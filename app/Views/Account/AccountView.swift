@@ -26,14 +26,14 @@ struct AccountView: View {
                     AccountHeaderView()
 
                     // MARK: Appearance
-                    AccountSection(title: "Appearance", icon: "ph-palette") {
+                    AccountSection(title: String(localized: "Appearance", comment: "Settings: a section heading"), icon: "ph-palette") {
                         ThemePickerRows()
                     }
                     .padding(.top, 30)
 
                     // MARK: App Icon
                     if AppIconPickerRows.isEnabled {
-                        AccountSection(title: "App Icon", icon: "ph-image") {
+                        AccountSection(title: String(localized: "App Icon", comment: "Settings: a section heading"), icon: "ph-image") {
                             AppIconPickerRows()
                         }
                         .padding(.top, 30)
@@ -45,7 +45,7 @@ struct AccountView: View {
                     // under The Rosary, below, and the Prayers tab's under
                     // its own name, so neither "Audio" is read as the
                     // other's
-                    AccountSection(title: "Prayer Experience", icon: "ph-text-aa") {
+                    AccountSection(title: String(localized: "Prayer Experience", comment: "Settings: a section heading"), icon: "ph-text-aa") {
                         VStack(spacing: 0) {
                             TextSizeRow(value: Bindable(userSettings).textSizeScale)
 
@@ -71,7 +71,7 @@ struct AccountView: View {
                     // The Rosary's own choices, as its own page sets the
                     // first two, then what is shown before and after the
                     // mysteries
-                    AccountSection(title: "The Rosary", icon: "lv-rosary") {
+                    AccountSection(title: String(localized: "The Rosary", comment: "Settings: a section heading"), icon: "lv-rosary") {
                         VStack(spacing: 0) {
                             // Audio: the meditation alone, or the Whole
                             // Rosary said aloud in the voice chosen above,
@@ -154,8 +154,8 @@ struct AccountView: View {
                             // The set page's note, and while the Whole
                             // Rosary is not chosen, where to choose it
                             Text(userSettings.prayAloud
-                                 ? "Played after the closing prayer."
-                                 : "Played after the closing prayer, with the Whole Rosary. Audio is at the top of this section.")
+                                 ? String(localized: "Played after the closing prayer.", comment: "Settings: the line under a row")
+                                 : String(localized: "Played after the closing prayer, with the Whole Rosary. Audio is at the top of this section.", comment: "Settings: the line under a row"))
                                 .font(AppFonts.italicFont(13))
                                 .foregroundColor(AppColors.textSecondary)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -173,10 +173,10 @@ struct AccountView: View {
                     // makes a sound. Before any answer it shows the default
                     // and says the book will ask; only a tap here answers
                     // the question
-                    AccountSection(title: "Prayers Tab", icon: "lv-prayer-book") {
+                    AccountSection(title: String(localized: "Prayers Tab", comment: "Settings: a section heading"), icon: "lv-prayer-book") {
                         RosaryChoiceSettingsRow(
                             icon: PrayerBookAudio.icon,
-                            title: "Audio",
+                            title: String(localized: "Audio", comment: "Settings: a row\'s name"),
                             options: PrayerBookAudio.options,
                             value: Binding(
                                 get: { PrayerBookStore.shared.praysAloud },
@@ -194,7 +194,7 @@ struct AccountView: View {
                     .padding(.top, 30)
 
                     // MARK: Devotion
-                    AccountSection(title: "Devotion", icon: "ph-scroll") {
+                    AccountSection(title: String(localized: "Devotion", comment: "Settings: a section heading"), icon: "ph-scroll") {
                         VStack(spacing: 0) {
                             // The Chapel page is arranged in place, so
                             // these are the standing doors to the two
@@ -208,9 +208,9 @@ struct AccountView: View {
                             if !ArchivedPages.chapel {
                                 ActionRow(
                                     icon: "ph-scroll",
-                                    title: "Daily Prayers",
+                                    title: String(localized: "Daily Prayers", comment: "Settings: a row\'s name"),
                                     subtitle: userSettings.ruleItems.isEmpty
-                                        ? "No prayers chosen yet"
+                                        ? String(localized: "No prayers chosen yet", comment: "Settings: the line under a row")
                                         : userSettings.ruleItems.map(\.title).joined(separator: " · ")
                                 ) {
                                     showRuleEditor = true
@@ -230,8 +230,8 @@ struct AccountView: View {
 
                             ActionRow(
                                 icon: "ph-flame",
-                                title: "Prayer Record",
-                                subtitle: "Your streaks, history, and milestones"
+                                title: String(localized: "Prayer Record", comment: "Settings: a row\'s name"),
+                                subtitle: String(localized: "Your streaks, history, and milestones", comment: "Settings: the line under a row")
                             ) {
                                 router.switchTo(.progress)
                             }
@@ -243,8 +243,8 @@ struct AccountView: View {
                             // Chapel and its Journal tile archived
                             ActionRow(
                                 icon: "ph-book-open",
-                                title: "Journal",
-                                subtitle: "Your reflections, kept on this device"
+                                title: String(localized: "Journal", comment: "Settings: a row\'s name"),
+                                subtitle: String(localized: "Your reflections, kept on this device", comment: "Settings: the line under a row")
                             ) {
                                 router.switchTo(.journal)
                             }
@@ -254,10 +254,10 @@ struct AccountView: View {
 
                             ToggleRow(
                                 icon: "ph-bell",
-                                title: "Daily Reminders",
+                                title: String(localized: "Daily Reminders", comment: "Settings: a row\'s name"),
                                 subtitle: userSettings.remindersEnabled
                                     ? userSettings.reminderTimeLabel
-                                    : "Off",
+                                    : String(localized: "Off", comment: "Settings: the line under a row"),
                                 isOn: Bindable(userSettings).remindersEnabled
                             )
 
@@ -267,8 +267,8 @@ struct AccountView: View {
 
                                 ActionRow(
                                     icon: "ph-bell-fill",
-                                    title: "Turn On in iPhone Settings",
-                                    subtitle: "Notifications are turned off for Lumen Viae"
+                                    title: String(localized: "Turn On in iPhone Settings", comment: "Settings: a row\'s name"),
+                                    subtitle: String(localized: "Notifications are turned off for Lumen Viae", comment: "Settings: the line under a row")
                                 ) {
                                     if let url = URL(string: UIApplication.openSettingsURLString) {
                                         UIApplication.shared.open(url)
@@ -292,7 +292,7 @@ struct AccountView: View {
 
                                 ActionRow(
                                     icon: "ph-speaker-high",
-                                    title: "Reminder Sound",
+                                    title: String(localized: "Reminder Sound", comment: "Settings: a row\'s name"),
                                     subtitle: userSettings.reminderSound.displayName
                                 ) {
                                     showSoundPicker = true
@@ -308,10 +308,10 @@ struct AccountView: View {
                             // reminder, apart from the daily one above
                             ToggleRow(
                                 icon: "lv-bell",
-                                title: "The Angelus Bell",
+                                title: String(localized: "The Angelus Bell", comment: "Settings: a row\'s name"),
                                 subtitle: PrayerBookStore.shared.angelusBellDenied
-                                    ? "Notifications are turned off for Lumen Viae"
-                                    : "Rings at 6 AM, noon and 6 PM for the Angelus, a short prayer to Mary",
+                                    ? String(localized: "Notifications are turned off for Lumen Viae", comment: "Settings: the line under a row")
+                                    : String(localized: "Rings at 6 AM, noon and 6 PM for the Angelus, a short prayer to Mary", comment: "Settings: the line under a row"),
                                 isOn: Binding(
                                     get: { PrayerBookStore.shared.angelusBell },
                                     set: { on in Task { await PrayerBookStore.shared.setAngelusBell(on) } }
@@ -328,9 +328,9 @@ struct AccountView: View {
                             // whoever came to learn the Rosary eventually has.
                             ActionRow(
                                 icon: "ph-heart",
-                                title: "What Brings You to the Rosary",
+                                title: String(localized: "What Brings You to the Rosary", comment: "Settings: a row\'s name"),
                                 subtitle: userSettings.intentions.isEmpty
-                                    ? "Not set"
+                                    ? String(localized: "Not set", comment: "Settings: the line under a row")
                                     : userSettings.intentions.map(\.displayName).joined(separator: " · ")
                             ) {
                                 showIntentionPicker = true
@@ -342,7 +342,7 @@ struct AccountView: View {
                     .padding(.top, 24)
 
                     // MARK: Offline
-                    AccountSection(title: "Offline", icon: "ph-download-simple") {
+                    AccountSection(title: String(localized: "Offline", comment: "Settings: a section heading"), icon: "ph-download-simple") {
                         OfflineContentRows()
                     }
                     .padding(.top, 30)
@@ -493,32 +493,32 @@ struct AppIconPickerRows: View {
     private static let options: [IconOption] = [
         IconOption(
             alternateName: nil,
-            displayName: "Painting",
-            detail: "Our Lady with the Marian monogram",
+            displayName: String(localized: "Painting", comment: "Settings, App Icon: the name of an icon"),
+            detail: String(localized: "Our Lady with the Marian monogram", comment: "Settings, App Icon: what the icon looks like"),
             preview: "icon-preview-Candlelit"
         ),
         IconOption(
             alternateName: "AppIconMarianBlue",
-            displayName: "Marian Blue",
-            detail: "Gold on Our Lady's blue",
+            displayName: String(localized: "Marian Blue", comment: "Settings, App Icon: the name of an icon"),
+            detail: String(localized: "Gold on Our Lady's blue", comment: "Settings, App Icon: what the icon looks like"),
             preview: "icon-preview-MarianBlue"
         ),
         IconOption(
             alternateName: "AppIconMidnight",
-            displayName: "Midnight",
-            detail: "Gold on the night sky",
+            displayName: String(localized: "Midnight", comment: "Settings, App Icon: the name of an icon"),
+            detail: String(localized: "Gold on the night sky", comment: "Settings, App Icon: what the icon looks like"),
             preview: "icon-preview-Midnight"
         ),
         IconOption(
             alternateName: "AppIconSorrowful",
-            displayName: "Sorrowful",
-            detail: "Gold on the violet of the Passion",
+            displayName: String(localized: "Sorrowful", comment: "Settings, App Icon: the name of an icon"),
+            detail: String(localized: "Gold on the violet of the Passion", comment: "Settings, App Icon: what the icon looks like"),
             preview: "icon-preview-Sorrowful"
         ),
         IconOption(
             alternateName: "AppIconVellum",
-            displayName: "Vellum",
-            detail: "Ink and gold on the page of an old book",
+            displayName: String(localized: "Vellum", comment: "Settings, App Icon: the name of an icon"),
+            detail: String(localized: "Ink and gold on the page of an old book", comment: "Settings, App Icon: what the icon looks like"),
             preview: "icon-preview-Vellum"
         )
     ]
@@ -688,6 +688,23 @@ struct OfflineContentRows: View {
 
     @State private var showRemoveConfirm = false
 
+    /// What the download is doing, said whole for each stage so each line
+    /// translates as a sentence. The stage names are the service's ids;
+    /// the first gets the list of what there is to download, and is not
+    /// itself a download.
+    private static func progressLine(forStage stage: String) -> String {
+        switch stage {
+        case "Preparing": return String(localized: "Preparing…", comment: "Settings, Save for Offline: finding what there is to download")
+        case "Meditations": return String(localized: "Downloading Meditations…", comment: "Settings, Save for Offline: progress")
+        case "Paintings": return String(localized: "Downloading Paintings…", comment: "Settings, Save for Offline: progress")
+        case "Meditation Audio": return String(localized: "Downloading Meditation Audio…", comment: "Settings, Save for Offline: progress")
+        case "Rosary Audio": return String(localized: "Downloading Rosary Audio…", comment: "Settings, Save for Offline: progress, the recorded prayers of the Rosary")
+        case "Prayers Audio": return String(localized: "Downloading Prayers Audio…", comment: "Settings, Save for Offline: progress, the recordings of the Prayers tab")
+        case "Chants": return String(localized: "Downloading Chants…", comment: "Settings, Save for Offline: progress")
+        default: return String(localized: "Downloading \(stage)…", comment: "Settings, Save for Offline: progress for a stage named by the app")
+        }
+    }
+
     private static let byteFormatter: ByteCountFormatter = {
         let formatter = ByteCountFormatter()
         formatter.countStyle = .file
@@ -727,8 +744,8 @@ struct OfflineContentRows: View {
                 VStack(spacing: 0) {
                     ActionRow(
                         icon: "ph-download-simple",
-                        title: "Save for Offline",
-                        subtitle: "Every meditation and audio file, ready without a connection"
+                        title: String(localized: "Save for Offline", comment: "Settings, Offline: a row's name"),
+                        subtitle: String(localized: "Every meditation and audio file, ready without a connection", comment: "Settings, Offline: the line under a row")
                     ) {
                         Task { await service.downloadAll() }
                     }
@@ -748,7 +765,7 @@ struct OfflineContentRows: View {
                     VStack(alignment: .leading, spacing: 4) {
                         // The first stage gets the list of what there is
                         // to download, and is not itself a download
-                        Text(stage == "Preparing" ? "Preparing…" : "Downloading \(stage)…")
+                        Text(Self.progressLine(forStage: stage))
                             .font(AppFonts.bodyFont(16))
                             .foregroundColor(AppColors.cream)
 
@@ -796,8 +813,8 @@ struct OfflineContentRows: View {
 
                     ActionRow(
                         icon: "ph-arrow-counter-clockwise",
-                        title: "Update Download",
-                        subtitle: "Gets the latest meditations; saved audio stays"
+                        title: String(localized: "Update Download", comment: "Settings, Offline: a row's name"),
+                        subtitle: String(localized: "Gets the latest meditations; saved audio stays", comment: "Settings, Offline: the line under a row")
                     ) {
                         Task { await service.downloadAll(refreshText: true) }
                     }
@@ -829,8 +846,8 @@ struct OfflineContentRows: View {
 
                     ActionRow(
                         icon: "ph-arrow-counter-clockwise",
-                        title: "Try Again",
-                        subtitle: "Already-downloaded files are kept"
+                        title: String(localized: "Try Again", comment: "Settings, Offline: a row's name"),
+                        subtitle: String(localized: "Already-downloaded files are kept", comment: "Settings, Offline: the line under a row")
                     ) {
                         Task { await service.downloadAll() }
                     }
@@ -851,8 +868,8 @@ struct OfflineContentRows: View {
     private var removeRow: some View {
         ActionRow(
             icon: "ph-trash",
-            title: "Remove Downloads",
-            subtitle: "Frees storage; streaming still works online"
+            title: String(localized: "Remove Downloads", comment: "Settings, Offline: a row's name"),
+            subtitle: String(localized: "Frees storage; streaming still works online", comment: "Settings, Offline: the line under a row")
         ) {
             showRemoveConfirm = true
         }
@@ -933,7 +950,7 @@ struct ToggleRow: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(title)
-        .accessibilityValue(isOn ? "On" : "Off")
+        .accessibilityValue(isOn ? Text("On", comment: "VoiceOver: a switch is on") : Text("Off", comment: "VoiceOver: a switch is off"))
         .accessibilityHint(subtitle ?? "")
         .accessibilityAddTraits(.isToggle)
     }
@@ -1256,18 +1273,18 @@ struct AboutSheet: View {
                 // Description
                 VStack(alignment: .leading, spacing: 16) {
                     InfoBlock(
-                        title: "Our Mission",
-                        text: "Lumen Viae helps you pray the Rosary each day, with a short reading for every mystery, and keeps the Church's other prayers close at hand. The mysteries are scenes from the lives of Jesus and Mary: the Joyful, Sorrowful, Glorious and Luminous, and the Seven Sorrows of Mary."
+                        title: String(localized: "Our Mission", comment: "About Lumen Viae: a section heading"),
+                        text: String(localized: "Lumen Viae helps you pray the Rosary each day, with a short reading for every mystery, and keeps the Church's other prayers close at hand. The mysteries are scenes from the lives of Jesus and Mary: the Joyful, Sorrowful, Glorious and Luminous, and the Seven Sorrows of Mary.", comment: "About Lumen Viae: a section's text")
                     )
 
                     InfoBlock(
-                        title: "How to Pray the Rosary",
-                        text: "A Rosary has five mysteries. For each one, think on its scene and pray one Our Father, ten Hail Marys, a Glory Be and the Fatima Prayer, together called a decade. The app guides you through all five, with an optional meditation for each: a short reading from a saint or from Scripture."
+                        title: String(localized: "How to Pray the Rosary", comment: "About Lumen Viae: a section heading"),
+                        text: String(localized: "A Rosary has five mysteries. For each one, think on its scene and pray one Our Father, ten Hail Marys, a Glory Be and the Fatima Prayer, together called a decade. The app guides you through all five, with an optional meditation for each: a short reading from a saint or from Scripture.", comment: "About Lumen Viae: a section's text")
                     )
 
                     InfoBlock(
-                        title: "Daily Schedule",
-                        text: "The traditional schedule assigns a set of mysteries to each day of the week: Joyful on Monday and Thursday; Sorrowful on Tuesday and Friday; Glorious on Wednesday and Saturday. Sunday follows the season — Joyful in Advent, Sorrowful in Lent, and Glorious the rest of the year. The modern schedule, St. John Paul II's, gives Thursday to the Luminous and Saturday to the Joyful; choose it in Settings, under Devotion."
+                        title: String(localized: "Daily Schedule", comment: "About Lumen Viae: a section heading"),
+                        text: String(localized: "The traditional schedule assigns a set of mysteries to each day of the week: Joyful on Monday and Thursday; Sorrowful on Tuesday and Friday; Glorious on Wednesday and Saturday. Sunday follows the season — Joyful in Advent, Sorrowful in Lent, and Glorious the rest of the year. The modern schedule, St. John Paul II's, gives Thursday to the Luminous and Saturday to the Joyful; choose it in Settings, under Devotion.", comment: "About Lumen Viae: a section's text")
                     )
                 }
                 .padding(.horizontal, SheetMetrics.gutter)
@@ -1298,8 +1315,8 @@ struct PrivacyPolicySheet: View {
             VStack(alignment: .leading, spacing: 0) {
                 SheetHeader(
                     kicker: "Lumen Viae",
-                    title: "Privacy Policy",
-                    lead: "Last updated: September 2026"
+                    title: String(localized: "Privacy Policy", comment: "Privacy Policy: a heading, or the date the policy was last changed"),
+                    lead: String(localized: "Last updated: September 2026", comment: "Privacy Policy: a heading, or the date the policy was last changed")
                 )
 
                 // Keep in step with PrivacyInfo.xcprivacy and App Store
@@ -1307,33 +1324,33 @@ struct PrivacyPolicySheet: View {
                 // APIService.recordCompletion, and nothing else.
                 VStack(alignment: .leading, spacing: 28) {
                     InfoBlock(
-                        title: "What Stays on Your Phone",
-                        text: "Almost everything. Your journal, your prayer record and streak, your place in every book and your settings are kept on this device and never sent to us. They leave it only in your iPhone's own iCloud Backup, if you have it on, under Apple's privacy policy."
+                        title: String(localized: "What Stays on Your Phone", comment: "Privacy Policy: a heading, or the date the policy was last changed"),
+                        text: String(localized: "Almost everything. Your journal, your prayer record and streak, your place in every book and your settings are kept on this device and never sent to us. They leave it only in your iPhone's own iCloud Backup, if you have it on, under Apple's privacy policy.", comment: "Privacy Policy: a section's text; keep it as plain and exact as the English")
                     )
 
                     InfoBlock(
-                        title: "What Reaches Us",
-                        text: "One short note, when you finish a Rosary prayed with meditations: which meditations they were, and whether you listened to the Whole Rosary. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary, the Audio Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us."
+                        title: String(localized: "What Reaches Us", comment: "Privacy Policy: a heading, or the date the policy was last changed"),
+                        text: String(localized: "One short note, when you finish a Rosary prayed with meditations: which meditations they were, and whether you listened to the Whole Rosary. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary, the Audio Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us.", comment: "Privacy Policy: a section's text; keep it as plain and exact as the English")
                     )
 
                     InfoBlock(
-                        title: "What the App Fetches",
-                        text: "Meditations, narration, the Hours of Prayer (the Divine Office), the words of the prayers, and the chants' recordings and sheet music come from our own server; the Mass texts from Missale Meum; the books and recordings under Spiritual Reading from Project Gutenberg and LibriVox. Each receives the request itself, as any website does, and nothing more. The app carries no analytics or advertising code from anyone else, and nothing is used to track you."
+                        title: String(localized: "What the App Fetches", comment: "Privacy Policy: a heading, or the date the policy was last changed"),
+                        text: String(localized: "Meditations, narration, the Hours of Prayer (the Divine Office), the words of the prayers, and the chants' recordings and sheet music come from our own server; the Mass texts from Missale Meum; the books and recordings under Spiritual Reading from Project Gutenberg and LibriVox. Each receives the request itself, as any website does, and nothing more. The app carries no analytics or advertising code from anyone else, and nothing is used to track you.", comment: "Privacy Policy: a section's text; keep it as plain and exact as the English")
                     )
 
                     InfoBlock(
-                        title: "Reminders",
-                        text: "Daily reminders and the Angelus bell are scheduled on your phone by iOS. We send no push notifications."
+                        title: String(localized: "Reminders", comment: "Privacy Policy: a heading, or the date the policy was last changed"),
+                        text: String(localized: "Daily reminders and the Angelus bell are scheduled on your phone by iOS. We send no push notifications.", comment: "Privacy Policy: a section's text; keep it as plain and exact as the English")
                     )
 
                     InfoBlock(
-                        title: "Children's Privacy",
-                        text: "The app is suitable for all ages. It asks no one for a name, an email or an account, and nothing it sends can tell us who you are."
+                        title: String(localized: "Children's Privacy", comment: "Privacy Policy: a heading, or the date the policy was last changed"),
+                        text: String(localized: "The app is suitable for all ages. It asks no one for a name, an email or an account, and nothing it sends can tell us who you are.", comment: "Privacy Policy: a section's text; keep it as plain and exact as the English")
                     )
 
                     InfoBlock(
-                        title: "Contact",
-                        text: "Questions about privacy? Reach us at \(Constants.supportEmail)"
+                        title: String(localized: "Contact", comment: "Privacy Policy: a heading, or the date the policy was last changed"),
+                        text: String(localized: "Questions about privacy? Reach us at \(Constants.supportEmail)", comment: "Privacy Policy: a section's text; keep it as plain and exact as the English")
                     )
                 }
                 .padding(.horizontal, SheetMetrics.gutter)
@@ -1356,47 +1373,47 @@ struct HelpSupportSheet: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
-                SheetHeader(kicker: "Lumen Viae", title: "Help & Support")
+                SheetHeader(kicker: "Lumen Viae", title: String(localized: "Help & Support", comment: "The Help & Support sheet's title"))
 
                 VStack(alignment: .leading, spacing: 28) {
                     InfoBlock(
-                        title: "How do I begin praying?",
-                        text: "From the home screen, tap \"Pray the Rosary\" under today's mysteries, or tap any mystery in the grid below. On the page that opens, choose a meditation (a short reading on each mystery), or another way to pray: the Scriptural Rosary, with a Bible verse for every Hail Mary, or the Audio Rosary, where you listen and pray along. The next page shows how you'll pray, the audio and the counting, just above Pray."
+                        title: String(localized: "How do I begin praying?", comment: "Help & Support: a question, or a button"),
+                        text: String(localized: "From the home screen, tap \"Pray the Rosary\" under today's mysteries, or tap any mystery in the grid below. On the page that opens, choose a meditation (a short reading on each mystery), or another way to pray: the Scriptural Rosary, with a Bible verse for every Hail Mary, or the Audio Rosary, where you listen and pray along. The next page shows how you'll pray, the audio and the counting, just above Pray.", comment: "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words")
                     )
 
                     InfoBlock(
-                        title: "What are the different mysteries?",
-                        text: "The mysteries are scenes from the lives of Jesus and Mary, five to a Rosary. There are four sets of them. On the traditional schedule: Joyful (Monday, Thursday), Sorrowful (Tuesday, Friday), and Glorious (Wednesday, Saturday). Sunday takes Joyful in Advent, Sorrowful in Lent, and Glorious otherwise. The Luminous Mysteries, added by St. John Paul II in 2002, can be prayed any day from View All beside the home grid. The modern schedule (Settings, under Devotion) gives them Thursday and moves the Joyful to Saturday. The Seven Sorrows of Mary can be prayed on any day too."
+                        title: String(localized: "What are the different mysteries?", comment: "Help & Support: a question, or a button"),
+                        text: String(localized: "The mysteries are scenes from the lives of Jesus and Mary, five to a Rosary. There are four sets of them. On the traditional schedule: Joyful (Monday, Thursday), Sorrowful (Tuesday, Friday), and Glorious (Wednesday, Saturday). Sunday takes Joyful in Advent, Sorrowful in Lent, and Glorious otherwise. The Luminous Mysteries, added by St. John Paul II in 2002, can be prayed any day from View All beside the home grid. The modern schedule (Settings, under Devotion) gives them Thursday and moves the Joyful to Saturday. The Seven Sorrows of Mary can be prayed on any day too.", comment: "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words")
                     )
 
                     InfoBlock(
-                        title: "How does audio work?",
-                        text: "Choose it on the Rosary's own page before you pray, or in Settings under The Rosary: with Meditation Only you hear the meditation and say the prayers yourself, and with Whole Rosary you hear every prayer, the beads moving with the voice. During the prayer, the play button starts and pauses the voice, and the buttons beside it move 10 seconds, or a whole prayer with Whole Rosary."
+                        title: String(localized: "How does audio work?", comment: "Help & Support: a question, or a button"),
+                        text: String(localized: "Choose it on the Rosary's own page before you pray, or in Settings under The Rosary: with Meditation Only you hear the meditation and say the prayers yourself, and with Whole Rosary you hear every prayer, the beads moving with the voice. During the prayer, the play button starts and pauses the voice, and the buttons beside it move 10 seconds, or a whole prayer with Whole Rosary.", comment: "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words")
                     )
 
                     InfoBlock(
-                        title: "Why are some meditations unavailable?",
-                        text: "Meditations come from our server. If you're offline, or they haven't been added yet, some meditations may not be available. Check your internet connection and try again."
+                        title: String(localized: "Why are some meditations unavailable?", comment: "Help & Support: a question, or a button"),
+                        text: String(localized: "Meditations come from our server. If you're offline, or they haven't been added yet, some meditations may not be available. Check your internet connection and try again.", comment: "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words")
                     )
 
                     InfoBlock(
-                        title: "How do I adjust text size?",
-                        text: "On the home screen, tap the sliders at the top left, then Prayer Experience → Text Size. Drag the slider toward the larger \"A\" to increase the meditation text size."
+                        title: String(localized: "How do I adjust text size?", comment: "Help & Support: a question, or a button"),
+                        text: String(localized: "On the home screen, tap the sliders at the top left, then Prayer Experience → Text Size. Drag the slider toward the larger \"A\" to increase the meditation text size.", comment: "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words")
                     )
 
                     InfoBlock(
-                        title: "Daily reminders aren't working",
-                        text: "Make sure notifications are enabled for Lumen Viae in your iPhone's Settings → Notifications. Then toggle Daily Reminders off and back on in the app to reschedule."
+                        title: String(localized: "Daily reminders aren't working", comment: "Help & Support: a question, or a button"),
+                        text: String(localized: "Make sure notifications are enabled for Lumen Viae in your iPhone's Settings → Notifications. Then toggle Daily Reminders off and back on in the app to reschedule.", comment: "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words")
                     )
 
                     VStack(alignment: .leading, spacing: 12) {
                         InfoBlock(
-                            title: "Contact Us",
-                            text: "Didn't find it here? Write to us in the app — we read every note."
+                            title: String(localized: "Contact Us", comment: "Help & Support: a question, or a button"),
+                            text: String(localized: "Didn't find it here? Write to us in the app — we read every note.", comment: "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words")
                         )
 
                         QuietGoldButton(
-                            title: "Send feedback",
+                            title: String(localized: "Send feedback", comment: "Help & Support: a question, or a button"),
                             leadingIcon: "ph-chat-teardrop-text",
                             horizontalPadding: 0,
                             action: onGiveFeedback

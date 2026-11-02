@@ -24,10 +24,10 @@ enum PrayerLanguage: String, CaseIterable, Identifiable {
     /// alike. The raw value is what is stored, so it never changes.
     var displayName: String {
         switch self {
-        case .english:           return "English"
-        case .latin:             return "Latin"
-        case .both:              return "Latin with English"
-        case .latinUnderEnglish: return "English with Latin"
+        case .english:           return String(localized: "English", comment: "Settings, Prayer Language: a choice of the language prayers are shown in")
+        case .latin:             return String(localized: "Latin", comment: "Settings, Prayer Language: a choice of the language prayers are shown in")
+        case .both:              return String(localized: "Latin with English", comment: "Settings, Prayer Language: a choice of the language prayers are shown in")
+        case .latinUnderEnglish: return String(localized: "English with Latin", comment: "Settings, Prayer Language: a choice of the language prayers are shown in")
         }
     }
 
@@ -77,20 +77,20 @@ enum PrayerIntention: String, CaseIterable, Identifiable {
     /// anyone's answer.
     var displayName: String {
         switch self {
-        case .peace:    return "Finding Peace"
-        case .habit:    return "Praying Every Day"
-        case .devotion: return "Growing Closer to Mary"
-        case .learning: return "Learning the Rosary"
+        case .peace:    return String(localized: "Finding Peace", comment: "What brings you to the Rosary: one reason, as a short title")
+        case .habit:    return String(localized: "Praying Every Day", comment: "What brings you to the Rosary: one reason, as a short title")
+        case .devotion: return String(localized: "Growing Closer to Mary", comment: "What brings you to the Rosary: one reason, as a short title")
+        case .learning: return String(localized: "Learning the Rosary", comment: "What brings you to the Rosary: one reason, as a short title")
         }
     }
 
     /// The line under the name, shared by onboarding and Settings
     var detail: String {
         switch self {
-        case .peace:    return "Stillness in a busy life"
-        case .habit:    return "To make the Rosary part of each day"
-        case .devotion: return "To love Mary more"
-        case .learning: return "New to it, or coming back after a while"
+        case .peace:    return String(localized: "Stillness in a busy life", comment: "What brings you to the Rosary: the line under a reason")
+        case .habit:    return String(localized: "To make the Rosary part of each day", comment: "What brings you to the Rosary: the line under a reason")
+        case .devotion: return String(localized: "To love Mary more", comment: "What brings you to the Rosary: the line under a reason")
+        case .learning: return String(localized: "New to it, or coming back after a while", comment: "What brings you to the Rosary: the line under a reason")
         }
     }
 }
@@ -118,14 +118,14 @@ struct ReminderSound: Identifiable, Equatable {
     static let all: [ReminderSound] = [
         ReminderSound(
             fileName: "candle_chime.caf",
-            displayName: "Candle Chime",
-            detail: "One warm tone with a soft shimmer",
+            displayName: String(localized: "Candle Chime", comment: "Settings, Reminder Sound: the name of a notification sound"),
+            detail: String(localized: "One warm tone with a soft shimmer", comment: "Settings, Reminder Sound: what the sound is like"),
             icon: "ph-flame"
         ),
         ReminderSound(
             fileName: "altar_bell.caf",
-            displayName: "Altar Bell",
-            detail: "A single strike of a small bronze bell",
+            displayName: String(localized: "Altar Bell", comment: "Settings, Reminder Sound: the name of a notification sound"),
+            detail: String(localized: "A single strike of a small bronze bell", comment: "Settings, Reminder Sound: what the sound is like"),
             icon: "ph-bell"
         )
     ]
@@ -272,7 +272,10 @@ final class UserSettings {
 
     /// What the voice setting is called wherever it is offered - Settings
     /// and the player's playback sheet.
-    static let narrationVoiceTitle = "Narration voice"
+    static let narrationVoiceTitle = String(
+        localized: "Narration voice",
+        comment: "Heading over the choice of recorded voice that reads the meditations, in Settings and the player"
+    )
 
     // MARK: - Reader
 

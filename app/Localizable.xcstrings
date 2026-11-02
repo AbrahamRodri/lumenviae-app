@@ -1,0 +1,3169 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    " " : {
+
+    },
+    "  " : {
+
+    },
+    "  %@" : {
+
+    },
+    "  ×%lld" : {
+
+    },
+    " · %@" : {
+
+    },
+    " %@" : {
+
+    },
+    " ↗" : {
+
+    },
+    "– 1 THESSALONIANS 5:17-18" : {
+
+    },
+    "— %@" : {
+
+    },
+    "·" : {
+
+    },
+    "· %lld MIN" : {
+
+    },
+    "· from %@" : {
+
+    },
+    "“" : {
+
+    },
+    "“%@”" : {
+
+    },
+    "\"Pray without ceasing. In all things give thanks; for this is the will of God in Christ Jesus concerning you.\"" : {
+
+    },
+    "%@ " : {
+
+    },
+    "%@ — %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ — %2$@"
+          }
+        }
+      }
+    },
+    "%@ · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "%@ · %lld OF %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$lld OF %3$lld"
+          }
+        }
+      }
+    },
+    "%@ · PRAYED" : {
+
+    },
+    "%@ · waiting for you" : {
+
+    },
+    "%@ app icon" : {
+
+    },
+    "%@ colors" : {
+
+    },
+    "%@ could not be reached. Check your connection and try again." : {
+
+    },
+    "%@ in" : {
+
+    },
+    "%@ of %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@"
+          }
+        }
+      }
+    },
+    "%@ theme" : {
+
+    },
+    "%@, %@" : {
+      "comment" : "VoiceOver for a book on the home shelf: title, author",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@"
+          }
+        }
+      }
+    },
+    "%@, %@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@, %3$@"
+          }
+        }
+      }
+    },
+    "%@, %@, consecrated today" : {
+      "comment" : "VoiceOver for the consecration row on the day it was made: the name, then the day's title",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@, consecrated today"
+          }
+        }
+      }
+    },
+    "%@, %@, the prayer for now" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@, the prayer for now"
+          }
+        }
+      }
+    },
+    "%@, %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@."
+          }
+        }
+      }
+    },
+    "%@, %@. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@. %3$@"
+          }
+        }
+      }
+    },
+    "%@, %@. %@%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@. %3$@%4$@"
+          }
+        }
+      }
+    },
+    "%@, %@. Continue reading." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@. Continue reading."
+          }
+        }
+      }
+    },
+    "%@, %@. Day 1 is %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@. Day 1 is %3$@."
+          }
+        }
+      }
+    },
+    "%@, %@. Reading under way." : {
+      "comment" : "VoiceOver for a book on the home shelf that has been started: title, author",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@. Reading under way."
+          }
+        }
+      }
+    },
+    "%@, %@%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@%3$@"
+          }
+        }
+      }
+    },
+    "%@, %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$lld"
+          }
+        }
+      }
+    },
+    "%@, %lld chapters" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$lld chapters"
+          }
+        }
+      }
+    },
+    "%@, hidden. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, hidden. %2$@"
+          }
+        }
+      }
+    },
+    "%@, playlist, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, playlist, %2$@"
+          }
+        }
+      }
+    },
+    "%@: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$@"
+          }
+        }
+      }
+    },
+    "%@: %@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$@, %3$@"
+          }
+        }
+      }
+    },
+    "%@: the %@%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: the %2$@%3$@"
+          }
+        }
+      }
+    },
+    "%@. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@. %2$@"
+          }
+        }
+      }
+    },
+    "%@. %@, a 33-day preparation. Begin." : {
+      "comment" : "VoiceOver for the consecration row before it is started: the name, then the line under it",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@. %2$@, a 33-day preparation. Begin."
+          }
+        }
+      }
+    },
+    "%@. %@. Begins %@" : {
+      "comment" : "VoiceOver for a consecration chosen to start later; the date is like Monday, October 19",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@. %2$@. Begins %3$@"
+          }
+        }
+      }
+    },
+    "%@. Open the calendar" : {
+
+    },
+    "%@%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@%2$@"
+          }
+        }
+      }
+    },
+    "%@%@%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@%2$@%3$@"
+          }
+        }
+      }
+    },
+    "%@%@%@%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@%2$@%3$@%4$@"
+          }
+        }
+      }
+    },
+    "%@%lld of %lld prayed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@%2$lld of %3$lld prayed"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "%lld chapters" : {
+
+    },
+    "%lld characters" : {
+
+    },
+    "%lld days away" : {
+
+    },
+    "%lld DAYS IN A ROW" : {
+
+    },
+    "%lld earlier chapters" : {
+
+    },
+    "%lld Masses today · choose one" : {
+
+    },
+    "%lld minutes of silence" : {
+
+    },
+    "%lld notes on passages of this book" : {
+
+    },
+    "%lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "%lld OF %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld OF %2$lld"
+          }
+        }
+      }
+    },
+    "%lld of %lld, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld, %3$@"
+          }
+        }
+      }
+    },
+    "%lld ROSARIES PRAYED" : {
+
+    },
+    "%lld. %@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld. %2$@, %3$@"
+          }
+        }
+      }
+    },
+    "%lld%%" : {
+
+    },
+    "•" : {
+
+    },
+    "×%lld" : {
+
+    },
+    "✦" : {
+
+    },
+    "❝" : {
+
+    },
+    "1 chapter" : {
+
+    },
+    "1 character" : {
+
+    },
+    "1 day away" : {
+
+    },
+    "1 DAY SO FAR" : {
+
+    },
+    "1 earlier chapter" : {
+
+    },
+    "1 minute of silence" : {
+
+    },
+    "1 note on a passage of this book" : {
+
+    },
+    "1 ROSARY PRAYED" : {
+
+    },
+    "1×" : {
+
+    },
+    "15" : {
+
+    },
+    "A" : {
+
+    },
+    "A 33-day preparation" : {
+
+    },
+    "A 33-day preparation to give yourself to Jesus through Mary" : {
+
+    },
+    "A 33-day preparation to give yourself to Jesus through Mary." : {
+
+    },
+    "A COMPANION TO THE BOOK" : {
+
+    },
+    "A dark chapel lit by warm gold" : {
+      "comment" : "Settings, Appearance: the line under a color theme"
+    },
+    "A favourite" : {
+
+    },
+    "A GUIDED ROSARY" : {
+
+    },
+    "A litany is a prayer of short petitions, each answered by the same response." : {
+
+    },
+    "A new set" : {
+
+    },
+    "A new set, begun with %@" : {
+
+    },
+    "A passage" : {
+
+    },
+    "A PRAYER ASKING HIS HELP" : {
+
+    },
+    "A renewal of the promises of your baptism" : {
+
+    },
+    "A Rosary has five mysteries. For each one, think on its scene and pray one Our Father, ten Hail Marys, a Glory Be and the Fatima Prayer, together called a decade. The app guides you through all five, with an optional meditation for each: a short reading from a saint or from Scripture." : {
+      "comment" : "About Lumen Viae: a section's text"
+    },
+    "A SAYING FOR TODAY" : {
+
+    },
+    "A single strike of a small bronze bell" : {
+      "comment" : "Settings, Reminder Sound: what the sound is like"
+    },
+    "A verse is shown for each Hail Mary. You read and pray in silence." : {
+      "comment" : "The line under a Rosary choice, saying what the chosen option does"
+    },
+    "A voice reads each prayer to you." : {
+      "comment" : "Settings, Prayers Tab Audio: the line under the chosen option"
+    },
+    "About" : {
+      "comment" : "About: a row's name, a heading, or the line under it"
+    },
+    "About %@" : {
+
+    },
+    "About Lumen Viae" : {
+      "comment" : "About: a row's name, a heading, or the line under it"
+    },
+    "ABOUT THIS DAY" : {
+
+    },
+    "Add" : {
+
+    },
+    "Add chants in the order you will sing them, and pauses between them for silence or a note in red." : {
+
+    },
+    "Add Prayers" : {
+
+    },
+    "Add the pause" : {
+
+    },
+    "ADD THE PAUSE" : {
+
+    },
+    "Add to a set" : {
+
+    },
+    "Add to a Set" : {
+
+    },
+    "Add to Favourites" : {
+
+    },
+    "ADDED" : {
+
+    },
+    "ADDED ×%lld" : {
+
+    },
+    "Adds it again at the end of the set" : {
+
+    },
+    "Adds it to the end of the set" : {
+
+    },
+    "Adds the chant to the end of this set" : {
+
+    },
+    "Adds to the playlist" : {
+
+    },
+    "ADJUST" : {
+
+    },
+    "Adjusts your daily reading goal" : {
+
+    },
+    "After prayer" : {
+
+    },
+    "After the Hail Marys, swipe left" : {
+
+    },
+    "AFTER THE ROSARY" : {
+
+    },
+    "After you pray, write a reflection and it will appear here." : {
+
+    },
+    "ALL BOOKS" : {
+
+    },
+    "All chants saved" : {
+
+    },
+    "All the readings" : {
+
+    },
+    "Almost everything. Your journal, your prayer record and streak, your place in every book and your settings are kept on this device and never sent to us. They leave it only in your iPhone's own iCloud Backup, if you have it on, under Apple's privacy policy." : {
+      "comment" : "Privacy Policy: a section's text; keep it as plain and exact as the English"
+    },
+    "Already-downloaded files are kept" : {
+      "comment" : "Settings, Offline: the line under a row"
+    },
+    "Also remembered today: %@" : {
+
+    },
+    "Also what a tap on the Pray button does" : {
+
+    },
+    "Altar Bell" : {
+      "comment" : "Settings, Reminder Sound: the name of a notification sound"
+    },
+    "Amen" : {
+
+    },
+    "Amen — close the day and reflect" : {
+
+    },
+    "Amen — finish the Rosary" : {
+
+    },
+    "Amen." : {
+
+    },
+    "An Our Father, Hail Mary and Glory Be after the Rosary, for what the Pope asks the Church to pray for." : {
+      "comment" : "Settings, After the Rosary: the line under a prayer said after the Rosary"
+    },
+    "and %lld more" : {
+
+    },
+    "And %lld more. Add a word to narrow the search." : {
+
+    },
+    "and of the Son, and of the Holy Spirit. Amen." : {
+
+    },
+    "And what it said to you…" : {
+
+    },
+    "App Icon" : {
+      "comment" : "Settings: a section heading"
+    },
+    "App Introduction" : {
+      "comment" : "About: a row's name, a heading, or the line under it"
+    },
+    "Appearance" : {
+      "comment" : "Settings: a section heading"
+    },
+    "Arrange this page" : {
+
+    },
+    "ARRANGE THIS PAGE" : {
+
+    },
+    "Arranging the page." : {
+
+    },
+    "ASK FOR" : {
+
+    },
+    "Audio" : {
+      "comment" : "Settings: a row's name"
+    },
+    "Available Offline" : {
+
+    },
+    "Back" : {
+
+    },
+    "Back a step" : {
+
+    },
+    "Back fifteen seconds" : {
+
+    },
+    "Back ten seconds" : {
+
+    },
+    "Back to normal speed" : {
+
+    },
+    "Back to the four steps" : {
+
+    },
+    "Back to the player" : {
+
+    },
+    "BEFORE EACH DECADE" : {
+
+    },
+    "BEFORE YOU BEGIN" : {
+
+    },
+    "BEGIN" : {
+      "comment" : "Home, Today's Prayer: small capitals under the consecration row before it is started"
+    },
+    "Begins %@" : {
+
+    },
+    "BEGINS %@" : {
+      "comment" : "Home, Today's Prayer: small capitals for a consecration chosen to start later; the date is like OCT 19"
+    },
+    "Begins a reflection with this question as its title" : {
+
+    },
+    "Begun with this chant" : {
+
+    },
+    "BOOKMARK" : {
+
+    },
+    "Bookmark this passage" : {
+
+    },
+    "By tradition handed down through St. Bridget of Sweden, Our Lady promises seven graces to those who honour her daily by meditating on her sorrows." : {
+
+    },
+    "Cancel" : {
+
+    },
+    "CANCEL" : {
+
+    },
+    "Candle Chime" : {
+      "comment" : "Settings, Reminder Sound: the name of a notification sound"
+    },
+    "Candlelit" : {
+      "comment" : "Settings, Appearance: the name of a color theme"
+    },
+    "Carlo Acutis" : {
+
+    },
+    "CHANGE" : {
+
+    },
+    "CHANT" : {
+      "comment" : "Tab bar label for the Gregorian chant library, in capitals"
+    },
+    "Chant position" : {
+
+    },
+    "Chants sung one after another, for a time of prayer." : {
+
+    },
+    "Chants: %lld of %lld saved" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Chants: %1$lld of %2$lld saved"
+          }
+        }
+      }
+    },
+    "CHAPEL" : {
+      "comment" : "Tab bar label, in capitals"
+    },
+    "Chapter %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Chapter %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Chapter unavailable." : {
+
+    },
+    "Children's Privacy" : {
+      "comment" : "Privacy Policy: a heading, or the date the policy was last changed"
+    },
+    "Choose %@" : {
+
+    },
+    "Choose a day" : {
+
+    },
+    "Choose a painting or a photo" : {
+
+    },
+    "Choose any that fit. We'll word your reminders to match." : {
+      "comment" : "Settings, PrayerIntentionSheet: its heading, the label over it, the line under it, or a note at its foot"
+    },
+    "Choose chants for an hour of prayer in church, a prayer group or family prayer" : {
+
+    },
+    "Choose from Photos" : {
+
+    },
+    "Choose how the app looks, sounds and reminds you." : {
+
+    },
+    "Choose it on the Rosary's own page before you pray, or in Settings under The Rosary: with Meditation Only you hear the meditation and say the prayers yourself, and with Whole Rosary you hear every prayer, the beads moving with the voice. During the prayer, the play button starts and pauses the voice, and the buttons beside it move 10 seconds, or a whole prayer with Whole Rosary." : {
+      "comment" : "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words"
+    },
+    "Choose none and your reminders use a general set of words." : {
+      "comment" : "Settings, PrayerIntentionSheet: its heading, the label over it, the line under it, or a note at its foot"
+    },
+    "Choose your feast" : {
+
+    },
+    "Chooses this feast" : {
+
+    },
+    "Classic Catholic books to read, or to listen to" : {
+
+    },
+    "Clear search" : {
+
+    },
+    "Clear Search" : {
+
+    },
+    "Clear the search" : {
+
+    },
+    "Close" : {
+
+    },
+    "CLOSE" : {
+
+    },
+    "Close the search" : {
+
+    },
+    "Closes this part's chapters" : {
+
+    },
+    "Consecrated" : {
+
+    },
+    "CONSECRATED" : {
+
+    },
+    "Consecrated %@ — renew whenever you wish" : {
+
+    },
+    "CONSECRATED TODAY" : {
+      "comment" : "Home, Today's Prayer: small capitals once the act of consecration was made today"
+    },
+    "CONSECRATION" : {
+      "comment" : "Tab bar label for the 33-day Marian consecration, in capitals"
+    },
+    "Consecration completed — renew whenever you wish" : {
+
+    },
+    "Consecration Day" : {
+
+    },
+    "Consecration Day: %@" : {
+
+    },
+    "Consecration to Mary" : {
+      "comment" : "Home, Today's Prayer: name of the 33-day Marian consecration row"
+    },
+    "Contact" : {
+      "comment" : "Privacy Policy: a heading, or the date the policy was last changed"
+    },
+    "Contact Us" : {
+      "comment" : "Help & Support: a question, or a button"
+    },
+    "CONTENTS · %lld CHAPTERS" : {
+
+    },
+    "CONTINUE READING" : {
+
+    },
+    "Continue reading: %@" : {
+
+    },
+    "CONTINUE YOUR ROSARY" : {
+
+    },
+    "Continue your Rosary at the %@" : {
+
+    },
+    "Continues at the %@" : {
+
+    },
+    "Continues reading" : {
+
+    },
+    "COPY TEXT" : {
+
+    },
+    "Couldn't load — check your connection" : {
+      "comment" : "Home: an unfinished Rosary could not be loaded to continue it"
+    },
+    "Couldn't load the meditations. Check your connection. Prayers, chants, mysteries and books can still be searched." : {
+
+    },
+    "Couldn't load these meditations" : {
+
+    },
+    "Couldn't load these meditations. Check your connection and try again." : {
+
+    },
+    "Count on your own rosary. The screen shows one mystery at a time." : {
+      "comment" : "The line under a Rosary choice, saying what the chosen option does"
+    },
+    "Counting" : {
+      "comment" : "One of the Rosary's two choices, its name: Rosary Audio (what the voice says) or Counting (where the beads are counted)"
+    },
+    "CURRENT STREAK" : {
+
+    },
+    "Currently here" : {
+
+    },
+    "Daily Mysteries" : {
+      "comment" : "Settings: the choice of which set of mysteries each weekday brings"
+    },
+    "Daily Prayers" : {
+      "comment" : "Settings: a row's name"
+    },
+    "Daily reading goal" : {
+
+    },
+    "DAILY READING GOAL" : {
+
+    },
+    "Daily reading goal. %@." : {
+
+    },
+    "Daily reading goal. %@. Opens your reading goal." : {
+
+    },
+    "Daily reminder" : {
+      "comment" : "Settings, ReminderSoundSheet: its heading, the label over it, the line under it, or a note at its foot"
+    },
+    "Daily Reminders" : {
+      "comment" : "Settings: a row's name"
+    },
+    "Daily reminders and the Angelus bell are scheduled on your phone by iOS. We send no push notifications." : {
+      "comment" : "Privacy Policy: a section's text; keep it as plain and exact as the English"
+    },
+    "Daily reminders aren't working" : {
+      "comment" : "Help & Support: a question, or a button"
+    },
+    "Daily Schedule" : {
+      "comment" : "About Lumen Viae: a section heading"
+    },
+    "Dark navy, quiet and plain" : {
+      "comment" : "Settings, Appearance: the line under a color theme"
+    },
+    "Day %lld" : {
+
+    },
+    "day %lld of 33" : {
+      "comment" : "VoiceOver: the day of the 33-day consecration"
+    },
+    "DAY %lld OF 33" : {
+      "comment" : "Home, Today's Prayer: small capitals, the day of the 33-day consecration"
+    },
+    "DAY 1" : {
+
+    },
+    "Day 1 is %@" : {
+
+    },
+    "Deep blue, the color of Mary" : {
+      "comment" : "Settings, Appearance: the line under a color theme"
+    },
+    "Delete" : {
+
+    },
+    "Delete %@?" : {
+
+    },
+    "Delete reflection" : {
+
+    },
+    "Delete the Set" : {
+
+    },
+    "Delete This Playlist" : {
+
+    },
+    "Delete this playlist?" : {
+
+    },
+    "DELETE THIS PRAYER" : {
+
+    },
+    "Delete this prayer?" : {
+
+    },
+    "Delete this reflection?" : {
+
+    },
+    "Devotion" : {
+      "comment" : "Settings, Daily Mysteries sheet: its heading, the label over it, or the line under it\nSettings: a section heading"
+    },
+    "Didn't find it here? Write to us in the app — we read every note." : {
+      "comment" : "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words"
+    },
+    "Dismiss unfinished Rosary" : {
+
+    },
+    "Done" : {
+
+    },
+    "DONE" : {
+
+    },
+    "Done arranging" : {
+
+    },
+    "Douay-Rheims, the classic Catholic English Bible · ten verses to a mystery, seven to a sorrow" : {
+
+    },
+    "Douay-Rheims, the traditional Catholic English Bible" : {
+
+    },
+    "Double-tap for the next prayer" : {
+
+    },
+    "Double-tap to begin. Touch and hold for more devotions." : {
+
+    },
+    "Double-tap to hear a voice read the prayers" : {
+
+    },
+    "Double-tap to pray in silence" : {
+
+    },
+    "Double-tap to pray." : {
+
+    },
+    "Double-tap to put it back on your page." : {
+
+    },
+    "Downloading %@…" : {
+      "comment" : "Settings, Save for Offline: progress for a stage named by the app"
+    },
+    "Downloading Chants…" : {
+      "comment" : "Settings, Save for Offline: progress"
+    },
+    "Downloading Meditation Audio…" : {
+      "comment" : "Settings, Save for Offline: progress"
+    },
+    "Downloading Meditations…" : {
+      "comment" : "Settings, Save for Offline: progress"
+    },
+    "Downloading Paintings…" : {
+      "comment" : "Settings, Save for Offline: progress"
+    },
+    "Downloading Prayers Audio…" : {
+      "comment" : "Settings, Save for Offline: progress, the recordings of the Prayers tab"
+    },
+    "Downloading Rosary Audio…" : {
+      "comment" : "Settings, Save for Offline: progress, the recorded prayers of the Rosary"
+    },
+    "Downloads the recordings for the Whole Rosary" : {
+
+    },
+    "Drag a section by its handle to move it. Tap one to make it full or half." : {
+
+    },
+    "Drag to change the order. Swipe to take one out." : {
+
+    },
+    "during prayer" : {
+
+    },
+    "During prayer" : {
+
+    },
+    "Each mystery has its fruit — the grace, by long tradition, to ask for while its decade is prayed. The cards name it under Ask for." : {
+
+    },
+    "Each Rosary you pray is counted here, by its mysteries." : {
+
+    },
+    "EDIT" : {
+
+    },
+    "Edit %@" : {
+
+    },
+    "Edit playlist" : {
+
+    },
+    "Edit reflection" : {
+
+    },
+    "EDIT THIS MENU" : {
+
+    },
+    "Edit your daily prayers" : {
+
+    },
+    "EN" : {
+
+    },
+    "English" : {
+      "comment" : "Settings, Prayer Language: a choice of the language prayers are shown in"
+    },
+    "English with Latin" : {
+      "comment" : "Settings, Prayer Language: a choice of the language prayers are shown in"
+    },
+    "Enlarge the Sheet Music" : {
+
+    },
+    "Erase Progress and Start Over" : {
+
+    },
+    "EVERY MASS" : {
+
+    },
+    "Every meditation and audio file, ready without a connection" : {
+      "comment" : "Settings, Offline: the line under a row"
+    },
+    "Every mystery of the Rosary is a page of the Gospel. Read its verse before the decade (the ten Hail Marys said for it), and pray with the scene in front of you." : {
+
+    },
+    "Every Rosary will begin this way. You can change it on any Rosary's page, or in Settings." : {
+
+    },
+    "Everything in the app that is not our own writing, and the people and places it comes from. Every painting is by a painter dead more than a hundred years, and every text is in the public domain or used under an open licence." : {
+      "comment" : "About, Sources & Credits: the line under the heading, or a section label"
+    },
+    "Everything you are, given to Jesus through Mary" : {
+
+    },
+    "Explore" : {
+
+    },
+    "Family Morning Prayer" : {
+
+    },
+    "Fetching the text from Project Gutenberg.\nThis happens once." : {
+
+    },
+    "Find a line" : {
+
+    },
+    "Find a prayer" : {
+
+    },
+    "Finding Peace" : {
+      "comment" : "What brings you to the Rosary: one reason, as a short title"
+    },
+    "For an intention of your own. It burns for a day, and stays on your device." : {
+
+    },
+    "For praying along with a book or a group" : {
+
+    },
+    "FOR THE FIRST TIME" : {
+
+    },
+    "For the greater glory of God" : {
+
+    },
+    "For the Pope's intentions" : {
+      "comment" : "Settings, After the Rosary: name of a prayer said after the Rosary"
+    },
+    "Forward fifteen seconds" : {
+
+    },
+    "Forward ten seconds" : {
+
+    },
+    "Frees storage; streaming still works online" : {
+      "comment" : "Settings, Offline: the line under a row"
+    },
+    "From %@\n%@ · written about 1712" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "From %1$@\n%2$@ · written about 1712"
+          }
+        }
+      }
+    },
+    "From the home screen, tap \"Pray the Rosary\" under today's mysteries, or tap any mystery in the grid below. On the page that opens, choose a meditation (a short reading on each mystery), or another way to pray: the Scriptural Rosary, with a Bible verse for every Hail Mary, or the Audio Rosary, where you listen and pray along. The next page shows how you'll pray, the audio and the counting, just above Pray." : {
+      "comment" : "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words"
+    },
+    "FULL" : {
+
+    },
+    "Gets the latest meditations; saved audio stays" : {
+      "comment" : "Settings, Offline: the line under a row"
+    },
+    "Give yourself entirely to Mary — body and soul, goods and merits, without reserve and for ever — so as to belong entirely to Jesus through her." : {
+
+    },
+    "Give yourself to Jesus through Mary" : {
+      "comment" : "Home, Today's Prayer: line under the consecration before it begins"
+    },
+    "Go to the reading" : {
+
+    },
+    "Goes to choosing your feast" : {
+
+    },
+    "Goes to its chants" : {
+
+    },
+    "Goes to this part" : {
+
+    },
+    "GOING DEEPER" : {
+
+    },
+    "Gold on Our Lady's blue" : {
+      "comment" : "Settings, App Icon: what the icon looks like"
+    },
+    "Gold on the night sky" : {
+      "comment" : "Settings, App Icon: what the icon looks like"
+    },
+    "Gold on the violet of the Passion" : {
+      "comment" : "Settings, App Icon: what the icon looks like"
+    },
+    "GRACE TO ASK FOR" : {
+
+    },
+    "Growing Closer to Mary" : {
+      "comment" : "What brings you to the Rosary: one reason, as a short title"
+    },
+    "HALF" : {
+
+    },
+    "Hear %@ read" : {
+
+    },
+    "Hear It Sung" : {
+
+    },
+    "Hear this chapter read" : {
+
+    },
+    "Hear this read" : {
+
+    },
+    "HEAR THIS READ" : {
+
+    },
+    "Hear this read, from the start of this recording" : {
+
+    },
+    "Held" : {
+
+    },
+    "Help & Support" : {
+      "comment" : "About: a row's name, a heading, or the line under it\nThe Help & Support sheet's title"
+    },
+    "Her feast days, what the Church teaches about her, where she has appeared, and the saints who loved her." : {
+
+    },
+    "Here is what your first day looks like." : {
+
+    },
+    "HIDDEN SECTIONS" : {
+
+    },
+    "Hidden word" : {
+
+    },
+    "Hidden word beginning %@" : {
+
+    },
+    "Hide" : {
+
+    },
+    "Hide %@" : {
+
+    },
+    "Hide the prayer's words" : {
+
+    },
+    "His feast day is %@, the day he died. His tomb is in the Sanctuary of the Spoliation, Assisi." : {
+
+    },
+    "HOLD" : {
+
+    },
+    "Holds your turn" : {
+
+    },
+    "HOME" : {
+      "comment" : "Tab bar label, in capitals"
+    },
+    "Hours of Prayer" : {
+      "comment" : "Home, Today's Prayer: name of the row opening the Divine Office"
+    },
+    "HOURS OF PRAYER" : {
+
+    },
+    "Hours of Prayer, %@, %@, the hour now, until %@" : {
+      "comment" : "VoiceOver for the Hours of Prayer row: the hour's plain name, its Church name, then when it ends",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hours of Prayer, %1$@, %2$@, the hour now, until %3$@"
+          }
+        }
+      }
+    },
+    "How do I adjust text size?" : {
+      "comment" : "Help & Support: a question, or a button"
+    },
+    "How do I begin praying?" : {
+      "comment" : "Help & Support: a question, or a button"
+    },
+    "How does audio work?" : {
+      "comment" : "Help & Support: a question, or a button"
+    },
+    "How to practise" : {
+
+    },
+    "How to Pray\nthe Rosary" : {
+
+    },
+    "How to Pray the Rosary" : {
+      "comment" : "About Lumen Viae: a section heading"
+    },
+    "I am all yours" : {
+
+    },
+    "Icon of St. Carlo Acutis" : {
+
+    },
+    "If you have never prayed the Rosary, begin here. You need no beads — your fingers will do — and nothing by heart. Three short lessons, and then your first Rosary, with every word in front of you." : {
+
+    },
+    "Image, %@" : {
+
+    },
+    "IN ONE SENTENCE" : {
+
+    },
+    "In Silence" : {
+      "comment" : "Prayers Tab Audio option: no sound"
+    },
+    "Ink and gold on the page of an old book" : {
+      "comment" : "Settings, App Icon: what the icon looks like"
+    },
+    "It is taken out of every playlist it is in." : {
+
+    },
+    "Its chants stay in the library; only the set goes." : {
+
+    },
+    "Its prayers stay in the book and in My Prayers." : {
+
+    },
+    "Journal" : {
+      "comment" : "Settings: a row's name"
+    },
+    "JOURNAL" : {
+      "comment" : "Tab bar label, in capitals"
+    },
+    "Joyful on Thursday, Glorious on Saturday" : {
+      "comment" : "Settings, Daily Mysteries: the two days on which this schedule differs; Joyful, Glorious and Luminous are sets of mysteries"
+    },
+    "Keep praying" : {
+
+    },
+    "Kept as yours. Practise it here any time." : {
+
+    },
+    "Kept in Your Chants, under Learned." : {
+
+    },
+    "KIND OF MEDITATION" : {
+
+    },
+    "LA" : {
+
+    },
+    "Language" : {
+
+    },
+    "Language and Text Size" : {
+
+    },
+    "Language, Save, Learn by heart, Hear it sung" : {
+
+    },
+    "Last updated: September 2026" : {
+      "comment" : "Privacy Policy: a heading, or the date the policy was last changed"
+    },
+    "Latin" : {
+      "comment" : "Settings, Prayer Language: a choice of the language prayers are shown in"
+    },
+    "Latin with English" : {
+      "comment" : "Settings, Prayer Language: a choice of the language prayers are shown in"
+    },
+    "Learn by Heart" : {
+
+    },
+    "LEARN BY HEART" : {
+
+    },
+    "Learn by heart: %@" : {
+
+    },
+    "LEARN THIS ONE FIRST" : {
+
+    },
+    "Learned" : {
+
+    },
+    "LEARNED" : {
+
+    },
+    "Learned by heart" : {
+
+    },
+    "Learned by Heart" : {
+
+    },
+    "LEARNED BY HEART" : {
+
+    },
+    "Learning in English" : {
+
+    },
+    "Learning in Latin" : {
+
+    },
+    "Learning the Rosary" : {
+      "comment" : "What brings you to the Rosary: one reason, as a short title"
+    },
+    "Leave" : {
+
+    },
+    "Leave your first Rosary?" : {
+
+    },
+    "Left empty, it is called %@" : {
+
+    },
+    "LESSON %@ OF 3" : {
+
+    },
+    "LET GO TO PLACE IT HERE" : {
+
+    },
+    "Light a candle" : {
+
+    },
+    "Light of the Way" : {
+
+    },
+    "LIGHT OF THE WAY" : {
+      "comment" : "Tagline under the app's name, Lumen Viae, in capitals"
+    },
+    "Line %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Line %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "LINE %lld OF %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "LINE %1$lld OF %2$lld"
+          }
+        }
+      }
+    },
+    "LISTEN" : {
+
+    },
+    "Loading %@" : {
+
+    },
+    "Loading audio" : {
+
+    },
+    "Loading the chant" : {
+
+    },
+    "Loading the reading" : {
+
+    },
+    "Loading..." : {
+
+    },
+    "Lumen Viae" : {
+
+    },
+    "LUMEN VIAE" : {
+
+    },
+    "Lumen Viae helps you pray the Rosary each day, with a short reading for every mystery, and keeps the Church's other prayers close at hand. The mysteries are scenes from the lives of Jesus and Mary: the Joyful, Sorrowful, Glorious and Luminous, and the Seven Sorrows of Mary." : {
+      "comment" : "About Lumen Viae: a section's text"
+    },
+    "Lumen Viae is made by one person, for the greater glory of God. If a credit here is wrong or missing, write through Send Feedback and it will be put right." : {
+
+    },
+    "Lumen Viae v%@" : {
+
+    },
+    "LUMEN VIAE V%@" : {
+
+    },
+    "Luminous on Thursday, Joyful on Saturday" : {
+      "comment" : "Settings, Daily Mysteries: the two days on which this schedule differs; Joyful, Glorious and Luminous are sets of mysteries"
+    },
+    "Make a new set" : {
+
+    },
+    "Make full width" : {
+
+    },
+    "Make half width" : {
+
+    },
+    "Make sure notifications are enabled for Lumen Viae in your iPhone's Settings → Notifications. Then toggle Daily Reminders off and back on in the app to reschedule." : {
+      "comment" : "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words"
+    },
+    "Make your own set" : {
+
+    },
+    "Marian Blue" : {
+      "comment" : "Settings, App Icon: the name of an icon\nSettings, Appearance: the name of a color theme"
+    },
+    "Meditation Only" : {
+      "comment" : "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen"
+    },
+    "Meditations and audio will stream when you're online. You can download everything again at any time." : {
+
+    },
+    "Meditations come from our server. If you're offline, or they haven't been added yet, some meditations may not be available. Check your internet connection and try again." : {
+      "comment" : "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words"
+    },
+    "Meditations, narration, the Hours of Prayer (the Divine Office), the words of the prayers, and the chants' recordings and sheet music come from our own server; the Mass texts from Missale Meum; the books and recordings under Spiritual Reading from Project Gutenberg and LibriVox. Each receives the request itself, as any website does, and nothing more. The app carries no analytics or advertising code from anyone else, and nothing is used to track you." : {
+      "comment" : "Privacy Policy: a section's text; keep it as plain and exact as the English"
+    },
+    "Memorare" : {
+      "comment" : "Settings, After the Rosary: name of a prayer said after the Rosary\nShort name of a prayer said after the Rosary, for a summary line"
+    },
+    "Midnight" : {
+      "comment" : "Settings, App Icon: the name of an icon\nSettings, Appearance: the name of a color theme"
+    },
+    "MILESTONE REACHED" : {
+
+    },
+    "Milestones Ahead" : {
+
+    },
+    "MINUTES OF SILENCE" : {
+
+    },
+    "Miss a day? Every day stays open. Return whenever you can." : {
+
+    },
+    "Modern" : {
+      "comment" : "Settings, Daily Mysteries: the name of a weekly schedule of mysteries"
+    },
+    "Montfort calls it an easy, short, perfect and secure way to union with Our Lord. What follows is his teaching, a part at a time." : {
+
+    },
+    "More" : {
+
+    },
+    "More for %@" : {
+
+    },
+    "More options" : {
+
+    },
+    "Morning Offering" : {
+
+    },
+    "Move down" : {
+
+    },
+    "Move up" : {
+
+    },
+    "Move, resize or hide sections" : {
+
+    },
+    "MOVING" : {
+
+    },
+    "My Prayers" : {
+
+    },
+    "Mystery, topic, or leave blank" : {
+
+    },
+    "Name" : {
+
+    },
+    "Narration" : {
+
+    },
+    "Narration speed" : {
+
+    },
+    "Narration voice" : {
+      "comment" : "Heading over the choice of recorded voice that reads the meditations, in Settings and the player"
+    },
+    "New Playlist" : {
+
+    },
+    "New Prayer" : {
+
+    },
+    "New reflection" : {
+
+    },
+    "NEW SET" : {
+
+    },
+    "New to it, or coming back after a while" : {
+      "comment" : "What brings you to the Rosary: the line under a reason"
+    },
+    "Next" : {
+
+    },
+    "NEXT" : {
+
+    },
+    "NEXT · LESSON %@" : {
+
+    },
+    "Next bead" : {
+
+    },
+    "Next line" : {
+
+    },
+    "Next month" : {
+
+    },
+    "Next mystery" : {
+
+    },
+    "Next prayer" : {
+
+    },
+    "Next prayer, %@" : {
+
+    },
+    "Next reading" : {
+
+    },
+    "Next step" : {
+
+    },
+    "Next step, %@" : {
+
+    },
+    "Next topic" : {
+
+    },
+    "Next topic, %@" : {
+
+    },
+    "Next: %@. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Next: %1$@. %2$@"
+          }
+        }
+      }
+    },
+    "No book open yet · choose one" : {
+
+    },
+    "No chant matches “%@”." : {
+
+    },
+    "No line in this book has those words." : {
+
+    },
+    "No mail account" : {
+
+    },
+    "No Mass texts for this day." : {
+
+    },
+    "No meditations for the %@ yet." : {
+
+    },
+    "No meditations match all of those kinds" : {
+
+    },
+    "No prayers chosen yet" : {
+      "comment" : "Settings: the line under a row"
+    },
+    "No prayers yet. Add the book's, or write your own." : {
+
+    },
+    "No reflections yet" : {
+
+    },
+    "No silence" : {
+
+    },
+    "No sound. The words are on screen for you to say." : {
+      "comment" : "Settings, Prayers Tab Audio: the line under the chosen option"
+    },
+    "None" : {
+
+    },
+    "None chosen yet." : {
+
+    },
+    "Not begun" : {
+
+    },
+    "Not chosen yet. You'll be asked the first time you pray from the Prayers tab." : {
+      "comment" : "Settings, Prayers Tab Audio: the line before the reader has chosen"
+    },
+    "Not now" : {
+
+    },
+    "NOT NOW" : {
+
+    },
+    "Not set" : {
+      "comment" : "Settings: the line under a row"
+    },
+    "Not yet opened" : {
+
+    },
+    "NOTES" : {
+
+    },
+    "Nothing found" : {
+
+    },
+    "Nothing is deleted. Tap one to put it back." : {
+
+    },
+    "Nothing is hidden. The ✕ on a section puts it here." : {
+
+    },
+    "Nothing matches “%@”" : {
+
+    },
+    "Notifications are off for Lumen Viae. Turn them on in your iPhone's Settings app, then choose a time in Lumen Viae's Settings, under Devotion." : {
+
+    },
+    "Notifications are turned off for Lumen Viae" : {
+      "comment" : "Settings: the line under a row"
+    },
+    "NOW" : {
+
+    },
+    "NOW  ·  %@" : {
+
+    },
+    "NOW · %@" : {
+
+    },
+    "NOW · UNTIL %@" : {
+      "comment" : "Home, Today's Prayer: small capitals, the hour of the Office now and when it ends, like NOW · UNTIL NOON"
+    },
+    "Now, %@" : {
+
+    },
+    "OF MARY, NEVER ENOUGH" : {
+
+    },
+    "Off" : {
+      "comment" : "Settings: the line under a row\nVoiceOver: a switch is off"
+    },
+    "Offline" : {
+      "comment" : "Settings: a section heading"
+    },
+    "OK" : {
+
+    },
+    "On" : {
+      "comment" : "VoiceOver: a switch is on"
+    },
+    "On %@" : {
+
+    },
+    "On My Rosary" : {
+      "comment" : "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen"
+    },
+    "On the home screen, tap the sliders at the top left, then Prayer Experience → Text Size. Drag the slider toward the larger \"A\" to increase the meditation text size." : {
+      "comment" : "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words"
+    },
+    "On the Screen" : {
+      "comment" : "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen"
+    },
+    "Once opened, this book reads offline." : {
+
+    },
+    "One short note, when you finish a Rosary prayed with meditations: which meditations they were, and whether you listened to the Whole Rosary. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary, the Audio Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us." : {
+      "comment" : "Privacy Policy: a section's text; keep it as plain and exact as the English"
+    },
+    "One warm tone with a soft shimmer" : {
+      "comment" : "Settings, Reminder Sound: what the sound is like"
+    },
+    "Open a mystery to see its meditation sets, each under its own painting. The filter button shows only the kinds you choose, and a set you pin stays at the top. You can read each meditation, or listen when a set has narration." : {
+
+    },
+    "Open on Verbum Gloriae's Site" : {
+
+    },
+    "OPEN THE BOOK" : {
+
+    },
+    "Open your devotions menu" : {
+
+    },
+    "Opened" : {
+
+    },
+    "Opening and Closing Prayers" : {
+      "comment" : "Settings, The Rosary: whether a Rosary prayed in silence shows the prayers on the cross and first beads"
+    },
+    "Opens %@" : {
+
+    },
+    "Opens a practice, step by step" : {
+
+    },
+    "Opens its chants" : {
+
+    },
+    "Opens Prayers." : {
+
+    },
+    "Opens the book" : {
+
+    },
+    "Opens the chant" : {
+
+    },
+    "Opens the chant with its score" : {
+
+    },
+    "Opens the chant with its sheet music" : {
+
+    },
+    "Opens the Consecration tab" : {
+
+    },
+    "Opens the day's index" : {
+
+    },
+    "Opens the prayer in words" : {
+
+    },
+    "Opens the set" : {
+
+    },
+    "Opens the sets of chants, yours among them" : {
+
+    },
+    "Opens the sheet music full screen" : {
+
+    },
+    "Opens this part's chapters" : {
+
+    },
+    "Opens Verbum Gloriae's website" : {
+
+    },
+    "Or press and hold anywhere." : {
+
+    },
+    "OTHER FEASTS" : {
+
+    },
+    "Our heart is restless until it rests in thee. — St. Augustine" : {
+
+    },
+    "Our Lady with the Marian monogram" : {
+      "comment" : "Settings, App Icon: what the icon looks like"
+    },
+    "Our Mission" : {
+      "comment" : "About Lumen Viae: a section heading"
+    },
+    "Page %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Page %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Painting" : {
+      "comment" : "Settings, App Icon: the name of an icon"
+    },
+    "Painting, chosen" : {
+
+    },
+    "Parts" : {
+
+    },
+    "Parts of This Prayer" : {
+
+    },
+    "Pause" : {
+
+    },
+    "PAUSE" : {
+
+    },
+    "Pause %@" : {
+
+    },
+    "Pause Between Chants" : {
+
+    },
+    "Pause the chant" : {
+
+    },
+    "Pause the reading" : {
+
+    },
+    "PAUSE THE READING" : {
+
+    },
+    "Pause the reading of %@" : {
+
+    },
+    "Photograph of St. Carlo Acutis" : {
+
+    },
+    "Pin this set to the top" : {
+
+    },
+    "Pinch or double tap to bring the sheet music closer" : {
+
+    },
+    "Pinned" : {
+
+    },
+    "PLACE IT HERE" : {
+
+    },
+    "Play" : {
+
+    },
+    "Play %@" : {
+
+    },
+    "Play the chant" : {
+
+    },
+    "Play the reading" : {
+
+    },
+    "Played after the closing prayer, with the Whole Rosary. Audio is at the top of this section." : {
+      "comment" : "Settings: the line under a row"
+    },
+    "Played after the closing prayer." : {
+      "comment" : "Settings: the line under a row"
+    },
+    "Played lately" : {
+
+    },
+    "PLAYLIST" : {
+
+    },
+    "PLAYLIST · %@" : {
+
+    },
+    "Plays at the normal speed" : {
+
+    },
+    "Plays at three-quarters speed, for learning" : {
+
+    },
+    "Plays from this line" : {
+
+    },
+    "Position in the chant" : {
+
+    },
+    "Position in this reading" : {
+
+    },
+    "Practice beads. The %@ Joyful Mystery, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Practice beads. The %1$@ Joyful Mystery, %2$@"
+          }
+        }
+      }
+    },
+    "Pray" : {
+
+    },
+    "PRAY" : {
+
+    },
+    "Pray %@" : {
+
+    },
+    "Pray the %@ with a verse of Scripture on every bead." : {
+
+    },
+    "Pray the Rosary" : {
+      "comment" : "Home: the featured card's button, opening today's mysteries"
+    },
+    "PRAY THESE" : {
+
+    },
+    "Pray today to begin" : {
+
+    },
+    "Pray together" : {
+
+    },
+    "PRAYED" : {
+      "comment" : "Home, Today's Prayer: small capitals once the hour's prayers were prayed"
+    },
+    "prayed today" : {
+      "comment" : "VoiceOver, end of a Today's Prayer row prayed today"
+    },
+    "Prayed today" : {
+
+    },
+    "PRAYED TODAY" : {
+
+    },
+    "Prayed together" : {
+
+    },
+    "Prayed with a guide: every step, every word, and the beads drawn so you always know where you are." : {
+
+    },
+    "Prayer Experience" : {
+      "comment" : "Settings: a section heading"
+    },
+    "Prayer Language" : {
+
+    },
+    "Prayer Record" : {
+      "comment" : "Settings: a row's name"
+    },
+    "PRAYER RECORD" : {
+      "comment" : "Tab bar label for streaks and prayer history, in capitals"
+    },
+    "Prayers" : {
+
+    },
+    "PRAYERS" : {
+      "comment" : "Tab bar label for the prayer book, in capitals"
+    },
+    "Prayers and readings for today" : {
+      "comment" : "Home, Today's Prayer: line under Today's Mass while the day's feast is loading"
+    },
+    "Prayers Tab" : {
+      "comment" : "Settings: a section heading"
+    },
+    "Prayers Tab Audio" : {
+      "comment" : "Settings: whether the Prayers tab reads its prayers aloud"
+    },
+    "Praying Every Day" : {
+      "comment" : "What brings you to the Rosary: one reason, as a short title"
+    },
+    "Praying in silence" : {
+
+    },
+    "Praying with a voice" : {
+
+    },
+    "Prays the %@ as your first Rosary" : {
+
+    },
+    "Prays them as your first Rosary" : {
+
+    },
+    "Preparing prayer" : {
+
+    },
+    "Preparing your prayer experience..." : {
+
+    },
+    "Preparing…" : {
+      "comment" : "Settings, Save for Offline: finding what there is to download"
+    },
+    "Preview of the %@ setting" : {
+
+    },
+    "Previous bead" : {
+
+    },
+    "Previous line" : {
+
+    },
+    "Previous month" : {
+
+    },
+    "Previous mystery" : {
+
+    },
+    "Previous prayer" : {
+
+    },
+    "Previous reading" : {
+
+    },
+    "Previous step" : {
+
+    },
+    "Privacy Policy" : {
+      "comment" : "About: a row's name, a heading, or the line under it\nPrivacy Policy: a heading, or the date the policy was last changed"
+    },
+    "Progress: %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Progress: %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "QUESTIONS" : {
+
+    },
+    "Questions about privacy? Reach us at %@" : {
+      "comment" : "Privacy Policy: a section's text; keep it as plain and exact as the English"
+    },
+    "Read in Silence" : {
+      "comment" : "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen"
+    },
+    "Read the licence" : {
+
+    },
+    "Reading %lld of %lld, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Reading %1$lld of %2$lld, %3$@"
+          }
+        }
+      }
+    },
+    "Reading speed %@" : {
+
+    },
+    "ready to consecrate" : {
+      "comment" : "VoiceOver: after the 33 days, the act not yet made"
+    },
+    "READY TO CONSECRATE" : {
+      "comment" : "Home, Today's Prayer: small capitals after the 33 days, the act not yet made; never says late"
+    },
+    "Rearrange" : {
+
+    },
+    "RECENT" : {
+
+    },
+    "Reflection" : {
+
+    },
+    "REFLECTION" : {
+
+    },
+    "Reminder Sound" : {
+      "comment" : "Settings, ReminderSoundSheet: its heading, the label over it, the line under it, or a note at its foot\nSettings: a row's name"
+    },
+    "Reminder Time" : {
+
+    },
+    "Reminders" : {
+      "comment" : "Privacy Policy: a heading, or the date the policy was last changed\nSettings, PrayerIntentionSheet: its heading, the label over it, the line under it, or a note at its foot"
+    },
+    "REMOVE" : {
+
+    },
+    "Remove Downloads" : {
+      "comment" : "Settings, Offline: a row's name"
+    },
+    "Remove from Favourites" : {
+
+    },
+    "Remove from Saved" : {
+
+    },
+    "Remove from the device" : {
+
+    },
+    "Remove offline downloads?" : {
+
+    },
+    "Remove the bookmark from this passage" : {
+
+    },
+    "Remove the Learned mark" : {
+
+    },
+    "Rename" : {
+
+    },
+    "Rename this set" : {
+
+    },
+    "Renew it each year on this feast, and every day in your heart." : {
+
+    },
+    "Repeat the chant" : {
+
+    },
+    "Repeat this line" : {
+
+    },
+    "Repeat, speed and hiding the words" : {
+
+    },
+    "Report a problem or share an idea" : {
+      "comment" : "About: a row's name, a heading, or the line under it"
+    },
+    "Restart your consecration?" : {
+
+    },
+    "Return home" : {
+
+    },
+    "RETURN HOME" : {
+
+    },
+    "Returns home" : {
+
+    },
+    "Reveal the next line" : {
+
+    },
+    "Rings at 6 AM, noon and 6 PM for the Angelus, a short prayer to Mary" : {
+      "comment" : "Settings: the line under a row"
+    },
+    "Rosaries Prayed" : {
+
+    },
+    "Rosary Audio" : {
+      "comment" : "One of the Rosary's two choices, its name: Rosary Audio (what the voice says) or Counting (where the beads are counted)"
+    },
+    "Rosary Mysteries" : {
+
+    },
+    "Said in the voice you choose · ten Hail Marys to a mystery, seven to a sorrow" : {
+
+    },
+    "SAINT · 1991 – 2006" : {
+
+    },
+    "Saint Michael Prayer" : {
+      "comment" : "Settings, After the Rosary: name of a prayer said after the Rosary"
+    },
+    "Save" : {
+
+    },
+    "SAVE" : {
+
+    },
+    "Save %@ for offline" : {
+
+    },
+    "Save as your own set" : {
+
+    },
+    "Save for Offline" : {
+      "comment" : "Settings, Offline: a row's name"
+    },
+    "SAVE FOR OFFLINE" : {
+
+    },
+    "Save this reading to the device" : {
+
+    },
+    "Saved" : {
+
+    },
+    "Saved on this device" : {
+
+    },
+    "SAVING" : {
+
+    },
+    "Saving on this device, %lld percent" : {
+
+    },
+    "Saving your photo…" : {
+
+    },
+    "Say it first, then check it" : {
+
+    },
+    "say it, then reveal" : {
+
+    },
+    "Scenes from the lives of Jesus and Mary" : {
+
+    },
+    "Scenes from the lives of Jesus and Mary. Choose which to pray." : {
+
+    },
+    "Scrolls to them" : {
+
+    },
+    "Search" : {
+
+    },
+    "SEARCH" : {
+
+    },
+    "Search %lld chants" : {
+
+    },
+    "Search every prayer, chant, mystery and book in the app." : {
+
+    },
+    "Search inside this book" : {
+
+    },
+    "Search reflections" : {
+
+    },
+    "Search reflections…" : {
+
+    },
+    "Search the chants" : {
+
+    },
+    "Searching the meditations…" : {
+
+    },
+    "SEE ALL" : {
+
+    },
+    "See all Spiritual Reading books" : {
+
+    },
+    "See all: %@" : {
+
+    },
+    "Select this passage" : {
+
+    },
+    "Send feedback" : {
+      "comment" : "Help & Support: a question, or a button"
+    },
+    "Send Feedback" : {
+      "comment" : "About: a row's name, a heading, or the line under it"
+    },
+    "Sets of Chants" : {
+
+    },
+    "Settings" : {
+
+    },
+    "Share" : {
+
+    },
+    "SHARE" : {
+
+    },
+    "SHEET MUSIC" : {
+
+    },
+    "Sheet music: %@" : {
+
+    },
+    "Show" : {
+      "comment" : "Opening and Closing Prayers option: show them with their words"
+    },
+    "SHOW" : {
+
+    },
+    "Show %@" : {
+
+    },
+    "SHOW ME" : {
+
+    },
+    "Show me how to arrange the page" : {
+
+    },
+    "Show more feasts" : {
+
+    },
+    "Show the %lld earlier chapters" : {
+
+    },
+    "Show the earlier chapter" : {
+
+    },
+    "Show the prayer's words" : {
+
+    },
+    "Show the sheet music" : {
+
+    },
+    "Shows %lld more" : {
+
+    },
+    "Shows its prayers" : {
+
+    },
+    "Shows the word" : {
+
+    },
+    "Silence · %@ left" : {
+
+    },
+    "Silence · paused, %@ left" : {
+
+    },
+    "Silence, %@ left" : {
+
+    },
+    "Silence, paused, %@ left" : {
+
+    },
+    "SILENT" : {
+
+    },
+    "Singing" : {
+
+    },
+    "Skip" : {
+      "comment" : "Opening and Closing Prayers option: leave them out"
+    },
+    "Skips to the end of the introduction" : {
+
+    },
+    "Sleep timer" : {
+
+    },
+    "Some of it didn't download. What finished is saved." : {
+
+    },
+    "Something went wrong" : {
+
+    },
+    "SOONEST" : {
+
+    },
+    "Sorrowful" : {
+      "comment" : "Settings, App Icon: the name of an icon"
+    },
+    "Sources & Credits" : {
+      "comment" : "About: a row's name, a heading, or the line under it"
+    },
+    "SPEED AND SLEEP TIMER" : {
+
+    },
+    "Speed and sleep timer. %@. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Speed and sleep timer. %1$@. %2$@"
+          }
+        }
+      }
+    },
+    "Speed, faster" : {
+
+    },
+    "Speed, normal" : {
+
+    },
+    "Speed, slower" : {
+
+    },
+    "Spiritual Reading" : {
+
+    },
+    "St. Carlo Acutis, pray for this intention." : {
+
+    },
+    "St. Michael" : {
+      "comment" : "Short name of a prayer said after the Rosary, for a summary line"
+    },
+    "Start at any day instead" : {
+
+    },
+    "Start Day" : {
+
+    },
+    "Starts again from the Sign of the Cross, and clears your saved place" : {
+
+    },
+    "Step %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Step %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Step %lld of %lld, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Step %1$lld of %2$lld, %3$@"
+          }
+        }
+      }
+    },
+    "Step %lld of %lld. %@. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Step %1$lld of %2$lld. %3$@. %4$@"
+          }
+        }
+      }
+    },
+    "Step %lld of 4, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Step %1$lld of 4, %2$@"
+          }
+        }
+      }
+    },
+    "Step %lld of 4, %@. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Step %1$lld of 4, %2$@. %3$@"
+          }
+        }
+      }
+    },
+    "Stillness in a busy life" : {
+      "comment" : "What brings you to the Rosary: the line under a reason"
+    },
+    "Stop and close the player" : {
+
+    },
+    "Stop Learning" : {
+
+    },
+    "Sung so far" : {
+
+    },
+    "Swipe down for the next bead" : {
+
+    },
+    "Swipe down, or use the actions, for the next bead" : {
+
+    },
+    "Swipe up or down for the next or previous prayer" : {
+
+    },
+    "Swipe up or down to move between beads" : {
+
+    },
+    "Swipe up or down to move through the narration" : {
+
+    },
+    "Switches to English" : {
+
+    },
+    "Switches to Latin" : {
+
+    },
+    "Take turns" : {
+
+    },
+    "Take up and read (St. Augustine's ‘Tolle, lege’)" : {
+
+    },
+    "Takes up your turn" : {
+
+    },
+    "TAP" : {
+
+    },
+    "Tap a sound to hear it and make it yours." : {
+      "comment" : "Settings, ReminderSoundSheet: its heading, the label over it, the line under it, or a note at its foot"
+    },
+    "Tap a step to see its words." : {
+
+    },
+    "Tap for the next bead" : {
+
+    },
+    "Tap the bead to hide the words." : {
+
+    },
+    "Tap the bookmark on any prayer to keep it here." : {
+
+    },
+    "Tap to add a title" : {
+
+    },
+    "Ten Hail Marys, counted on your own rosary" : {
+
+    },
+    "Text options" : {
+
+    },
+    "Text size" : {
+
+    },
+    "Text Size" : {
+
+    },
+    "Texts from Project Gutenberg. Recordings by LibriVox volunteers. All in the public domain." : {
+
+    },
+    "Texts, Recordings and Type" : {
+      "comment" : "About, Sources & Credits: the line under the heading, or a section label"
+    },
+    "Thank you" : {
+
+    },
+    "That photo could not be read. Try another." : {
+
+    },
+    "The %@" : {
+
+    },
+    "THE %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "THE %1$@ %2$@"
+          }
+        }
+      }
+    },
+    "The 33 days end on a feast of Mary: your Consecration Day." : {
+
+    },
+    "The Angelus Bell" : {
+      "comment" : "Settings: a row's name"
+    },
+    "The app is suitable for all ages. It asks no one for a name, an email or an account, and nothing it sends can tell us who you are." : {
+      "comment" : "Privacy Policy: a section's text; keep it as plain and exact as the English"
+    },
+    "The beads are on the screen. Swipe for each Hail Mary." : {
+      "comment" : "The line under a Rosary choice, saying what the chosen option does"
+    },
+    "The beads unlock when the meditation ends" : {
+
+    },
+    "The book could not be loaded." : {
+
+    },
+    "The book this consecration comes from" : {
+
+    },
+    "The chime was made for Lumen Viae; the bell is a public domain recording." : {
+      "comment" : "Settings, ReminderSoundSheet: its heading, the label over it, the line under it, or a note at its foot"
+    },
+    "THE COURSE" : {
+
+    },
+    "THE COURSE IS DONE" : {
+
+    },
+    "The cross and first beads" : {
+
+    },
+    "The cross and first beads. %@" : {
+
+    },
+    "the day of consecration" : {
+      "comment" : "VoiceOver: the day the act of consecration is made"
+    },
+    "THE DAY OF CONSECRATION" : {
+      "comment" : "Home, Today's Prayer: small capitals on the day the act of consecration is made"
+    },
+    "The day's feast could not be reached." : {
+
+    },
+    "The days you completed still stand. Choose another feast whenever you're ready." : {
+
+    },
+    "THE DAYS YOU HAVE PRAYED" : {
+
+    },
+    "The days you have prayed will be cleared so you can begin again. Journal reflections you have written stay in your Journal." : {
+
+    },
+    "The Devotion in Summary" : {
+
+    },
+    "The End" : {
+
+    },
+    "The first day's prayers open then. Nothing is asked of you before it." : {
+
+    },
+    "The first meditation  ·  %@" : {
+
+    },
+    "The first saint of the millennial generation · feast, %@" : {
+
+    },
+    "The Hail Mary" : {
+
+    },
+    "The Holy Bible" : {
+
+    },
+    "The Marian Library" : {
+
+    },
+    "THE MASS IS ENDED" : {
+
+    },
+    "The modern schedule is St. John Paul II's, from his letter on the Rosary, Rosarium Virginis Mariae (2002). Both keep Sunday by the season: Joyful in Advent, Sorrowful in Lent, Glorious the rest of the year." : {
+      "comment" : "Settings, Daily Mysteries sheet: a note at its foot; Rosarium Virginis Mariae is the Latin title of the letter"
+    },
+    "The Mysteries\nin Scripture" : {
+
+    },
+    "The mysteries are scenes from the lives of Jesus and Mary, five to a Rosary. There are four sets of them. On the traditional schedule: Joyful (Monday, Thursday), Sorrowful (Tuesday, Friday), and Glorious (Wednesday, Saturday). Sunday takes Joyful in Advent, Sorrowful in Lent, and Glorious otherwise. The Luminous Mysteries, added by St. John Paul II in 2002, can be prayed any day from View All beside the home grid. The modern schedule (Settings, under Devotion) gives them Thursday and moves the Joyful to Saturday. The Seven Sorrows of Mary can be prayed on any day too." : {
+      "comment" : "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words"
+    },
+    "THE MYSTERIES YOU WILL PRAY" : {
+
+    },
+    "The next chant waits until you tap" : {
+
+    },
+    "The note, read in red between chants" : {
+
+    },
+    "The Order of Mass" : {
+
+    },
+    "The Paintings" : {
+      "comment" : "About, Sources & Credits: the line under the heading, or a section label"
+    },
+    "The paintings, books and recordings, and where they come from" : {
+      "comment" : "About: a row's name, a heading, or the line under it"
+    },
+    "THE PASSAGE" : {
+
+    },
+    "The Path to Consecration" : {
+
+    },
+    "The Pope" : {
+      "comment" : "Short name of a prayer said after the Rosary, for a summary line"
+    },
+    "The prayer “Remember, O most gracious Virgin Mary” after the Rosary." : {
+      "comment" : "Settings, After the Rosary: the line under a prayer said after the Rosary"
+    },
+    "The Prayer to Saint Michael after the Rosary." : {
+      "comment" : "Settings, After the Rosary: the line under a prayer said after the Rosary"
+    },
+    "The prayers of the Church" : {
+
+    },
+    "The prayers said at every traditional Latin Mass (Ordo Missæ)" : {
+
+    },
+    "The reading: %@. Opens the player." : {
+
+    },
+    "The recording couldn't be reached." : {
+
+    },
+    "The Rosary" : {
+      "comment" : "Settings: a section heading"
+    },
+    "The Rosary begins at the first mystery and ends at the last Glory Be." : {
+      "comment" : "Settings, Opening and Closing Prayers: the line under the chosen option"
+    },
+    "The Rosary begins with the Sign of the Cross and the Creed and ends with the Hail, Holy Queen, each with its words." : {
+      "comment" : "Settings, Opening and Closing Prayers: the line under the chosen option"
+    },
+    "The Rosary is always the same prayer: the same mysteries in the same order, with ten Hail Marys for each. A meditation set gives you words to think about while you pray.\n\nEach set has one meditation for each mystery: five for the Rosary, or seven for the Seven Sorrows." : {
+
+    },
+    "The Rosary is five decades — sets of ten Hail Marys — each spent with one scene from the life of Jesus and Mary. Today's are chosen for you; you may pick others." : {
+
+    },
+    "The same three steps each day" : {
+
+    },
+    "The set's name" : {
+
+    },
+    "THE SEVEN GRACES" : {
+
+    },
+    "The sheet music" : {
+
+    },
+    "The sheet music comes with a connection" : {
+
+    },
+    "The singer sings a line, then waits while you sing it back" : {
+
+    },
+    "The traditional Latin Mass (1962 Missal) · texts from Missale Meum" : {
+
+    },
+    "The traditional schedule assigns a set of mysteries to each day of the week: Joyful on Monday and Thursday; Sorrowful on Tuesday and Friday; Glorious on Wednesday and Saturday. Sunday follows the season — Joyful in Advent, Sorrowful in Lent, and Glorious the rest of the year. The modern schedule, St. John Paul II's, gives Thursday to the Luminous and Saturday to the Joyful; choose it in Settings, under Devotion." : {
+      "comment" : "About Lumen Viae: a section's text"
+    },
+    "The way St. Louis de Montfort taught in his book %@" : {
+
+    },
+    "THE WORD BEHIND THE BEADS" : {
+
+    },
+    "The words of prayers and meditations" : {
+
+    },
+    "The words of this chant are printed on its sheet music." : {
+
+    },
+    "THEN" : {
+
+    },
+    "These meditations aren't available yet." : {
+
+    },
+    "These prayers could not be found." : {
+
+    },
+    "This chant could not be found." : {
+
+    },
+    "This iPhone has no mail account set up, so we couldn't open a message. Your note has been copied — paste it into whichever mail app you use, addressed to %@." : {
+
+    },
+    "This order of prayer could not be found." : {
+
+    },
+    "This page could not be found." : {
+
+    },
+    "This page is yours to arrange" : {
+
+    },
+    "THIS SEASON" : {
+
+    },
+    "This set is no longer here." : {
+
+    },
+    "This set no longer matches the occasion's order. Deleting it removes the set; its chants stay in the library." : {
+
+    },
+    "Title (optional)" : {
+
+    },
+    "To begin" : {
+
+    },
+    "TO BEGIN, ON TODAY'S MYSTERIES" : {
+
+    },
+    "To love Mary more" : {
+      "comment" : "What brings you to the Rosary: the line under a reason"
+    },
+    "To make the Rosary part of each day" : {
+      "comment" : "What brings you to the Rosary: the line under a reason"
+    },
+    "TODAY" : {
+
+    },
+    "Today's Mass" : {
+      "comment" : "Home, Today's Prayer: name of the row opening the day's Mass\nThe day's Mass, named before its feast is known"
+    },
+    "TODAY'S MYSTERIES" : {
+      "comment" : "Home: badge over the featured card naming today's set of mysteries"
+    },
+    "Today's Prayer" : {
+
+    },
+    "Topic before, %@" : {
+
+    },
+    "Total Consecration" : {
+      "comment" : "Home, Today's Prayer: title of the day of consecration, when the day's own title is missing"
+    },
+    "Totus tuus ego sum" : {
+
+    },
+    "Traditional" : {
+      "comment" : "Settings, Daily Mysteries: the name of a weekly schedule of mysteries"
+    },
+    "True Devotion to Mary" : {
+
+    },
+    "True Devotion to Mary. Opens the book." : {
+
+    },
+    "Try a mystery, a prayer, a chant or a saint's name." : {
+
+    },
+    "Try a shorter word, or search by a mystery's name." : {
+
+    },
+    "Try Again" : {
+      "comment" : "Settings, Offline: a row's name"
+    },
+    "Turn On in iPhone Settings" : {
+      "comment" : "Settings: a row's name"
+    },
+    "UNMARK" : {
+
+    },
+    "Unpin this set" : {
+
+    },
+    "Update Download" : {
+      "comment" : "Settings, Offline: a row's name"
+    },
+    "USE THE BOOK'S OWN PAINTINGS" : {
+
+    },
+    "Vellum" : {
+      "comment" : "Settings, App Icon: the name of an icon"
+    },
+    "Verbum Gloriae's website" : {
+
+    },
+    "Version %@" : {
+
+    },
+    "VIEW ALL" : {
+
+    },
+    "VOICE" : {
+
+    },
+    "We couldn't reach the meditations. Try again in a few seconds. To pray without a connection, open Settings and choose Save for Offline." : {
+
+    },
+    "What are the different mysteries?" : {
+      "comment" : "Help & Support: a question, or a button"
+    },
+    "What Brings You to the Rosary" : {
+      "comment" : "Settings, PrayerIntentionSheet: its heading, the label over it, the line under it, or a note at its foot\nSettings: a row's name"
+    },
+    "What people wonder before their first Rosary" : {
+
+    },
+    "What Reaches Us" : {
+      "comment" : "Privacy Policy: a heading, or the date the policy was last changed"
+    },
+    "What stayed with you in this prayer?" : {
+
+    },
+    "What Stays on Your Phone" : {
+      "comment" : "Privacy Policy: a heading, or the date the policy was last changed"
+    },
+    "What the App Fetches" : {
+      "comment" : "Privacy Policy: a heading, or the date the policy was last changed"
+    },
+    "When the beads are familiar" : {
+
+    },
+    "Where you are reading. Goes to this part." : {
+
+    },
+    "Where you stopped: %@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Where you stopped: %1$@, %2$@"
+          }
+        }
+      }
+    },
+    "Which mysteries each day brings. The two schedules differ only on Thursday and Saturday." : {
+      "comment" : "Settings, Daily Mysteries sheet: its heading, the label over it, or the line under it"
+    },
+    "Whole Rosary" : {
+      "comment" : "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen"
+    },
+    "Whosoever followeth Me shall not walk in darkness." : {
+
+    },
+    "Why are some meditations unavailable?" : {
+      "comment" : "Help & Support: a question, or a button"
+    },
+    "With a Voice" : {
+      "comment" : "Prayers Tab Audio option: a voice reads the prayers"
+    },
+    "With the Whole Rosary, the voice says them." : {
+      "comment" : "Settings, Opening and Closing Prayers: why the choice is dimmed while the Whole Rosary is chosen"
+    },
+    "Words" : {
+
+    },
+    "Words: %@" : {
+
+    },
+    "Write a New Prayer" : {
+
+    },
+    "Write a note or choose a silence first" : {
+
+    },
+    "WRITE A REFLECTION" : {
+
+    },
+    "Write down what comes to you\nwhile you pray, or after." : {
+
+    },
+    "Write the prayer as you say it…" : {
+
+    },
+    "Write Your First Reflection" : {
+
+    },
+    "Written during prayer" : {
+
+    },
+    "YOU" : {
+
+    },
+    "You can change the time or turn it off in Settings." : {
+
+    },
+    "You can choose another feast until Day 1 begins." : {
+
+    },
+    "You completed this consecration. Many renew it each year." : {
+
+    },
+    "You have made your consecration to Jesus through Mary." : {
+
+    },
+    "YOU HAVE PRAYED THE ROSARY" : {
+
+    },
+    "YOU HAVE PRAYED THE SEVEN SORROWS" : {
+
+    },
+    "You have read the whole of True Devotion. All yours, Mary." : {
+
+    },
+    "You haven’t chosen any daily prayers yet." : {
+
+    },
+    "You hear every prayer. Pray along with the voice." : {
+      "comment" : "The line under a Rosary choice, saying what the chosen option does"
+    },
+    "You hear every verse and prayer." : {
+      "comment" : "The line under a Rosary choice, saying what the chosen option does"
+    },
+    "You hear the meditation. You say the prayers." : {
+      "comment" : "The line under a Rosary choice, saying what the chosen option does"
+    },
+    "Your 33 days begin %@" : {
+
+    },
+    "Your 33 days begin tomorrow" : {
+
+    },
+    "Your app version and device are added at the bottom so we can find the problem. Sent as an email from your own account, straight to %@ — nothing goes to our server." : {
+
+    },
+    "Your candle is lit" : {
+
+    },
+    "Your Chants" : {
+
+    },
+    "Your first day's prayers open right away." : {
+
+    },
+    "Your First Rosary" : {
+
+    },
+    "Your intention (optional)" : {
+
+    },
+    "Your iPhone will then ask once whether Lumen Viae may send reminders. You can change the time or turn it off in Settings." : {
+
+    },
+    "Your note is on its way. Every one of them is read." : {
+
+    },
+    "Your notes on this book, %lld" : {
+
+    },
+    "Your own" : {
+
+    },
+    "YOUR PLACE IS KEPT" : {
+
+    },
+    "Your place will be kept. You can come back to it from How to Pray." : {
+
+    },
+    "Your prayers, works, joys and sufferings, placed in her hands" : {
+
+    },
+    "Your reflections, kept on this device" : {
+      "comment" : "Settings: the line under a row"
+    },
+    "YOUR ROSARY TODAY" : {
+
+    },
+    "Your sets" : {
+
+    },
+    "Your sets, and a new one" : {
+
+    },
+    "Your streaks, history, and milestones" : {
+      "comment" : "Settings: the line under a row"
+    },
+    "Your turn" : {
+
+    }
+  },
+  "version" : "1.0"
+}

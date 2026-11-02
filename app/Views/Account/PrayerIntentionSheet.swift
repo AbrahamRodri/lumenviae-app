@@ -27,9 +27,9 @@ struct PrayerIntentionSheet: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
                 SheetHeader(
-                    kicker: "Reminders",
-                    title: "What Brings You to the Rosary",
-                    lead: "Choose any that fit. We'll word your reminders to match."
+                    kicker: String(localized: "Reminders", comment: "Settings, PrayerIntentionSheet: its heading, the label over it, the line under it, or a note at its foot"),
+                    title: String(localized: "What Brings You to the Rosary", comment: "Settings, PrayerIntentionSheet: its heading, the label over it, the line under it, or a note at its foot"),
+                    lead: String(localized: "Choose any that fit. We'll word your reminders to match.", comment: "Settings, PrayerIntentionSheet: its heading, the label over it, the line under it, or a note at its foot")
                 )
 
                 ForEach(PrayerIntention.allCases) { intention in
@@ -54,7 +54,7 @@ struct PrayerIntentionSheet: View {
                     .accessibilityAddTraits(chosen ? .isSelected : [])
                 }
 
-                SheetNote("Choose none and your reminders use a general set of words.")
+                SheetNote(String(localized: "Choose none and your reminders use a general set of words.", comment: "Settings, PrayerIntentionSheet: its heading, the label over it, the line under it, or a note at its foot"))
             }
         }
         .sheetGround()

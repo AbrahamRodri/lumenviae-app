@@ -97,7 +97,8 @@ struct Constants {
     // MARK: App Identity
 
     static let appName = "LUMEN VIAE"
-    static let appTagline = "LIGHT OF THE WAY"
+    /// The name stays Latin in every language; the tagline is translated.
+    static let appTagline = String(localized: "LIGHT OF THE WAY", comment: "Tagline under the app's name, Lumen Viae, in capitals")
 
     /// Where questions, feedback, and privacy notes go. The same address
     /// the web app publishes on its own feedback and privacy pages —
@@ -107,13 +108,13 @@ struct Constants {
 
     // MARK: Tab Bar Labels
 
-    static let homeTab = "HOME"
-    static let consecrationTab = "CONSECRATION"
-    static let journalTab = "JOURNAL"
-    static let progressTab = "PRAYER RECORD"
-    static let chapelTab = "CHAPEL"
-    static let chantTab = "CHANT"
-    static let prayersTab = "PRAYERS"
+    static let homeTab = String(localized: "HOME", comment: "Tab bar label, in capitals")
+    static let consecrationTab = String(localized: "CONSECRATION", comment: "Tab bar label for the 33-day Marian consecration, in capitals")
+    static let journalTab = String(localized: "JOURNAL", comment: "Tab bar label, in capitals")
+    static let progressTab = String(localized: "PRAYER RECORD", comment: "Tab bar label for streaks and prayer history, in capitals")
+    static let chapelTab = String(localized: "CHAPEL", comment: "Tab bar label, in capitals")
+    static let chantTab = String(localized: "CHANT", comment: "Tab bar label for the Gregorian chant library, in capitals")
+    static let prayersTab = String(localized: "PRAYERS", comment: "Tab bar label for the prayer book, in capitals")
 }
 
 // MARK: - Color Hex Support

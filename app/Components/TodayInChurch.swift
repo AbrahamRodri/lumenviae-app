@@ -38,7 +38,7 @@ final class TodayInChurch {
 
     /// The feast, once known. Until then the ledger names the thing itself.
     var title: String {
-        proper?.info.title ?? "Today's Mass"
+        proper?.info.title ?? String(localized: "Today's Mass", comment: "The day's Mass, named before its feast is known")
     }
 
     /// "Feast  ·  Red vestments", whichever parts the day carries — the

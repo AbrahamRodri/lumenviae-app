@@ -61,18 +61,18 @@ enum AppTheme: String, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .marianBlue: return "Marian Blue"
-        case .midnight:   return "Midnight"
-        case .candlelit:  return "Candlelit"
+        case .marianBlue: return String(localized: "Marian Blue", comment: "Settings, Appearance: the name of a color theme")
+        case .midnight:   return String(localized: "Midnight", comment: "Settings, Appearance: the name of a color theme")
+        case .candlelit:  return String(localized: "Candlelit", comment: "Settings, Appearance: the name of a color theme")
         }
     }
 
     /// One-line character description shown in the theme picker
     var detail: String {
         switch self {
-        case .marianBlue: return "Deep blue, the color of Mary"
-        case .midnight:   return "Dark navy, quiet and plain"
-        case .candlelit:  return "A dark chapel lit by warm gold"
+        case .marianBlue: return String(localized: "Deep blue, the color of Mary", comment: "Settings, Appearance: the line under a color theme")
+        case .midnight:   return String(localized: "Dark navy, quiet and plain", comment: "Settings, Appearance: the line under a color theme")
+        case .candlelit:  return String(localized: "A dark chapel lit by warm gold", comment: "Settings, Appearance: the line under a color theme")
         }
     }
 

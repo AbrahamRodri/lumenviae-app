@@ -74,8 +74,8 @@ struct HeaderView: View {
 
     private func glyph(
         _ icon: String,
-        _ label: String,
-        hint: String = "",
+        _ label: LocalizedStringKey,
+        hint: LocalizedStringKey = "",
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {

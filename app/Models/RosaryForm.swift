@@ -81,8 +81,8 @@ enum RosaryChoice: Hashable, CaseIterable {
 
     var title: String {
         switch self {
-        case .audio: return "Rosary Audio"
-        case .counting: return "Counting"
+        case .audio: return String(localized: "Rosary Audio", comment: "One of the Rosary's two choices, its name: Rosary Audio (what the voice says) or Counting (where the beads are counted)")
+        case .counting: return String(localized: "Counting", comment: "One of the Rosary's two choices, its name: Rosary Audio (what the voice says) or Counting (where the beads are counted)")
         }
     }
 
@@ -106,10 +106,14 @@ enum RosaryChoice: Hashable, CaseIterable {
     func name(of value: Bool, for form: RosaryForm = .meditation) -> String {
         switch self {
         case .audio:
-            if value { return "Whole Rosary" }
-            return form == .scriptural ? "Read in Silence" : "Meditation Only"
+            if value { return String(localized: "Whole Rosary", comment: "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen") }
+            return form == .scriptural
+                ? String(localized: "Read in Silence", comment: "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen")
+                : String(localized: "Meditation Only", comment: "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen")
         case .counting:
-            return value ? "On the Screen" : "On My Rosary"
+            return value
+                ? String(localized: "On the Screen", comment: "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen")
+                : String(localized: "On My Rosary", comment: "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen")
         }
     }
 
@@ -118,16 +122,16 @@ enum RosaryChoice: Hashable, CaseIterable {
         switch (self, form == .scriptural) {
         case (.audio, false):
             return value
-                ? "You hear every prayer. Pray along with the voice."
-                : "You hear the meditation. You say the prayers."
+                ? String(localized: "You hear every prayer. Pray along with the voice.", comment: "The line under a Rosary choice, saying what the chosen option does")
+                : String(localized: "You hear the meditation. You say the prayers.", comment: "The line under a Rosary choice, saying what the chosen option does")
         case (.audio, true):
             return value
-                ? "You hear every verse and prayer."
-                : "A verse is shown for each Hail Mary. You read and pray in silence."
+                ? String(localized: "You hear every verse and prayer.", comment: "The line under a Rosary choice, saying what the chosen option does")
+                : String(localized: "A verse is shown for each Hail Mary. You read and pray in silence.", comment: "The line under a Rosary choice, saying what the chosen option does")
         case (.counting, _):
             return value
-                ? "The beads are on the screen. Swipe for each Hail Mary."
-                : "Count on your own rosary. The screen shows one mystery at a time."
+                ? String(localized: "The beads are on the screen. Swipe for each Hail Mary.", comment: "The line under a Rosary choice, saying what the chosen option does")
+                : String(localized: "Count on your own rosary. The screen shows one mystery at a time.", comment: "The line under a Rosary choice, saying what the chosen option does")
         }
     }
 

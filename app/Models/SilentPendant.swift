@@ -143,20 +143,26 @@ struct SilentPendant: Equatable {
 /// whose two choices stand on every Rosary's own page; this one lives in
 /// Settings alone.
 enum OpeningPrayersChoice {
-    static let title = "Opening and Closing Prayers"
+    static let title = String(
+        localized: "Opening and Closing Prayers",
+        comment: "Settings, The Rosary: whether a Rosary prayed in silence shows the prayers on the cross and first beads"
+    )
     static let icon = "lv-procession-cross"
 
     static let options = [
-        RosaryChoice.Option(value: false, name: "Skip"),
-        RosaryChoice.Option(value: true, name: "Show"),
+        RosaryChoice.Option(value: false, name: String(localized: "Skip", comment: "Opening and Closing Prayers option: leave them out")),
+        RosaryChoice.Option(value: true, name: String(localized: "Show", comment: "Opening and Closing Prayers option: show them with their words")),
     ]
 
     static func note(for value: Bool) -> String {
         value
-            ? "The Rosary begins with the Sign of the Cross and the Creed and ends with the Hail, Holy Queen, each with its words."
-            : "The Rosary begins at the first mystery and ends at the last Glory Be."
+            ? String(localized: "The Rosary begins with the Sign of the Cross and the Creed and ends with the Hail, Holy Queen, each with its words.", comment: "Settings, Opening and Closing Prayers: the line under the chosen option")
+            : String(localized: "The Rosary begins at the first mystery and ends at the last Glory Be.", comment: "Settings, Opening and Closing Prayers: the line under the chosen option")
     }
 
     /// Said aloud, the voice says them whatever is chosen
-    static let unavailableNote = "With the Whole Rosary, the voice says them."
+    static let unavailableNote = String(
+        localized: "With the Whole Rosary, the voice says them.",
+        comment: "Settings, Opening and Closing Prayers: why the choice is dimmed while the Whole Rosary is chosen"
+    )
 }

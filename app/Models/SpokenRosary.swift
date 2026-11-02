@@ -148,27 +148,27 @@ enum RosaryClosingExtra: String, CaseIterable, Hashable {
     /// What the setting is called
     var title: String {
         switch self {
-        case .holyFather: return "For the Pope's intentions"
-        case .memorare: return "Memorare"
-        case .stMichael: return "Saint Michael Prayer"
+        case .holyFather: return String(localized: "For the Pope's intentions", comment: "Settings, After the Rosary: name of a prayer said after the Rosary")
+        case .memorare: return String(localized: "Memorare", comment: "Settings, After the Rosary: name of a prayer said after the Rosary")
+        case .stMichael: return String(localized: "Saint Michael Prayer", comment: "Settings, After the Rosary: name of a prayer said after the Rosary")
         }
     }
 
     /// The name where three share a row: the set's page
     var shortTitle: String {
         switch self {
-        case .holyFather: return "The Pope"
-        case .memorare: return "Memorare"
-        case .stMichael: return "St. Michael"
+        case .holyFather: return String(localized: "The Pope", comment: "Short name of a prayer said after the Rosary, for a summary line")
+        case .memorare: return String(localized: "Memorare", comment: "Short name of a prayer said after the Rosary, for a summary line")
+        case .stMichael: return String(localized: "St. Michael", comment: "Short name of a prayer said after the Rosary, for a summary line")
         }
     }
 
     /// What the setting adds, said as what is prayed
     var detail: String {
         switch self {
-        case .holyFather: return "An Our Father, Hail Mary and Glory Be after the Rosary, for what the Pope asks the Church to pray for."
-        case .memorare: return "The prayer “Remember, O most gracious Virgin Mary” after the Rosary."
-        case .stMichael: return "The Prayer to Saint Michael after the Rosary."
+        case .holyFather: return String(localized: "An Our Father, Hail Mary and Glory Be after the Rosary, for what the Pope asks the Church to pray for.", comment: "Settings, After the Rosary: the line under a prayer said after the Rosary")
+        case .memorare: return String(localized: "The prayer “Remember, O most gracious Virgin Mary” after the Rosary.", comment: "Settings, After the Rosary: the line under a prayer said after the Rosary")
+        case .stMichael: return String(localized: "The Prayer to Saint Michael after the Rosary.", comment: "Settings, After the Rosary: the line under a prayer said after the Rosary")
         }
     }
 

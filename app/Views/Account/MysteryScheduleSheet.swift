@@ -47,7 +47,10 @@ struct MysteryScheduleRow: View {
 struct MysteryScheduleSheet: View {
 
     /// What the setting is called, in Settings and on the sheet
-    static let title = "Daily Mysteries"
+    static let title = String(
+        localized: "Daily Mysteries",
+        comment: "Settings: the choice of which set of mysteries each weekday brings"
+    )
 
     @Environment(UserSettings.self) private var userSettings
 
@@ -57,9 +60,9 @@ struct MysteryScheduleSheet: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
                 SheetHeader(
-                    kicker: "Devotion",
+                    kicker: String(localized: "Devotion", comment: "Settings, Daily Mysteries sheet: its heading, the label over it, or the line under it"),
                     title: Self.title,
-                    lead: "Which mysteries each day brings. The two schedules differ only on Thursday and Saturday."
+                    lead: String(localized: "Which mysteries each day brings. The two schedules differ only on Thursday and Saturday.", comment: "Settings, Daily Mysteries sheet: its heading, the label over it, or the line under it")
                 )
 
                 ForEach(MysterySchedule.allCases) { schedule in
@@ -85,7 +88,7 @@ struct MysteryScheduleSheet: View {
                     .accessibilityAddTraits(chosen ? [.isButton, .isSelected] : .isButton)
                 }
 
-                SheetNote("The modern schedule is St. John Paul II's, from his letter on the Rosary, Rosarium Virginis Mariae (2002). Both keep Sunday by the season: Joyful in Advent, Sorrowful in Lent, Glorious the rest of the year.")
+                SheetNote(String(localized: "The modern schedule is St. John Paul II's, from his letter on the Rosary, Rosarium Virginis Mariae (2002). Both keep Sunday by the season: Joyful in Advent, Sorrowful in Lent, Glorious the rest of the year.", comment: "Settings, Daily Mysteries sheet: a note at its foot; Rosarium Virginis Mariae is the Latin title of the letter"))
             }
         }
         .sheetGround()

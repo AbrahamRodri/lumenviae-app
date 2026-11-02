@@ -110,7 +110,9 @@ struct ReadingShelfSection: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityLabel(
-            "\(info.title), \(info.author)\(hasRibbon ? ". Reading under way." : "")"
+            hasRibbon
+                ? Text("\(info.title), \(info.author). Reading under way.", comment: "VoiceOver for a book on the home shelf that has been started: title, author")
+                : Text("\(info.title), \(info.author)", comment: "VoiceOver for a book on the home shelf: title, author")
         )
     }
 }

@@ -190,11 +190,14 @@ struct TodaysPrayerRow: Equatable {
     /// own, the one its day page opens on; before it, and once it is
     /// made, the Coronation.
     static func consecration(_ progress: ConsecrationProgress?, now: Date = Date()) -> TodaysPrayerRow {
-        let name = "Consecration to Mary"
-        let invitation = "Give yourself to Jesus through Mary"
+        let name = String(localized: "Consecration to Mary", comment: "Home, Today's Prayer: name of the 33-day Marian consecration row")
+        let invitation = String(
+            localized: "Give yourself to Jesus through Mary",
+            comment: "Home, Today's Prayer: line under the consecration before it begins"
+        )
         let coronation = ConsecrationPhase.consecrationDay.heroImageName
         let coronationFocal = UnitPoint(x: 0.5, y: 0.12)
-        let consecrationTitle = ConsecrationData.day(34)?.title ?? "Total Consecration"
+        let consecrationTitle = ConsecrationData.day(34)?.title ?? String(localized: "Total Consecration", comment: "Home, Today's Prayer: title of the day of consecration, when the day's own title is missing")
 
         guard let progress else {
             return TodaysPrayerRow(
@@ -202,8 +205,11 @@ struct TodaysPrayerRow: Equatable {
                 focal: coronationFocal,
                 name: name,
                 subtitle: invitation,
-                fact: "BEGIN",
-                spoken: "\(name). \(invitation), a 33-day preparation. Begin."
+                fact: String(localized: "BEGIN", comment: "Home, Today's Prayer: small capitals under the consecration row before it is started"),
+                spoken: String(
+                    localized: "\(name). \(invitation), a 33-day preparation. Begin.",
+                    comment: "VoiceOver for the consecration row before it is started: the name, then the line under it"
+                )
             )
         }
 
@@ -214,9 +220,12 @@ struct TodaysPrayerRow: Equatable {
                 focal: coronationFocal,
                 name: name,
                 subtitle: consecrationTitle,
-                fact: "CONSECRATED TODAY",
+                fact: String(localized: "CONSECRATED TODAY", comment: "Home, Today's Prayer: small capitals once the act of consecration was made today"),
                 isPrayed: true,
-                spoken: "\(name), \(consecrationTitle), consecrated today"
+                spoken: String(
+                    localized: "\(name), \(consecrationTitle), consecrated today",
+                    comment: "VoiceOver for the consecration row on the day it was made: the name, then the day's title"
+                )
             )
         }
 
@@ -228,8 +237,14 @@ struct TodaysPrayerRow: Equatable {
                 focal: coronationFocal,
                 name: name,
                 subtitle: invitation,
-                fact: "BEGINS \(start.formatted(.dateTime.month(.abbreviated).day()).uppercased())",
-                spoken: "\(name). \(invitation). Begins \(start.formatted(.dateTime.weekday(.wide).month(.wide).day()))"
+                fact: String(
+                    localized: "BEGINS \(start.formatted(.dateTime.month(.abbreviated).day()).uppercased())",
+                    comment: "Home, Today's Prayer: small capitals for a consecration chosen to start later; the date is like OCT 19"
+                ),
+                spoken: String(
+                    localized: "\(name). \(invitation). Begins \(start.formatted(.dateTime.weekday(.wide).month(.wide).day()))",
+                    comment: "VoiceOver for a consecration chosen to start later; the date is like Monday, October 19"
+                )
             )
         }
 
@@ -245,14 +260,14 @@ struct TodaysPrayerRow: Equatable {
         let spokenDay: String
         switch daysIn {
         case ..<34:
-            fact = "DAY \(day) OF 33"
-            spokenDay = "day \(day) of 33"
+            fact = String(localized: "DAY \(day) OF 33", comment: "Home, Today's Prayer: small capitals, the day of the 33-day consecration")
+            spokenDay = String(localized: "day \(day) of 33", comment: "VoiceOver: the day of the 33-day consecration")
         case 34:
-            fact = "THE DAY OF CONSECRATION"
-            spokenDay = "the day of consecration"
+            fact = String(localized: "THE DAY OF CONSECRATION", comment: "Home, Today's Prayer: small capitals on the day the act of consecration is made")
+            spokenDay = String(localized: "the day of consecration", comment: "VoiceOver: the day the act of consecration is made")
         default:
-            fact = "READY TO CONSECRATE"
-            spokenDay = "ready to consecrate"
+            fact = String(localized: "READY TO CONSECRATE", comment: "Home, Today's Prayer: small capitals after the 33 days, the act not yet made; never says late")
+            spokenDay = String(localized: "ready to consecrate", comment: "VoiceOver: after the 33 days, the act not yet made")
         }
 
         return TodaysPrayerRow(
@@ -262,7 +277,7 @@ struct TodaysPrayerRow: Equatable {
             subtitle: title,
             fact: fact,
             isPrayed: prayed,
-            spoken: [name, title, spokenDay, prayed ? "prayed today" : nil]
+            spoken: [name, title, spokenDay, prayed ? String(localized: "prayed today", comment: "VoiceOver, end of a Today's Prayer row prayed today") : nil]
                 .compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", ")
         )
     }
@@ -292,12 +307,12 @@ struct TodaysPrayerRow: Equatable {
             focal: painting.focal,
             name: title,
             subtitle: summary,
-            fact: prayed ? "PRAYED" : moment.uppercased(),
+            fact: prayed ? String(localized: "PRAYED", comment: "Home, Today's Prayer: small capitals once the hour's prayers were prayed") : moment.uppercased(),
             isPrayed: prayed,
             spoken: [
                 title,
                 summary.trimmingCharacters(in: CharacterSet(charactersIn: ".")),
-                prayed ? "prayed today" : moment.lowercased(),
+                prayed ? String(localized: "prayed today", comment: "VoiceOver, end of a Today's Prayer row prayed today") : moment.lowercased(),
             ].joined(separator: ", ")
         )
     }
@@ -308,9 +323,11 @@ struct TodaysPrayerRow: Equatable {
     /// over LESSER FEAST · WHITE. Until the propers arrive the line says
     /// what the Mass holds, and the fact waits.
     static func mass(_ today: TodayInChurch) -> TodaysPrayerRow {
-        let name = "Today's Mass"
+        let name = String(localized: "Today's Mass", comment: "Home, Today's Prayer: name of the row opening the day's Mass")
         let known = today.proper != nil
-        let subtitle = known ? today.title : "Prayers and readings for today"
+        let subtitle = known
+            ? today.title
+            : String(localized: "Prayers and readings for today", comment: "Home, Today's Prayer: line under Today's Mass while the day's feast is loading")
 
         let fact: String? = today.rank.map { rank in
             guard let vestment = today.vestment else { return rank.uppercased() }
@@ -342,11 +359,14 @@ struct TodaysPrayerRow: Equatable {
         return TodaysPrayerRow(
             painting: painting.asset,
             focal: painting.focal,
-            name: "Hours of Prayer",
+            name: String(localized: "Hours of Prayer", comment: "Home, Today's Prayer: name of the row opening the Divine Office"),
             subtitle: "\(hour.plainName) (\(hour.label))",
-            fact: "NOW · UNTIL \(until.uppercased())",
+            fact: String(localized: "NOW · UNTIL \(until.uppercased())", comment: "Home, Today's Prayer: small capitals, the hour of the Office now and when it ends, like NOW · UNTIL NOON"),
             mark: .litHour,
-            spoken: "Hours of Prayer, \(hour.plainName), \(hour.label), the hour now, until \(until)"
+            spoken: String(
+                localized: "Hours of Prayer, \(hour.plainName), \(hour.label), the hour now, until \(until)",
+                comment: "VoiceOver for the Hours of Prayer row: the hour's plain name, its Church name, then when it ends"
+            )
         )
     }
 }
