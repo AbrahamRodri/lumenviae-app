@@ -60,9 +60,9 @@ struct MysteryScheduleSheet: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
                 SheetHeader(
-                    kicker: String(localized: "Devotion", comment: "Settings, Daily Mysteries sheet: its heading, the label over it, or the line under it"),
+                    kicker: String(localized: "Devotion", comment: "Settings, Daily Mysteries sheet: the small label over its title"),
                     title: Self.title,
-                    lead: String(localized: "Which mysteries each day brings. The two schedules differ only on Thursday and Saturday.", comment: "Settings, Daily Mysteries sheet: its heading, the label over it, or the line under it")
+                    lead: String(localized: "Which mysteries each day brings. The two schedules differ only on Thursday and Saturday.", comment: "Settings, Daily Mysteries sheet: the line under its title")
                 )
 
                 ForEach(MysterySchedule.allCases) { schedule in

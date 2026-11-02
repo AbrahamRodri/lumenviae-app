@@ -651,6 +651,9 @@
     "Amen." : {
 
     },
+    "An idea" : {
+      "comment" : "Send Feedback: a topic to choose, an idea for the app"
+    },
     "An Our Father, Hail Mary and Glory Be after the Rosary, for what the Pope asks the Church to pray for." : {
       "comment" : "Settings, After the Rosary: the line under a prayer said after the Rosary"
     },
@@ -705,6 +708,9 @@
     "Back ten seconds" : {
 
     },
+    "Back to my note" : {
+      "comment" : "Send Feedback: returns to the note after no mail account was found"
+    },
     "Back to normal speed" : {
 
     },
@@ -745,7 +751,7 @@
 
     },
     "Cancel" : {
-
+      "comment" : "Send Feedback: closes the sheet without sending"
     },
     "CANCEL" : {
 
@@ -810,7 +816,7 @@
 
     },
     "Choose any that fit. We'll word your reminders to match." : {
-      "comment" : "Settings, PrayerIntentionSheet: its heading, the label over it, the line under it, or a note at its foot"
+      "comment" : "Settings, What Brings You to the Rosary sheet: the line under its title"
     },
     "Choose chants for an hour of prayer in church, a prayer group or family prayer" : {
 
@@ -825,7 +831,7 @@
       "comment" : "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words"
     },
     "Choose none and your reminders use a general set of words." : {
-      "comment" : "Settings, PrayerIntentionSheet: its heading, the label over it, the line under it, or a note at its foot"
+      "comment" : "Settings, What Brings You to the Rosary sheet: the note at its foot"
     },
     "Choose your feast" : {
 
@@ -957,7 +963,7 @@
 
     },
     "Daily reminder" : {
-      "comment" : "Settings, ReminderSoundSheet: its heading, the label over it, the line under it, or a note at its foot"
+      "comment" : "Settings, Reminder Sound sheet: the small label over its title"
     },
     "Daily Reminders" : {
       "comment" : "Settings: a row's name"
@@ -1020,7 +1026,7 @@
 
     },
     "Devotion" : {
-      "comment" : "Settings, Daily Mysteries sheet: its heading, the label over it, or the line under it\nSettings: a section heading"
+      "comment" : "Settings, Daily Mysteries sheet: the small label over its title\nSettings: a section heading"
     },
     "Didn't find it here? Write to us in the app — we read every note." : {
       "comment" : "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words"
@@ -1029,7 +1035,7 @@
 
     },
     "Done" : {
-
+      "comment" : "Send Feedback: closes the sheet after sending, or after the note was copied"
     },
     "DONE" : {
 
@@ -2203,13 +2209,13 @@
 
     },
     "Reminder Sound" : {
-      "comment" : "Settings, ReminderSoundSheet: its heading, the label over it, the line under it, or a note at its foot\nSettings: a row's name"
+      "comment" : "Settings, Reminder Sound sheet: its title\nSettings: a row's name"
     },
     "Reminder Time" : {
 
     },
     "Reminders" : {
-      "comment" : "Privacy Policy: a heading, or the date the policy was last changed\nSettings, PrayerIntentionSheet: its heading, the label over it, the line under it, or a note at its foot"
+      "comment" : "Privacy Policy: a heading, or the date the policy was last changed\nSettings, What Brings You to the Rosary sheet: the small label over its title"
     },
     "REMOVE" : {
 
@@ -2328,6 +2334,9 @@
     "Saving your photo…" : {
 
     },
+    "Say anything you'd like us to hear…" : {
+      "comment" : "Send Feedback: the placeholder in the empty message field; it changes with the topic"
+    },
     "Say it first, then check it" : {
 
     },
@@ -2382,11 +2391,14 @@
     "Select this passage" : {
 
     },
+    "Send" : {
+      "comment" : "Send Feedback: opens the email with the note"
+    },
     "Send feedback" : {
       "comment" : "Help & Support: a question, or a button"
     },
     "Send Feedback" : {
-      "comment" : "About: a row's name, a heading, or the line under it"
+      "comment" : "About: a row's name, a heading, or the line under it\nThe feedback sheet's title"
     },
     "Sets of Chants" : {
 
@@ -2475,8 +2487,14 @@
     "Some of it didn't download. What finished is saved." : {
 
     },
+    "Something else" : {
+      "comment" : "Send Feedback: a topic to choose, anything else"
+    },
     "Something went wrong" : {
 
+    },
+    "Something's wrong" : {
+      "comment" : "Send Feedback: a topic to choose, a problem with the app"
     },
     "SOONEST" : {
 
@@ -2623,7 +2641,7 @@
 
     },
     "Tap a sound to hear it and make it yours." : {
-      "comment" : "Settings, ReminderSoundSheet: its heading, the label over it, the line under it, or a note at its foot"
+      "comment" : "Settings, Reminder Sound sheet: the line under its title"
     },
     "Tap a step to see its words." : {
 
@@ -2699,7 +2717,7 @@
 
     },
     "The chime was made for Lumen Viae; the bell is a public domain recording." : {
-      "comment" : "Settings, ReminderSoundSheet: its heading, the label over it, the line under it, or a note at its foot"
+      "comment" : "Settings, Reminder Sound sheet: the note at its foot"
     },
     "THE COURSE" : {
 
@@ -2757,6 +2775,9 @@
     },
     "THE MASS IS ENDED" : {
 
+    },
+    "The meditations" : {
+      "comment" : "Send Feedback: a topic to choose, about the meditation texts"
     },
     "The modern schedule is St. John Paul II's, from his letter on the Rosary, Rosarium Virginis Mariae (2002). Both keep Sunday by the season: Joyful in Advent, Sorrowful in Lent, Glorious the rest of the year." : {
       "comment" : "Settings, Daily Mysteries sheet: a note at its foot; Rosarium Virginis Mariae is the Latin title of the letter"
@@ -2987,7 +3008,16 @@
       "comment" : "Help & Support: a question, or a button"
     },
     "What Brings You to the Rosary" : {
-      "comment" : "Settings, PrayerIntentionSheet: its heading, the label over it, the line under it, or a note at its foot\nSettings: a row's name"
+      "comment" : "Settings, What Brings You to the Rosary sheet: its title\nSettings: a row's name"
+    },
+    "What did you notice — a typo, a translation, a passage?" : {
+      "comment" : "Send Feedback: the placeholder in the empty message field; it changes with the topic"
+    },
+    "What happened, and what were you doing when it did?" : {
+      "comment" : "Send Feedback: the placeholder in the empty message field; it changes with the topic"
+    },
+    "What is this about?" : {
+      "comment" : "Send Feedback: label over the topics"
     },
     "What people wonder before their first Rosary" : {
 
@@ -3003,6 +3033,9 @@
     },
     "What the App Fetches" : {
       "comment" : "Privacy Policy: a heading, or the date the policy was last changed"
+    },
+    "What would you like Lumen Viae to do?" : {
+      "comment" : "Send Feedback: the placeholder in the empty message field; it changes with the topic"
     },
     "When the beads are familiar" : {
 
@@ -3021,7 +3054,7 @@
       }
     },
     "Which mysteries each day brings. The two schedules differ only on Thursday and Saturday." : {
-      "comment" : "Settings, Daily Mysteries sheet: its heading, the label over it, or the line under it"
+      "comment" : "Settings, Daily Mysteries sheet: the line under its title"
     },
     "Whole Rosary" : {
       "comment" : "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen"
@@ -3127,6 +3160,9 @@
     },
     "Your iPhone will then ask once whether Lumen Viae may send reminders. You can change the time or turn it off in Settings." : {
 
+    },
+    "Your note" : {
+      "comment" : "Send Feedback: label over the message field"
     },
     "Your note is on its way. Every one of them is read." : {
 
