@@ -3861,7 +3861,10 @@ transition entirely.
   In-App Events open it with (`lumenviae://home`). `ContentView`'s
   `onOpenURL` hands the link to `AppRouter.open`, which goes to Home as
   a tab tap does, whatever the path; no link opens a particular page
-  yet. There are no universal links.
+  yet. Over a prayer or its completion screen
+  (`AppRoute.isPrayerUnderWay`), a consecration day, or any sheet (an
+  editor's words live only while it is up), a link only brings the app
+  forward, as the Angelus notification does. There are no universal links.
 - **Persistence:** SwiftData for prayer sessions, journal entries,
   consecration progress and reading progress; UserDefaults for settings,
   favorites and the resume snapshot; Application Support for offline
