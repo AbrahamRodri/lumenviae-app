@@ -201,6 +201,15 @@ struct ContentView: View {
                 consecrationArrivals += 1
             }
         }
+        // A lumenviae:// link, from an App Store event: to Home, but never
+        // over a consecration day being prayed, whose stack is the tab's
+        // own, nor over a sheet — an editor's words live only while it is
+        // up, and going Home would close it. Then the app only comes forward
+        .onOpenURL { url in
+            guard !(router.selectedTab == .consecration && isConsecrationNavigating),
+                  !Self.isPresentingSheet else { return }
+            router.open(url)
+        }
         .onChange(of: router.shortcutRequest) { _, request in
             guard let request else { return }
             router.shortcutRequest = nil
@@ -631,6 +640,18 @@ struct ContentView: View {
         case .chantBrowse(let scope):
             ChantBrowsePage(scope: scope)
         }
+    }
+
+    // MARK: - Links
+
+    /// Whether a sheet or a cover stands over the app — an editor, a
+    /// tray, a form — which SwiftUI keeps no list of, so it is read off
+    /// the window's root
+    private static var isPresentingSheet: Bool {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap(\.windows)
+            .contains { $0.rootViewController?.presentedViewController != nil }
     }
 
     // MARK: - The chant player

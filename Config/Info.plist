@@ -32,5 +32,21 @@
 		<key>UIImageName</key>
 		<string>LaunchMark</string>
 	</dict>
+	<!--
+	  The app's link scheme, lumenviae://, which the App Store's In-App
+	  Events open the app with (lumenviae://home). Every such link opens
+	  Home; see AppRouter.open(_:).
+	-->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.lumenviae.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>lumenviae</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
