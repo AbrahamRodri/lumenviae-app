@@ -168,18 +168,18 @@ struct MissalPassage: View {
 
         switch language {
         case .english:
-            MissalPassageText(text: english, size: size, role: .primary, showsDropCap: showsDropCap)
+            MissalPassageText(text: english, size: size, role: .primary, isLatin: false, showsDropCap: showsDropCap)
         case .latin:
             MissalPassageText(text: latin, size: size, role: .primary, showsDropCap: showsDropCap)
         case .both:
-            bilingual(primary: latin, secondary: english)
+            bilingual(primary: latin, secondary: english, primaryIsLatin: true)
         case .latinUnderEnglish:
-            bilingual(primary: english, secondary: latin)
+            bilingual(primary: english, secondary: latin, primaryIsLatin: false)
         }
     }
 
     @ViewBuilder
-    private func bilingual(primary: String, secondary: String) -> some View {
+    private func bilingual(primary: String, secondary: String, primaryIsLatin: Bool) -> some View {
         let paired = missalCanPair(primary, secondary)
 
         switch layout {
@@ -188,6 +188,7 @@ struct MissalPassage: View {
                 primary: primary,
                 secondary: secondary,
                 size: size,
+                primaryIsLatin: primaryIsLatin,
                 showsDropCap: showsDropCap
             )
         case .sideBySide where paired:
@@ -195,19 +196,20 @@ struct MissalPassage: View {
                 primary: primary,
                 secondary: secondary,
                 size: size,
+                primaryIsLatin: primaryIsLatin,
                 showsDropCap: showsDropCap
             )
         case .sideBySide:
             HStack(alignment: .top, spacing: 18) {
-                MissalPassageText(text: primary, size: max(13, size - 2), role: .primary, showsDropCap: showsDropCap)
+                MissalPassageText(text: primary, size: max(13, size - 2), role: .primary, isLatin: primaryIsLatin, showsDropCap: showsDropCap)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                MissalPassageText(text: secondary, size: max(13, size - 2), role: .secondary)
+                MissalPassageText(text: secondary, size: max(13, size - 2), role: .secondary, isLatin: !primaryIsLatin)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         case .interlinear:
             VStack(alignment: .leading, spacing: (size * 0.55).rounded()) {
-                MissalPassageText(text: primary, size: size, role: .primary, showsDropCap: showsDropCap)
-                MissalPassageText(text: secondary, size: size, role: .secondary)
+                MissalPassageText(text: primary, size: size, role: .primary, isLatin: primaryIsLatin, showsDropCap: showsDropCap)
+                MissalPassageText(text: secondary, size: size, role: .secondary, isLatin: !primaryIsLatin)
                     .padding(.leading, 20)
             }
         }
@@ -224,8 +226,8 @@ struct MissalPassage: View {
 /// cross a printed missal sets, before anything is drawn or paired.
 private let missalCrossPattern = try? NSRegularExpression(pattern: #"(^|\s)\+\s*"#)
 
-private func missalNormalized(_ line: String) -> String {
-    var normalized = missalSpeakerMarked(line)
+private func missalNormalized(_ line: String, latin: Bool) -> String {
+    var normalized = missalSpeakerMarked(line, latin: latin)
     if normalized.contains("☩") {
         normalized = normalized.replacingOccurrences(of: "☩", with: "✠")
     }
@@ -272,21 +274,23 @@ struct MissalReferenceText: View {
     }
 }
 
-private func missalLines(of text: String) -> [String] {
+func missalLines(of text: String, latin: Bool = true) -> [String] {
     text.components(separatedBy: "\n")
-        .map { missalNormalized($0.trimmingCharacters(in: .whitespaces)) }
+        .map { missalNormalized($0.trimmingCharacters(in: .whitespaces), latin: latin) }
         .filter { !$0.isEmpty }
 }
 
-/// The source marks the dialogue "S." (sacerdos) and "M." (ministri), in
-/// both languages, which no newcomer can read, and an antiphon "Ant.":
-/// the priest's lines open "P.", the server's and people's "S.", and an
-/// antiphon says the word. Only at the head of a line, where the marks
+/// The Latin source marks the dialogue "S." (sacerdos) and "M." (ministri),
+/// which no newcomer can read, and an antiphon "Ant.": the priest's lines
+/// open "P.", the server's and people's "S.", and an antiphon says the
+/// word. The English already reads "P." and "S." for priest and people, so
+/// only the Latin's marks are rewritten: "S. And with thy spirit." stays
+/// the people's. Only at the head of a line, where the marks
 /// stand, and only on a line that ends as a sentence does: a saint named
 /// "S. Joánnis Baptístæ" at the head of a line is left as it is.
-private func missalSpeakerMarked(_ line: String) -> String {
+func missalSpeakerMarked(_ line: String, latin: Bool) -> String {
     if line.hasPrefix("Ant. ") { return "Antiphon: " + line.dropFirst(5) }
-    guard let last = line.last, ".!?:,".contains(last) else { return line }
+    guard latin, let last = line.last, ".!?:,".contains(last) else { return line }
     if line.hasPrefix("S. ") { return "P. " + line.dropFirst(3) }
     if line.hasPrefix("M. ") { return "S. " + line.dropFirst(3) }
     return line
@@ -315,8 +319,8 @@ private func missalCanPair(_ primary: String, _ secondary: String) -> Bool {
     return !primaryLines.isEmpty && primaryLines.count == missalLines(of: secondary).count
 }
 
-private func missalLinePairs(_ primary: String, _ secondary: String) -> [MissalLinePair] {
-    zip(missalLines(of: primary), missalLines(of: secondary))
+private func missalLinePairs(_ primary: String, _ secondary: String, primaryIsLatin: Bool) -> [MissalLinePair] {
+    zip(missalLines(of: primary, latin: primaryIsLatin), missalLines(of: secondary, latin: !primaryIsLatin))
         .map { MissalLinePair(primary: $0, secondary: $1) }
 }
 
@@ -355,6 +359,10 @@ struct MissalPassageText: View {
     let size: CGFloat
     var role: Role = .primary
 
+    /// Whether the text is the Latin, whose speaker marks are rewritten;
+    /// the English keeps its own.
+    var isLatin: Bool = true
+
     /// Sets an illuminated initial on the passage's opening — the run
     /// after the citation, where a printed missal puts it, so the
     /// Epistle's initial lands on "Brethren", not on the announcement.
@@ -376,7 +384,7 @@ struct MissalPassageText: View {
             }
         }
 
-        for line in missalLines(of: text) {
+        for line in missalLines(of: text, latin: isLatin) {
             if let reference = missalReference(in: line) {
                 closeRun()
                 result.append(.reference(reference))
@@ -465,13 +473,15 @@ struct MissalPairedPassageText: View {
     let primary: String
     let secondary: String
     let size: CGFloat
+    /// Which side is the Latin, whose speaker marks are rewritten.
+    var primaryIsLatin: Bool = true
     var showsDropCap: Bool = false
 
     var body: some View {
         // Cut once per pass: `pairs` was a computed property read both
         // here and by the drop-cap search, so every passage was split
         // and normalized twice over.
-        let pairs = missalLinePairs(primary, secondary)
+        let pairs = missalLinePairs(primary, secondary, primaryIsLatin: primaryIsLatin)
         let dropCapIndex = showsDropCap ? missalDropCapIndex(in: pairs) : nil
 
         return VStack(
@@ -528,12 +538,14 @@ struct MissalColumnPassageText: View {
     let primary: String
     let secondary: String
     let size: CGFloat
+    /// Which side is the Latin, whose speaker marks are rewritten.
+    var primaryIsLatin: Bool = true
     var showsDropCap: Bool = false
 
     private var columnSize: CGFloat { max(13, size - 2) }
 
     var body: some View {
-        let pairs = missalLinePairs(primary, secondary)
+        let pairs = missalLinePairs(primary, secondary, primaryIsLatin: primaryIsLatin)
         let dropCapIndex = showsDropCap ? missalDropCapIndex(in: pairs) : nil
 
         return Grid(
