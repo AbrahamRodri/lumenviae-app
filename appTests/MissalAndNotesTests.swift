@@ -170,3 +170,29 @@ struct PinnedSetsTests {
         #expect(UserDefaults.standard.array(forKey: key) as? [Int] == before)
     }
 }
+
+/// The dialogue's speaker marks: only the Latin's "S." (sacerdos) and
+/// "M." (ministri) are rewritten. The English already says "P." and "S."
+/// for priest and people, as on Palm Sunday 2026, where the people's
+/// "S. And with thy spirit." must stay the people's.
+struct MissalSpeakerMarkTests {
+
+    @Test func theEnglishKeepsItsOwnMarks() {
+        #expect(missalSpeakerMarked("S. And with thy spirit.", latin: false) == "S. And with thy spirit.")
+        #expect(missalSpeakerMarked("P. The Lord be with you.", latin: false) == "P. The Lord be with you.")
+        #expect(missalLines(of: "P. The Lord be with you.\nS. And with thy spirit.", latin: false)
+            == ["P. The Lord be with you.", "S. And with thy spirit."])
+    }
+
+    @Test func theLatinIsStillRewritten() {
+        #expect(missalSpeakerMarked("S. Dóminus vobíscum.", latin: true) == "P. Dóminus vobíscum.")
+        #expect(missalSpeakerMarked("M. Et cum spíritu tuo.", latin: true) == "S. Et cum spíritu tuo.")
+        // A saint named at the head of a line is not a speaker
+        #expect(missalSpeakerMarked("S. Joánnis Baptístæ", latin: true) == "S. Joánnis Baptístæ")
+    }
+
+    @Test func anAntiphonSaysTheWordInEitherLanguage() {
+        #expect(missalSpeakerMarked("Ant. Hosánna fílio David.", latin: true) == "Antiphon: Hosánna fílio David.")
+        #expect(missalSpeakerMarked("Ant. Hosanna to the Son of David.", latin: false) == "Antiphon: Hosanna to the Son of David.")
+    }
+}
