@@ -201,6 +201,8 @@ struct ContentView: View {
                 consecrationArrivals += 1
             }
         }
+        // A lumenviae:// link, from an App Store event: to Home
+        .onOpenURL { url in router.open(url) }
         .onChange(of: router.shortcutRequest) { _, request in
             guard let request else { return }
             router.shortcutRequest = nil

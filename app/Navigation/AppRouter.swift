@@ -544,6 +544,18 @@ final class AppRouter {
         selectedTab = tab
     }
 
+    /// The scheme the app registers in Info.plist (`CFBundleURLTypes`)
+    static let linkScheme = "lumenviae"
+
+    /// Opens a `lumenviae://` link, as an App Store In-App Event does with
+    /// `lumenviae://home`. Every such link goes to Home, the way a tap on
+    /// its tab does; no link opens a particular page yet, so an unknown
+    /// path is Home too. A link of any other scheme is left alone.
+    func open(_ url: URL) {
+        guard url.scheme?.lowercased() == AppRouter.linkScheme else { return }
+        switchTo(.home)
+    }
+
     /// Returns to the home screen and clears stored navigation state.
     func popToRoot() {
         // Mutate in place rather than replacing the NavigationPath object;

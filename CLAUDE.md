@@ -3856,6 +3856,12 @@ transition entirely.
   The consecration tab hosts its **own** stack as a sibling of the outer one —
   nesting it silently drops the outer stack's destination table. Don't
   "simplify" that.
+- **Links:** the app registers the `lumenviae` URL scheme
+  (`CFBundleURLTypes` in `Config/Info.plist`), which the App Store's
+  In-App Events open it with (`lumenviae://home`). `ContentView`'s
+  `onOpenURL` hands the link to `AppRouter.open`, which goes to Home as
+  a tab tap does, whatever the path; no link opens a particular page
+  yet. There are no universal links.
 - **Persistence:** SwiftData for prayer sessions, journal entries,
   consecration progress and reading progress; UserDefaults for settings,
   favorites and the resume snapshot; Application Support for offline
