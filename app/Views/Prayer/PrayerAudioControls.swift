@@ -22,15 +22,27 @@ enum NarrationClock {
     static func spoken(_ seconds: Double) -> String {
         // Int(Double.nan) traps, and a not-yet-loaded track reports nan
         // for its duration before the asset resolves.
-        guard seconds.isFinite, seconds > 0 else { return "0 seconds" }
+        guard seconds.isFinite, seconds > 0 else {
+            return String(localized: "0 seconds", comment: "VoiceOver: a narration position or length of nothing yet")
+        }
         let whole = Int(seconds)
         let mins = whole / 60
         let secs = whole % 60
-        let minutes = "\(mins) minute\(mins == 1 ? "" : "s")"
-        let sec = "\(secs) second\(secs == 1 ? "" : "s")"
+        // "1 minute" and "1 second" come from the catalog's plural variations
+        let minutes = String(
+            localized: "\(mins) minutes",
+            comment: "VoiceOver: part of a narration position or length, a number of minutes"
+        )
+        let sec = String(
+            localized: "\(secs) seconds",
+            comment: "VoiceOver: part of a narration position or length, a number of seconds"
+        )
         if mins == 0 { return sec }
         if secs == 0 { return minutes }
-        return "\(minutes) \(sec)"
+        return String(
+            localized: "\(minutes) \(sec)",
+            comment: "VoiceOver: a narration position or length, minutes then seconds, like 3 minutes 20 seconds"
+        )
     }
 }
 
@@ -106,7 +118,7 @@ struct NarrationPlayButton: View {
             }
         }
         .buttonStyle(GoldCTAButtonStyle())
-        .accessibilityLabel(isLoading ? "Loading audio" : (isPlaying ? "Pause" : "Play"))
+        .accessibilityLabel(isLoading ? Text("Loading audio") : (isPlaying ? Text("Pause") : Text("Play")))
     }
 }
 
@@ -149,11 +161,17 @@ struct NarrationPlayControl: View {
         // Said aloud, the prayer being said rather than a clock that runs
         // a few seconds and starts again at every prayer
         .accessibilityValue(
-            !ready ? "Not ready"
-                : aloud ? (viewModel.spokenCaption ?? "")
-                : "\(NarrationClock.spoken(viewModel.currentTime)) of \(NarrationClock.spoken(viewModel.totalDuration))"
+            !ready ? Text("Not ready")
+                : aloud ? Text(viewModel.spokenCaption ?? "")
+                : Text("\(NarrationClock.spoken(viewModel.currentTime)) of \(NarrationClock.spoken(viewModel.totalDuration))")
         )
-        .accessibilityHint(ready ? (aloud ? "Swipe up or down for the next or previous prayer" : "Swipe up or down to move through the narration") : "")
+        .accessibilityHint(
+            ready
+                ? (aloud
+                    ? Text("Swipe up or down for the next or previous prayer")
+                    : Text("Swipe up or down to move through the narration"))
+                : Text(verbatim: "")
+        )
         // Said aloud, a prayer at a swipe, so the value read out is the
         // one moved: fifteen seconds ran a Hail Mary off its end while it
         // played, and did nothing to be heard while it was paused
@@ -203,16 +221,28 @@ struct PlaybackSettingsSheet: View {
         // Scrolls only when the words outgrow the sheet
         return ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                SheetHeader(title: "Playback") {
-                    SheetHeaderAction(title: "Done") { dismiss() }
+                SheetHeader(title: String(
+                    localized: "Playback",
+                    comment: "Playback settings sheet on the prayer screen: its title"
+                )) {
+                    SheetHeaderAction(title: String(
+                        localized: "Done",
+                        comment: "Sheet header button that closes the sheet"
+                    )) { dismiss() }
                 }
 
-                SheetSectionLabel("Voice")
+                SheetSectionLabel(String(
+                    localized: "Voice",
+                    comment: "Playback settings sheet: section label over the narration voices"
+                ))
 
                 NarrationVoiceChoice()
                     .padding(.horizontal, SheetMetrics.gutter)
 
-                SheetSectionLabel("Speed")
+                SheetSectionLabel(String(
+                    localized: "Speed",
+                    comment: "Playback settings sheet: section label over the narration speed slider"
+                ))
 
                 PlaybackSpeedChoice()
                     .padding(.horizontal, SheetMetrics.gutter)
@@ -440,7 +470,12 @@ struct PlaybackSpeedChoice: View {
 
     /// What VoiceOver says: "1.25 times", or at 1× "normal speed"
     static func spokenRate(_ rate: Double) -> String {
-        rate == 1 ? "Normal speed" : "\(String(format: "%g", rate)) times"
+        rate == 1
+            ? String(localized: "Normal speed", comment: "VoiceOver: the narration speed at 1x")
+            : String(
+                localized: "\(String(format: "%g", rate)) times",
+                comment: "VoiceOver: the narration speed as a multiple, like 1.25 times"
+            )
     }
 }
 

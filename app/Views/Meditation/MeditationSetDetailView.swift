@@ -55,11 +55,20 @@ struct MeditationSetDetailView: View {
 
     var body: some View {
         RosaryConfirmPage(
-            kicker: viewModel.category.map { "The \($0.devotionTitle)" } ?? "The Rosary",
+            kicker: viewModel.category.map { String(
+                localized: "The \($0.devotionTitle)",
+                comment: "A meditation set's page: small capitals over the set's name, the mysteries it belongs to, like The Joyful Mysteries"
+            ) } ?? String(
+                localized: "The Rosary",
+                comment: "A meditation set's page: small capitals over the set's name when its mysteries are not known"
+            ),
             title: viewModel.name,
             subtitle: viewModel.subtitle,
             prayEnabled: viewModel.hasMeditations,
-            preparing: isPreparingToPray && viewModel.fullSet == nil ? "Preparing the meditations" : nil,
+            preparing: isPreparingToPray && viewModel.fullSet == nil ? String(
+                localized: "Preparing the meditations",
+                comment: "A meditation set's page: shown on the Pray button while the set is still loading after Pray was tapped"
+            ) : nil,
             onBack: { router.pop() },
             onPray: pray
         ) {
@@ -104,23 +113,35 @@ struct MeditationSetDetailView: View {
     private var sections: some View {
         VStack(spacing: 0) {
             if let about = viewModel.about {
-                SetSection(label: "About") {
+                SetSection(label: String(
+                    localized: "About",
+                    comment: "A meditation set's page, the ledger: label of the row describing the set"
+                )) {
                     ReadingText(text: about, size: 16)
                 }
             }
 
             if !viewModel.entryTitles.isEmpty {
-                SetSection(label: "The\nmeditations") { meditationList }
+                SetSection(label: String(
+                    localized: "The\nmeditations",
+                    comment: "A meditation set's page, ledger label in two short lines (a line break between) over the list of the set's meditations"
+                )) { meditationList }
             }
 
             if viewModel.hasAttribution {
-                SetSection(label: "From") { attribution }
+                SetSection(label: String(
+                    localized: "From",
+                    comment: "A meditation set's page, ledger label of the row naming the author and the source"
+                )) { attribution }
             }
 
             // The painting's credit, the way a museum plate carries one —
             // small, and only when the painting came with one
             if let credit = viewModel.artworkCredit {
-                SetSection(label: "The\npainting") {
+                SetSection(label: String(
+                    localized: "The\npainting",
+                    comment: "A meditation set's page, ledger label in two short lines (a line break between) over the painting's credit"
+                )) {
                     Text(credit)
                         .font(AppFonts.italicFont(14))
                         .foregroundColor(AppColors.textSecondary)
@@ -199,7 +220,10 @@ struct MeditationSetDetailView: View {
     @ViewBuilder
     private var offlineSection: some View {
         if let state = viewModel.offlineState {
-            SetSection(label: "Offline") {
+            SetSection(label: String(
+                localized: "Offline",
+                comment: "A meditation set's page, ledger label of the row that saves the set for praying without a connection"
+            )) {
                 // One slot for the four states, so save → saving → saved
                 // crossfade over one another instead of the row being
                 // torn down and rebuilt
@@ -207,7 +231,10 @@ struct MeditationSetDetailView: View {
                     switch state {
                     case .available:
                         offlineButton(
-                            title: "Save for offline",
+                            title: String(
+                                localized: "Save for offline",
+                                comment: "A meditation set's page: button that downloads the set, its narration and painting"
+                            ),
                             icon: "ph-download-simple",
                             color: AppColors.gold
                         )
@@ -229,7 +256,10 @@ struct MeditationSetDetailView: View {
                             }
 
                             offlineButton(
-                                title: "Remove",
+                                title: String(
+                                    localized: "Remove",
+                                    comment: "A meditation set's page: button that deletes the saved offline copy"
+                                ),
                                 icon: "ph-trash",
                                 color: AppColors.textSecondary
                             )
@@ -244,7 +274,10 @@ struct MeditationSetDetailView: View {
                                 .fixedSize(horizontal: false, vertical: true)
 
                             offlineButton(
-                                title: "Try again",
+                                title: String(
+                                    localized: "Try again",
+                                    comment: "A meditation set's page: button that tries the download or the load again"
+                                ),
                                 icon: "ph-arrow-counter-clockwise",
                                 color: AppColors.gold
                             )
@@ -340,7 +373,10 @@ struct MeditationSetDetailView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
 
                         QuietGoldButton(
-                            title: "Close",
+                            title: String(
+                                localized: "Close",
+                                comment: "A meditation set's page: button that folds away the first meditation's preview"
+                            ),
                             leadingIcon: "ph-caret-up",
                             leadingIconSize: 10,
                             size: 10,
@@ -355,7 +391,10 @@ struct MeditationSetDetailView: View {
                     .transition(.opacity.combined(with: .offset(y: -8)))
                 } else {
                     QuietGoldButton(
-                        title: "Read the first meditation",
+                        title: String(
+                            localized: "Read the first meditation",
+                            comment: "A meditation set's page: button that unfolds the first meditation's text"
+                        ),
                         leadingIcon: "ph-book-open",
                         leadingIconSize: 12,
                         trailingIcon: "ph-caret-down",
@@ -383,7 +422,10 @@ struct MeditationSetDetailView: View {
                     .padding(.top, 14)
 
                 QuietGoldButton(
-                    title: "Try again",
+                    title: String(
+                        localized: "Try again",
+                        comment: "A meditation set's page: button that tries the download or the load again"
+                    ),
                     leadingIcon: "ph-arrow-counter-clockwise",
                     leadingIconSize: 11,
                     size: 10,

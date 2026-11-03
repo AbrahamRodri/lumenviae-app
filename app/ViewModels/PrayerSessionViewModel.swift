@@ -1142,8 +1142,16 @@ extension PrayerSessionViewModel: SpokenRosaryHost {
         guard case .preparing(let done, let total) = spoken?.phase else { return nil }
         // A share, not a count of files: "12 of 63" counts recordings,
         // which is nothing the person praying knows about
-        guard total > 0 else { return "Getting the prayers ready…" }
-        return "Getting the prayers ready · \(done * 100 / total)%"
+        guard total > 0 else {
+            return String(
+                localized: "Getting the prayers ready…",
+                comment: "Prayer screen: while the recorded prayers are fetched before the Rosary is said aloud"
+            )
+        }
+        return String(
+            localized: "Getting the prayers ready · \(done * 100 / total)%",
+            comment: "Prayer screen: while the recorded prayers are fetched, with how far it has gone as a percentage"
+        )
     }
 
     /// The last Amen has been said aloud; AMEN is waiting to be tapped
@@ -1163,8 +1171,16 @@ extension PrayerSessionViewModel: SpokenRosaryHost {
         guard let spoken, spoken.phase == .running || spoken.phase == .finished,
               let segment = spoken.currentSegment else { return nil }
         switch segment.phase {
-        case .opening: return "Opening prayers · \(segment.caption)"
-        case .closing: return "Closing prayers · \(segment.caption)"
+        case .opening:
+            return String(
+                localized: "Opening prayers · \(segment.caption)",
+                comment: "Prayer screen, said aloud: the opening prayers, then the prayer being said, like Opening prayers · The Apostles' Creed"
+            )
+        case .closing:
+            return String(
+                localized: "Closing prayers · \(segment.caption)",
+                comment: "Prayer screen, said aloud: the closing prayers, then the prayer being said, like Closing prayers · Hail, Holy Queen"
+            )
         case .decade: return segment.caption
         }
     }
@@ -1201,19 +1217,31 @@ extension PrayerSessionViewModel: SpokenRosaryHost {
     /// Queen). Nil otherwise.
     var spokenBeadLines: [String]? {
         guard let spoken else { return nil }
-        if spoken.phase == .finished { return ["Closing", "Prayers"] }
+        let closingLines = [
+            String(localized: "Closing", comment: "Strand margin, first of two short lines: Closing / Prayers, the prayers after the last decade"),
+            String(localized: "Prayers", comment: "Strand margin, second of two short lines: Opening / Prayers or Closing / Prayers"),
+        ]
+        if spoken.phase == .finished { return closingLines }
         guard spoken.phase == .running || spokenStatus != nil,
               let segment = spoken.currentSegment else { return nil }
         switch segment.phase {
-        case .opening: return ["Opening", "Prayers"]
-        case .closing: return ["Closing", "Prayers"]
+        case .opening:
+            return [
+                String(localized: "Opening", comment: "Strand margin, first of two short lines: Opening / Prayers, the prayers on the cross and first beads"),
+                String(localized: "Prayers", comment: "Strand margin, second of two short lines: Opening / Prayers or Closing / Prayers"),
+            ]
+        case .closing: return closingLines
         case .decade: break
         }
         switch segment.kind {
         case .announcement:
-            return [segment.mysteryKey.hasPrefix("seven_sorrows") ? "The Sorrow" : "The Mystery"]
+            return [
+                segment.mysteryKey.hasPrefix("seven_sorrows")
+                    ? String(localized: "The Sorrow", comment: "Strand margin, said aloud: the bead is named for the sorrow being announced")
+                    : String(localized: "The Mystery", comment: "Strand margin, said aloud: the bead is named for the mystery being announced")
+            ]
         case .meditation:
-            return ["Meditation"]
+            return [String(localized: "Meditation", comment: "Strand margin, said aloud: the bead is named for the meditation being read")]
         default:
             return nil
         }

@@ -49,11 +49,91 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     /// The label for one decade by position: "The First Joyful Mystery",
     /// or, for the chaplet, "The First Sorrow of Mary". Callers uppercase
     /// or trim the article as their surface needs.
+    ///
+    /// One sentence per set, so a translation can place the ordinal and
+    /// the set's adjective in its own order; the ordinal is
+    /// `Constants.ordinalWord`.
     func mysteryLabel(ordinal number: Int) -> String {
         let ordinal = Constants.ordinalWord(number)
         switch self {
-        case .sevenSorrows: return "The \(ordinal) Sorrow of Mary"
-        default: return "The \(ordinal) \(displayName) Mystery"
+        case .joyful:
+            return String(
+                localized: "The \(ordinal) Joyful Mystery",
+                comment: "Title of one decade of the Rosary by its place; the ordinal is a word like First, Second … Fifth"
+            )
+        case .sorrowful:
+            return String(
+                localized: "The \(ordinal) Sorrowful Mystery",
+                comment: "Title of one decade of the Rosary by its place; the ordinal is a word like First, Second … Fifth"
+            )
+        case .glorious:
+            return String(
+                localized: "The \(ordinal) Glorious Mystery",
+                comment: "Title of one decade of the Rosary by its place; the ordinal is a word like First, Second … Fifth"
+            )
+        case .luminous:
+            return String(
+                localized: "The \(ordinal) Luminous Mystery",
+                comment: "Title of one decade of the Rosary by its place; the ordinal is a word like First, Second … Fifth"
+            )
+        case .sevenSorrows:
+            return String(
+                localized: "The \(ordinal) Sorrow of Mary",
+                comment: "Title of one sorrow of the Seven Sorrows chaplet by its place; the ordinal is a word like First … Seventh"
+            )
+        }
+    }
+
+    /// The line under the opening prayers naming the decade they lead
+    /// to: "Then the First Glorious Mystery". Whole, with its article, so
+    /// a translation can set both in its own order.
+    func leadInLabel(ordinal number: Int) -> String {
+        let ordinal = Constants.ordinalWord(number)
+        switch self {
+        case .joyful:
+            return String(localized: "Then the \(ordinal) Joyful Mystery", comment: "Prayer screen, the opening prayers: the decade they lead to, as a whole line; the ordinal is a word like First")
+        case .sorrowful:
+            return String(localized: "Then the \(ordinal) Sorrowful Mystery", comment: "Prayer screen, the opening prayers: the decade they lead to, as a whole line; the ordinal is a word like First")
+        case .glorious:
+            return String(localized: "Then the \(ordinal) Glorious Mystery", comment: "Prayer screen, the opening prayers: the decade they lead to, as a whole line; the ordinal is a word like First")
+        case .luminous:
+            return String(localized: "Then the \(ordinal) Luminous Mystery", comment: "Prayer screen, the opening prayers: the decade they lead to, as a whole line; the ordinal is a word like First")
+        case .sevenSorrows:
+            return String(localized: "Then the \(ordinal) Sorrow of Mary", comment: "Prayer screen, the opening prayers: the decade they lead to, as a whole line; the ordinal is a word like First")
+        }
+    }
+
+    /// The same place as running text, without the article, for a
+    /// sentence that supplies its own ("Continue at the Third Joyful
+    /// Mystery"): "Third Joyful Mystery", "Third Sorrow of Mary".
+    func mysteryPlaceLabel(ordinal number: Int) -> String {
+        let ordinal = Constants.ordinalWord(number)
+        switch self {
+        case .joyful:
+            return String(
+                localized: "\(ordinal) Joyful Mystery",
+                comment: "Where an unfinished Rosary stopped, set inside a sentence after an article (Continue at the …); the ordinal is a word like Third"
+            )
+        case .sorrowful:
+            return String(
+                localized: "\(ordinal) Sorrowful Mystery",
+                comment: "Where an unfinished Rosary stopped, set inside a sentence after an article (Continue at the …); the ordinal is a word like Third"
+            )
+        case .glorious:
+            return String(
+                localized: "\(ordinal) Glorious Mystery",
+                comment: "Where an unfinished Rosary stopped, set inside a sentence after an article (Continue at the …); the ordinal is a word like Third"
+            )
+        case .luminous:
+            return String(
+                localized: "\(ordinal) Luminous Mystery",
+                comment: "Where an unfinished Rosary stopped, set inside a sentence after an article (Continue at the …); the ordinal is a word like Third"
+            )
+        case .sevenSorrows:
+            return String(
+                localized: "\(ordinal) Sorrow of Mary",
+                comment: "Where an unfinished chaplet stopped, set inside a sentence after an article (Continue at the …); the ordinal is a word like Third"
+            )
         }
     }
 

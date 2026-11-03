@@ -291,6 +291,30 @@ struct SpokenRosaryScriptTests {
         #expect(SpokenRosaryScript.resumeIndex(in: whole, step: nil) == nil)
     }
 
+    @Test func resumeIndexMatchesWhatIsHeardInAnyLanguage() {
+        let whole = script(.joyful, extras: [.memorare])
+        let index = whole.firstIndex { $0.kind == .prayer("memorare") }!
+        let segment = whole[index]
+
+        // Saved with the caption in another language: the kind still matches
+        let translated = SpokenStep(
+            index: index, mystery: segment.mystery, bead: segment.bead,
+            caption: "Acordaos", kind: segment.kind.key
+        )
+        #expect(SpokenRosaryScript.resumeIndex(in: whole, step: translated) == index)
+
+        // The same place holding another prayer is not taken up
+        let otherPrayer = SpokenStep(
+            index: index, mystery: segment.mystery, bead: segment.bead,
+            caption: segment.caption, kind: SpokenSegment.Kind.prayer("st_michael_prayer").key
+        )
+        #expect(SpokenRosaryScript.resumeIndex(in: whole, step: otherPrayer) == nil)
+
+        // A step saved before the kind was kept matches on its caption
+        let older = SpokenStep(index: index, mystery: segment.mystery, bead: segment.bead, caption: segment.caption)
+        #expect(SpokenRosaryScript.resumeIndex(in: whole, step: older) == index)
+    }
+
     // MARK: - The Rosary Aloud
 
     @Test(arguments: [MysteryCategory.joyful, .sorrowful, .glorious, .luminous])

@@ -52,7 +52,7 @@ struct SetupTogglePill: View {
         }
         .buttonStyle(GoldCTAButtonStyle())
         .accessibilityLabel(title)
-        .accessibilityValue(isOn ? "On" : "Off")
+        .accessibilityValue(isOn ? Text("On") : Text("Off"))
         .accessibilityHint(hint)
         .accessibilityAddTraits(.isToggle)
     }

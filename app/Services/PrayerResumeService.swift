@@ -119,10 +119,12 @@ extension InProgressPrayer {
     var placeLabel: String {
         let ordinal = mysteryIndex + 1
         guard let mysteries = MysteryCategory(fromAPIString: category) else {
-            return "\(Constants.ordinalWord(ordinal)) \(category.capitalized) Mystery"
+            return String(
+                localized: "\(Constants.ordinalWord(ordinal)) \(category.capitalized) Mystery",
+                comment: "Where an unfinished Rosary of an unknown set stopped, after an article; the ordinal is a word like Third, then the set's name"
+            )
         }
-        let label = mysteries.mysteryLabel(ordinal: ordinal)
-        return label.hasPrefix("The ") ? String(label.dropFirst(4)) : label
+        return mysteries.mysteryPlaceLabel(ordinal: ordinal)
     }
 }
 

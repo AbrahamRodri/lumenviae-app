@@ -81,9 +81,15 @@ final class SpokenRosaryPlayer {
         var message: String {
             switch self {
             case .offline:
-                return "You're offline. The Whole Rosary needs the internet the first time."
+                return String(
+                    localized: "You're offline. The Whole Rosary needs the internet the first time.",
+                    comment: "Prayer screen notice when the Rosary cannot be said aloud: no connection and the recordings were never downloaded"
+                )
             case .notRecorded:
-                return "The Whole Rosary isn't recorded in this voice yet. Choose another voice."
+                return String(
+                    localized: "The Whole Rosary isn't recorded in this voice yet. Choose another voice.",
+                    comment: "Prayer screen notice when the Rosary cannot be said aloud: no recordings in the chosen narration voice"
+                )
             }
         }
     }
@@ -133,7 +139,13 @@ final class SpokenRosaryPlayer {
     /// Where the Rosary stands: what the host keeps to come back to
     var currentStep: SpokenStep? {
         guard let segment = currentSegment else { return nil }
-        return SpokenStep(index: index, mystery: segment.mystery, bead: segment.bead, caption: segment.caption)
+        return SpokenStep(
+            index: index,
+            mystery: segment.mystery,
+            bead: segment.bead,
+            caption: segment.caption,
+            kind: segment.kind.key
+        )
     }
 
     /// Between two segments, in the breath before the next begins

@@ -261,7 +261,10 @@ final class MeditationSetDetailViewModel {
     /// "The First Sorrowful Mystery" — or, for the chaplet, "The First
     /// Sorrow of Mary"
     var firstMysteryLabel: String {
-        category?.mysteryLabel(ordinal: 1) ?? "The First Mystery"
+        category?.mysteryLabel(ordinal: 1) ?? String(
+            localized: "The First Mystery",
+            comment: "A meditation set's page: the first decade's title when the set's mysteries are not known"
+        )
     }
 
     /// Whether there is anything to pray with. A set the API returned

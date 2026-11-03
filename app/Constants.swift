@@ -89,7 +89,15 @@ struct Constants {
     /// Ordinal word for a mystery's position ("First"…"Seventh") — covers
     /// five-decade rosaries and the Seven Sorrows chaplet.
     static func ordinalWord(_ number: Int) -> String {
-        let ordinals = ["First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh"]
+        let ordinals = [
+            String(localized: "First", comment: "Ordinal word for a decade's place, set before Mystery or Sorrow in titles like The First Joyful Mystery"),
+            String(localized: "Second", comment: "Ordinal word for a decade's place, set before Mystery or Sorrow in titles like The Second Joyful Mystery"),
+            String(localized: "Third", comment: "Ordinal word for a decade's place, set before Mystery or Sorrow in titles like The Third Joyful Mystery"),
+            String(localized: "Fourth", comment: "Ordinal word for a decade's place, set before Mystery or Sorrow in titles like The Fourth Joyful Mystery"),
+            String(localized: "Fifth", comment: "Ordinal word for a decade's place, set before Mystery or Sorrow in titles like The Fifth Joyful Mystery"),
+            String(localized: "Sixth", comment: "Ordinal word for a sorrow's place in the Seven Sorrows chaplet, as in The Sixth Sorrow of Mary"),
+            String(localized: "Seventh", comment: "Ordinal word for a sorrow's place in the Seven Sorrows chaplet, as in The Seventh Sorrow of Mary"),
+        ]
         guard number >= 1 && number <= ordinals.count else { return "" }
         return ordinals[number - 1]
     }

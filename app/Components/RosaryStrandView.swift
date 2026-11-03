@@ -60,7 +60,10 @@ struct RosaryStrandView: View {
 
     /// What stands beside the bead under the hand while the strand is
     /// locked: what to do, and when
-    static let lockedLines = ["Listen first,", "then swipe"]
+    static let lockedLines = [
+        String(localized: "Listen first,", comment: "Strand margin while the beads are locked, first of two short lines: Listen first, / then swipe"),
+        String(localized: "then swipe", comment: "Strand margin while the beads are locked, second of two short lines: Listen first, / then swipe"),
+    ]
 
     /// Room for the numerals beside the bead column
     static let width: CGFloat = 150
@@ -439,7 +442,7 @@ extension View {
 
                 if let onAmen {
                     GoldCTAButton(
-                        title: "Amen",
+                        title: String(localized: "Amen", comment: "Gold button on the Rosary's last bead that finishes the Rosary"),
                         prominence: .inline,
                         trailingIcon: "ph-check",
                         fullWidth: false,

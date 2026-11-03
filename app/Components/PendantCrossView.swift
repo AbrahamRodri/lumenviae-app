@@ -319,7 +319,9 @@ struct PendantCrossView: View {
             }
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(current.map { "The cross and first beads. \($0.name)" } ?? "The cross and first beads")
+        .accessibilityLabel(
+            current.map { Text("The cross and first beads. \($0.name)") } ?? Text("The cross and first beads")
+        )
     }
 
     // MARK: Where Everything Hangs
@@ -588,7 +590,12 @@ struct PendantStage: View {
         .allowsHitTesting(onTap != nil)
         // Where the voice is on it, as the pendant itself says
         .modifier(StageTapAccessibility(
-            label: pendant.place.map { "The cross and first beads. \($0.name)" } ?? "The cross and first beads",
+            label: pendant.place.map {
+                String(
+                    localized: "The cross and first beads. \($0.name)",
+                    comment: "VoiceOver for the drawn rosary pendant: what it is, then the part the voice is on, like The large bead"
+                )
+            } ?? String(localized: "The cross and first beads", comment: "VoiceOver for the drawn rosary pendant: the cross and the beads above it"),
             chromeHidden: chromeHidden,
             action: { onTap?() }
         ))
@@ -610,10 +617,14 @@ struct PendantTitleBlock: View {
     /// "Then the First Glorious Mystery", while the opening is said
     var leadsInto: String? = nil
 
-    /// "The First Glorious Mystery" read mid-sentence
-    static func leadIn(to kicker: String) -> String {
-        let phrase = kicker.hasPrefix("The ") ? "the " + kicker.dropFirst(4) : kicker
-        return "Then \(phrase)"
+    /// "Then the First Glorious Mystery": the set's own sentence, or the
+    /// decade's place alone for a set whose mysteries are not known
+    static func leadIn(category: MysteryCategory?, ordinal: Int) -> String {
+        if let category { return category.leadInLabel(ordinal: ordinal) }
+        return String(
+            localized: "Then the \(Constants.ordinalWord(ordinal)) Mystery",
+            comment: "Prayer screen, the opening prayers: the decade they lead to, for a set of unknown mysteries; the ordinal is a word like First"
+        )
     }
 
     var body: some View {

@@ -174,13 +174,19 @@ struct SelectMeditationView: View {
     /// own page with them chosen
     private var otherWaysToPray: some View {
         VStack(alignment: .leading, spacing: 12) {
-            ShelfHeading(title: "Ways to pray")
+            ShelfHeading(title: String(
+                localized: "Ways to pray",
+                comment: "Mysteries' page: heading over the Rosary's other two forms, the Scriptural Rosary and the Audio Rosary"
+            ))
 
             VStack(spacing: 0) {
                 OtherWayRow(
                     icon: PrayerShortcut.scripturalRosary.icon,
                     title: ScripturalRosaryViewModel.displayName(for: .scriptural),
-                    detail: "A Bible verse for every Hail Mary"
+                    detail: String(
+                        localized: "A Bible verse for every Hail Mary",
+                        comment: "Mysteries' page, Ways to pray: the line under The Scriptural Rosary"
+                    )
                 ) {
                     openOnce(.scripturalRosary(category))
                 }
@@ -188,7 +194,10 @@ struct SelectMeditationView: View {
                 OtherWayRow(
                     icon: PrayerShortcut.rosaryAloud.icon,
                     title: ScripturalRosaryViewModel.displayName(for: .plain),
-                    detail: "Listen and pray along"
+                    detail: String(
+                        localized: "Listen and pray along",
+                        comment: "Mysteries' page, Ways to pray: the line under The Audio Rosary"
+                    )
                 ) {
                     openOnce(.rosaryAloud(category))
                 }
@@ -205,13 +214,19 @@ struct SelectMeditationView: View {
     private var meditationsHeading: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 6) {
-                ShelfHeading(title: "Meditations")
+                ShelfHeading(title: String(
+                    localized: "Meditations",
+                    comment: "Mysteries' page: heading over the shelf of meditation sets"
+                ))
 
                 if hasShelf {
                     if viewModel.hasLabels {
                         ChromeToggle(
                             icon: "ph-funnel",
-                            label: "Filter by kind",
+                            label: String(
+                                localized: "Filter by kind",
+                                comment: "Mysteries' page: VoiceOver name of the funnel button that opens the kinds of meditation"
+                            ),
                             isOn: isFilterOpen || !viewModel.selectedLabels.isEmpty,
                             badge: viewModel.selectedLabels.count,
                             action: { isFilterOpen.toggle() }
@@ -227,14 +242,20 @@ struct SelectMeditationView: View {
 
                     ChromeToggle(
                         icon: "ph-cards",
-                        label: "Gallery",
+                        label: String(
+                            localized: "Gallery",
+                            comment: "Mysteries' page: VoiceOver name of the button that shows the sets as a gallery of tiles"
+                        ),
                         isOn: viewMode == .gallery,
                         action: { viewMode = .gallery }
                     )
 
                     ChromeToggle(
                         icon: "ph-list",
-                        label: "List",
+                        label: String(
+                            localized: "List",
+                            comment: "Mysteries' page: VoiceOver name of the button that shows the sets as a list"
+                        ),
                         isOn: viewMode == .list,
                         action: { viewMode = .list }
                     )
@@ -273,8 +294,14 @@ struct SelectMeditationView: View {
     /// mysteries are, for someone who has never prayed with either
     private var meditationsLead: String {
         category == .sevenSorrows
-            ? "Choose a meditation: a short reading for each of Mary's seven sorrows, to listen to or read in silence."
-            : "Choose a meditation: a short reading for each of the five mysteries, to listen to or read in silence."
+            ? String(
+                localized: "Choose a meditation: a short reading for each of Mary's seven sorrows, to listen to or read in silence.",
+                comment: "Seven Sorrows page: the line under MEDITATIONS saying what a meditation is"
+            )
+            : String(
+                localized: "Choose a meditation: a short reading for each of the five mysteries, to listen to or read in silence.",
+                comment: "Mysteries' page: the line under MEDITATIONS saying what a meditation is"
+            )
     }
 
     /// How many meditations are showing — a set of five readings is
@@ -282,10 +309,17 @@ struct SelectMeditationView: View {
     /// "6 meditations" once named six sets as six readings
     private var countLabel: String {
         let total = viewModel.totalSetCount
-        let unit = total == 1 ? "set of meditations" : "sets of meditations"
-        return viewModel.isNarrowed
-            ? "\(viewModel.visibleSetCount) of \(total) \(unit)"
-            : "\(total) \(unit)"
+        // "1 set of meditations" comes from the catalog's plural variations
+        if viewModel.isNarrowed {
+            return String(
+                localized: "\(viewModel.visibleSetCount) of \(total) sets of meditations",
+                comment: "Mysteries' page, while a kind is chosen: how many sets show of all of them, like 2 of 6 sets of meditations"
+            )
+        }
+        return String(
+            localized: "\(total) sets of meditations",
+            comment: "Mysteries' page: the number of meditation sets, like 6 sets of meditations"
+        )
     }
 
     /// Kinds of meditation, disclosed.
@@ -304,7 +338,10 @@ struct SelectMeditationView: View {
                     // than its label, so the tray doesn't grow when it
                     // appears.
                     QuietGoldButton(
-                        title: "Clear",
+                        title: String(
+                            localized: "Clear",
+                            comment: "Mysteries' page, kinds of meditation tray: the button that clears the chosen kinds"
+                        ),
                         size: 10,
                         tracking: 1.8,
                         color: AppColors.gold.opacity(0.8),
@@ -339,7 +376,10 @@ struct SelectMeditationView: View {
     private var results: some View {
         VStack(spacing: 34) {
             if !viewModel.pinnedSets.isEmpty {
-                group(title: "Pinned", sets: viewModel.pinnedSets)
+                group(title: String(
+                    localized: "Pinned",
+                    comment: "Mysteries' page: heading over the meditation sets the reader pinned to the top"
+                ), sets: viewModel.pinnedSets)
             }
 
             ForEach(viewModel.sections) { section in
@@ -422,7 +462,10 @@ struct SelectMeditationView: View {
                 .multilineTextAlignment(.center)
 
             QuietGoldButton(
-                title: "Clear filters",
+                title: String(
+                    localized: "Clear filters",
+                    comment: "Mysteries' page: button under the line saying no set matches the chosen kinds"
+                ),
                 size: 10,
                 color: AppColors.gold
             ) {
@@ -444,7 +487,10 @@ struct SelectMeditationView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             QuietGoldButton(
-                title: "Try again",
+                title: String(
+                    localized: "Try again",
+                    comment: "Mysteries' page: button that loads the meditation sets again"
+                ),
                 leadingIcon: "ph-arrow-counter-clockwise",
                 leadingIconSize: 11,
                 size: 10,
@@ -479,7 +525,10 @@ struct SelectMeditationView: View {
                 .multilineTextAlignment(.center)
 
             GoldCTAButton(
-                title: "Try again",
+                title: String(
+                    localized: "Try again",
+                    comment: "Mysteries' page: button that loads the meditation sets again"
+                ),
                 prominence: .inline,
                 fullWidth: false
             ) {

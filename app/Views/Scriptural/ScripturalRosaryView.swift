@@ -54,11 +54,23 @@ struct ScripturalRosaryView: View {
 
     var body: some View {
         RosaryConfirmPage(
-            kicker: isPlain ? "Listen and pray along" : "A verse for every bead",
+            kicker: isPlain ? String(
+                localized: "Listen and pray along",
+                comment: "The Audio Rosary's own page: small capitals over its name, saying what it is"
+            ) : String(
+                localized: "A verse for every bead",
+                comment: "The Scriptural Rosary's own page: small capitals over its name, saying what it is"
+            ),
             title: ScripturalRosaryViewModel.displayName(for: form),
             subtitle: isPlain
-                ? "A voice leads every prayer, with no readings between."
-                : "One verse of Scripture for every Hail Mary.",
+                ? String(
+                    localized: "A voice leads every prayer, with no readings between.",
+                    comment: "The Audio Rosary's own page: the italic line under its name"
+                )
+                : String(
+                    localized: "One verse of Scripture for every Hail Mary.",
+                    comment: "The Scriptural Rosary's own page: the italic line under its name"
+                ),
             onBack: { router.pop() },
             onPray: {
                 guard !isOpening else { return }
@@ -87,18 +99,34 @@ struct ScripturalRosaryView: View {
 
     private var sections: some View {
         VStack(spacing: 0) {
-            SetSection(label: "About") {
+            SetSection(label: String(
+                localized: "About",
+                comment: "A Rosary's own page, the ledger below the choices: label of the row describing the form"
+            )) {
                 ReadingText(text: about, size: 16)
             }
 
             if !isPlain {
                 // The chaplet's are sorrows, and its ledger says so
-                SetSection(label: category == .sevenSorrows ? "The first\nsorrow" : "The first\nmystery") {
+                SetSection(
+                    label: category == .sevenSorrows
+                        ? String(
+                            localized: "The first\nsorrow",
+                            comment: "A Rosary's own page, ledger label in two short lines (a line break between) over the chaplet's first sorrow and its first verse"
+                        )
+                        : String(
+                            localized: "The first\nmystery",
+                            comment: "A Rosary's own page, ledger label in two short lines (a line break between) over the first mystery and its first verse"
+                        )
+                ) {
                     firstDecade
                 }
             }
 
-            SetSection(label: "From") {
+            SetSection(label: String(
+                localized: "From",
+                comment: "A Rosary's own page, ledger label of the row naming where the words come from"
+            )) {
                 attribution
             }
         }
@@ -108,8 +136,14 @@ struct ScripturalRosaryView: View {
     /// does not say twice
     private var about: String {
         isPlain
-            ? "The beads move with the voice — for praying with the phone put away, or for learning the prayers by ear. Each mystery, a scene from the lives of Jesus and Mary, is announced, and each prayer is shown on the screen as it is said. Pause the voice to pray quietly for a while."
-            : "Each mystery, a scene from the lives of Jesus and Mary, is told verse by verse. The Our Father bead names the mystery and a grace to ask for, each of the Hail Marys has its own verse, and the Glory Be closes it."
+            ? String(
+                localized: "The beads move with the voice — for praying with the phone put away, or for learning the prayers by ear. Each mystery, a scene from the lives of Jesus and Mary, is announced, and each prayer is shown on the screen as it is said. Pause the voice to pray quietly for a while.",
+                comment: "The Audio Rosary's own page, ledger: what the form is"
+            )
+            : String(
+                localized: "Each mystery, a scene from the lives of Jesus and Mary, is told verse by verse. The Our Father bead names the mystery and a grace to ask for, each of the Hail Marys has its own verse, and the Glory Be closes it.",
+                comment: "The Scriptural Rosary's own page, ledger: what the form is"
+            )
     }
 
     /// How the prayer will open: the first mystery by name, and the

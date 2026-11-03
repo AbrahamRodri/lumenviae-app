@@ -214,7 +214,12 @@ struct GuidedRosaryView: View {
 
     private var header: some View {
         HStack {
-            PrayerHeaderButton(icon: "ph-x", size: 18, label: "Leave your first Rosary", tint: AppColors.gold) {
+            PrayerHeaderButton(
+                icon: "ph-x",
+                size: 18,
+                label: String(localized: "Leave your first Rosary", comment: "Guided Rosary: VoiceOver name of the close button"),
+                tint: AppColors.gold
+            ) {
                 if let index, index >= GuidedRosary.firstKeptStep {
                     confirmingLeave = true
                 } else {
@@ -270,7 +275,7 @@ struct GuidedRosaryView: View {
         ZStack(alignment: .leading) {
             if index != nil {
                 QuietGoldButton(
-                    title: "Back",
+                    title: String(localized: "Back", comment: "Guided Rosary: the quiet button back to the step before"),
                     leadingIcon: "ph-caret-left",
                     leadingIconSize: 10,
                     horizontalPadding: 8
@@ -280,7 +285,10 @@ struct GuidedRosaryView: View {
                 .transition(.opacity)
             } else if resumes {
                 QuietGoldButton(
-                    title: "Begin again",
+                    title: String(
+                        localized: "Begin again",
+                        comment: "Guided Rosary welcome, with a place kept: the quiet button that starts again from the Sign of the Cross"
+                    ),
                     leadingIcon: "ph-arrow-counter-clockwise",
                     leadingIconSize: 11,
                     horizontalPadding: 8
@@ -297,9 +305,20 @@ struct GuidedRosaryView: View {
     /// begins. Continue wears it too — the praying begins again. It once
     /// trailed the word, the one Begin in the course that did; Next and
     /// Amen still follow theirs, since they go on and complete.
+    private func footActTitle(resumes: Bool) -> String {
+        if index == nil {
+            return resumes
+                ? String(localized: "Continue", comment: "Guided Rosary welcome, with a place kept: the gold button that takes it up")
+                : String(localized: "Begin", comment: "Guided Rosary welcome: the gold button that begins the first Rosary")
+        }
+        return isLast
+            ? String(localized: "Amen", comment: "Guided Rosary, last step: the gold button that finishes the Rosary")
+            : String(localized: "Next", comment: "Guided Rosary: the gold button on to the next step")
+    }
+
     private func footAct(resumes: Bool) -> some View {
         GoldCTAButton(
-            title: index == nil ? (resumes ? "Continue" : "Begin") : (isLast ? "Amen" : "Next"),
+            title: footActTitle(resumes: resumes),
             prominence: .inline,
             glyph: index == nil ? .play : .none,
             trailingIcon: index == nil ? nil : (isLast ? "ph-check" : "ph-caret-right"),
@@ -380,9 +399,15 @@ struct GuidedRosaryView: View {
         let place = step.place.replacingOccurrences(of: " · ", with: ", ")
         let words: String
         if step.isAnnouncement, let decade = step.decade {
-            words = "\(place): \(MysteryData.mysteries(for: category)[decade].name)."
+            words = String(
+                localized: "\(place): \(MysteryData.mysteries(for: category)[decade].name).",
+                comment: "Guided Rosary, VoiceOver announcement as a mystery is announced: where on the rosary, then the mystery's name"
+            )
         } else {
-            words = "\(place). \(step.instruction)"
+            words = String(
+                localized: "\(place). \(step.instruction)",
+                comment: "Guided Rosary, VoiceOver announcement as a step arrives: where on the rosary, then what to do"
+            )
         }
 
         var announcement = AttributedString(words)
@@ -417,7 +442,10 @@ struct GuidedRosaryView: View {
             }
 
             ReadingText(
-                text: "You do not need to know anything by heart. Every step will tell you where you are and what to do, and every word is written out.",
+                text: String(
+                    localized: "You do not need to know anything by heart. Every step will tell you where you are and what to do, and every word is written out.",
+                    comment: "Guided Rosary welcome: the opening paragraph"
+                ),
                 size: readingSize - 1,
                 showsDropCap: true
             )
@@ -438,7 +466,10 @@ struct GuidedRosaryView: View {
             }
 
             ReadingText(
-                text: "Hold a rosary if you have one; if not, your ten fingers will count the beads. Pray aloud or silently, as you like.\n\nThe drawing above is a rosary. The bead you are on will light up as you go, so you can always find your place.",
+                text: String(
+                    localized: "Hold a rosary if you have one; if not, your ten fingers will count the beads. Pray aloud or silently, as you like.\n\nThe drawing above is a rosary. The bead you are on will light up as you go, so you can always find your place.",
+                    comment: "Guided Rosary welcome: two paragraphs, separated by a blank line, on what to hold and the drawing of a rosary"
+                ),
                 size: readingSize - 1
             )
         }

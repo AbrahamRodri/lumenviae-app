@@ -59,7 +59,12 @@ final class ScripturalRosaryViewModel {
     /// A form's name, for a page that has no model of its own: the
     /// Rosary's own page and its Mysteries sheet
     static func displayName(for form: SpokenForm) -> String {
-        form == .plain ? holyRosaryName : "The Scriptural Rosary"
+        form == .plain
+            ? holyRosaryName
+            : String(
+                localized: "The Scriptural Rosary",
+                comment: "Name of the form of the Rosary with a Bible verse for every Hail Mary, as headers and the Lock Screen show it"
+            )
     }
 
     /// The form said aloud, as a reader sees it. It was "The Holy
@@ -68,7 +73,12 @@ final class ScripturalRosaryViewModel {
     /// its kind and never by its stored name, so a card saved under "The
     /// Rosary Aloud" or "The Holy Rosary" still comes back as this form.
     /// What the Prayer Record keeps is `aloudDevotionName`, unchanged.
-    static let holyRosaryName = "The Audio Rosary"
+    static var holyRosaryName: String {
+        String(
+            localized: "The Audio Rosary",
+            comment: "Name of the form of the Rosary in which every prayer is said aloud and the listener prays along"
+        )
+    }
 
     /// Which snapshot an interrupted one is kept as, so it comes back
     /// as itself
@@ -439,7 +449,7 @@ final class ScripturalRosaryViewModel {
                 return BeadReading(
                     reference: nil,
                     text: Self.prayer("our_father", in: UserSettings.shared.prayerLanguage),
-                    footnote: MysteryData.fruit(for: mystery).map { "Grace to ask for · \($0)" }
+                    footnote: MysteryData.fruit(for: mystery).map { Self.graceToAskFor($0) }
                 )
             }
             // The mystery's fruit, the grace to ask for while it is
@@ -447,7 +457,7 @@ final class ScripturalRosaryViewModel {
             return BeadReading(
                 reference: mystery.scriptureReference,
                 text: mystery.description ?? "",
-                footnote: MysteryData.fruit(for: mystery).map { "Grace to ask for · \($0)" }
+                footnote: MysteryData.fruit(for: mystery).map { Self.graceToAskFor($0) }
             )
         }
 
@@ -475,6 +485,14 @@ final class ScripturalRosaryViewModel {
         }
         let verse = verses[bead - 1]
         return BeadReading(reference: verse.reference, text: verse.text, footnote: nil)
+    }
+
+    /// The fruit of a mystery as the column sets it under the Our Father
+    static func graceToAskFor(_ fruit: String) -> String {
+        String(
+            localized: "Grace to ask for · \(fruit)",
+            comment: "Scriptural Rosary, under the Our Father: the grace to ask for in this mystery, like Grace to ask for · Humility"
+        )
     }
 
     /// The doxology, in the language the Rosary's prayers are set in —
@@ -605,8 +623,16 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
         guard case .preparing(let done, let total) = spoken?.phase else { return nil }
         // A share, not a count of files: "12 of 63" counts recordings,
         // which is nothing the person praying knows about
-        guard total > 0 else { return "Getting the prayers ready…" }
-        return "Getting the prayers ready · \(done * 100 / total)%"
+        guard total > 0 else {
+            return String(
+                localized: "Getting the prayers ready…",
+                comment: "Prayer screen: while the recorded prayers are fetched before the Rosary is said aloud"
+            )
+        }
+        return String(
+            localized: "Getting the prayers ready · \(done * 100 / total)%",
+            comment: "Prayer screen: while the recorded prayers are fetched, with how far it has gone as a percentage"
+        )
     }
 
     /// Why the spoken Rosary could not begin, while it could not
@@ -638,8 +664,16 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
         guard let spoken, spoken.phase == .running || spoken.phase == .finished,
               let segment = spoken.currentSegment else { return nil }
         switch segment.phase {
-        case .opening: return "Opening prayers · \(segment.caption)"
-        case .closing: return "Closing prayers · \(segment.caption)"
+        case .opening:
+            return String(
+                localized: "Opening prayers · \(segment.caption)",
+                comment: "Prayer screen, said aloud: the opening prayers, then the prayer being said, like Opening prayers · The Apostles' Creed"
+            )
+        case .closing:
+            return String(
+                localized: "Closing prayers · \(segment.caption)",
+                comment: "Prayer screen, said aloud: the closing prayers, then the prayer being said, like Closing prayers · Hail, Holy Queen"
+            )
         case .decade: return segment.caption
         }
     }
@@ -655,9 +689,13 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
               let segment = spoken.currentSegment, segment.phase == .decade else { return nil }
         switch segment.kind {
         case .announcement:
-            return [segment.mysteryKey.hasPrefix("seven_sorrows") ? "The Sorrow" : "The Mystery"]
+            return [
+                segment.mysteryKey.hasPrefix("seven_sorrows")
+                    ? String(localized: "The Sorrow", comment: "Strand margin, said aloud: the bead is named for the sorrow being announced")
+                    : String(localized: "The Mystery", comment: "Strand margin, said aloud: the bead is named for the mystery being announced")
+            ]
         case .meditation:
-            return ["Meditation"]
+            return [String(localized: "Meditation", comment: "Strand margin, said aloud: the bead is named for the meditation being read")]
         default:
             return nil
         }

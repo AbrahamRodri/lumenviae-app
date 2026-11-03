@@ -147,7 +147,10 @@ struct PrayerTrackTray: View {
     private func view(for row: Row, showsDivider: Bool) -> some View {
         switch row {
         case .reflection:
-            TrayRow(icon: "ph-note-pencil", title: "Add a reflection", showsDivider: showsDivider) {
+            TrayRow(icon: "ph-note-pencil", title: String(
+                localized: "Add a reflection",
+                comment: "Prayer screen, More menu: row that opens the journal editor"
+            ), showsDivider: showsDivider) {
                 handoff(actions.onAddReflection)
             }
 
@@ -157,7 +160,10 @@ struct PrayerTrackTray: View {
         case .feedback:
             // Handed off like the reflection editor: the form is another
             // sheet, and presenting into this one's dismissal drops it.
-            TrayRow(icon: "ph-chat-teardrop-text", title: "Give feedback", showsDivider: showsDivider) {
+            TrayRow(icon: "ph-chat-teardrop-text", title: String(
+                localized: "Give feedback",
+                comment: "Prayer screen, More menu: row that opens the feedback form"
+            ), showsDivider: showsDivider) {
                 handoff(actions.onGiveFeedback)
             }
 
@@ -166,19 +172,28 @@ struct PrayerTrackTray: View {
             // the system share sheet gets its own presentation over the
             // tray.
             ShareLink(item: actions.shareText) {
-                TrayRowLabel(icon: "ph-export", title: "Share", showsDivider: showsDivider)
+                TrayRowLabel(icon: "ph-export", title: String(
+                    localized: "Share",
+                    comment: "Prayer screen, More menu: row that shares the meditation"
+                ), showsDivider: showsDivider)
             }
             .buttonStyle(.plain)
 
         case .expand:
             if case .reader(let onExpand) = placement {
-                TrayRow(icon: "ph-caret-up", title: "Expand player", showsDivider: showsDivider) {
+                TrayRow(icon: "ph-caret-up", title: String(
+                    localized: "Expand player",
+                    comment: "Meditation reader, More menu: row that goes back to the full player"
+                ), showsDivider: showsDivider) {
                     handoff(onExpand)
                 }
             }
 
         case .end:
-            TrayRow(icon: "ph-x", title: "End prayer", showsDivider: showsDivider) {
+            TrayRow(icon: "ph-x", title: String(
+                localized: "End prayer",
+                comment: "Prayer screen, More menu: row that leaves the Rosary"
+            ), showsDivider: showsDivider) {
                 handoff(actions.onEndSession)
             }
         }
@@ -188,14 +203,23 @@ struct PrayerTrackTray: View {
     @ViewBuilder
     private func downloadRow(showsDivider: Bool) -> some View {
         if isSaved {
-            TrayRow(icon: "ph-trash", title: "Remove offline copy", showsDivider: showsDivider) {
+            TrayRow(icon: "ph-trash", title: String(
+                localized: "Remove offline copy",
+                comment: "Prayer screen, More menu: row that deletes the saved narration"
+            ), showsDivider: showsDivider) {
                 offline.removeAudio(meditationId: actions.meditationId, voice: actions.voice)
                 dismiss()
             }
         } else if let audioURL = actions.audioURL {
             TrayRow(
                 icon: "ph-download-simple",
-                title: isDownloading ? "Saving…" : "Save for offline",
+                title: isDownloading ? String(
+                    localized: "Saving…",
+                    comment: "Prayer screen, More menu: the download row while the narration is being saved"
+                ) : String(
+                    localized: "Save for offline",
+                    comment: "Prayer screen, More menu: row that saves the narration for praying without a connection"
+                ),
                 showsDivider: showsDivider,
                 isEnabled: !isDownloading
             ) {

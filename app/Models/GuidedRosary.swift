@@ -105,44 +105,86 @@ enum RosaryMap {
     static let anatomy: [Anatomy] = [
         Anatomy(
             id: "crucifix",
-            name: "The crucifix",
-            prayed: "Where the Rosary begins and ends. Hold it for the Sign of the Cross and the Apostles' Creed.",
+            name: String(
+                localized: "The crucifix",
+                comment: "How to Pray, the beads lesson: name of a part of the rosary, chosen to light it on a drawing"
+            ),
+            prayed: String(
+                localized: "Where the Rosary begins and ends. Hold it for the Sign of the Cross and the Apostles' Creed.",
+                comment: "How to Pray, the beads lesson: what is prayed on this part of the rosary"
+            ),
             parts: [.crucifix]
         ),
         Anatomy(
             id: "first_large",
-            name: "The first large bead",
-            prayed: "An Our Father, the prayer Jesus taught.",
+            name: String(
+                localized: "The first large bead",
+                comment: "How to Pray, the beads lesson: name of a part of the rosary, chosen to light it on a drawing"
+            ),
+            prayed: String(
+                localized: "An Our Father, the prayer Jesus taught.",
+                comment: "How to Pray, the beads lesson: what is prayed on this part of the rosary"
+            ),
             parts: [.pendantLarge(0)]
         ),
         Anatomy(
             id: "three_small",
-            name: "The three small beads",
-            prayed: "Three Hail Marys, asking for an increase of faith, hope and charity.",
+            name: String(
+                localized: "The three small beads",
+                comment: "How to Pray, the beads lesson: name of a part of the rosary, chosen to light it on a drawing"
+            ),
+            prayed: String(
+                localized: "Three Hail Marys, asking for an increase of faith, hope and charity.",
+                comment: "How to Pray, the beads lesson: what is prayed on this part of the rosary"
+            ),
             parts: [.pendantSmall(0), .pendantSmall(1), .pendantSmall(2)]
         ),
         Anatomy(
             id: "second_large",
-            name: "The next large bead",
-            prayed: "The Glory Be first, on reaching it. Then the first mystery is announced, and its Our Father said on this bead.",
+            name: String(
+                localized: "The next large bead",
+                comment: "How to Pray, the beads lesson: name of a part of the rosary, chosen to light it on a drawing"
+            ),
+            prayed: String(
+                localized: "The Glory Be first, on reaching it. Then the first mystery is announced, and its Our Father said on this bead.",
+                comment: "How to Pray, the beads lesson: what is prayed on this part of the rosary"
+            ),
             parts: [.pendantLarge(1)]
         ),
         Anatomy(
             id: "medal",
-            name: "The medal",
-            prayed: "Where the loop begins, and where the Rosary is closed with the Hail, Holy Queen.",
+            name: String(
+                localized: "The medal",
+                comment: "How to Pray, the beads lesson: name of a part of the rosary, chosen to light it on a drawing"
+            ),
+            prayed: String(
+                localized: "Where the loop begins, and where the Rosary is closed with the Hail, Holy Queen.",
+                comment: "How to Pray, the beads lesson: what is prayed on this part of the rosary"
+            ),
             parts: [.medal]
         ),
         Anatomy(
             id: "decade",
-            name: "A decade",
-            prayed: "Ten small beads: ten Hail Marys while you think about one mystery. There are five decades, one for each mystery.",
+            name: String(
+                localized: "A decade",
+                comment: "How to Pray, the beads lesson: name of a part of the rosary, chosen to light it on a drawing"
+            ),
+            prayed: String(
+                localized: "Ten small beads: ten Hail Marys while you think about one mystery. There are five decades, one for each mystery.",
+                comment: "How to Pray, the beads lesson: what is prayed on this part of the rosary"
+            ),
             parts: Set((0..<10).map { RosaryPart.loopSmall(decade: 0, bead: $0) })
         ),
         Anatomy(
             id: "between",
-            name: "The large beads between",
-            prayed: "On each, the Glory Be and the Fatima Prayer close one decade; then the next mystery is announced, and its Our Father said on the same bead.",
+            name: String(
+                localized: "The large beads between",
+                comment: "How to Pray, the beads lesson: name of a part of the rosary, chosen to light it on a drawing"
+            ),
+            prayed: String(
+                localized: "On each, the Glory Be and the Fatima Prayer close one decade; then the next mystery is announced, and its Our Father said on the same bead.",
+                comment: "How to Pray, the beads lesson: what is prayed on this part of the rosary"
+            ),
             parts: [.loopLarge(0), .loopLarge(1), .loopLarge(2), .loopLarge(3)]
         )
     ]
@@ -216,49 +258,111 @@ enum GuidedRosary {
             ))
         }
 
+        // Where on the Rosary, in small capitals once drawn; and what to
+        // do there, in plain words
+        let crucifix = String(
+            localized: "The crucifix",
+            comment: "Guided Rosary: where on the rosary the fingers are, shown in small capitals over the step"
+        )
+        let medal = String(
+            localized: "The medal",
+            comment: "Guided Rosary: where on the rosary the fingers are, the medal where the loop joins, shown in small capitals"
+        )
+        let nextLargeBead = String(
+            localized: "The next large bead",
+            comment: "Guided Rosary: where on the rosary the fingers are, shown in small capitals over the step"
+        )
+
         // The opening, on the pendant
-        add(.crucifix, "The crucifix",
-            "Take the crucifix in your hand. Touch your forehead, your breast, your left shoulder and your right as you say:",
+        add(.crucifix, crucifix,
+            String(
+                localized: "Take the crucifix in your hand. Touch your forehead, your breast, your left shoulder and your right as you say:",
+                comment: "Guided Rosary, first step: what to do, said before the Sign of the Cross, which follows the colon"
+            ),
             prayers: ["sign_of_cross"])
-        add(.crucifix, "The crucifix",
-            "Still holding the crucifix, say what the Church believes. Everything the Rosary is about is in this prayer.",
+        add(.crucifix, crucifix,
+            String(
+                localized: "Still holding the crucifix, say what the Church believes. Everything the Rosary is about is in this prayer.",
+                comment: "Guided Rosary: what to do before the Apostles' Creed"
+            ),
             prayers: ["apostles_creed"])
-        add(.pendantLarge(0), "The first large bead",
-            "Move your fingers up to the first large bead, and pray the prayer Jesus taught His disciples.",
+        add(.pendantLarge(0),
+            String(
+                localized: "The first large bead",
+                comment: "Guided Rosary: where on the rosary the fingers are, shown in small capitals over the step"
+            ),
+            String(
+                localized: "Move your fingers up to the first large bead, and pray the prayer Jesus taught His disciples.",
+                comment: "Guided Rosary: what to do before the first Our Father"
+            ),
             prayers: ["our_father"])
 
-        let virtues = ["faith", "hope", "charity"]
-        for (index, virtue) in virtues.enumerated() {
-            add(.pendantSmall(index), "Small bead · \(index + 1) of 3",
-                index == 0
-                    ? "On each of the next three small beads, a Hail Mary. This first one asks God for an increase of \(virtue)."
-                    : "The next small bead: a Hail Mary for an increase of \(virtue).",
+        let virtues = [
+            String(
+                localized: "On each of the next three small beads, a Hail Mary. This first one asks God for an increase of faith.",
+                comment: "Guided Rosary: what to do on the first of the three small beads, a Hail Mary for faith"
+            ),
+            String(
+                localized: "The next small bead: a Hail Mary for an increase of hope.",
+                comment: "Guided Rosary: what to do on the second of the three small beads"
+            ),
+            String(
+                localized: "The next small bead: a Hail Mary for an increase of charity.",
+                comment: "Guided Rosary: what to do on the third of the three small beads"
+            ),
+        ]
+        for (index, instruction) in virtues.enumerated() {
+            add(.pendantSmall(index),
+                String(
+                    localized: "Small bead · \(index + 1) of 3",
+                    comment: "Guided Rosary: where on the rosary the fingers are, one of the three small beads, like Small bead · 2 of 3"
+                ),
+                instruction,
                 prayers: ["hail_mary"])
         }
 
         // The Glory Be is said on reaching the large bead, before the
         // mystery and its Our Father — the bead the drawing lights, so
         // the words say so too
-        add(.pendantLarge(1), "The next large bead",
-            "Move up to the next large bead. Before anything else is said on it, give glory to the Holy Trinity.",
+        add(.pendantLarge(1), nextLargeBead,
+            String(
+                localized: "Move up to the next large bead. Before anything else is said on it, give glory to the Holy Trinity.",
+                comment: "Guided Rosary: what to do before the Glory Be on the second large bead"
+            ),
             prayers: ["glory_be"])
 
         // The five decades
         for (decade, mystery) in mysteries.prefix(5).enumerated() {
-            let ordinal = mystery.ordinalName
             let bead = RosaryMap.ourFatherBead(decade: decade)
+            let scene = mystery.name.lowercasedArticle
 
-            add(bead, "The \(ordinal) \(category.displayName) Mystery",
+            add(bead, category.mysteryLabel(ordinal: mystery.order),
                 decade == 0
-                    ? "Now the heart of the Rosary. Each decade is spent with one scene from the life of Jesus and Mary. Say its name, aloud or silently, and picture it."
-                    : "Say the name of the next mystery, and picture the scene.",
+                    ? String(
+                        localized: "Now the heart of the Rosary. Each decade is spent with one scene from the life of Jesus and Mary. Say its name, aloud or silently, and picture it.",
+                        comment: "Guided Rosary: what to do when the first mystery is announced"
+                    )
+                    : String(
+                        localized: "Say the name of the next mystery, and picture the scene.",
+                        comment: "Guided Rosary: what to do when each later mystery is announced"
+                    ),
                 decade: decade,
                 announcement: true)
 
-            add(bead, "\(mystery.name) · the large bead",
+            add(bead,
+                String(
+                    localized: "\(mystery.name) · the large bead",
+                    comment: "Guided Rosary: where on the rosary the fingers are: the mystery's name, then the large bead its Our Father is said on"
+                ),
                 decade == 0
-                    ? "On the large bead, the Our Father. Keep the scene before you as you pray."
-                    : "On the large bead, the Our Father.",
+                    ? String(
+                        localized: "On the large bead, the Our Father. Keep the scene before you as you pray.",
+                        comment: "Guided Rosary: what to do on the first decade's Our Father"
+                    )
+                    : String(
+                        localized: "On the large bead, the Our Father.",
+                        comment: "Guided Rosary: what to do on each later decade's Our Father"
+                    ),
                 prayers: ["our_father"],
                 decade: decade)
 
@@ -266,50 +370,96 @@ enum GuidedRosary {
                 let instruction: String
                 switch (decade, bead) {
                 case (0, 0):
-                    instruction = "Ten Hail Marys, one on each small bead. The words are the same each time; let them carry you while your mind stays with \(mystery.name.lowercasedArticle)."
+                    instruction = String(
+                        localized: "Ten Hail Marys, one on each small bead. The words are the same each time; let them carry you while your mind stays with \(scene).",
+                        comment: "Guided Rosary, first Hail Mary of the first decade: what to do; the end is the mystery's name in running text, like the Annunciation"
+                    )
                 case (0, 1):
-                    instruction = "The next bead. If your mind wanders, simply come back to the scene."
+                    instruction = String(
+                        localized: "The next bead. If your mind wanders, simply come back to the scene.",
+                        comment: "Guided Rosary, second Hail Mary of the first decade: what to do"
+                    )
                 case (_, 0):
-                    instruction = "Ten Hail Marys on \(mystery.name.lowercasedArticle)."
+                    instruction = String(
+                        localized: "Ten Hail Marys on \(scene).",
+                        comment: "Guided Rosary, first Hail Mary of a later decade; the end is the mystery's name in running text, like the Annunciation"
+                    )
                 case (_, 9):
-                    instruction = "The last of the ten."
+                    instruction = String(
+                        localized: "The last of the ten.",
+                        comment: "Guided Rosary: the tenth Hail Mary of a decade"
+                    )
                 default:
-                    instruction = "Stay with \(mystery.name.lowercasedArticle)."
+                    instruction = String(
+                        localized: "Stay with \(scene).",
+                        comment: "Guided Rosary, a Hail Mary of a decade; the end is the mystery's name in running text, like the Annunciation"
+                    )
                 }
 
                 add(.loopSmall(decade: decade, bead: bead),
-                    "\(mystery.name) · \(bead + 1) of 10",
+                    GuidedRosary.hailMaryPlace(mystery.name, bead: bead + 1),
                     instruction,
                     prayers: ["hail_mary"],
                     decade: decade)
             }
 
             let closingBead: RosaryPart = decade < 4 ? .loopLarge(decade) : .medal
-            add(closingBead, "The decade closes",
+            add(closingBead,
+                String(
+                    localized: "The decade closes",
+                    comment: "Guided Rosary: where on the rosary the fingers are, the Glory Be and Fatima Prayer closing a decade, in small capitals"
+                ),
                 decade == 0
-                    ? "Move on to the next large bead. Before its Our Father, close the decade: the Glory Be, and the prayer Our Lady asked for at Fatima. You have prayed one decade."
+                    ? String(
+                        localized: "Move on to the next large bead. Before its Our Father, close the decade: the Glory Be, and the prayer Our Lady asked for at Fatima. You have prayed one decade.",
+                        comment: "Guided Rosary: what to do when the first decade closes"
+                    )
                     : decade == 4
-                        ? "Move on to the medal, and close the last decade."
-                        : "On the next large bead, before its Our Father, close the decade.",
+                        ? String(
+                            localized: "Move on to the medal, and close the last decade.",
+                            comment: "Guided Rosary: what to do when the fifth and last decade closes"
+                        )
+                        : String(
+                            localized: "On the next large bead, before its Our Father, close the decade.",
+                            comment: "Guided Rosary: what to do when the second, third or fourth decade closes"
+                        ),
                 prayers: ["glory_be", "fatima_prayer"],
                 decade: decade)
         }
 
         // The close, on the medal and the crucifix
-        add(.medal, "The medal",
-            "You are back at the medal. Hold it, and greet Our Lady as Queen and Mother.",
+        add(.medal, medal,
+            String(
+                localized: "You are back at the medal. Hold it, and greet Our Lady as Queen and Mother.",
+                comment: "Guided Rosary: what to do before the Hail, Holy Queen"
+            ),
             prayers: ["hail_holy_queen"],
             closing: true)
-        add(.medal, "The medal",
-            "The closing prayer asks that what the mysteries hold may become ours.",
+        add(.medal, medal,
+            String(
+                localized: "The closing prayer asks that what the mysteries hold may become ours.",
+                comment: "Guided Rosary: what to do before the closing prayer"
+            ),
             prayers: ["rosary_closing_prayer"],
             closing: true)
-        add(.crucifix, "The crucifix",
-            "End as you began, with the Sign of the Cross.",
+        add(.crucifix, crucifix,
+            String(
+                localized: "End as you began, with the Sign of the Cross.",
+                comment: "Guided Rosary, last step: what to do before the final Sign of the Cross"
+            ),
             prayers: ["sign_of_cross"],
             closing: true)
 
         return steps
+    }
+
+    /// Where the fingers are on a Hail Mary bead: the mystery's name and
+    /// which of its ten, "The Annunciation · 3 of 10"
+    static func hailMaryPlace(_ mysteryName: String, bead: Int) -> String {
+        String(
+            localized: "\(mysteryName) · \(bead) of 10",
+            comment: "Guided Rosary: where on the rosary the fingers are: the mystery's name, then which of the decade's ten Hail Marys, like The Annunciation · 3 of 10"
+        )
     }
 }
 
@@ -383,9 +533,11 @@ extension GuidedRosary {
             let here = steps[step]
             if let decade = here.decade {
                 let mystery = MysteryData.mysteries(for: category)[decade]
-                return "The \(mystery.ordinalName) \(category.displayName) Mystery"
+                return category.mysteryLabel(ordinal: mystery.order)
             }
-            return here.isClosing ? "The closing prayers" : "The opening prayers"
+            return here.isClosing
+                ? String(localized: "The closing prayers", comment: "Guided Rosary welcome: the part of the Rosary a kept place is in, after the last decade")
+                : String(localized: "The opening prayers", comment: "Guided Rosary welcome: the part of the Rosary a kept place is in, on the cross and first beads")
         }
 
         /// The bead within that part: "The Crowning with Thorns · 4 of
@@ -397,7 +549,7 @@ extension GuidedRosary {
             if let decade = here.decade {
                 let mystery = MysteryData.mysteries(for: category)[decade]
                 if case .loopSmall(_, let bead) = here.part {
-                    return "\(mystery.name) · \(bead + 1) of 10"
+                    return GuidedRosary.hailMaryPlace(mystery.name, bead: bead + 1)
                 }
                 return mystery.name
             }

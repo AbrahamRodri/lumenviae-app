@@ -409,8 +409,14 @@ struct ScripturalRosaryPrayerView: View {
             // while `audioURL` is nil - the tray offers no download.
             voice: NarrationVoiceCatalog.shared.chosenSlug,
             shareText: viewModel.isPlain
-                ? "\(mysteryName) · \(viewModel.displayName) on Lumen Viae"
-                : "\(shareLine) · \(mysteryName), the Scriptural Rosary on Lumen Viae",
+                ? String(
+                    localized: "\(mysteryName) · \(viewModel.displayName) on Lumen Viae",
+                    comment: "Text shared from the Audio Rosary: the mystery's name, then the form's name; Lumen Viae is the app's name"
+                )
+                : String(
+                    localized: "\(shareLine) · \(mysteryName), the Scriptural Rosary on Lumen Viae",
+                    comment: "Text shared from the Scriptural Rosary: the verse on screen with its reference, then the mystery's name; Lumen Viae is the app's name"
+                ),
             feedbackContext: FeedbackContext(
                 meditationTitle: mysteryName,
                 setName: viewModel.displayName
@@ -547,7 +553,12 @@ struct ScripturalRosaryPrayerView: View {
     /// the size of the reading on the right.
     private var header: some View {
         ZStack {
-            Text((viewModel.isPlain ? viewModel.displayName : "Scriptural Rosary").uppercased())
+            Text(
+                (viewModel.isPlain
+                    ? viewModel.displayName
+                    : String(localized: "Scriptural Rosary", comment: "Scriptural Rosary's prayer screen: the header's name, set in capitals"))
+                    .uppercased()
+            )
                 .font(AppFonts.labelFont(9))
                 .tracking(2.5)
                 .foregroundColor(AppColors.goldLight)
@@ -555,11 +566,19 @@ struct ScripturalRosaryPrayerView: View {
                 .lineLimit(1)
 
             HStack {
-                PrayerHeaderButton(icon: "ph-x", size: 18, label: "End prayer") {
+                PrayerHeaderButton(
+                    icon: "ph-x",
+                    size: 18,
+                    label: String(localized: "End prayer", comment: "Prayer screen: VoiceOver name of the close button that leaves the Rosary")
+                ) {
                     router.popToRoot()
                 }
                 Spacer()
-                PrayerHeaderButton(icon: "ph-text-aa", size: 18, label: "Text options") {
+                PrayerHeaderButton(
+                    icon: "ph-text-aa",
+                    size: 18,
+                    label: String(localized: "Text options", comment: "Scriptural Rosary's prayer screen: VoiceOver name of the button that opens text size")
+                ) {
                     activeSheet = .text
                 }
             }
@@ -637,7 +656,7 @@ struct ScripturalRosaryPrayerView: View {
         .onLongPressGesture(perform: prayBack)
         .accessibilityElement(children: .contain)
         .accessibilityLabel(accessibilityText)
-        .accessibilityHint(viewModel.isLastBeadOfRosary ? "" : "Tap for the next bead")
+        .accessibilityHint(viewModel.isLastBeadOfRosary ? Text(verbatim: "") : Text("Tap for the next bead"))
         .accessibilityAction(named: "Next bead", prayForward)
         .accessibilityAction(named: "Previous bead", prayBack)
         .padding(.leading, 28)
@@ -702,7 +721,10 @@ struct ScripturalRosaryPrayerView: View {
                 PendantTitleBlock(
                     pendant: pendant,
                     leadsInto: pendant.phase == .opening
-                        ? PendantTitleBlock.leadIn(to: viewModel.mysteryKicker)
+                        ? PendantTitleBlock.leadIn(
+                            category: viewModel.category,
+                            ordinal: viewModel.currentMysteryIndex + 1
+                        )
                         : nil
                 )
                 .pendantPrayerElement(
@@ -792,7 +814,7 @@ struct ScripturalRosaryPrayerView: View {
     /// It beckons once the voice has said the last Amen.
     private var amenButton: some View {
         GoldCTAButton(
-            title: "Amen",
+            title: String(localized: "Amen", comment: "Gold button on the Rosary's last bead that finishes the Rosary"),
             prominence: .inline,
             trailingIcon: "ph-check",
             fullWidth: false,
@@ -921,17 +943,26 @@ struct ScripturalRosaryPrayerView: View {
     /// other bead says nothing — a cue repeated fifty times is chrome.
     private var beadCue: String? {
         if viewModel.isDecadePrayed, viewModel.isLastMystery, !viewModel.lastMysteryEndsRosary {
-            return "The closing prayers follow on the next swipe."
+            return String(
+                localized: "The closing prayers follow on the next swipe.",
+                comment: "Scriptural Rosary, cue under the last decade's Glory Be: a swipe goes on to the closing prayers"
+            )
         }
         if viewModel.isDecadePrayed {
             let next = viewModel.category.mysteryLabel(ordinal: viewModel.currentMysteryIndex + 2)
-            return "\(next) follows on the next swipe."
+            return String(
+                localized: "\(next) follows on the next swipe.",
+                comment: "Scriptural Rosary, cue once a decade is prayed: the next mystery's title, like The Second Joyful Mystery"
+            )
         }
         // In the Rosary Aloud the voice moves the beads, and how to move
         // them by hand is news only once the voice cannot
         if viewModel.isFirstMystery, viewModel.currentBeadIndex == 0,
            !viewModel.isPlain || viewModel.spokenFailure != nil {
-            return "Swipe down for the first Hail Mary, and up for the bead before."
+            return String(
+                localized: "Swipe down for the first Hail Mary, and up for the bead before.",
+                comment: "Scriptural Rosary, cue on the first bead: how the beads are moved"
+            )
         }
         return nil
     }
@@ -1007,7 +1038,7 @@ struct ScripturalRosaryPrayerView: View {
         // mystery the forward action is the arrow's AMEN, and says so:
         // an action called "Next mystery" must not finish the Rosary
         .accessibilityElement(children: .contain)
-        .accessibilityAction(named: finishesHere ? "Amen — finish the Rosary" : "Next mystery") {
+        .accessibilityAction(named: finishesHere ? Text("Amen — finish the Rosary") : Text("Next mystery")) {
             if finishesHere { finishRosary() } else { nextMystery() }
         }
         .accessibilityAction(named: "Previous mystery", previousMystery)
@@ -1016,8 +1047,23 @@ struct ScripturalRosaryPrayerView: View {
     /// What the hand counts on the decade: "Our Father · Ten Hail Marys ·
     /// Glory Be", seven to a sorrow of the chaplet
     private var decadeCount: String {
-        let hailMarys = viewModel.hailMarys == 7 ? "Seven" : viewModel.hailMarys == 10 ? "Ten" : "\(viewModel.hailMarys)"
-        return "Our Father · \(hailMarys) Hail Marys · Glory Be"
+        switch viewModel.hailMarys {
+        case 7:
+            return String(
+                localized: "Our Father · Seven Hail Marys · Glory Be",
+                comment: "Scriptural Rosary counted on one's own rosary, Seven Sorrows chaplet: what the hand counts on one sorrow"
+            )
+        case 10:
+            return String(
+                localized: "Our Father · Ten Hail Marys · Glory Be",
+                comment: "Scriptural Rosary counted on one's own rosary: what the hand counts on one decade"
+            )
+        default:
+            return String(
+                localized: "Our Father · \(viewModel.hailMarys) Hail Marys · Glory Be",
+                comment: "Scriptural Rosary counted on one's own rosary: what the hand counts on one decade, with a number of Hail Marys"
+            )
+        }
     }
 
     /// Every bead's words in order, each under the bead's own name
@@ -1090,7 +1136,15 @@ struct ScripturalRosaryPrayerView: View {
         TransportButton(
             icon: .asset(finishesHere ? "ph-check" : "ph-arrow-right"),
             size: finishesHere ? 21 : 20,
-            label: finishesHere ? "Amen — finish the Rosary" : "Next mystery"
+            label: finishesHere
+                ? String(
+                    localized: "Amen — finish the Rosary",
+                    comment: "Prayer screen: VoiceOver name of the check on the last mystery that finishes the Rosary"
+                )
+                : String(
+                    localized: "Next mystery",
+                    comment: "Prayer screen, counted on one's own rosary: VoiceOver name of the arrow on to the next mystery"
+                )
         ) {
             if finishesHere {
                 finishRosary()
@@ -1200,7 +1254,7 @@ struct ScripturalRosaryPrayerView: View {
                     icon: "ph-dots-three",
                     size: 23,
                     tint: Self.utilityTint,
-                    label: "More"
+                    label: String(localized: "More", comment: "Prayer screen: VoiceOver name of the button that opens the menu of more actions")
                 ) {
                     activeSheet = .tray
                 }

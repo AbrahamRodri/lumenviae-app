@@ -31,15 +31,25 @@ enum MeditationLabel {
     /// "Contemplative" reads as Inside the Scene, what those meditations
     /// do (Emmerich, Agreda, Ignatius, Faber: the persons seen and heard),
     /// since the bare adjective could not be told from Reflections beside it
-    private static let displayNames: [String: String] = [
-        "Considerations": "Reflections",
-        "Contemplative": "Inside the Scene",
-        "Scriptural": "Gospel"
-    ]
-
-    /// The user-facing wording for an API label.
+    ///
+    /// The raw labels are the web app's vocabulary (`LumenViae.Rosary.Labels`)
+    /// and are what filtering matches; only their wording is translated.
+    /// A label the app does not know yet shows as the server sends it.
     static func displayName(_ label: String) -> String {
-        displayNames[label] ?? label
+        switch label {
+        case "Considerations":
+            return String(localized: "Reflections", comment: "A kind of meditation: a saint's reflections on a mystery")
+        case "Contemplative":
+            return String(localized: "Inside the Scene", comment: "A kind of meditation: the mystery's scene seen and heard from within")
+        case "Scriptural":
+            return String(localized: "Gospel", comment: "A kind of meditation: the Gospel passage of the mystery")
+        case "Saints":
+            return String(localized: "Saints", comment: "A kind of meditation: written by a saint")
+        case "Intentions":
+            return String(localized: "Intentions", comment: "A kind of meditation: for a particular intention")
+        default:
+            return label
+        }
     }
 
     /// A set's labels as one tracked line — "SAINTS  ·  REFLECTIONS" — the

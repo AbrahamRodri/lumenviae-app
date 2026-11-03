@@ -45,11 +45,22 @@ enum PendantPlace: Hashable {
     /// What the bead is called, for VoiceOver
     var name: String {
         switch self {
-        case .cross: return "The crucifix"
-        case .largeBead: return "The large bead"
-        case .smallBead(let index): return "Small bead \(index + 1) of 3"
-        case .chain: return "The chain"
-        case .medal: return "The medal"
+        case .cross:
+            return String(localized: "The crucifix", comment: "VoiceOver: the part of the rosary's pendant the voice is on, the crucifix")
+        case .largeBead:
+            return String(localized: "The large bead", comment: "VoiceOver: the part of the rosary's pendant the voice is on, the large bead above the cross")
+        case .smallBead(let index):
+            return String(
+                localized: "Small bead \(index + 1) of 3",
+                comment: "VoiceOver: the part of the rosary's pendant the voice is on, one of the three small beads, like Small bead 2 of 3"
+            )
+        case .chain:
+            return String(localized: "The chain", comment: "VoiceOver: the part of the rosary's pendant the voice is on, the chain")
+        case .medal:
+            return String(
+                localized: "The medal",
+                comment: "VoiceOver: the part of the rosary's pendant the voice is on, the centrepiece medal where the decades join"
+            )
         }
     }
 }
@@ -69,7 +80,9 @@ struct SpokenPendant: Equatable {
     let isChaplet: Bool
 
     var heading: String {
-        phase == .closing ? "The Closing Prayers" : "The Opening Prayers"
+        phase == .closing
+            ? String(localized: "The Closing Prayers", comment: "Prayer screen: heading over the prayers said after the last decade")
+            : String(localized: "The Opening Prayers", comment: "Prayer screen: heading over the prayers said on the cross and first beads")
     }
 }
 
@@ -87,6 +100,17 @@ struct SpokenSegment: Hashable {
         case meditation
         /// The Scriptural Rosary's verse for one Hail Mary, counted from 1
         case verse(Int)
+
+        /// A stable name for what is heard, the same in every language,
+        /// kept with a resume step so it can be matched again
+        var key: String {
+            switch self {
+            case .prayer(let id): return "prayer:\(id)"
+            case .announcement: return "announcement"
+            case .meditation: return "meditation"
+            case .verse(let number): return "verse:\(number)"
+            }
+        }
     }
 
     /// Where in the Rosary a segment falls. The opening and closing
@@ -187,13 +211,21 @@ enum RosaryClosingExtra: String, CaseIterable, Hashable {
         case .holyFather:
             return ["our_father", "hail_mary", "glory_be"].map { ($0, Self.holyFatherCaption) }
         case .memorare:
-            return [("memorare", "The Memorare")]
+            return [("memorare", String(localized: "The Memorare", comment: "Prayer screen: caption while the Memorare is said after the Rosary"))]
         case .stMichael:
-            return [("st_michael_prayer", "Prayer to Saint Michael")]
+            return [
+                (
+                    "st_michael_prayer",
+                    String(localized: "Prayer to Saint Michael", comment: "Prayer screen: caption while the Prayer to Saint Michael is said after the Rosary")
+                )
+            ]
         }
     }
 
-    static let holyFatherCaption = "For the Pope's intentions"
+    static let holyFatherCaption = String(
+        localized: "For the Pope's intentions",
+        comment: "Prayer screen: caption while the Our Father, Hail Mary and Glory Be for the Pope's intentions are said after the Rosary"
+    )
 
     /// The chosen ones, in the order they are said, whatever order they
     /// were chosen in
@@ -273,16 +305,42 @@ enum SpokenRosaryScript {
         // The pendant: the Rosary opens with the Creed, the Our Father and
         // three Hail Marys for faith, hope and charity. The chaplet of the
         // Seven Sorrows opens with the Act of Contrition.
-        opening("sign_of_cross", "The Sign of the Cross", .cross)
+        let signOfTheCross = String(
+            localized: "The Sign of the Cross",
+            comment: "Prayer screen: caption while the Sign of the Cross is said, opening and closing the Rosary"
+        )
+        let ourFather = String(localized: "The Our Father", comment: "Prayer screen: caption while the Our Father is said")
+        let gloryBeCaption = String(localized: "The Glory Be", comment: "Prayer screen: caption while the Glory Be is said")
+        let closingPrayer = String(
+            localized: "The Closing Prayer",
+            comment: "Prayer screen: caption while the closing prayer after the Rosary or the chaplet is said"
+        )
+        opening("sign_of_cross", signOfTheCross, .cross)
         if isChaplet {
-            opening("act_of_contrition", "The Act of Contrition", .cross)
+            opening(
+                "act_of_contrition",
+                String(localized: "The Act of Contrition", comment: "Prayer screen: caption while the Act of Contrition opens the Seven Sorrows chaplet"),
+                .cross
+            )
         } else {
-            opening("apostles_creed", "The Apostles' Creed", .cross)
-            opening("our_father", "The Our Father", .largeBead)
-            for (index, virtue) in ["faith", "hope", "charity"].enumerated() {
-                opening("hail_mary", "A Hail Mary for \(virtue)", .smallBead(index))
+            opening(
+                "apostles_creed",
+                String(localized: "The Apostles' Creed", comment: "Prayer screen: caption while the Apostles' Creed is said on the cross"),
+                .cross
+            )
+            opening("our_father", ourFather, .largeBead)
+            let virtues = [
+                String(localized: "A Hail Mary for faith", comment: "Prayer screen: caption for the first of the three opening Hail Marys, said for faith"),
+                String(localized: "A Hail Mary for hope", comment: "Prayer screen: caption for the second of the three opening Hail Marys, said for hope"),
+                String(
+                    localized: "A Hail Mary for charity",
+                    comment: "Prayer screen: caption for the third of the three opening Hail Marys, said for charity"
+                ),
+            ]
+            for (index, caption) in virtues.enumerated() {
+                opening("hail_mary", caption, .smallBead(index))
             }
-            opening("glory_be", "The Glory Be", .chain)
+            opening("glory_be", gloryBeCaption, .chain)
         }
 
         for (decade, key) in mysteryKeys.enumerated() {
@@ -293,22 +351,42 @@ enum SpokenRosaryScript {
                 ))
             }
 
-            add(.announcement, bead: 0, isChaplet ? "The sorrow" : "The mystery")
+            add(
+                .announcement,
+                bead: 0,
+                isChaplet
+                    ? String(localized: "The sorrow", comment: "Prayer screen: caption while a sorrow of the chaplet is announced")
+                    : String(localized: "The mystery", comment: "Prayer screen: caption while a mystery of the Rosary is announced")
+            )
             if style == .meditation {
-                add(.meditation, bead: 0, "The meditation")
+                add(.meditation, bead: 0, String(localized: "The meditation", comment: "Prayer screen: caption while the mystery's meditation is read aloud"))
             }
-            add(.prayer("our_father"), bead: 0, "The Our Father")
+            add(.prayer("our_father"), bead: 0, ourFather)
 
             for number in 1...max(hailMarys, 1) {
                 if style == .scriptural {
-                    add(.verse(number), bead: number, "Scripture · \(number) of \(hailMarys)")
+                    add(
+                        .verse(number),
+                        bead: number,
+                        String(
+                            localized: "Scripture · \(number) of \(hailMarys)",
+                            comment: "Prayer screen: caption while the verse before a Hail Mary is read, like Scripture · 4 of 10"
+                        )
+                    )
                 }
-                add(.prayer("hail_mary"), bead: number, "Hail Mary · \(number) of \(hailMarys)")
+                add(
+                    .prayer("hail_mary"),
+                    bead: number,
+                    String(
+                        localized: "Hail Mary · \(number) of \(hailMarys)",
+                        comment: "Prayer screen: name of a Hail Mary bead and which of the decade's Hail Marys it is, like Hail Mary · 4 of 10"
+                    )
+                )
             }
 
-            add(.prayer("glory_be"), bead: gloryBe, "The Glory Be")
+            add(.prayer("glory_be"), bead: gloryBe, gloryBeCaption)
             if !isChaplet {
-                add(.prayer("fatima_prayer"), bead: gloryBe, "The Fatima Prayer")
+                add(.prayer("fatima_prayer"), bead: gloryBe, String(localized: "The Fatima Prayer", comment: "Prayer screen: caption while the Fatima Prayer is said"))
             }
         }
 
@@ -316,19 +394,30 @@ enum SpokenRosaryScript {
             // The chaplet closes with three Hail Marys in honor of the
             // tears Our Lady shed in her sorrows, and its own prayer
             for number in 1...3 {
-                closing("hail_mary", "In honor of her tears · \(number) of 3", .smallBead(number - 1))
+                closing(
+                    "hail_mary",
+                    String(
+                        localized: "In honor of her tears · \(number) of 3",
+                        comment: "Prayer screen, end of the Seven Sorrows chaplet: caption for one of three Hail Marys said in honor of Mary's tears"
+                    ),
+                    .smallBead(number - 1)
+                )
             }
-            closing("sorrows_closing_prayer", "The Closing Prayer", .medal)
+            closing("sorrows_closing_prayer", closingPrayer, .medal)
         } else {
-            closing("hail_holy_queen", "Hail, Holy Queen", .medal)
-            closing("rosary_closing_prayer", "The Closing Prayer", .medal)
+            closing(
+                "hail_holy_queen",
+                String(localized: "Hail, Holy Queen", comment: "Prayer screen: caption while the Hail, Holy Queen is said after the last decade"),
+                .medal
+            )
+            closing("rosary_closing_prayer", closingPrayer, .medal)
             for extra in RosaryClosingExtra.ordered(extras) {
                 for prayer in extra.prayers {
                     closing(prayer.id, prayer.caption, .medal)
                 }
             }
         }
-        closing("sign_of_cross", "The Sign of the Cross", .cross)
+        closing("sign_of_cross", signOfTheCross, .cross)
 
         return script
     }
@@ -352,8 +441,14 @@ enum SpokenRosaryScript {
     static func resumeIndex(in script: [SpokenSegment], step: SpokenStep?) -> Int? {
         guard let step, script.indices.contains(step.index) else { return nil }
         let segment = script[step.index]
-        guard segment.mystery == step.mystery, segment.bead == step.bead,
-              segment.caption == step.caption else { return nil }
+        guard segment.mystery == step.mystery, segment.bead == step.bead else { return nil }
+        // Matched on what is heard. A step saved before the kind was kept
+        // falls back to its caption, which is in the language it was saved in
+        if let kind = step.kind {
+            guard segment.kind.key == kind else { return nil }
+        } else {
+            guard segment.caption == step.caption else { return nil }
+        }
         return step.index
     }
 
@@ -410,4 +505,6 @@ struct SpokenStep: Codable, Equatable {
     let mystery: Int
     let bead: Int
     let caption: String
+    /// `SpokenSegment.Kind.key`; nil in a step saved before it was kept
+    var kind: String? = nil
 }

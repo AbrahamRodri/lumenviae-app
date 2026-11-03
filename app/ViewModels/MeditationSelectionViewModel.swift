@@ -145,7 +145,10 @@ final class MeditationSelectionViewModel {
 
         var result = order.map { Section(title: $0, sets: grouped[$0] ?? []) }
         if !unlabeled.isEmpty {
-            result.append(Section(title: result.isEmpty ? nil : "More", sets: unlabeled))
+            result.append(Section(title: result.isEmpty ? nil : String(
+                localized: "More",
+                comment: "Mysteries' page: heading over the meditation sets that carry no kind, closing the list"
+            ), sets: unlabeled))
         }
         return result
     }
@@ -186,7 +189,10 @@ final class MeditationSelectionViewModel {
             if let stored = OfflineContentService.shared.storedSummaries(category: category) {
                 meditationSets = stored
             } else {
-                errorMessage = "Couldn't load the meditations. Check your connection and try again."
+                errorMessage = String(
+                    localized: "Couldn't load the meditations. Check your connection and try again.",
+                    comment: "Mysteries' page: shown when the meditation sets could not be loaded"
+                )
             }
         }
 
