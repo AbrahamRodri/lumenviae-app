@@ -131,7 +131,9 @@ struct PrayersNowCard: View {
                 .buttonStyle(SacredCardButtonStyle(scales: false))
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(
-                    "\(title), \(offered ? "prayed" : "the prayer for this hour"). \(PrayerBook.daySummary(of: order, on: now))"
+                    offered
+                        ? Text("\(title), prayed. \(PrayerBook.daySummary(of: order, on: now))")
+                        : Text("\(title), the prayer for this hour. \(PrayerBook.daySummary(of: order, on: now))")
                 )
                 .accessibilityHint("Shows its prayers")
                 .accessibilityAddTraits(.isButton)
@@ -172,7 +174,7 @@ struct PrayersNowCard: View {
             .frame(width: Self.paintingWidth)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(offered ? "\(hour) · PRAYED" : "NOW · \(hour)")
+                (offered ? Text("\(hour) · PRAYED") : Text("NOW · \(hour)"))
                     .font(AppFonts.labelFont(9.5))
                     .tracking(2.2)
                     .foregroundColor(AppColors.gold)
@@ -210,8 +212,12 @@ struct PrayersNowCard: View {
 
     private func prayButton(title: String) -> some View {
         PrayersPrayButton(
-            title: offered ? "PRAY AGAIN" : "PRAY",
-            spoken: offered ? "Pray \(title) again" : "Pray \(title)",
+            title: offered
+                ? String(localized: "PRAY AGAIN", comment: "Prayers tab, the Now card: the act on the hour's order once it has been prayed; in capitals")
+                : String(localized: "PRAY", comment: "Prayers tab, the Now card: the act that prays the hour's order; in capitals"),
+            spoken: offered
+                ? String(localized: "Pray \(title) again", comment: "VoiceOver, Prayers tab's Now card: the act once prayed; the name is an order of prayer, like Night Prayers")
+                : String(localized: "Pray \(title)", comment: "VoiceOver, Prayers tab's Now card: the act; the name is an order of prayer, like Night Prayers"),
             action: pray
         )
     }
@@ -316,7 +322,15 @@ struct PrayersPictureRow: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .combine)
-        .accessibilityLabel([prayer.listTitle, note, kept ? "saved" : nil].compactMap { $0 }.joined(separator: ", "))
+        .accessibilityLabel(
+            [
+                prayer.listTitle,
+                note,
+                kept ? String(localized: "saved", comment: "VoiceOver, a prayer's row on the Prayers tab: the reader has saved it") : nil
+            ]
+            .compactMap { $0 }
+            .joined(separator: ", ")
+        )
         .accessibilityAddTraits(.isButton)
     }
 }

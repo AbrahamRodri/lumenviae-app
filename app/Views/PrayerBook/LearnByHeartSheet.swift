@@ -57,10 +57,10 @@ struct LearnByHeartSheet: View {
 
         var label: String {
             switch self {
-            case .read:         return "Read"
-            case .someHidden:   return "Some hidden"
-            case .firstLetters: return "First letters"
-            case .byHeart:      return "By heart"
+            case .read:         return String(localized: "Read", comment: "Learn by Heart sheet: the first of four steps, the whole prayer shown to read")
+            case .someHidden:   return String(localized: "Some hidden", comment: "Learn by Heart sheet: the second of four steps, some words of the prayer hidden")
+            case .firstLetters: return String(localized: "First letters", comment: "Learn by Heart sheet: the third of four steps, each word cut to its first letter")
+            case .byHeart:      return String(localized: "By heart", comment: "Learn by Heart sheet: the last of four steps, the prayer said without the words")
             }
         }
 
@@ -68,8 +68,8 @@ struct LearnByHeartSheet: View {
         /// no telling, and by the last step the reader knows the way
         var hint: String? {
             switch self {
-            case .someHidden:   return "Touch a word to see it."
-            case .firstLetters: return "Say it from the first letters."
+            case .someHidden:   return String(localized: "Touch a word to see it.", comment: "Learn by Heart sheet: the hint under the step where some words are hidden")
+            case .firstLetters: return String(localized: "Say it from the first letters.", comment: "Learn by Heart sheet: the hint under the step where each word is cut to its first letter")
             case .read, .byHeart: return nil
             }
         }
@@ -205,8 +205,8 @@ struct LearnByHeartSheet: View {
                     .modifier(BarCapsule())
                 }
                 .buttonStyle(QuietGlyphButtonStyle())
-                .accessibilityLabel(inLatin ? "Learning in Latin" : "Learning in English")
-                .accessibilityHint(inLatin ? "Switches to English" : "Switches to Latin")
+                .accessibilityLabel(inLatin ? Text("Learning in Latin") : Text("Learning in English"))
+                .accessibilityHint(inLatin ? Text("Switches to English") : Text("Switches to Latin"))
             }
 
             Spacer()
@@ -303,7 +303,11 @@ struct LearnByHeartSheet: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(stage == .firstLetters ? "Hidden word beginning \(letters(word).prefix(1))" : "Hidden word")
+            .accessibilityLabel(
+                stage == .firstLetters
+                    ? Text("Hidden word beginning \(String(letters(word).prefix(1)))")
+                    : Text("Hidden word")
+            )
             .accessibilityHint("Shows the word")
         } else {
             Text(word)
@@ -417,7 +421,13 @@ struct LearnByHeartSheet: View {
         } else if stage == .byHeart {
             HStack(spacing: 14) {
                 StepDisc(direction: .back) { go(to: .firstLetters) }
-                GoldCTAButton(title: "I know it by heart", trailingIcon: "ph-check") {
+                GoldCTAButton(
+                    title: String(
+                        localized: "I know it by heart",
+                        comment: "Learn by Heart sheet: the gold act on the last step, marking the prayer as learned"
+                    ),
+                    trailingIcon: "ph-check"
+                ) {
                     store.setByHeart(prayer.id, true)
                     sealed = true
                     Task { @MainActor in
@@ -527,7 +537,7 @@ private struct StepDisc: View {
                 .contentShape(Circle())
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel(direction == .back ? "Back a step" : "Next step")
+        .accessibilityLabel(direction == .back ? Text("Back a step") : Text("Next step"))
     }
 }
 

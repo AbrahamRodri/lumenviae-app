@@ -325,7 +325,10 @@ enum ChantLibraryData {
         ChantOccasion(
             id: "benediction",
             title: "Adoration and Blessing",
-            note: "Benediction: hymns before the Host, then the priest's blessing",
+            note: String(
+                localized: "Benediction: hymns before the Host, then the priest's blessing",
+                comment: "Chant library: the one line under a sung set's name saying what it is for"
+            ),
             painting: "topic_blessed_sacrament",
             blocks: [
                 ChantOccasionBlock(rubric: "The Host is placed on the altar for all to see. Kneel.",
@@ -341,7 +344,10 @@ enum ChantLibraryData {
         ChantOccasion(
             id: "visit",
             title: "A Visit to Jesus in Church",
-            note: "Quiet time with Jesus, present in the Host",
+            note: String(
+                localized: "Quiet time with Jesus, present in the Host",
+                comment: "Chant library: the one line under a sung set's name saying what it is for"
+            ),
             painting: "jesus_eucharist_saviour",
             blocks: [
                 ChantOccasionBlock(rubric: "Kneel before the tabernacle, where the Host is kept.",
@@ -355,7 +361,10 @@ enum ChantLibraryData {
         ChantOccasion(
             id: "sung_rosary",
             title: "A Sung Rosary",
-            note: "Every prayer of the Rosary, sung in Latin",
+            note: String(
+                localized: "Every prayer of the Rosary, sung in Latin",
+                comment: "Chant library: the one line under a sung set's name saying what it is for"
+            ),
             painting: "feast_our_lady_of_the_rosary",
             blocks: [
                 ChantOccasionBlock(rubric: "On the crucifix: make the Sign of the Cross, then sing the Creed.",
@@ -379,7 +388,10 @@ enum ChantLibraryData {
         ChantOccasion(
             id: "before_bed",
             title: "Before Bed",
-            note: "End the day with Mary",
+            note: String(
+                localized: "End the day with Mary",
+                comment: "Chant library: the one line under a sung set's name saying what it is for"
+            ),
             painting: "hour_night",
             blocks: [
                 ChantOccasionBlock(rubric: "Put yourself under her protection for the night.",
@@ -391,7 +403,10 @@ enum ChantLibraryData {
         ChantOccasion(
             id: "before_work",
             title: "Before Work or Study",
-            note: "Ask for help before you start",
+            note: String(
+                localized: "Ask for help before you start",
+                comment: "Chant library: the one line under a sung set's name saying what it is for"
+            ),
             painting: "saint_joseph_carpenter",
             blocks: [
                 ChantOccasionBlock(rubric: "Before you begin, ask the Holy Spirit to come.",
@@ -403,7 +418,10 @@ enum ChantLibraryData {
         ChantOccasion(
             id: "for_the_dead",
             title: "For Those Who Have Died",
-            note: "At a funeral, or any time in November",
+            note: String(
+                localized: "At a funeral, or any time in November",
+                comment: "Chant library: the one line under a sung set's name saying what it is for"
+            ),
             painting: "devotion_holy_souls",
             blocks: [
                 ChantOccasionBlock(rubric: "The poem sung at the funeral Mass.",

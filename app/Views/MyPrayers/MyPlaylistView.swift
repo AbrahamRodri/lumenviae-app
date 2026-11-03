@@ -95,7 +95,16 @@ struct MyPlaylistView: View {
                     .padding(.top, 4)
 
                 if !prayers.isEmpty {
-                    PrayersPrayButton(title: "PRAY", spoken: "Pray \(playlist.displayName)") {
+                    PrayersPrayButton(
+                        title: String(
+                            localized: "PRAY",
+                            comment: "A playlist's page: the button that prays it, in small capitals"
+                        ),
+                        spoken: String(
+                            localized: "Pray \(playlist.displayName)",
+                            comment: "VoiceOver: the button that prays a playlist of the reader's own, by its name"
+                        )
+                    ) {
                         router.push(.prayAlong(.playlist(playlist)))
                     }
                     .padding(.top, 10)
@@ -103,7 +112,16 @@ struct MyPlaylistView: View {
 
                 VStack(spacing: 0) {
                     if prayers.isEmpty {
-                        MyPrayersInvite(line: "This playlist has no prayers yet.", action: "ADD PRAYERS") {
+                        MyPrayersInvite(
+                            line: String(
+                                localized: "This playlist has no prayers yet.",
+                                comment: "A playlist's page while it holds no prayer"
+                            ),
+                            action: String(
+                                localized: "ADD PRAYERS",
+                                comment: "A playlist's page while it holds no prayer: the button to add some, in small capitals"
+                            )
+                        ) {
                             editing = true
                         }
                     }

@@ -27,14 +27,20 @@ enum MyPrayersPaintings {
 
     static let groups: [Group] = [
         Group(
-            title: "Our Lady",
+            title: String(
+                localized: "Our Lady",
+                comment: "Image picker: the heading over a group of paintings of the Virgin Mary"
+            ),
             assets: [
                 "mary_virgin_in_prayer", "mary_sistine_madonna", "mary_immaculate_conception", "mary_mother_of_mercy",
                 "mary_mount_carmel", "mary_of_the_snows", "mary_mater_dolorosa", "feast_annunciation",
                 "feast_our_lady_of_the_rosary", "prayer_holy_family",
             ]),
         Group(
-            title: "Our Lord",
+            title: String(
+                localized: "Our Lord",
+                comment: "Image picker: the heading over a group of paintings of Jesus"
+            ),
             assets: [
                 "jesus_light_of_the_world", "jesus_good_shepherd", "jesus_holy_name", "jesus_anima_christi",
                 "jesus_eucharist_saviour", "jesus_precious_blood", "jesus_healing_blind", "jesus_washing_feet",
@@ -43,7 +49,10 @@ enum MyPrayersPaintings {
                 "prayer_supper_emmaus", "tribute_money", "last_judgment",
             ]),
         Group(
-            title: "Saints and Angels",
+            title: String(
+                localized: "Saints and Angels",
+                comment: "Image picker: the heading over a group of paintings of saints and angels"
+            ),
             assets: [
                 "devotion_st_joseph", "saint_joseph_carpenter", "devotion_guardian_angels", "prayer_tobias_angel",
                 "saint_michael", "devotion_holy_trinity", "feast_all_saints", "devotion_holy_souls", "carlo_acutis",
@@ -53,7 +62,10 @@ enum MyPrayersPaintings {
                 "saint_ambrose", "saint_jerome_penitent", "apostles_calling_duccio", "psalm_king_david",
             ]),
         Group(
-            title: "The Mysteries",
+            title: String(
+                localized: "The Mysteries",
+                comment: "Image picker: the heading over a group of paintings of the mysteries of the Rosary"
+            ),
             assets: [
                 "joyful_annunciation", "joyful_visitation", "joyful_nativity", "joyful_presentation", "joyful_finding",
                 "luminous_baptism", "luminous_cana", "luminous_proclamation", "luminous_transfiguration",
@@ -65,7 +77,10 @@ enum MyPrayersPaintings {
                 "seven_sorrows_descent", "seven_sorrows_pieta", "seven_sorrows_burial",
             ]),
         Group(
-            title: "Hours, Seasons and Feasts",
+            title: String(
+                localized: "Hours, Seasons and Feasts",
+                comment: "Image picker: the heading over a group of paintings for times of day, seasons and feasts"
+            ),
             assets: [
                 "hour_morning", "hour_night", "season_advent", "season_lent", "advent_isaiah", "shepherds_annunciation",
                 "christmas_shepherds", "pentecost_maino", "feast_christ_the_king", "topic_daily_prayers",
@@ -101,7 +116,10 @@ struct MyPrayersArtRow: View {
                         .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
                 )
                 VStack(alignment: .leading, spacing: 2) {
-                    MyPrayersLabel("Image")
+                    MyPrayersLabel(String(
+                        localized: "Image",
+                        comment: "An editor's image row: the label over the chosen image's description"
+                    ))
                     Text(description)
                         .font(AppFonts.readingItalicFont(15))
                         .foregroundColor(AppColors.cream)
@@ -125,8 +143,21 @@ struct MyPrayersArtRow: View {
     }
 
     private var description: String {
-        guard let art else { return "The book's own" }
-        return UserPhotoStore.isPhoto(art) ? "Your photo" : "A painting"
+        guard let art else {
+            return String(
+                localized: "The book's own",
+                comment: "An editor's image row: no image chosen, so the book's own paintings are used"
+            )
+        }
+        return UserPhotoStore.isPhoto(art)
+            ? String(
+                localized: "Your photo",
+                comment: "An editor's image row: the chosen image is a photo of the reader's"
+            )
+            : String(
+                localized: "A painting",
+                comment: "An editor's image row: the chosen image is one of the app's paintings"
+            )
     }
 }
 
@@ -151,8 +182,17 @@ struct MyPrayersArtPicker: View {
             AppColors.appGradient.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                SheetHeader(kicker: "Image", title: "Choose an Image") {
-                    SheetHeaderAction(title: "Done") { dismiss() }
+                SheetHeader(
+                    kicker: String(
+                        localized: "Image",
+                        comment: "Image picker: the small kicker over the sheet's title"
+                    ),
+                    title: String(localized: "Choose an Image", comment: "Image picker: the sheet's title")
+                ) {
+                    SheetHeaderAction(title: String(
+                        localized: "Done",
+                        comment: "Sheet header action that closes the sheet"
+                    )) { dismiss() }
                 }
 
                 ScrollView(showsIndicators: false) {
@@ -251,7 +291,7 @@ struct MyPrayersArtPicker: View {
             }
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel(chosen ? "Painting, chosen" : "Painting")
+        .accessibilityLabel(chosen ? Text("Painting, chosen") : Text("Painting"))
     }
 
     private func pick(_ art: String?) {

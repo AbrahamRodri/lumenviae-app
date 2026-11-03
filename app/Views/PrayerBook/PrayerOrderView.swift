@@ -260,7 +260,7 @@ struct PrayerOrderView: View {
             // of the painting can stand behind it
             .shadow(color: AppColors.background.opacity(0.9), radius: 6)
             .accessibilityElement(children: .combine)
-            .accessibilityLabel(offered ? "\(order.occasion). Prayed today" : order.occasion)
+            .accessibilityLabel(offered ? Text("\(order.occasion). Prayed today") : Text(order.occasion))
 
             Text(title)
                 .font(AppFonts.titleFont(29))
@@ -304,7 +304,10 @@ struct PrayerOrderView: View {
     private func seasonNote(_ order: PrayerOrder) -> String? {
         switch order.id {
         case PrayerBook.angelusOrderID where PrayerBook.isEastertide(now):
-            return "Said in place of the Angelus until Pentecost."
+            return String(
+                localized: "Said in place of the Angelus until Pentecost.",
+                comment: "Order of prayer page for the Angelus, in the Easter season: a note under its list saying Queen of Heaven (Regina Caeli) takes the Angelus's place"
+            )
         default:
             return nil
         }
@@ -313,7 +316,11 @@ struct PrayerOrderView: View {
     // MARK: - Foot
 
     private func foot(_ order: PrayerOrder) -> some View {
-        GoldCTAButton(title: "Pray", prominence: .inline, glyph: .play) {
+        GoldCTAButton(
+            title: String(localized: "Pray", comment: "Order of prayer page: the gold act at its foot that begins praying the order"),
+            prominence: .inline,
+            glyph: .play
+        ) {
             router.push(.prayAlong(.order(order, on: now)))
         }
         .padding(.horizontal, 24)
@@ -385,7 +392,12 @@ private struct OrderPrayerRow: View {
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .combine)
         .accessibilityLabel(
-            ["\(number), \(prayer.title)", byHeart ? "learned by heart" : nil, kept ? "saved" : nil]
+            [
+                "\(number), \(prayer.title)",
+                byHeart
+                    ? String(localized: "learned by heart", comment: "VoiceOver, a prayer's row on an order of prayer page: the reader has marked it as known by heart") : nil,
+                kept ? String(localized: "saved", comment: "VoiceOver, a prayer's row on an order of prayer page: the reader has saved it") : nil
+            ]
                 .compactMap { $0 }
                 .joined(separator: ", ")
         )

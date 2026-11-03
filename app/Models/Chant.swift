@@ -159,18 +159,33 @@ struct Chant: Identifiable, Hashable {
 
     /// Its two names as VoiceOver says them: "Salve Regina, Hail, Holy
     /// Queen". A Latin title is never heard alone.
-    var spokenName: String { "\(latinTitle), \(englishTitle)" }
+    var spokenName: String {
+        String(
+            localized: "\(latinTitle), \(englishTitle)",
+            comment: "VoiceOver: a chant's Latin title, then its English title"
+        )
+    }
 
     /// Its names with the setting where neither says it, for a control
     /// that must tell two settings of one work apart: "Salve Regina, Hail,
     /// Holy Queen, simple melody"
     var spokenNameAndSetting: String {
-        settingMidLine.map { "\(spokenName), \($0)" } ?? spokenName
+        settingMidLine.map {
+            String(
+                localized: "\(spokenName), \($0)",
+                comment: "VoiceOver: a chant's two titles, then its setting, like simple melody"
+            )
+        } ?? spokenName
     }
 
     /// The English name with the Latin after it, where one line holds
     /// both: "Hail, Holy Queen (Salve Regina)"
-    var englishWithLatin: String { "\(englishTitle) (\(latinTitle))" }
+    var englishWithLatin: String {
+        String(
+            localized: "\(englishTitle) (\(latinTitle))",
+            comment: "A chant's English title with its Latin title after it in brackets, like Hail, Holy Queen (Salve Regina)"
+        )
+    }
 
     /// The title with its setting, for a row that has room for one line:
     /// "Salve Regina · Simple melody", and Credo III alone, never twice
@@ -258,10 +273,19 @@ enum ChantCatalog {
     /// Said wherever a chant plays. The licence asks for no attribution;
     /// the app gives it anyway, and says the files are shared on the same
     /// terms, which the licence does ask.
-    static let credit = "Recordings and sheet music by Verbum Gloriae"
+    static let credit = String(
+        localized: "Recordings and sheet music by Verbum Gloriae",
+        comment: "Credit line on a chant's page and the Lock Screen; Verbum Gloriae is the name of a Spanish chant apostolate"
+    )
     /// The library page's one line of credit, a link to their site
-    static let libraryCredit = "Recordings and scores by Verbum Gloriae"
-    static let licenceNote = "Shared under Verbum Gloriae's free licence, a copyleft licence. Our copies are compressed and recoloured, and they carry the same licence."
+    static let libraryCredit = String(
+        localized: "Recordings and scores by Verbum Gloriae",
+        comment: "Chant library page: its one line of credit, a link; Verbum Gloriae is the name of a Spanish chant apostolate"
+    )
+    static let licenceNote = String(
+        localized: "Shared under Verbum Gloriae's free licence, a copyleft licence. Our copies are compressed and recoloured, and they carry the same licence.",
+        comment: "Chant page: the note on the recordings' licence, under the credit"
+    )
     static let sourceSite = URL(string: "https://www.verbumgloriae.es")!
     static let licenceURL = URL(string: "https://www.verbumgloriae.es/licencia-copyleft/")!
 }

@@ -366,12 +366,27 @@ struct ChantView: View {
     /// stands. The three labels are the ones the page has always used.
     static func learnWords(learned: Bool, step: ChantLearningStep?) -> (title: String, note: String) {
         if learned {
-            return ("Practise again", "Learned")
+            return (
+                String(localized: "Practise again", comment: "Chant page, the Learn card's title once the chant is learned by heart"),
+                String(localized: "Learned", comment: "Chant page, the Learn card's note: the reader has marked this chant learned by heart")
+            )
         }
         if let step {
-            return ("Continue learning", "Step \(step.rawValue) of 4 · \(step.title)")
+            return (
+                String(localized: "Continue learning", comment: "Chant page, the Learn card's title while a practice is under way"),
+                String(
+                    localized: "Step \(step.rawValue) of 4 · \(step.title)",
+                    comment: "Chant page, the Learn card's note: which of the four practice steps the learner is on, then that step's name"
+                )
+            )
         }
-        return ("Learn this chant", "Four steps: listen, read along, sing along, on your own")
+        return (
+            String(localized: "Learn this chant", comment: "Chant page, the Learn card's title before any practice"),
+            String(
+                localized: "Four steps: listen, read along, sing along, on your own",
+                comment: "Chant page, the Learn card's note naming the practice's four steps"
+            )
+        )
     }
 
     private func learnCard(_ chant: Chant) -> some View {
@@ -427,7 +442,11 @@ struct ChantView: View {
 
         if !prayers.isEmpty {
             VStack(alignment: .leading, spacing: 6) {
-                ChantSectionHeading(kicker: nil, title: "The prayer it sings", titleSize: 17)
+                ChantSectionHeading(
+                    kicker: nil,
+                    title: String(localized: "The prayer it sings", comment: "Chant page, heading over the prayer whose words this chant sings"),
+                    titleSize: 17
+                )
                 VStack(spacing: 0) {
                     ForEach(prayers, id: \.id) { prayer in
                         ChantPrayerRow(prayer: prayer) {
@@ -441,7 +460,11 @@ struct ChantView: View {
 
         if !others.isEmpty {
             VStack(alignment: .leading, spacing: 6) {
-                ChantSectionHeading(kicker: nil, title: "Also sung", titleSize: 17)
+                ChantSectionHeading(
+                    kicker: nil,
+                    title: String(localized: "Also sung", comment: "Chant page, heading over other musical settings of the same chant"),
+                    titleSize: 17
+                )
                 VStack(spacing: 0) {
                     ForEach(others) { other in
                         ChantSongRow(chant: other, player: ChantPlayer.shared) {
@@ -658,7 +681,10 @@ private struct NowPlayingLine: View {
 /// for as long as the singer took over it
 struct ChantYourTurn: View {
     let turn: ChantTurn
-    var subtitle = "The singer sang the line. Now sing it back."
+    var subtitle = String(
+        localized: "The singer sang the line. Now sing it back.",
+        comment: "Chant page, Take turns: the line under Your turn, while the reader sings back the line just sung"
+    )
 
     var body: some View {
         HStack(spacing: 14) {
@@ -794,8 +820,8 @@ private struct NowPlayingTransport: View {
         .buttonStyle(QuietGlyphButtonStyle())
         .disabled(!holds)
         .accessibilityLabel(lines
-            ? (back ? "Previous line" : "Next line")
-            : (back ? "Back ten seconds" : "Forward ten seconds"))
+            ? (back ? Text("Previous line") : Text("Next line"))
+            : (back ? Text("Back ten seconds") : Text("Forward ten seconds")))
     }
 }
 
@@ -860,7 +886,7 @@ struct NowPlayingTools: View {
             }
         }
         .buttonStyle(QuietGlyphButtonStyle())
-        .accessibilityLabel(lines ? "Repeat this line" : "Repeat the chant")
+        .accessibilityLabel(lines ? Text("Repeat this line") : Text("Repeat the chant"))
         .accessibilityAddTraits(isOn ? [.isSelected] : [])
         .sensoryFeedback(.selection, trigger: isOn)
     }
@@ -880,9 +906,9 @@ struct NowPlayingTools: View {
             }
         }
         .buttonStyle(QuietGlyphButtonStyle())
-        .accessibilityLabel(slow ? "Speed, slower" : speed > 1 ? "Speed, faster" : "Speed, normal")
+        .accessibilityLabel(slow ? Text("Speed, slower") : speed > 1 ? Text("Speed, faster") : Text("Speed, normal"))
         .accessibilityAddTraits(slow ? [.isSelected] : [])
-        .accessibilityHint(slow ? "Plays at the normal speed" : "Plays at three-quarters speed, for learning")
+        .accessibilityHint(slow ? Text("Plays at the normal speed") : Text("Plays at three-quarters speed, for learning"))
     }
 
     private var takeTurnsButton: some View {
@@ -911,7 +937,7 @@ struct NowPlayingTools: View {
         }
         .buttonStyle(QuietGlyphButtonStyle())
         .accessibilityLabel("Sleep timer")
-        .accessibilityValue(isOn ? "On" : "")
+        .accessibilityValue(isOn ? Text("On") : Text(verbatim: ""))
         .accessibilityAddTraits(isOn ? [.isSelected] : [])
     }
 

@@ -247,7 +247,19 @@ struct PrayerHoursStrip: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(QuietGlyphButtonStyle())
-        .accessibilityLabel("\(order.title(on: now))\(lit ? ", now" : "")\(offered ? ", prayed today" : "")")
+        .accessibilityLabel(spokenLabel(order, lit: lit, offered: offered))
+    }
+
+    /// The hour's name, and whether it is now and prayed: one sentence a
+    /// case, so a translation is never glued from English pieces
+    private func spokenLabel(_ order: PrayerOrder, lit: Bool, offered: Bool) -> Text {
+        let title = order.title(on: now)
+        switch (lit, offered) {
+        case (true, true): return Text("\(title), now, prayed today")
+        case (true, false): return Text("\(title), now")
+        case (false, true): return Text("\(title), prayed today")
+        case (false, false): return Text(title)
+        }
     }
 
     /// Named as the Prayers page's strip names its stations — MORNING,

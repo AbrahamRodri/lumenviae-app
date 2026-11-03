@@ -34,16 +34,24 @@ enum ChantSavedShelf: Hashable {
 
     var title: String {
         switch self {
-        case .favorites: return "Favourites"
-        case .learned:   return "Learned"
+        case .favorites: return String(localized: "Favourites", comment: "Your Chants: name of the shelf of chants the reader has marked as favourites")
+        case .learned:   return String(localized: "Learned", comment: "Your Chants: name of the shelf of chants the reader has learned by heart")
         }
     }
 
     /// The one line an empty shelf says
     var emptyLine: String {
         switch self {
-        case .favorites: return "Hold any chant to add it to your favourites."
-        case .learned:   return "Chants you learn by heart are kept here."
+        case .favorites:
+            return String(
+                localized: "Hold any chant to add it to your favourites.",
+                comment: "Your Chants: the one line an empty Favourites shelf says"
+            )
+        case .learned:
+            return String(
+                localized: "Chants you learn by heart are kept here.",
+                comment: "Your Chants: the one line an empty Learned shelf says"
+            )
         }
     }
 
@@ -76,7 +84,7 @@ enum ChantSavedShelf: Hashable {
     /// "5 chants", for VoiceOver; nothing for an empty shelf, which is not
     /// told it has none
     static func spokenCount(_ n: Int) -> String? {
-        n > 0 ? (n == 1 ? "1 chant" : "\(n) chants") : nil
+        n > 0 ? String(localized: "\(n) chants", comment: "VoiceOver: how many chants a shelf or set holds") : nil
     }
 }
 
@@ -478,14 +486,14 @@ struct ChantSavedSection: View {
         if calendar.isDate(date, inSameDayAs: now) {
             let hour = calendar.component(.hour, from: date)
             switch hour {
-            case ..<12: return "This morning"
-            case 12..<18: return "This afternoon"
-            default: return "Tonight"
+            case ..<12: return String(localized: "This morning", comment: "Your Chants, Played lately: when a chant was played, earlier today before noon")
+            case 12..<18: return String(localized: "This afternoon", comment: "Your Chants, Played lately: when a chant was played, earlier today in the afternoon")
+            default: return String(localized: "Tonight", comment: "Your Chants, Played lately: when a chant was played, today in the evening")
             }
         }
         if let yesterday = calendar.date(byAdding: .day, value: -1, to: now),
            calendar.isDate(date, inSameDayAs: yesterday) {
-            return "Yesterday"
+            return String(localized: "Yesterday", comment: "Your Chants, Played lately: when a chant was played")
         }
         var style = Date.FormatStyle(locale: locale, calendar: calendar, timeZone: calendar.timeZone)
         if let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: date), to: calendar.startOfDay(for: now)).day,
@@ -601,7 +609,9 @@ struct ChantShelfSwitch: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel([shelf.title, ChantSavedShelf.spokenCount(count)].compactMap { $0 }.joined(separator: ", "))
+        .accessibilityLabel(
+            ChantSavedShelf.spokenCount(count).map { Text("\(shelf.title), \($0)") } ?? Text(shelf.title)
+        )
         .accessibilityAddTraits(on ? [.isButton, .isSelected] : .isButton)
     }
 }
@@ -675,20 +685,31 @@ struct ChantSavedSetCover: View {
     /// "4 chants · 20 min" — the length of its recordings and silences,
     /// never a guess — or, for a set with nothing in it yet, just that
     static func summary(of set: ChantSet) -> String {
-        guard set.chantCount > 0 else { return "No chants yet" }
+        guard set.chantCount > 0 else {
+            return String(localized: "No chants yet", comment: "Your Chants: under a set of the reader's that holds no chant")
+        }
         return ChantSetCard.summary(count: set.chantCount, duration: set.duration)
     }
 
     /// "Thursday holy hour, 4 chants, 20 minutes"
     static func spoken(_ set: ChantSet) -> String {
-        guard let chants = ChantSavedShelf.spokenCount(set.chantCount) else { return "\(set.name), no chants yet" }
-        return "\(set.name), \(chants), \(spokenMinutes(set.duration))"
+        guard let chants = ChantSavedShelf.spokenCount(set.chantCount) else {
+            return String(
+                localized: "\(set.name), no chants yet",
+                comment: "VoiceOver: a set of the reader's that holds no chant; the set's name the reader gave it"
+            )
+        }
+        let minutes = spokenMinutes(set.duration)
+        return String(
+            localized: "\(set.name), \(chants), \(minutes)",
+            comment: "VoiceOver: a set of the reader's: its name, how many chants (like 4 chants), how long (like 20 minutes)"
+        )
     }
 
     /// "20 minutes": the length rounded to the minute, never under one
     static func spokenMinutes(_ duration: TimeInterval) -> String {
         let whole = max(1, Int((duration / 60).rounded()))
-        return whole == 1 ? "1 minute" : "\(whole) minutes"
+        return String(localized: "\(whole) minutes", comment: "VoiceOver: how long a set of chants plays, rounded to the minute")
     }
 }
 

@@ -129,13 +129,19 @@ final class ChantPlayer {
     /// "0:55 of 4:12", once the recording is loaded and ours.
     var timeLabel: String? {
         guard ownsPlayback, let claim, claim.duration > 0 else { return nil }
-        return "\(Self.clock(claim.currentTime)) of \(Self.clock(claim.duration))"
+        return String(
+            localized: "\(Self.clock(claim.currentTime)) of \(Self.clock(claim.duration))",
+            comment: "Chant player: time sung so far of the recording's length, like 0:55 of 4:12"
+        )
     }
 
     /// "55 seconds of 4 minutes 12 seconds": the same, as VoiceOver says it
     var spokenTimeLabel: String? {
         guard ownsPlayback, let claim, claim.duration > 0 else { return nil }
-        return "\(Self.spoken(claim.currentTime)) of \(Self.spoken(claim.duration))"
+        return String(
+            localized: "\(Self.spoken(claim.currentTime)) of \(Self.spoken(claim.duration))",
+            comment: "VoiceOver, chant player: time sung so far of the recording's length, both in words, like 55 seconds of 4 minutes 12 seconds"
+        )
     }
 
     /// "1:12" — how far into the recording, once it is loaded and ours.
@@ -176,15 +182,10 @@ final class ChantPlayer {
 
     /// "1 minute 5 seconds" — the clock as VoiceOver should say it, where
     /// "1:05" is read out as a ratio or an hour.
+    /// The narration's words, so the two players say a time alike and
+    /// the catalog holds one translation of it.
     static func spoken(_ seconds: Double) -> String {
-        let whole = max(0, Int(seconds.rounded(.down)))
-        let minutes = whole / 60
-        let rest = whole % 60
-        let minuteWords = minutes == 1 ? "1 minute" : "\(minutes) minutes"
-        let secondWords = rest == 1 ? "1 second" : "\(rest) seconds"
-        if minutes == 0 { return secondWords }
-        if rest == 0 { return minuteWords }
-        return "\(minuteWords) \(secondWords)"
+        NarrationClock.spoken(seconds)
     }
 
     // MARK: - Acts
@@ -378,7 +379,9 @@ final class ChantPlayer {
     /// stands, or the setting
     private func nowPlayingSubtitle(for chant: Chant) -> String {
         if let queue { return "\(queue.title) · \(queue.position)" }
-        return chant.setting.map { "Chant · \($0)" } ?? "Chant"
+        return chant.setting.map {
+            String(localized: "Chant · \($0)", comment: "Lock Screen: the line under a chant's title, the word Chant then its setting, like simple melody")
+        } ?? String(localized: "Chant", comment: "Lock Screen: the line under a chant's title when no set is being sung")
     }
 
     /// Moves the playhead to a fraction of the recording.

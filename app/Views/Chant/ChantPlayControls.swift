@@ -57,8 +57,8 @@ struct ChantPlayDisc: View {
         }
         .buttonStyle(GoldCTAButtonStyle())
         .accessibilityLabel(
-            isLoading ? "Loading \(label)"
-                : isPlaying ? "Pause \(label)" : "Play \(label)"
+            isLoading ? Text("Loading \(label)")
+                : isPlaying ? Text("Pause \(label)") : Text("Play \(label)")
         )
     }
 }
@@ -170,7 +170,7 @@ struct ChantGoldPlayButton: View {
             .contentShape(Circle())
         }
         .buttonStyle(GoldCTAButtonStyle())
-        .accessibilityLabel(isLoading ? "Loading \(label)" : isPlaying ? "Pause \(label)" : "Play \(label)")
+        .accessibilityLabel(isLoading ? Text("Loading \(label)") : isPlaying ? Text("Pause \(label)") : Text("Play \(label)"))
     }
 }
 
@@ -196,8 +196,11 @@ struct ChantSetPlayButton: View {
         // for while it arrived
         let going = singing && player.isGoingOn
         let word = !singing ? title
-            : player.waitingForNext ? "Play next"
-            : going ? "Pause" : "Resume"
+            : player.waitingForNext
+                ? String(localized: "Play next", comment: "A sung set's play button while the set waits for a tap before its next chant")
+            : going
+                ? String(localized: "Pause", comment: "A sung set's play button while the set is being sung")
+                : String(localized: "Resume", comment: "A sung set's play button while the set is paused")
         GoldCTAButton(title: word, glyph: going ? .none : .play) {
             if singing {
                 player.pauseOrResume()

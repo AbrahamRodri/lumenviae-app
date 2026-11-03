@@ -53,7 +53,10 @@ struct ChantPickerSheet: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SheetHeader(kicker: "Add chants to", title: current.name)
+            SheetHeader(
+                kicker: String(localized: "Add chants to", comment: "Add a chant sheet: small kicker over the name of the set the chants are added to"),
+                title: current.name
+            )
 
             searchField
 
@@ -280,8 +283,8 @@ struct ChantPauseSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            SheetHeader(title: "A pause") {
-                SheetHeaderAction(title: "Cancel") { dismiss() }
+            SheetHeader(title: String(localized: "A pause", comment: "Add a pause sheet: its title; a pause is a red note or a silence between chants in a set")) {
+                SheetHeaderAction(title: String(localized: "Cancel", comment: "Sheet header action that closes the sheet without saving")) { dismiss() }
             }
 
             TextField("", text: $note, prompt: Text(Self.silentPrayer).foregroundColor(Rubric.text.opacity(0.45)))
@@ -309,7 +312,11 @@ struct ChantPauseSheet: View {
 
             ZStack {
                 if canAdd {
-                    GoldCTAButton(title: "Add the pause", trailingIcon: "ph-check", action: add)
+                    GoldCTAButton(
+                        title: String(localized: "Add the pause", comment: "Add a pause sheet: the button that adds the pause to the set"),
+                        trailingIcon: "ph-check",
+                        action: add
+                    )
                         .transition(.opacity)
                 } else {
                     waitingAct
@@ -356,7 +363,7 @@ struct ChantPauseSheet: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(QuietGlyphButtonStyle())
-                    .accessibilityLabel(length == 0 ? "No silence" : length == 1 ? "1 minute of silence" : "\(length) minutes of silence")
+                    .accessibilityLabel(length == 0 ? Text("No silence") : Text("\(length) minutes of silence"))
                     .accessibilityAddTraits(lit ? [.isSelected] : [])
                 }
             }
@@ -393,7 +400,11 @@ struct ChantPauseSheet: View {
     private var waitingAct: some View {
         // The gold button, hidden, sets the size, so the act keeps its
         // edges when it turns gold
-        GoldCTAButton(title: "Add the pause", trailingIcon: "ph-check", action: add)
+        GoldCTAButton(
+            title: String(localized: "Add the pause", comment: "Add a pause sheet: the button that adds the pause to the set"),
+            trailingIcon: "ph-check",
+            action: add
+        )
             .hidden()
             .overlay {
                 Button(action: add) {
@@ -464,10 +475,11 @@ struct ChantPauseSheet: View {
         )
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
-            canAdd
-                ? "In the set it reads: \(shown)"
-                    + (minutes > 0 ? ", then \(minutes == 1 ? "a minute" : "\(minutes) minutes") of silence" : "")
-                : "Write a note or choose a silence to add a pause"
+            !canAdd
+                ? Text("Write a note or choose a silence to add a pause")
+                : minutes > 0
+                    ? Text("In the set it reads: \(shown), then \(minutes) minutes of silence")
+                    : Text("In the set it reads: \(shown)")
         )
     }
 }
@@ -526,7 +538,7 @@ struct ChantAddToSetSheet: View {
             .accessibilityElement(children: .combine)
             .accessibilityAddTraits(.isHeader)
 
-            SheetHeaderAction(title: "Cancel") { dismiss() }
+            SheetHeaderAction(title: String(localized: "Cancel", comment: "Sheet header action that closes the sheet without saving")) { dismiss() }
         }
         .padding(.horizontal, SheetMetrics.gutter)
         .padding(.top, SheetMetrics.headerTop)
@@ -593,7 +605,7 @@ struct ChantNewSetSheet: View {
                 ChantHeadPainting(name: ChantSet.emptyPainting)
                     .opacity(0.9)
 
-                SheetHeaderAction(title: "Cancel") { dismiss() }
+                SheetHeaderAction(title: String(localized: "Cancel", comment: "Sheet header action that closes the sheet without saving")) { dismiss() }
                     .shadow(color: .black.opacity(0.7), radius: 6)
                     .padding(.top, SheetMetrics.headerTop)
                     .padding(.trailing, SheetMetrics.gutter)
@@ -623,7 +635,11 @@ struct ChantNewSetSheet: View {
 
             Spacer(minLength: 12)
 
-            GoldCTAButton(title: "Make the set", trailingIcon: "ph-check", action: make)
+            GoldCTAButton(
+                title: String(localized: "Make the set", comment: "New set sheet: the button that makes the set"),
+                trailingIcon: "ph-check",
+                action: make
+            )
                 .padding(.horizontal, SheetMetrics.gutter)
                 .padding(.bottom, 20)
         }
@@ -657,8 +673,11 @@ struct ChantWordsSheet: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SheetHeader(kicker: chant.englishTitle, title: "The words") {
-                SheetHeaderAction(title: "Done") { dismiss() }
+            SheetHeader(
+                kicker: chant.englishTitle,
+                title: String(localized: "The words", comment: "Words sheet: its title, under the chant's name; the chant's words line by line")
+            ) {
+                SheetHeaderAction(title: String(localized: "Done", comment: "Sheet header action that closes the sheet")) { dismiss() }
             }
 
             ScrollView {
@@ -671,9 +690,19 @@ struct ChantWordsSheet: View {
                         PrayerText(content: prayer.content(for: language(for: prayer)), size: 17)
                             .padding(.horizontal, SheetMetrics.gutter)
                             .padding(.vertical, 8)
-                        SheetNote("The words as they appear in Prayers. The chant may add a short verse and response, or a closing prayer.")
+                        SheetNote(
+                            String(
+                                localized: "The words as they appear in Prayers. The chant may add a short verse and response, or a closing prayer.",
+                                comment: "Words sheet: note under a chant's words taken from the Prayers tab"
+                            )
+                        )
                     } else {
-                        SheetNote("The words of this chant aren't written out here yet. You can read them on its sheet music.")
+                        SheetNote(
+                            String(
+                                localized: "The words of this chant aren't written out here yet. You can read them on its sheet music.",
+                                comment: "Words sheet: note when the app has no words for the chant"
+                            )
+                        )
                     }
                 }
                 .padding(.bottom, 24)
@@ -739,8 +768,12 @@ struct ChantSleepSheet: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SheetHeader(kicker: "The Chant Library", title: "Sleep timer", lead: lead) {
-                SheetHeaderAction(title: "Done") { dismiss() }
+            SheetHeader(
+                kicker: String(localized: "The Chant Library", comment: "Sleep timer sheet: small kicker naming the Chant tab's library"),
+                title: String(localized: "Sleep timer", comment: "Sleep timer sheet: its title; the chant stops playing after a while"),
+                lead: lead
+            ) {
+                SheetHeaderAction(title: String(localized: "Done", comment: "Sheet header action that closes the sheet")) { dismiss() }
             }
             ScrollView {
                 VStack(spacing: 0) {
@@ -749,7 +782,14 @@ struct ChantSleepSheet: View {
                             player.sleep(afterMinutes: minutes)
                             dismiss()
                         } label: {
-                            SheetRow("In \(minutes) minutes", icon: "ph-moon-stars", accessory: .none)
+                            SheetRow(
+                                String(
+                                    localized: "In \(minutes) minutes",
+                                    comment: "Sleep timer sheet: a choice, stop the chant after this many minutes"
+                                ),
+                                icon: "ph-moon-stars",
+                                accessory: .none
+                            )
                         }
                         .buttonStyle(.plain)
                     }
@@ -758,7 +798,7 @@ struct ChantSleepSheet: View {
                         dismiss()
                     } label: {
                         SheetRow(
-                            "When this chant ends",
+                            String(localized: "When this chant ends", comment: "Sleep timer sheet: a choice, stop when the chant playing ends"),
                             icon: "ph-music-note",
                             accessory: player.sleepsAtEndOfChant ? .check : .none,
                             isLit: player.sleepsAtEndOfChant
@@ -770,7 +810,9 @@ struct ChantSleepSheet: View {
                             player.cancelSleep()
                             dismiss()
                         } label: {
-                            SheetRow("Turn off the timer", icon: "ph-x", accessory: .none, showsDivider: false)
+                            SheetRow(
+                                String(localized: "Turn off the timer", comment: "Sleep timer sheet: a choice that cancels the sleep timer"),
+                                icon: "ph-x", accessory: .none, showsDivider: false)
                         }
                         .buttonStyle(.plain)
                     }
@@ -782,10 +824,11 @@ struct ChantSleepSheet: View {
 
     private var lead: String? {
         if let ends = player.sleepEndsAt {
-            return "Falls silent at \(ends.formatted(date: .omitted, time: .shortened))."
+            let time = ends.formatted(date: .omitted, time: .shortened)
+            return String(localized: "Falls silent at \(time).", comment: "Sleep timer sheet: line under the title; the time of day the chant will stop, like 10:45 PM")
         }
         if player.sleepsAtEndOfChant {
-            return "Falls silent when this chant ends."
+            return String(localized: "Falls silent when this chant ends.", comment: "Sleep timer sheet: line under the title when the timer stops at the chant's end")
         }
         return nil
     }

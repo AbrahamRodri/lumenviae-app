@@ -49,10 +49,23 @@ enum ChantBrowseScope: Hashable {
 
     var title: String {
         switch self {
-        case .all: return "All Chants"
-        case .group: return group.map(Self.cardTitle) ?? "Chants"
-        case .massOfTheAngels: return Self.massSetting
-        case .songsToMary: return "Songs to Mary"
+        case .all:
+            return String(localized: "All Chants", comment: "Title of the page listing every section of the chant book")
+        case .group:
+            return group.map(Self.cardTitle)
+                ?? String(localized: "Chants", comment: "Title of a chant shelf page whose section could not be found")
+        case .massOfTheAngels:
+            // Shown only: `massSetting` stays English, matched against
+            // the library's own notes
+            return String(
+                localized: "Mass of the Angels",
+                comment: "Title of the shelf of the Mass of the Angels (Missa de Angelis, Mass VIII), a sung Mass setting"
+            )
+        case .songsToMary:
+            return String(
+                localized: "Songs to Mary",
+                comment: "Title of the shelf of the four seasonal antiphons sung to Our Lady"
+            )
         }
     }
 
@@ -124,8 +137,13 @@ enum ChantBrowseScope: Hashable {
     /// would stand twice in the library for two different things.
     nonisolated static func cardTitle(of group: ChantGroup) -> String {
         switch group.id {
-        case "ourLady": return "Hymns to Our Lady"
-        case "benediction": return "Benediction"
+        case "ourLady":
+            return String(localized: "Hymns to Our Lady", comment: "Chant book section card and shelf title: the hymns to Our Lady")
+        case "benediction":
+            return String(
+                localized: "Benediction",
+                comment: "Chant book section card and shelf title: chants for Benediction of the Blessed Sacrament"
+            )
         default: return group.title
         }
     }
@@ -164,7 +182,7 @@ enum ChantBrowseScope: Hashable {
 
     /// "1 chant", "8 chants"
     static func chantCount(_ count: Int) -> String {
-        count == 1 ? "1 chant" : "\(count) chants"
+        String(localized: "\(count) chants", comment: "How many chants a section of the chant book or a shelf holds, like 8 chants")
     }
 }
 
@@ -520,10 +538,12 @@ private struct ChantShelfPlayAll: View {
         let going = singing && player.isGoingOn
         let word =
             !singing
-            ? "Play all"
+            ? String(localized: "Play all", comment: "A chant shelf page: the button that plays every chant on the shelf, in capitals")
             : player.waitingForNext
-                ? "Play next"
-                : going ? "Pause" : "Resume"
+                ? String(localized: "Play next", comment: "A chant shelf page: the button, while the shelf waits between chants for a tap")
+                : going
+                    ? String(localized: "Pause", comment: "A chant shelf page: the button that pauses the shelf being sung")
+                    : String(localized: "Resume", comment: "A chant shelf page: the button that takes up the paused shelf")
         Button {
             if singing { player.pauseOrResume() } else { player.play(queue) }
         } label: {
@@ -542,7 +562,7 @@ private struct ChantShelfPlayAll: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .animation(Motion.crossfade, value: word)
-        .accessibilityLabel(singing ? word : "Play all of \(title)")
+        .accessibilityLabel(singing ? Text(word) : Text("Play all of \(title)"))
     }
 }
 
@@ -666,7 +686,9 @@ private struct ChantNumberedRow: View {
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(number). " + ChantShelfRow.spoken(chant, showsSetting: showsSetting, sounding: sounding))
+            .accessibilityLabel(
+                Text("\(number). \(ChantShelfRow.spoken(chant, showsSetting: showsSetting, sounding: sounding))")
+            )
             .accessibilityHint("Opens the chant with its sheet music")
             .accessibilityAddTraits(.isButton)
 
@@ -695,8 +717,17 @@ private struct ChantShelfRow: ViewModifier {
     }
 
     static func spoken(_ chant: Chant, showsSetting: Bool, sounding: Bool) -> String {
-        let length = sounding ? "playing now" : chant.spokenLength
-        return "\(chant.latinTitle), \(ChantShelfNames.subtitle(of: chant, showsSetting: showsSetting)), \(length)"
+        let subtitle = ChantShelfNames.subtitle(of: chant, showsSetting: showsSetting)
+        guard sounding else {
+            return String(
+                localized: "\(chant.latinTitle), \(subtitle), \(chant.spokenLength)",
+                comment: "VoiceOver: a chant on a shelf: its Latin name, its English name, how long it plays"
+            )
+        }
+        return String(
+            localized: "\(chant.latinTitle), \(subtitle), playing now",
+            comment: "VoiceOver: a chant on a shelf, the one sounding: its Latin name, then its English name"
+        )
     }
 }
 
@@ -822,7 +853,8 @@ struct ChantSetsPage: View {
         singing: Bool,
         open: @escaping () -> Void
     ) -> some View {
-        Button(action: open) {
+        let spoken = [title, note, summary].compactMap { $0 }.joined(separator: ", ")
+        return Button(action: open) {
             HStack(spacing: 14) {
                 CachedAssetImage(painting, focal: ChantThumbnail.focalPoint(for: painting))
                     .frame(width: 112)
@@ -866,7 +898,7 @@ struct ChantSetsPage: View {
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
-            [title, note, summary, singing ? "playing now" : nil].compactMap { $0 }.joined(separator: ", ")
+            singing ? Text("\(spoken), playing now") : Text(spoken)
         )
         .accessibilityHint("Opens the set")
         .accessibilityAddTraits(.isButton)

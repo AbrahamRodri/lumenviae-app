@@ -92,24 +92,36 @@ struct ChantLibraryView: View {
             VStack(alignment: .leading, spacing: 40) {
                 VStack(spacing: 22) {
                     PageSearchHead(
-                        title: "Chant",
-                        count: "\(ChantCatalog.all.count) recordings",
+                        title: String(localized: "Chant", comment: "The Chant tab's page title: the library of Gregorian chant"),
+                        count: String(
+                            localized: "\(ChantCatalog.all.count) recordings",
+                            comment: "The Chant page, under its title: how many chant recordings the library holds"
+                        ),
                         origin: .chant,
-                        hint: "Find a chant, a prayer or a mystery, chants first"
+                        hint: String(
+                            localized: "Find a chant, a prayer or a mystery, chants first",
+                            comment: "VoiceOver hint on the Chant page's search glass: the app's one search, with chants listed first"
+                        )
                     )
                     tiles
                 }
                 .padding(.horizontal, 18)
 
                 if !played.isEmpty {
-                    shelfSection("Played lately") { playedLately }
+                    shelfSection(String(localized: "Played lately", comment: "Chant page: heading of the shelf of the last chants played")) { playedLately }
                 }
 
-                shelfSection("Songs to Mary") { songsToMary }
+                shelfSection(String(localized: "Songs to Mary", comment: "Chant page: heading of the shelf of the four seasonal antiphons sung to Our Lady")) { songsToMary }
 
-                shelfSection("Sets of chants") { sungSets }
+                shelfSection(String(localized: "Sets of chants", comment: "Chant page: heading of the shelf of sets of chants sung one after another for a time of prayer")) { sungSets }
 
-                shelfSection("All chants", count: "\(ChantCatalog.all.count) chants") {
+                shelfSection(
+                    String(localized: "All chants", comment: "Chant page: heading of the grid of every section of the chant book"),
+                    count: String(
+                        localized: "\(ChantCatalog.all.count) chants",
+                        comment: "Chant page: beside the All chants heading, how many chants there are, in small capitals"
+                    )
+                ) {
                     ChantSectionsGrid()
                         .padding(.horizontal, 18)
                 }
@@ -169,12 +181,20 @@ struct ChantLibraryView: View {
                     spoken: chant.spokenName
                 ) { openChant(chant) }
             } else {
-                tile("Learned", painting: ChantSavedShelf.learned.emptyPainting, spoken: "Chants you have learned") {
+                tile(
+                    String(localized: "Learned", comment: "Chant page: tile that opens the chants the reader has learned by heart"),
+                    painting: ChantSavedShelf.learned.emptyPainting,
+                    spoken: String(localized: "Chants you have learned", comment: "VoiceOver: the Learned tile on the Chant page")
+                ) {
                     router.push(.chantSaved(.learned))
                 }
             }
 
-            tile("Your favourites", painting: favouritesPainting, spoken: "Your favourite chants") {
+            tile(
+                String(localized: "Your favourites", comment: "Chant page: tile that opens the reader's favourite chants"),
+                painting: favouritesPainting,
+                spoken: String(localized: "Your favourite chants", comment: "VoiceOver: the Your favourites tile on the Chant page")
+            ) {
                 router.push(.chantSaved(.favorites))
             }
 
@@ -182,7 +202,14 @@ struct ChantLibraryView: View {
                 if let occasion = ChantOccasion.occasion(id) { occasionTile(occasion) }
             }
 
-            tile("Mass of the Angels", painting: "sorrowful_crucifixion", spoken: "The Mass of the Angels") {
+            tile(
+                String(
+                    localized: "Mass of the Angels",
+                    comment: "Chant page: tile that opens the Mass of the Angels (Missa de Angelis, Mass VIII), a sung Mass setting"
+                ),
+                painting: "sorrowful_crucifixion",
+                spoken: String(localized: "The Mass of the Angels", comment: "VoiceOver: the Mass of the Angels tile on the Chant page")
+            ) {
                 router.push(.chantBrowse(.massOfTheAngels))
             }
 
@@ -251,7 +278,7 @@ struct ChantLibraryView: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(sounding ? "\(spoken), playing now" : spoken)
+        .accessibilityLabel(sounding ? Text("\(spoken), playing now") : Text(spoken))
         .accessibilityAddTraits(.isButton)
     }
 
@@ -467,7 +494,9 @@ struct ChantSongRow: View {
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(
-                "\(chant.spokenName), \(sounding ? "playing now" : chant.spokenLength)"
+                sounding
+                    ? Text("\(chant.spokenName), playing now")
+                    : Text("\(chant.spokenName), \(chant.spokenLength)")
             )
             .accessibilityHint("Opens the chant with its sheet music")
             .accessibilityAddTraits(.isButton)
@@ -727,7 +756,10 @@ struct ChantSetCard: View {
     /// "4 chants · 7 min": the length of its recordings, never a guess
     static func summary(count: Int, duration: TimeInterval) -> String {
         let minutes = max(1, Int((duration / 60).rounded()))
-        return "\(count == 1 ? "1 chant" : "\(count) chants") · \(minutes) min"
+        return String(
+            localized: "\(count) chants · \(minutes) min",
+            comment: "Under a set of chants: how many chants and how long they play, rounded to the minute, like 4 chants · 7 min"
+        )
     }
 }
 

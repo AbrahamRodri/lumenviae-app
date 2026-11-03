@@ -76,11 +76,20 @@ struct MyPrayersView: View {
 
     private var playlists: some View {
         VStack(alignment: .leading, spacing: 10) {
-            PrayersShelfHeading(title: "Playlists")
+            PrayersShelfHeading(title: String(
+                localized: "Playlists",
+                comment: "My Prayers page: the heading over the reader's playlists"
+            ))
             if store.playlists.isEmpty {
                 MyPrayersInvite(
-                    line: "Gather the prayers you say together, in your order, and pray them one after another.",
-                    action: "NEW PLAYLIST"
+                    line: String(
+                        localized: "Gather the prayers you say together, in your order, and pray them one after another.",
+                        comment: "My Prayers page: the invitation shown while the reader has no playlist"
+                    ),
+                    action: String(
+                        localized: "NEW PLAYLIST",
+                        comment: "My Prayers page: the button that makes a new playlist, in small capitals"
+                    )
                 ) { newPlaylist = true }
             } else {
                 VStack(spacing: 10) {
@@ -100,11 +109,20 @@ struct MyPrayersView: View {
 
     private var prayers: some View {
         VStack(alignment: .leading, spacing: 6) {
-            PrayersShelfHeading(title: "Prayers I Wrote")
+            PrayersShelfHeading(title: String(
+                localized: "Prayers I Wrote",
+                comment: "My Prayers page: the heading over the prayers the reader wrote"
+            ))
             if store.prayers.isEmpty {
                 MyPrayersInvite(
-                    line: "Write a prayer of your own, or one your family says in its own words.",
-                    action: "NEW PRAYER"
+                    line: String(
+                        localized: "Write a prayer of your own, or one your family says in its own words.",
+                        comment: "My Prayers page: the invitation shown while the reader has written no prayer"
+                    ),
+                    action: String(
+                        localized: "NEW PRAYER",
+                        comment: "My Prayers page: the button that writes a new prayer, in small capitals"
+                    )
                 ) { newPrayer = true }
             } else {
                 VStack(spacing: 0) {
@@ -194,7 +212,17 @@ struct MyPlaylistCard: View {
             .accessibilityAddTraits(.isButton)
 
             if count > 0 {
-                PrayersPrayButton(title: "PRAY", spoken: "Pray \(playlist.displayName)", action: pray)
+                PrayersPrayButton(
+                    title: String(
+                        localized: "PRAY",
+                        comment: "A playlist's card: the button that prays it, in small capitals"
+                    ),
+                    spoken: String(
+                        localized: "Pray \(playlist.displayName)",
+                        comment: "VoiceOver: the button that prays a playlist of the reader's own, by its name"
+                    ),
+                    action: pray
+                )
                     .padding(.trailing, 14)
                     .padding(.bottom, 6)
             }
@@ -250,13 +278,22 @@ struct MyPrayersShelf: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            PrayersShelfHeading(title: "My Prayers") {
+            PrayersShelfHeading(title: String(
+                localized: "My Prayers",
+                comment: "Prayers tab: the heading over the shelf of the reader's own prayers and playlists"
+            )) {
                 router.push(.myPrayers)
             }
             if store.playlists.isEmpty {
                 MyPrayersInvite(
-                    line: "Make a playlist of the prayers you say together, with your own words and pictures.",
-                    action: "NEW PLAYLIST"
+                    line: String(
+                        localized: "Make a playlist of the prayers you say together, with your own words and pictures.",
+                        comment: "Prayers tab, My Prayers shelf: the invitation shown while the reader has nothing of their own"
+                    ),
+                    action: String(
+                        localized: "NEW PLAYLIST",
+                        comment: "My Prayers page: the button that makes a new playlist, in small capitals"
+                    )
                 ) { newPlaylist = true }
             } else {
                 VStack(spacing: 10) {

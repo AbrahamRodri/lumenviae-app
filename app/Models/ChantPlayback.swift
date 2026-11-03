@@ -55,7 +55,10 @@ struct ChantQueue: Equatable {
     var position: String {
         let chants = entries.compactMap(\.chant)
         let sung = entries.prefix(index + 1).compactMap(\.chant).count
-        return "\(max(1, sung)) of \(chants.count)"
+        return String(
+            localized: "\(max(1, sung)) of \(chants.count)",
+            comment: "Chant player: where a sung set stands, counting its chants, like 2 of 4"
+        )
     }
 
     /// The occasion unrolled, its steps numbered in the order they are
@@ -171,9 +174,15 @@ struct ChantSilenceNowPlaying: Equatable {
     init(queue: ChantQueue?, current: Chant) {
         let next = queue?.nextChant
         let shown = next ?? current
-        let set = queue?.title ?? "Chant"
+        let set = queue?.title
+            ?? String(localized: "Chant", comment: "Lock Screen: the line under a chant's title when no set is being sung")
         title = shown.latinTitle
-        subtitle = next == nil ? set : "\(set) · Next, after a pause"
+        subtitle = next == nil
+            ? set
+            : String(
+                localized: "\(set) · Next, after a pause",
+                comment: "Lock Screen, during a silence in a sung set: the set's name, then that the chant shown comes next after the pause"
+            )
         painting = ChantCatalog.painting(for: shown)
     }
 }
@@ -240,16 +249,20 @@ enum ChantPlayError: Equatable {
 
     var message: String {
         switch self {
-        case .missing: return "This chant's recording is missing."
-        case .failed:  return "The chant couldn't be played."
+        case .missing:
+            return String(localized: "This chant's recording is missing.", comment: "Chant player: error when the recording is not available")
+        case .failed:
+            return String(localized: "The chant couldn't be played.", comment: "Chant player: error when the recording would not load")
         }
     }
 
     /// The same, short enough for a caption under a disc
     var caption: String {
         switch self {
-        case .missing: return "Recording missing"
-        case .failed:  return "Couldn't play"
+        case .missing:
+            return String(localized: "Recording missing", comment: "Chant player: short caption under a play button, the recording is not available")
+        case .failed:
+            return String(localized: "Couldn't play", comment: "Chant player: short caption under a play button, the recording would not load")
         }
     }
 }

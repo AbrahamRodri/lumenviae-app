@@ -297,9 +297,25 @@ final class PrayerBookStore {
 
         for hour in Self.angelusHours {
             let content = UNMutableNotificationContent()
-            content.title = "The Angelus"
-            let bell = hour == 12 ? "noon" : hour < 12 ? "morning" : "evening"
-            content.body = "The \(bell) bell: time for the Angelus, a short prayer to Mary. Tap to pray it."
+            content.title = String(
+                localized: "The Angelus",
+                comment: "Angelus bell notification: its title, the name of the prayer"
+            )
+            // One whole sentence per bell, so a translation can word each
+            content.body = hour == 12
+                ? String(
+                    localized: "The noon bell: time for the Angelus, a short prayer to Mary. Tap to pray it.",
+                    comment: "Angelus bell notification at noon: its text"
+                )
+                : hour < 12
+                    ? String(
+                        localized: "The morning bell: time for the Angelus, a short prayer to Mary. Tap to pray it.",
+                        comment: "Angelus bell notification at 6 AM: its text"
+                    )
+                    : String(
+                        localized: "The evening bell: time for the Angelus, a short prayer to Mary. Tap to pray it.",
+                        comment: "Angelus bell notification at 6 PM: its text"
+                    )
             // The Angelus keeps the full peal; it is no longer one of the
             // reminder picker's sounds, so the file stays in the bundle for this.
             content.sound = UNNotificationSound(named: UNNotificationSoundName("church_bell.caf"))

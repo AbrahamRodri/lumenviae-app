@@ -15,9 +15,12 @@ enum ChantHiding: CaseIterable {
 
     var title: String {
         switch self {
-        case .none: return "None"
-        case .half: return "Half"
-        case .all:  return "All"
+        case .none:
+            return String(localized: "None", comment: "Chant practice, Hide words option: no words are hidden")
+        case .half:
+            return String(localized: "Half", comment: "Chant practice, Hide words option: every other word is cut to its first letter")
+        case .all:
+            return String(localized: "All", comment: "Chant practice, Hide words option: every word is cut to its first letter")
         }
     }
 }
