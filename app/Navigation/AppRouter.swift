@@ -169,6 +169,17 @@ extension AppRoute {
         default: return false
         }
     }
+
+    /// Whether this page is a prayer being prayed, or the screen that
+    /// closes one, which a link must not take away
+    var isPrayerUnderWay: Bool {
+        switch self {
+        case .prayerSession, .scripturalRosaryPrayer, .guidedRosary, .prayAlong, .completion:
+            return true
+        default:
+            return false
+        }
+    }
 }
 
 // MARK: - ScripturalRosaryLaunch
@@ -545,6 +556,23 @@ final class AppRouter {
             path.removeLast(path.count)
         }
         selectedTab = tab
+    }
+
+    /// The scheme the app registers in Info.plist (`CFBundleURLTypes`)
+    static let linkScheme = "lumenviae"
+
+    /// Opens a `lumenviae://` link, as an App Store In-App Event does with
+    /// `lumenviae://home`. Such a link goes to Home, the way a tap on its
+    /// tab does; no link opens a particular page yet, so an unknown path
+    /// is Home too. Over a prayer (`isPrayerUnderWay`) it only brings the
+    /// app forward where it is, as the Angelus bell's notification does;
+    /// ContentView holds it back over a sheet or a consecration day. A
+    /// link of any other scheme is left alone.
+    func open(_ url: URL) {
+        guard url.scheme?.lowercased() == AppRouter.linkScheme,
+              !routes.contains(where: { $0?.isPrayerUnderWay == true }) else { return }
+        popToRoot()
+        selectedTab = .home
     }
 
     /// Returns to the home screen and clears stored navigation state.

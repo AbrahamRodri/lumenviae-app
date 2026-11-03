@@ -25,6 +25,10 @@ Prayers of the reader's own, and playlists to pray them in order.
 - Add the family's morning prayers, nine prayers and their playlist (the
   Sign of the Cross said at both ends), to TestFlight builds only, once
   (`FamilyPrayersSeed`)
+- Open the app from a `lumenviae://` link, as the App Store's In-App
+  Events do: the link goes to Home, but never closes a prayer or
+  anything open over the page, such as a reflection being written
+  (`AppRouter.open`)
 
 ## 4.0 - Unreleased
 
