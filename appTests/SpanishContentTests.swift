@@ -99,6 +99,22 @@ struct SpanishContentTests {
         #expect(decoded.name == "The Annunciation")
     }
 
+    /// The Guided Rosary sets a mystery's name mid-sentence: its article
+    /// lowered in either language, a name opening on a noun left alone
+    @Test func aNameMidSentenceLowersItsArticleInEitherLanguage() {
+        #expect("The Annunciation".lowercasedArticle == "the Annunciation")
+        #expect("La encarnación del Hijo de Dios".lowercasedArticle == "la encarnación del Hijo de Dios")
+        #expect("El Bautismo de Jesús en el Jordán".lowercasedArticle == "el Bautismo de Jesús en el Jordán")
+        #expect("Los tres días de angustia".lowercasedArticle == "los tres días de angustia")
+        #expect("Jesús con la Cruz a cuestas".lowercasedArticle == "Jesús con la Cruz a cuestas")
+        #expect("Nuestra Señora se encuentra con Jesús".lowercasedArticle == "Nuestra Señora se encuentra con Jesús")
+        #expect("Lamentation".lowercasedArticle == "Lamentation")
+        for (key, mystery) in SpanishContent.mysteries {
+            let lowered = mystery.name.lowercasedArticle
+            #expect(!lowered.hasPrefix("La ") && !lowered.hasPrefix("El ") && !lowered.hasPrefix("Los "), "\(key)")
+        }
+    }
+
     // MARK: - The AI line
 
     @Test func theAILineStandsUnderTheMarkedPrayerInSpanishOnly() {
