@@ -48,6 +48,8 @@ struct LocalizationTests {
         #expect(MysteryCategory.sevenSorrows.devotionTitle == "Seven Sorrows of Mary")
         #expect(MysteryCategory.luminous.displayName == "Luminous")
         #expect(MysteryCategory.sevenSorrows.displayName == "Seven Sorrows")
+        #expect(MysteryCategory.joyful.subtitle == "Jesus' birth and childhood")
+        #expect(MysteryCategory.sevenSorrows.subtitle == "Mary in her grief")
     }
 
     @Test func meditationKindsKeepTheirEnglishWording() {

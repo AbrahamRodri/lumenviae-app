@@ -147,16 +147,11 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     /// the name on every card, so it is the explanation a newcomer reads
     var subtitle: String {
         switch self {
-        case .joyful:
-            return String(localized: "Jesus' birth and childhood", comment: "Line under a set of mysteries' name on its card: what the mysteries are about, in everyday words")
-        case .sorrowful:
-            return String(localized: "Jesus' suffering and death", comment: "Line under a set of mysteries' name on its card: what the mysteries are about, in everyday words")
-        case .glorious:
-            return String(localized: "Jesus risen, and Mary in glory", comment: "Line under a set of mysteries' name on its card: what the mysteries are about, in everyday words")
-        case .luminous:
-            return String(localized: "Jesus' public life", comment: "Line under a set of mysteries' name on its card: what the mysteries are about, in everyday words")
-        case .sevenSorrows:
-            return String(localized: "Mary in her grief", comment: "Line under a set of mysteries' name on its card: what the mysteries are about, in everyday words")
+        case .joyful:      return String(localized: "Jesus' birth and childhood", comment: "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about")
+        case .sorrowful:   return String(localized: "Jesus' suffering and death", comment: "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about")
+        case .glorious:    return String(localized: "Jesus risen, and Mary in glory", comment: "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about")
+        case .luminous:    return String(localized: "Jesus' public life", comment: "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about")
+        case .sevenSorrows: return String(localized: "Mary in her grief", comment: "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about")
         }
     }
 
@@ -222,12 +217,12 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
         case .sevenSorrows:
             return String(
                 localized: "Fridays, and on Our Lady of Sorrows, September 15",
-                comment: "When the Seven Sorrows chaplet is prayed, shown under its name; Our Lady of Sorrows is the feast on September 15"
+                comment: "When the Seven Sorrows chaplet is prayed, under its title on the mysteries' page"
             )
         default:
             return String(
                 localized: "Any day you choose",
-                comment: "When a set of mysteries outside the weekly schedule (the Luminous) is prayed, shown under its name"
+                comment: "When a set of mysteries outside the weekly schedule is prayed, under its title on the mysteries' page"
             )
         }
     }

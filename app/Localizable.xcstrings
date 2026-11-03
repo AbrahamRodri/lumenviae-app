@@ -2391,7 +2391,7 @@
       "comment" : "St. Carlo Acutis page: quiet button under A saying for today, showing another of his sayings"
     },
     "Any day you choose" : {
-      "comment" : "How to Pray, lesson 3: when the Luminous Mysteries are prayed, outside the weekly schedule\nWhen a set of mysteries outside the weekly schedule (the Luminous) is prayed, shown under its name"
+      "comment" : "How to Pray, lesson 3: when the Luminous Mysteries are prayed, outside the weekly schedule\nWhen a set of mysteries outside the weekly schedule is prayed, under its title on the mysteries' page"
     },
     "App Icon" : {
       "comment" : "Settings: a section heading"
@@ -3793,7 +3793,7 @@
       "comment" : "A day a set of mysteries is prayed, in a comma-separated list under its name, like Monday, Thursday; capitalized as a day name in English"
     },
     "Fridays, and on Our Lady of Sorrows, September 15" : {
-      "comment" : "When the Seven Sorrows chaplet is prayed, shown under its name; Our Lady of Sorrows is the feast on September 15"
+      "comment" : "When the Seven Sorrows chaplet is prayed, under its title on the mysteries' page"
     },
     "From" : {
       "comment" : "A Rosary's own page, ledger label of the row naming where the words come from\nA meditation set's page, ledger label of the row naming the author and the source"
@@ -4343,16 +4343,16 @@
 
     },
     "Jesus risen, and Mary in glory" : {
-      "comment" : "Line under a set of mysteries' name on its card: what the mysteries are about, in everyday words"
+      "comment" : "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about"
     },
     "Jesus' birth and childhood" : {
-      "comment" : "Line under a set of mysteries' name on its card: what the mysteries are about, in everyday words"
+      "comment" : "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about"
     },
     "Jesus' public life" : {
-      "comment" : "Line under a set of mysteries' name on its card: what the mysteries are about, in everyday words"
+      "comment" : "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about"
     },
     "Jesus' suffering and death" : {
-      "comment" : "Line under a set of mysteries' name on its card: what the mysteries are about, in everyday words"
+      "comment" : "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about"
     },
     "Join her. Today's mysteries are ready." : {
       "comment" : "Daily prayer reminder notification in October, the month of the Rosary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
@@ -4758,7 +4758,7 @@
       "comment" : "Consecration feast chooser: one short line saying what the feast of Our Lady remembers"
     },
     "Mary in her grief" : {
-      "comment" : "Line under a set of mysteries' name on its card: what the mysteries are about, in everyday words"
+      "comment" : "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about"
     },
     "Mary is assumed into Heaven" : {
       "comment" : "Consecration feast chooser: one short line saying what the feast of Our Lady remembers"
