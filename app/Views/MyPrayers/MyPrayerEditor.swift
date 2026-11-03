@@ -45,10 +45,30 @@ struct MyPrayerEditor: View {
             AppColors.appGradient.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                SheetHeader(kicker: "My Prayers", title: existing == nil ? "New Prayer" : "Edit Prayer") {
+                SheetHeader(
+                    kicker: String(
+                        localized: "My Prayers",
+                        comment: "Prayer editor: the small kicker over the sheet's title"
+                    ),
+                    title: existing == nil
+                        ? String(
+                            localized: "New Prayer",
+                            comment: "Prayer editor: the sheet's title when writing a new prayer of one's own"
+                        )
+                        : String(
+                            localized: "Edit Prayer",
+                            comment: "Prayer editor: the sheet's title when changing a prayer of one's own"
+                        )
+                ) {
                     HStack(spacing: 4) {
-                        SheetHeaderAction(title: "Cancel") { dismiss() }
-                        SheetHeaderAction(title: "Save", action: save)
+                        SheetHeaderAction(title: String(
+                            localized: "Cancel",
+                            comment: "Sheet header action that closes the sheet without saving"
+                        )) { dismiss() }
+                        SheetHeaderAction(title: String(
+                            localized: "Save",
+                            comment: "Sheet header action that saves and closes the sheet"
+                        ), action: save)
                             .disabled(hasNoText)
                             .opacity(hasNoText ? 0.35 : 1)
                     }
@@ -57,7 +77,10 @@ struct MyPrayerEditor: View {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 18) {
                         VStack(alignment: .leading, spacing: 6) {
-                            fieldLabel("Name")
+                            fieldLabel(String(
+                                localized: "Name",
+                                comment: "Prayer editor: the label over the prayer's name field"
+                            ))
                             TextField("Morning Offering", text: $title)
                                 .font(AppFonts.readingFont(20))
                                 .foregroundColor(AppColors.cream)
@@ -74,7 +97,10 @@ struct MyPrayerEditor: View {
                         }
 
                         VStack(alignment: .leading, spacing: 6) {
-                            fieldLabel("Words")
+                            fieldLabel(String(
+                                localized: "Words",
+                                comment: "Prayer editor: the label over the field for the prayer's words"
+                            ))
                             ZStack(alignment: .topLeading) {
                                 if text.isEmpty {
                                     Text("Write the prayer as you say it…")

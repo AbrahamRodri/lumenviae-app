@@ -209,11 +209,26 @@ enum PrayerBookPart: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .everyDay:   return "Every Day"
-        case .sacraments: return "The Sacraments"
-        case .god:        return "God, Our Lady and the Saints"
-        case .year:       return "Through the Year"
-        case .others:     return "For Others, and in Need"
+        case .everyDay:   return String(
+            localized: "Every Day",
+            comment: "Prayers tab: the heading of one of the five shelves the prayer topics are gathered into"
+        )
+        case .sacraments: return String(
+            localized: "The Sacraments",
+            comment: "Prayers tab: the heading of one of the five shelves the prayer topics are gathered into"
+        )
+        case .god:        return String(
+            localized: "God, Our Lady and the Saints",
+            comment: "Prayers tab: the heading of one of the five shelves the prayer topics are gathered into"
+        )
+        case .year:       return String(
+            localized: "Through the Year",
+            comment: "Prayers tab: the heading of one of the five shelves the prayer topics are gathered into"
+        )
+        case .others:     return String(
+            localized: "For Others, and in Need",
+            comment: "Prayers tab: the heading of one of the five shelves the prayer topics are gathered into"
+        )
         }
     }
 
@@ -251,7 +266,10 @@ struct PrayerOrder: Identifiable, Hashable {
     /// (the Regina Cæli) in the Easter season, and says so
     func title(on date: Date = Date()) -> String {
         if id == PrayerBook.angelusOrderID, PrayerBook.isEastertide(date) {
-            return "Queen of Heaven"
+            return String(
+                localized: "Queen of Heaven",
+                comment: "Prayers tab: the Angelus's name in the Easter season, when the Regina Caeli is said in its place"
+            )
         }
         return title
     }
@@ -279,10 +297,22 @@ enum MarianAntiphon: CaseIterable {
     /// Its name in English, as the lists say it — "Hail, Holy Queen"
     var name: String {
         switch self {
-        case .almaRedemptoris:   return "Loving Mother of the Redeemer"
-        case .aveReginaCaelorum: return "Hail, Queen of Heaven"
-        case .reginaCaeli:       return "Queen of Heaven"
-        case .salveRegina:       return "Hail, Holy Queen"
+        case .almaRedemptoris:   return String(
+            localized: "Loving Mother of the Redeemer",
+            comment: "Prayers tab: the English name of one of the four seasonal songs to Mary (antiphons of Our Lady); its Latin name stands beside it"
+        )
+        case .aveReginaCaelorum: return String(
+            localized: "Hail, Queen of Heaven",
+            comment: "Prayers tab: the English name of one of the four seasonal songs to Mary (antiphons of Our Lady); its Latin name stands beside it"
+        )
+        case .reginaCaeli:       return String(
+            localized: "Queen of Heaven",
+            comment: "Prayers tab: the English name of one of the four seasonal songs to Mary (antiphons of Our Lady); its Latin name stands beside it"
+        )
+        case .salveRegina:       return String(
+            localized: "Hail, Holy Queen",
+            comment: "Prayers tab: the English name of one of the four seasonal songs to Mary (antiphons of Our Lady); its Latin name stands beside it"
+        )
         }
     }
 
@@ -311,10 +341,22 @@ enum MarianAntiphon: CaseIterable {
     /// Sunday a week after it, where the Salve Regina's season begins
     var season: String {
         switch self {
-        case .almaRedemptoris:   return "Advent to February 2"
-        case .aveReginaCaelorum: return "February 2 to Holy Week"
-        case .reginaCaeli:       return "Easter to Pentecost"
-        case .salveRegina:       return "Pentecost to Advent"
+        case .almaRedemptoris:   return String(
+            localized: "Advent to February 2",
+            comment: "Prayers tab: the part of the year a seasonal song to Mary is sung, in plain dates (February 2 is Candlemas)"
+        )
+        case .aveReginaCaelorum: return String(
+            localized: "February 2 to Holy Week",
+            comment: "Prayers tab: the part of the year a seasonal song to Mary is sung, in plain dates (February 2 is Candlemas)"
+        )
+        case .reginaCaeli:       return String(
+            localized: "Easter to Pentecost",
+            comment: "Prayers tab: the part of the year a seasonal song to Mary is sung, in plain dates (February 2 is Candlemas)"
+        )
+        case .salveRegina:       return String(
+            localized: "Pentecost to Advent",
+            comment: "Prayers tab: the part of the year a seasonal song to Mary is sung, in plain dates (February 2 is Candlemas)"
+        )
         }
     }
 }
@@ -459,85 +501,217 @@ enum PrayerBook {
 
     static let orders: [PrayerOrder] = [
         PrayerOrder(
-            id: morningOrderID, title: "Morning Prayers", latinTitle: "Preces Matutinæ",
-            icon: "lv-rooster", occasion: "On waking",
-            detail: "A few short prayers on waking, giving the day to God.",
+            id: morningOrderID,
+            title: String(
+                localized: "Morning Prayers",
+                comment: "Prayers tab: the name of an order of prayer, a few prayers said together"
+            ),
+            latinTitle: "Preces Matutinæ",
+            icon: "lv-rooster",
+            occasion: String(
+                localized: "On waking",
+                comment: "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+            ),
+            detail: String(
+                localized: "A few short prayers on waking, giving the day to God.",
+                comment: "Prayers tab: one sentence saying what an order of prayer is"
+            ),
             prayerIDs: { _ in
                 ["sign_of_cross", "morning_offering", "our_father", "hail_mary", "glory_be",
                  "act_of_faith", "act_of_hope", "act_of_charity", "angele_dei"]
             }
         ),
         PrayerOrder(
-            id: angelusOrderID, title: "The Angelus", latinTitle: "Angelus Domini",
-            icon: "lv-bell", occasion: "6 AM, noon and 6 PM",
-            detail: "Remembering how God's Son became man, said three times a day when the church bell rings.",
+            id: angelusOrderID,
+            title: String(
+                localized: "The Angelus",
+                comment: "Prayers tab: the name of an order of prayer, a few prayers said together"
+            ),
+            latinTitle: "Angelus Domini",
+            icon: "lv-bell",
+            occasion: String(
+                localized: "6 AM, noon and 6 PM",
+                comment: "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+            ),
+            detail: String(
+                localized: "Remembering how God's Son became man, said three times a day when the church bell rings.",
+                comment: "Prayers tab: one sentence saying what an order of prayer is"
+            ),
             prayerIDs: { date in [isEastertide(date) ? "regina_caeli" : "angelus"] }
         ),
         PrayerOrder(
-            id: nightOrderID, title: "Night Prayers", latinTitle: "Preces Vespertinæ",
-            icon: "lv-lamp", occasion: "At bedtime",
-            detail: "Look back on the day, ask God's forgiveness, and end with a song to Mary.",
+            id: nightOrderID,
+            title: String(
+                localized: "Night Prayers",
+                comment: "Prayers tab: the name of an order of prayer, a few prayers said together"
+            ),
+            latinTitle: "Preces Vespertinæ",
+            icon: "lv-lamp",
+            occasion: String(
+                localized: "At bedtime",
+                comment: "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+            ),
+            detail: String(
+                localized: "Look back on the day, ask God's forgiveness, and end with a song to Mary.",
+                comment: "Prayers tab: one sentence saying what an order of prayer is"
+            ),
             prayerIDs: { date in
                 ["sign_of_cross", "examen", "act_of_contrition", "in_manus_tuas",
                  "visita_quaesumus", antiphon(on: date).prayerID]
             }
         ),
         PrayerOrder(
-            id: "table", title: "At Meals", latinTitle: "Benedictio Mensæ",
-            icon: "ch-bread", occasion: "Before and after meals",
-            detail: "Grace before the meal, and thanks when it is done.",
+            id: "table",
+            title: String(
+                localized: "At Meals",
+                comment: "Prayers tab: the name of an order of prayer, a few prayers said together"
+            ),
+            latinTitle: "Benedictio Mensæ",
+            icon: "ch-bread",
+            occasion: String(
+                localized: "Before and after meals",
+                comment: "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+            ),
+            detail: String(
+                localized: "Grace before the meal, and thanks when it is done.",
+                comment: "Prayers tab: one sentence saying what an order of prayer is"
+            ),
             prayerIDs: { _ in ["grace_before", "grace_after"] }
         ),
         PrayerOrder(
-            id: "before_mass", title: "Before Mass", latinTitle: "Præparatio ad Missam",
-            icon: "ch-altar", occasion: "In the pew",
-            detail: "Prayers to get ready for Mass: for light, a ready heart, and faith, hope and love.",
+            id: "before_mass",
+            title: String(
+                localized: "Before Mass",
+                comment: "Prayers tab: the name of an order of prayer, a few prayers said together"
+            ),
+            latinTitle: "Præparatio ad Missam",
+            icon: "ch-altar",
+            occasion: String(
+                localized: "In the pew",
+                comment: "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+            ),
+            detail: String(
+                localized: "Prayers to get ready for Mass: for light, a ready heart, and faith, hope and love.",
+                comment: "Prayers tab: one sentence saying what an order of prayer is"
+            ),
             prayerIDs: { _ in
                 ["sign_of_cross", "come_holy_ghost", "aquinas_before_mass",
                  "act_of_faith", "act_of_hope", "act_of_charity"]
             }
         ),
         PrayerOrder(
-            id: "after_mass", title: "After Communion", latinTitle: "Gratiarum Actio",
-            icon: "ch-chalice", occasion: "After Mass",
-            detail: "Prayers of thanks for the minutes after you receive Communion.",
+            id: "after_mass",
+            title: String(
+                localized: "After Communion",
+                comment: "Prayers tab: the name of an order of prayer, a few prayers said together"
+            ),
+            latinTitle: "Gratiarum Actio",
+            icon: "ch-chalice",
+            occasion: String(
+                localized: "After Mass",
+                comment: "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+            ),
+            detail: String(
+                localized: "Prayers of thanks for the minutes after you receive Communion.",
+                comment: "Prayers tab: one sentence saying what an order of prayer is"
+            ),
             prayerIDs: { _ in
                 ["anima_christi", "en_ego", "aquinas_after_mass", "mary_after_communion", "suscipe"]
             }
         ),
         PrayerOrder(
-            id: "before_confession", title: "Before Confession", latinTitle: "Ante Confessionem",
-            icon: "ch-keys", occasion: "Before going in",
-            detail: "Ask for light, go through the Ten Commandments, and be sorry for your sins.",
+            id: "before_confession",
+            title: String(
+                localized: "Before Confession",
+                comment: "Prayers tab: the name of an order of prayer, a few prayers said together"
+            ),
+            latinTitle: "Ante Confessionem",
+            icon: "ch-keys",
+            occasion: String(
+                localized: "Before going in",
+                comment: "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+            ),
+            detail: String(
+                localized: "Ask for light, go through the Ten Commandments, and be sorry for your sins.",
+                comment: "Prayers tab: one sentence saying what an order of prayer is"
+            ),
             prayerIDs: { _ in
                 ["sign_of_cross", "come_holy_ghost", "before_confession",
                  "examination_of_conscience", "act_of_contrition", "the_confession"]
             }
         ),
         PrayerOrder(
-            id: "after_confession", title: "After Confession", latinTitle: "Post Confessionem",
-            icon: "ch-keys", occasion: "Kneeling afterwards",
-            detail: "Say the prayers the priest gave you (your penance), then thank God for His mercy.",
+            id: "after_confession",
+            title: String(
+                localized: "After Confession",
+                comment: "Prayers tab: the name of an order of prayer, a few prayers said together"
+            ),
+            latinTitle: "Post Confessionem",
+            icon: "ch-keys",
+            occasion: String(
+                localized: "Kneeling afterwards",
+                comment: "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+            ),
+            detail: String(
+                localized: "Say the prayers the priest gave you (your penance), then thank God for His mercy.",
+                comment: "Prayers tab: one sentence saying what an order of prayer is"
+            ),
             prayerIDs: { _ in ["after_confession", "beati_quorum", "hail_mary"] }
         ),
         PrayerOrder(
-            id: "visit", title: "Visiting Jesus in Church", latinTitle: "Visitatio",
-            icon: "ch-monstrance", occasion: "In church, or from anywhere",
-            detail: "A few minutes with Jesus in the tabernacle, where the Host is kept in church, or in spirit from anywhere.",
+            id: "visit",
+            title: String(
+                localized: "Visiting Jesus in Church",
+                comment: "Prayers tab: the name of an order of prayer, a few prayers said together"
+            ),
+            latinTitle: "Visitatio",
+            icon: "ch-monstrance",
+            occasion: String(
+                localized: "In church, or from anywhere",
+                comment: "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+            ),
+            detail: String(
+                localized: "A few minutes with Jesus in the tabernacle, where the Host is kept in church, or in spirit from anywhere.",
+                comment: "Prayers tab: one sentence saying what an order of prayer is"
+            ),
             prayerIDs: { _ in
                 ["adoro_te", "spiritual_communion", "o_sacrum_convivium", "tantum_ergo", "divine_praises"]
             }
         ),
         PrayerOrder(
-            id: "holy_souls", title: "For Those Who Have Died", latinTitle: "Pro Defunctis",
-            icon: "ch-candle", occasion: "At a death, or any day",
-            detail: "Prayers asking God to give rest and peace to those who have died.",
+            id: "holy_souls",
+            title: String(
+                localized: "For Those Who Have Died",
+                comment: "Prayers tab: the name of an order of prayer, a few prayers said together"
+            ),
+            latinTitle: "Pro Defunctis",
+            icon: "ch-candle",
+            occasion: String(
+                localized: "At a death, or any day",
+                comment: "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+            ),
+            detail: String(
+                localized: "Prayers asking God to give rest and peace to those who have died.",
+                comment: "Prayers tab: one sentence saying what an order of prayer is"
+            ),
             prayerIDs: { _ in ["de_profundis", "requiem_aeternam", "fidelium_deus"] }
         ),
         PrayerOrder(
-            id: "trouble", title: "In Time of Trouble", latinTitle: "In Tribulatione",
-            icon: "ph-shield", occasion: "When you need help",
-            detail: "Prayers for help and protection, to Mary and to St Michael.",
+            id: "trouble",
+            title: String(
+                localized: "In Time of Trouble",
+                comment: "Prayers tab: the name of an order of prayer, a few prayers said together"
+            ),
+            latinTitle: "In Tribulatione",
+            icon: "ph-shield",
+            occasion: String(
+                localized: "When you need help",
+                comment: "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+            ),
+            detail: String(
+                localized: "Prayers for help and protection, to Mary and to St Michael.",
+                comment: "Prayers tab: one sentence saying what an order of prayer is"
+            ),
             prayerIDs: { _ in ["sub_tuum", "memorare", "perpetual_help", "st_michael_prayer"] }
         )
     ]
@@ -667,7 +841,10 @@ struct PrayAlongLaunch: Hashable {
                 return .order(order, on: date, startingAt: start)
             }
         }
-        return PrayAlongLaunch(orderID: nil, prayerIDs: [prayerID], title: resolve(prayerID)?.title ?? "Prayers")
+        return PrayAlongLaunch(orderID: nil, prayerIDs: [prayerID], title: resolve(prayerID)?.title ?? String(
+            localized: "Prayers",
+            comment: "Pray-along screen: the kicker when a prayer's own title cannot be found"
+        ))
     }
 
     /// A prayer by its id: the book's, one of the Rosary's or the
@@ -694,7 +871,10 @@ enum PrayerBookAudio {
 
     /// The book's own name, as its tab says it, with the word tab, so the
     /// row is never read as a second Audio, or as every prayer in the app
-    static let title = String(localized: "Prayers Tab Audio", comment: "Settings: whether the Prayers tab reads its prayers aloud")
+    static let title = String(
+        localized: "Prayers Tab Audio",
+        comment: "Settings: whether the Prayers tab reads its prayers aloud"
+    )
 
     /// The Prayer Book's door glyph
     static let icon = "lv-prayer-book"
@@ -702,8 +882,14 @@ enum PrayerBookAudio {
     /// The quieter way first, as the setting's `false`, as the Rosary's
     /// pills set theirs
     static let options: [RosaryChoice.Option] = [
-        RosaryChoice.Option(value: false, name: String(localized: "In Silence", comment: "Prayers Tab Audio option: no sound")),
-        RosaryChoice.Option(value: true, name: String(localized: "With a Voice", comment: "Prayers Tab Audio option: a voice reads the prayers")),
+        RosaryChoice.Option(value: false, name: String(
+            localized: "In Silence",
+            comment: "Prayers Tab Audio option: no sound"
+        )),
+        RosaryChoice.Option(value: true, name: String(
+            localized: "With a Voice",
+            comment: "Prayers Tab Audio option: a voice reads the prayers"
+        )),
     ]
 
     /// What the chosen option does. Until the reader has answered, the
@@ -718,7 +904,13 @@ enum PrayerBookAudio {
             )
         }
         return aloud
-            ? String(localized: "A voice reads each prayer to you.", comment: "Settings, Prayers Tab Audio: the line under the chosen option")
-            : String(localized: "No sound. The words are on screen for you to say.", comment: "Settings, Prayers Tab Audio: the line under the chosen option")
+            ? String(
+                localized: "A voice reads each prayer to you.",
+                comment: "Settings, Prayers Tab Audio: the line under the chosen option"
+            )
+            : String(
+                localized: "No sound. The words are on screen for you to say.",
+                comment: "Settings, Prayers Tab Audio: the line under the chosen option"
+            )
     }
 }

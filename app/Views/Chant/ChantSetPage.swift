@@ -150,7 +150,7 @@ struct ChantSetPage: View {
             Button("Cancel", role: .cancel) { renaming = nil }
         }
         .confirmationDialog(
-            "Delete \(deleting?.name ?? "this set")?",
+            deleting.map { Text("Delete \($0.name)?") } ?? Text("Delete this set?"),
             isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
             titleVisibility: .visible
         ) {
@@ -241,7 +241,7 @@ struct ChantSetPage: View {
             case .pause(let note, let seconds):
                 return Row(
                     id: item.id.uuidString,
-                    kind: .rubric(note.isEmpty ? "Silence" : note, seconds: seconds),
+                    kind: .rubric(note.isEmpty ? String(localized: "Silence", comment: "A sung set: a pause of the reader's own that has no note, only silence") : note, seconds: seconds),
                     origin: index,
                     itemID: item.id
                 )
@@ -304,7 +304,7 @@ struct ChantSetPage: View {
                 }
                 Text(
                     content.chantCount == 0
-                        ? "Nothing in it yet"
+                        ? String(localized: "Nothing in it yet", comment: "A sung set's page: under its name, the set holds no chant")
                         : ChantSetCard.summary(count: content.chantCount, duration: content.duration)
                 )
                 .font(AppFonts.readingFont(13.5))
@@ -331,10 +331,12 @@ struct ChantSetPage: View {
         let waiting = drawnSounding == nil && player.waitingForNext
         let word =
             !singing
-            ? "Play all"
+            ? String(localized: "Play all", comment: "A sung set's page: the button that plays the whole set, in capitals")
             : waiting
-                ? "Play next"
-                : going ? "Pause" : "Resume"
+                ? String(localized: "Play next", comment: "A sung set's page: the button, while the set waits between chants for a tap")
+                : going
+                    ? String(localized: "Pause", comment: "A sung set's page: the button that pauses the set being sung")
+                    : String(localized: "Resume", comment: "A sung set's page: the button that takes up the paused set")
         return Button {
             if singing { player.pauseOrResume() } else { player.play(queue) }
         } label: {
@@ -355,7 +357,7 @@ struct ChantSetPage: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .animation(Motion.crossfade, value: word)
-        .accessibilityLabel(singing ? word : "Play all of \(content.title)")
+        .accessibilityLabel(singing ? Text(word) : Text("Play all of \(content.title)"))
     }
 
     // MARK: - The bar
@@ -376,11 +378,11 @@ struct ChantSetPage: View {
         }
         .sensoryFeedback(.selection, trigger: kept)
         .accessibilityLabel("Save as your own set")
-        .accessibilityValue(kept ? "Saved" : "")
+        .accessibilityValue(kept ? Text("Saved") : Text(verbatim: ""))
         .accessibilityAddTraits(kept ? [.isSelected] : [])
         // The same question Saved asks before a set is deleted
         .confirmationDialog(
-            "Delete \(unkeeping?.name ?? "this set")?",
+            unkeeping.map { Text("Delete \($0.name)?") } ?? Text("Delete this set?"),
             isPresented: Binding(get: { unkeeping != nil }, set: { if !$0 { unkeeping = nil } }),
             titleVisibility: .visible
         ) {
@@ -516,7 +518,11 @@ struct ChantSetPage: View {
             ChantRubricText(text: text, size: 15)
             Spacer(minLength: 8)
             if let seconds {
-                Text(seconds > 0 ? ChantPlayer.clock(TimeInterval(seconds)) : "NOTE")
+                Text(
+                    seconds > 0
+                        ? ChantPlayer.clock(TimeInterval(seconds))
+                        : String(localized: "NOTE", comment: "A sung set: beside a pause of the reader's that is a red note with no silence, in capitals")
+                )
                     .font(AppFonts.labelFont(9))
                     .tracking(1)
                     .foregroundColor(lit ? Rubric.text : AppColors.textSecondary)
@@ -535,7 +541,10 @@ struct ChantSetPage: View {
     private func chantRow(_ chant: Chant, times: Int, number: Int?, lit: Bool, goingOn: Bool) -> some View {
         let duration = chant.duration * Double(max(1, times))
         let spoken = lit
-            ? "\(chant.spokenEntry(times: times, duration: duration)), playing now"
+            ? String(
+                localized: "\(chant.spokenEntry(times: times, duration: duration)), playing now",
+                comment: "VoiceOver: a chant in a sung set, the one sounding; first its name and length"
+            )
             : chant.spokenEntry(times: times, duration: duration)
         return Button {
             router.push(ChantTap.route(to: chant))
@@ -585,7 +594,7 @@ struct ChantSetPage: View {
                 .frame(height: AppLine.hairline)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(number.map { "\($0). \(spoken)" } ?? spoken)
+        .accessibilityLabel(number.map { Text("\($0). \(spoken)") } ?? Text(spoken))
         .accessibilityHint("Opens the chant")
         .accessibilityAddTraits(.isButton)
     }
@@ -602,19 +611,19 @@ struct ChantSetPage: View {
 
         var title: String {
             switch self {
-            case .playFromHere: return "Play from Here"
-            case .moveUp:       return "Move Up"
-            case .moveDown:     return "Move Down"
-            case .remove:       return "Remove"
+            case .playFromHere: return String(localized: "Play from Here", comment: "Menu item on a chant in a sung set: play the set from this chant on")
+            case .moveUp:       return String(localized: "Move Up", comment: "Menu item on a row of the reader's own sung set: move it one place up")
+            case .moveDown:     return String(localized: "Move Down", comment: "Menu item on a row of the reader's own sung set: move it one place down")
+            case .remove:       return String(localized: "Remove", comment: "Menu item on a row of the reader's own sung set: take it out of the set")
             }
         }
 
         var spokenTitle: String {
             switch self {
-            case .playFromHere: return "Play from here"
-            case .moveUp:       return "Move up"
-            case .moveDown:     return "Move down"
-            case .remove:       return "Remove"
+            case .playFromHere: return String(localized: "Play from here", comment: "VoiceOver action on a chant in a sung set: play the set from this chant on")
+            case .moveUp:       return String(localized: "Move up", comment: "VoiceOver action on a row of the reader's own sung set: move it one place up")
+            case .moveDown:     return String(localized: "Move down", comment: "VoiceOver action on a row of the reader's own sung set: move it one place down")
+            case .remove:       return String(localized: "Remove", comment: "VoiceOver action on a row of the reader's own sung set: take it out of the set")
             }
         }
 
@@ -669,9 +678,17 @@ struct ChantSetPage: View {
     /// "Silent prayer, 10 minutes of silence", or "Kneel., a note"
     static func spokenPause(_ text: String, seconds: Int?) -> String {
         guard let seconds else { return text }
-        return seconds > 0
-            ? "\(text), \(ChantPlayer.spoken(TimeInterval(seconds))) of silence"
-            : "\(text), a note"
+        guard seconds > 0 else {
+            return String(
+                localized: "\(text), a note",
+                comment: "VoiceOver: a pause in a sung set that is only a red note; first the note's words"
+            )
+        }
+        let silence = ChantPlayer.spoken(TimeInterval(seconds))
+        return String(
+            localized: "\(text), \(silence) of silence",
+            comment: "VoiceOver: a pause in a sung set: the note's words, then how long the silence is, like 10 minutes"
+        )
     }
 
     /// The reader's own set, when the page shows one that is still here
@@ -691,8 +708,8 @@ struct ChantSetPage: View {
     /// pause in the red its notes are set in
     private func addButtons(_ set: ChantSet) -> some View {
         HStack(spacing: 22) {
-            addButton("Add a chant", color: AppColors.gold) { addingChant = set }
-            addButton("Add a pause", color: Rubric.text) { addingPause = set }
+            addButton(String(localized: "Add a chant", comment: "Under the reader's own sung set: button that adds a chant, in capitals"), color: AppColors.gold) { addingChant = set }
+            addButton(String(localized: "Add a pause", comment: "Under the reader's own sung set: button that adds a red note or a silence, in capitals"), color: Rubric.text) { addingPause = set }
         }
         .frame(maxWidth: .infinity)
     }
@@ -730,11 +747,17 @@ struct ChantSetPage: View {
                 number += 1
             case .pause(let note, let seconds):
                 let silence = seconds > 0 ? " (\(ChantPlayer.clock(TimeInterval(seconds))))" : ""
-                lines.append("    \(note.isEmpty ? "Silence" : note)\(silence)")
+                let words = note.isEmpty ? String(localized: "Silence", comment: "A sung set: a pause of the reader's own that has no note, only silence") : note
+                lines.append("    \(words)\(silence)")
             }
         }
         lines.append("")
-        lines.append("Sung by Verbum Gloriae · from Lumen Viae's Chant Library")
+        lines.append(
+            String(
+                localized: "Sung by Verbum Gloriae · from Lumen Viae's Chant Library",
+                comment: "Last line of a sung set shared as plain text; Verbum Gloriae is the choir's name, Lumen Viae the app's"
+            )
+        )
         return lines.joined(separator: "\n")
     }
 }

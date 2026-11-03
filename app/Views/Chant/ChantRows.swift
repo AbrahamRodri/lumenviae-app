@@ -186,7 +186,12 @@ extension Chant {
     /// A chant in a set as VoiceOver says it: "Ave Maria, 10 times, Hail
     /// Mary, 3 minutes 20 seconds"
     func spokenEntry(times: Int, duration: TimeInterval) -> String {
-        let name = times > 1 ? "\(latinTitle), \(times) times" : latinTitle
+        let name = times > 1
+            ? String(
+                localized: "\(latinTitle), \(times) times",
+                comment: "VoiceOver: a chant in a sung set that is sung more than once in a row, its Latin title then how many times, like: Ave Maria, 10 times"
+            )
+            : latinTitle
         // Rounded as the lengths beside it are shown
         return "\(name), \(englishTitle), \(ChantPlayer.spoken(duration.rounded()))"
     }

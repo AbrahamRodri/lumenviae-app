@@ -40,10 +40,22 @@ extension PrayerBook {
     ) -> String {
         let hour = calendar.component(.hour, from: date)
         switch hour {
-        case dayBeginsAtHour..<11:  return "On waking"
-        case 11..<15: return "At noon"
-        case 15..<20: return "At 6 PM"
-        default:      return "At bedtime"
+        case dayBeginsAtHour..<11:  return String(
+            localized: "On waking",
+            comment: "Prayers tab, home's hour row: when one of the day's three orders of prayer is said"
+        )
+        case 11..<15: return String(
+            localized: "At noon",
+            comment: "Prayers tab, home's hour row: when one of the day's three orders of prayer is said"
+        )
+        case 15..<20: return String(
+            localized: "At 6 PM",
+            comment: "Prayers tab, home's hour row: when one of the day's three orders of prayer is said"
+        )
+        default:      return String(
+            localized: "At bedtime",
+            comment: "Prayers tab, home's hour row: when one of the day's three orders of prayer is said"
+        )
         }
     }
 
@@ -78,8 +90,14 @@ extension PrayerBook {
     /// state in code; the reader sees PRAYED.)
     static func hourName(of order: PrayerOrder, at date: Date = Date(), calendar: Calendar = .current) -> String {
         switch order.id {
-        case morningOrderID: return "Morning"
-        case nightOrderID:   return "Night"
+        case morningOrderID: return String(
+            localized: "Morning",
+            comment: "Prayers tab: the name of one of the day's three stations on the strip of hours, shown in small capitals (Morning, Noon, Evening, Night)"
+        )
+        case nightOrderID:   return String(
+            localized: "Night",
+            comment: "Prayers tab: the name of one of the day's three stations on the strip of hours, shown in small capitals (Morning, Noon, Evening, Night)"
+        )
         default:             return angelusBellKept(at: date, calendar: calendar).name
         }
     }
@@ -103,10 +121,26 @@ extension PrayerBook {
         if offered { return .offered }
         if dayOrder(at: date, calendar: calendar).id == order.id { return .now }
         switch order.id {
-        case morningOrderID: return .at("On waking")
-        case nightOrderID:   return .at("At bedtime")
+        case morningOrderID: return .at(String(
+            localized: "On waking",
+            comment: "Prayers tab, home's hour row: when one of the day's three orders of prayer is said"
+        ))
+        case nightOrderID:   return .at(String(
+            localized: "At bedtime",
+            comment: "Prayers tab, home's hour row: when one of the day's three orders of prayer is said"
+        ))
         default:
-            return .at(angelusBellKept(at: date, calendar: calendar) == .evening ? "At 6 PM" : "At noon")
+            return .at(
+                angelusBellKept(at: date, calendar: calendar) == .evening
+                    ? String(
+                        localized: "At 6 PM",
+                        comment: "Prayers tab, home's hour row: when one of the day's three orders of prayer is said"
+                    )
+                    : String(
+                        localized: "At noon",
+                        comment: "Prayers tab, home's hour row: when one of the day's three orders of prayer is said"
+                    )
+            )
         }
     }
 
@@ -121,8 +155,14 @@ extension PrayerBook {
         /// The bell's name on the strip
         var name: String {
             switch self {
-            case .noon:    return "Noon"
-            case .evening: return "Evening"
+            case .noon:    return String(
+                localized: "Noon",
+                comment: "Prayers tab: the name of one of the day's three stations on the strip of hours, shown in small capitals (Morning, Noon, Evening, Night)"
+            )
+            case .evening: return String(
+                localized: "Evening",
+                comment: "Prayers tab: the name of one of the day's three stations on the strip of hours, shown in small capitals (Morning, Noon, Evening, Night)"
+            )
             }
         }
 
@@ -183,13 +223,25 @@ extension PrayerBook {
     static func daySummary(of order: PrayerOrder, on date: Date = Date()) -> String {
         switch order.id {
         case morningOrderID:
-            return "Giving the day to God."
+            return String(
+                localized: "Giving the day to God.",
+                comment: "Prayers tab, home's hour row: one short line saying what an order of prayer of the day is, under its name"
+            )
         case angelusOrderID:
             return isEastertide(date)
-                ? "The Easter prayer to Mary, said in place of the Angelus."
-                : "A short prayer to Mary at 6 AM, noon and 6 PM."
+                ? String(
+                    localized: "The Easter prayer to Mary, said in place of the Angelus.",
+                    comment: "Prayers tab, home's hour row: one short line saying what an order of prayer of the day is, under its name"
+                )
+                : String(
+                    localized: "A short prayer to Mary at 6 AM, noon and 6 PM.",
+                    comment: "Prayers tab, home's hour row: one short line saying what an order of prayer of the day is, under its name"
+                )
         case nightOrderID:
-            return "A look back on the day, ending with a song to Mary."
+            return String(
+                localized: "A look back on the day, ending with a song to Mary.",
+                comment: "Prayers tab, home's hour row: one short line saying what an order of prayer of the day is, under its name"
+            )
         default:
             return order.detail
         }

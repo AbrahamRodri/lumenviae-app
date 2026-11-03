@@ -64,15 +64,34 @@ struct ChantSet: nonisolated Codable, Identifiable, Hashable {
     /// "5 chants and 2 pauses · about 21 minutes"
     var summary: String {
         var parts: [String] = []
-        let chants = chantCount == 1 ? "1 chant" : "\(chantCount) chants"
+        // "1 chant", "1 pause" and "about a minute" come from the
+        // catalog's plural variations
+        let chants = String(
+            localized: "\(chantCount) chants",
+            comment: "A sung set's summary: how many chants it holds"
+        )
         if pauseCount > 0 {
-            parts.append("\(chants) and \(pauseCount == 1 ? "1 pause" : "\(pauseCount) pauses")")
+            let pauses = String(
+                localized: "\(pauseCount) pauses",
+                comment: "A sung set's summary: how many pauses it holds between chants"
+            )
+            parts.append(
+                String(
+                    localized: "\(chants) and \(pauses)",
+                    comment: "A sung set's summary: its chants and its pauses, like 5 chants and 2 pauses"
+                )
+            )
         } else {
             parts.append(chants)
         }
         let minutes = Int((duration / 60).rounded())
         if minutes > 0 {
-            parts.append(minutes == 1 ? "about a minute" : "about \(minutes) minutes")
+            parts.append(
+                String(
+                    localized: "about \(minutes) minutes",
+                    comment: "A sung set's summary: how long its recordings run, rounded to minutes"
+                )
+            )
         }
         return parts.joined(separator: " · ")
     }
@@ -90,9 +109,12 @@ enum ChantWordsPreference: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .both:    return "Latin and English"
-        case .latin:   return "Latin only"
-        case .english: return "English only"
+        case .both:
+            return String(localized: "Latin and English", comment: "Chant words option: show the Latin and the English under the chant")
+        case .latin:
+            return String(localized: "Latin only", comment: "Chant words option: show only the Latin under the chant")
+        case .english:
+            return String(localized: "English only", comment: "Chant words option: show only the English under the chant")
         }
     }
 
@@ -288,10 +310,13 @@ final class ChantShelfStore {
 
     /// The next free "My set" name, for a new set's sheet to offer
     var nextSetName: String {
-        var proposed = "My set"
+        var proposed = String(localized: "My set", comment: "The name offered for a new sung set of chants, which the reader may change")
         var number = 2
         while sets.contains(where: { $0.name == proposed }) {
-            proposed = "My set \(number)"
+            proposed = String(
+                localized: "My set \(number)",
+                comment: "The name offered for a new sung set of chants when My set is taken, with a number, like My set 2"
+            )
             number += 1
         }
         return proposed

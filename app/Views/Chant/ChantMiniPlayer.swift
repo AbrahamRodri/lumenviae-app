@@ -102,8 +102,17 @@ struct ChantMiniPlayer: View {
     }
 
     private var title: String {
-        if let silence = player.silence { return silence.note.isEmpty ? "Silence" : silence.note }
-        if player.waitingForNext { return "Next: \(chant.latinTitle)" }
+        if let silence = player.silence {
+            return silence.note.isEmpty
+                ? String(localized: "Silence", comment: "Mini player's title during a timed pause between chants in a sung set")
+                : silence.note
+        }
+        if player.waitingForNext {
+            return String(
+                localized: "Next: \(chant.latinTitle)",
+                comment: "Mini player's title while a sung set waits for a tap; the chant's Latin title follows"
+            )
+        }
         return chant.latinTitle
     }
 

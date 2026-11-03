@@ -103,9 +103,18 @@ struct PrayAlongView: View {
     /// the head never says the title beneath it again. The Angelus's head
     /// once said when it is prayed, so one head in three named a time.
     private var kicker: String {
-        guard launch.orderID != nil else { return "Prayers" }
-        if prayers.count == 1, prayers[0].title.caseInsensitiveCompare(launch.title) == .orderedSame {
-            return "Prayers"
+        let book = String(
+            localized: "Prayers",
+            comment: "Pray-along screen, head: names the Prayers tab's book when a single prayer is open; shown in capitals"
+        )
+        guard launch.orderID != nil else { return book }
+        // The Angelus by its id as well: its order's title is the
+        // catalog's and the prayer's the server's, which differ once the
+        // app speaks another language
+        if prayers.count == 1,
+            isAngelus || prayers[0].title.caseInsensitiveCompare(launch.title) == .orderedSame
+        {
+            return book
         }
         return launch.title
     }
@@ -295,8 +304,8 @@ struct PrayAlongView: View {
         }
         .buttonStyle(QuietGlyphButtonStyle())
         .animation(Motion.crossfade, value: aloud)
-        .accessibilityLabel(aloud ? "Praying with a voice" : "Praying in silence")
-        .accessibilityHint(aloud ? "Double-tap to pray in silence" : "Double-tap to hear a voice read the prayers")
+        .accessibilityLabel(aloud ? Text("Praying with a voice") : Text("Praying in silence"))
+        .accessibilityHint(aloud ? Text("Double-tap to pray in silence") : Text("Double-tap to hear a voice read the prayers"))
     }
 
     /// What the page does less often, for the prayer on it: its
@@ -308,7 +317,7 @@ struct PrayAlongView: View {
                 if prayer.hasLatin {
                     Picker(selection: languageChoice) {
                         ForEach(LanguageChoice.allCases) { choice in
-                            Text(choice.rawValue).tag(choice)
+                            Text(choice.label).tag(choice)
                         }
                     } label: {
                         Label("Language", systemImage: "character.book.closed")
@@ -319,9 +328,17 @@ struct PrayAlongView: View {
                 let kept = store.isKept(prayer.id)
                 Button {
                     store.toggleRibbon(prayer.id)
-                    say(store.isKept(prayer.id)
-                        ? "Saved. Find it under Saved on the Prayers tab."
-                        : "Removed from Saved.")
+                    say(
+                        store.isKept(prayer.id)
+                            ? String(
+                                localized: "Saved. Find it under Saved on the Prayers tab.",
+                                comment: "Pray-along screen: said for three seconds, and to VoiceOver, after the reader saves the prayer from the More menu"
+                            )
+                            : String(
+                                localized: "Removed from Saved.",
+                                comment: "Pray-along screen: said for three seconds, and to VoiceOver, after the reader removes the prayer from Saved"
+                            )
+                    )
                 } label: {
                     // The bookmark, as every save in the app is; a pin means pinned
                     // to the top
@@ -366,6 +383,18 @@ struct PrayAlongView: View {
     private enum LanguageChoice: String, CaseIterable, Identifiable {
         case english = "English", latin = "Latin", both = "Both"
         var id: Self { self }
+
+        /// The choice's name in the menu; the raw value is only its tag
+        var label: String {
+            switch self {
+            case .english:
+                return String(localized: "English", comment: "Pray-along More menu, Language: show the prayer in English")
+            case .latin:
+                return String(localized: "Latin", comment: "Pray-along More menu, Language: show the prayer in Latin")
+            case .both:
+                return String(localized: "Both", comment: "Pray-along More menu, Language: show the prayer in English and Latin together")
+            }
+        }
     }
 
     private var languageChoice: Binding<LanguageChoice> {
@@ -621,7 +650,11 @@ struct PrayAlongView: View {
                 }
 
                 if isLast {
-                    GoldCTAButton(title: "Amen", trailingIcon: "ph-check", fullWidth: true) {
+                    GoldCTAButton(
+                        title: String(localized: "Amen", comment: "Pray-along screen: the gold act on the last prayer, finishing the prayers"),
+                        trailingIcon: "ph-check",
+                        fullWidth: true
+                    ) {
                         finish()
                     }
                 } else if let next = prayers[safe: index + 1] {
@@ -672,7 +705,12 @@ struct PrayAlongView: View {
             footNote(message)
         case .ready:
             if !showsPlayDisc {
-                footNote("This prayer has no recording yet. Pray it in silence, then go on.")
+                footNote(
+                    String(
+                        localized: "This prayer has no recording yet. Pray it in silence, then go on.",
+                        comment: "Pray-along screen, praying with a voice: a note at the foot when this prayer has no recording"
+                    )
+                )
             }
         }
     }
@@ -687,9 +725,15 @@ struct PrayAlongView: View {
 
     private var preparingLine: String {
         if case .preparing(let done, let total) = voice.state, total > 0 {
-            return "Fetching the recordings · \(done) of \(total)"
+            return String(
+                localized: "Fetching the recordings · \(done) of \(total)",
+                comment: "Pray-along screen, praying with a voice: a note at the foot while the prayers' recordings download, with how many have come"
+            )
         }
-        return "Fetching the recordings"
+        return String(
+            localized: "Fetching the recordings",
+            comment: "Pray-along screen, praying with a voice: a note at the foot while the prayers' recordings download"
+        )
     }
 
     private var playDisc: some View {
@@ -709,7 +753,7 @@ struct PrayAlongView: View {
             .shadow(color: AppColors.gold.opacity(0.25), radius: 10)
         }
         .buttonStyle(QuietGlyphButtonStyle())
-        .accessibilityLabel(voiceGoesOn ? "Pause" : "Play")
+        .accessibilityLabel(voiceGoesOn ? Text("Pause") : Text("Play"))
     }
 
     /// The next prayer named and a tap away: an outlined pill, since the
@@ -798,18 +842,27 @@ struct PrayAlongView: View {
                         .accessibilityAddTraits(.isHeader)
 
                     VStack(spacing: 4) {
-                        GoldCTAButton(title: "Done", fullWidth: false) {
+                        GoldCTAButton(
+                            title: String(localized: "Done", comment: "Pray-along screen, after the Amen: the gold act that closes the screen"),
+                            fullWidth: false
+                        ) {
                             router.pop()
                         }
                         .padding(.top, 14)
 
                         if launch.orderID == nil, let only = prayers.first, !store.isKept(only.id) {
-                            QuietGoldButton(title: "Save this prayer", leadingIcon: "ph-bookmark-simple") {
+                            QuietGoldButton(
+                                title: String(localized: "Save this prayer", comment: "Pray-along screen, after the Amen: keeps the prayer just prayed under Saved"),
+                                leadingIcon: "ph-bookmark-simple"
+                            ) {
                                 store.toggleRibbon(only.id)
                             }
                         }
 
-                        QuietGoldButton(title: "Pray again", leadingIcon: "ph-arrow-counter-clockwise") {
+                        QuietGoldButton(
+                            title: String(localized: "Pray again", comment: "Pray-along screen, after the Amen: begins the same prayers again"),
+                            leadingIcon: "ph-arrow-counter-clockwise"
+                        ) {
                             finished = false
                             goTo(0)
                         }
@@ -827,7 +880,10 @@ struct PrayAlongView: View {
             Text("These prayers could not be found.")
                 .font(AppFonts.readingItalicFont(16))
                 .foregroundColor(AppColors.textSecondary)
-            QuietGoldButton(title: "Close", leadingIcon: "ph-x") { router.pop() }
+            QuietGoldButton(
+                title: String(localized: "Close", comment: "Pray-along screen, when its prayers could not be found: closes the screen"),
+                leadingIcon: "ph-x"
+            ) { router.pop() }
         }
     }
 
@@ -1324,15 +1380,24 @@ struct PrayAloudChoiceSheet: View {
                 }
 
                 SheetHeader(
-                    kicker: "Prayers",
-                    title: "With a voice, or in silence?",
-                    lead: "A voice can read each prayer to you, or you can say the words yourself."
+                    kicker: String(localized: "Prayers", comment: "Sheet asked before the Prayers tab's book first speaks: the kicker naming the book"),
+                    title: String(
+                        localized: "With a voice, or in silence?",
+                        comment: "Sheet asked before the Prayers tab's book first speaks: its question"
+                    ),
+                    lead: String(
+                        localized: "A voice can read each prayer to you, or you can say the words yourself.",
+                        comment: "Sheet asked before the Prayers tab's book first speaks: the line under the question"
+                    )
                 )
 
                 Button { onChoose(true) } label: {
                     SheetRow(
-                        "With a voice",
-                        detail: "Read to you in the \(voices.chosenVoice.name.lowercased()) voice",
+                        String(localized: "With a voice", comment: "Sheet asked before the Prayers tab's book first speaks: the answer that has a voice read the prayers"),
+                        detail: String(
+                            localized: "Read to you in the \(voices.chosenVoice.name.lowercased()) voice",
+                            comment: "Sheet asked before the Prayers tab's book first speaks: under With a voice; the name is the chosen narration voice's, in lower case, like male or female"
+                        ),
                         icon: "ph-speaker-high",
                         detailLineLimit: nil
                     )
@@ -1341,8 +1406,11 @@ struct PrayAloudChoiceSheet: View {
 
                 Button { onChoose(false) } label: {
                     SheetRow(
-                        "In silence",
-                        detail: "No sound. The words stay on screen for you to say.",
+                        String(localized: "In silence", comment: "Sheet asked before the Prayers tab's book first speaks: the answer that keeps the book silent"),
+                        detail: String(
+                            localized: "No sound. The words stay on screen for you to say.",
+                            comment: "Sheet asked before the Prayers tab's book first speaks: under In silence"
+                        ),
                         icon: "ph-book-open",
                         showsDivider: false,
                         detailLineLimit: nil
@@ -1350,7 +1418,12 @@ struct PrayAloudChoiceSheet: View {
                 }
                 .buttonStyle(SacredCardButtonStyle())
 
-                SheetNote("Change this any time with VOICE or SILENT at the top of the page, or in Settings.")
+                SheetNote(
+                    String(
+                        localized: "Change this any time with VOICE or SILENT at the top of the page, or in Settings.",
+                        comment: "Sheet asked before the Prayers tab's book first speaks: the note at its foot; VOICE and SILENT are the words on the pray-along screen's switch and must match them"
+                    )
+                )
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

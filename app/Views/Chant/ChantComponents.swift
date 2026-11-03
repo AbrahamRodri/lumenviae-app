@@ -43,7 +43,13 @@ struct ChantCredit: View {
                 links {
                     creditLink("VERBUMGLORIAE.ES", to: ChantCatalog.sourceSite)
                         .accessibilityLabel("Verbum Gloriae's website")
-                    creditLink("READ THE LICENCE", to: ChantCatalog.licenceURL)
+                    creditLink(
+                        String(
+                            localized: "READ THE LICENCE",
+                            comment: "Chant credit: link to the chant recordings' copyleft licence, in small capitals"
+                        ),
+                        to: ChantCatalog.licenceURL
+                    )
                         .accessibilityLabel("Read the licence")
                 }
             }
@@ -243,7 +249,11 @@ struct ChantStepBeads: View {
             }
         }
         .accessibilityElement()
-        .accessibilityLabel(learned ? "Learned" : step.map { "Step \($0.rawValue) of 4, \($0.title)" } ?? "Not begun")
+        .accessibilityLabel(
+            learned
+                ? Text("Learned")
+                : step.map { Text("Step \($0.rawValue) of 4, \($0.title)") } ?? Text("Not begun")
+        )
     }
 }
 

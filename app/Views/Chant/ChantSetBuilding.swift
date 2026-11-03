@@ -50,9 +50,15 @@ struct ChantAddRing: View {
     static func spoken(_ count: Int) -> String? {
         switch count {
         case 0: return nil
-        case 1: return "In the set"
-        case 2: return "In the set twice"
-        default: return "In the set \(count) times"
+        case 1:
+            return String(localized: "In the set", comment: "VoiceOver: a chant in the add-a-chant list is in the set once")
+        case 2:
+            return String(localized: "In the set twice", comment: "VoiceOver: a chant in the add-a-chant list is in the set two times")
+        default:
+            return String(
+                localized: "In the set \(count) times",
+                comment: "VoiceOver: a chant in the add-a-chant list is in the set this many times (three or more)"
+            )
         }
     }
 }
@@ -106,7 +112,7 @@ struct ChantAddRow: View {
             ChantRule(opacity: 0.12)
                 .padding(.leading, SheetMetrics.gutter + 56)
         }
-        .accessibilityHint(count > 0 ? "Adds it again at the end of the set" : "Adds it to the end of the set")
+        .accessibilityHint(count > 0 ? Text("Adds it again at the end of the set") : Text("Adds it to the end of the set"))
     }
 }
 
@@ -235,13 +241,20 @@ struct ChantSetRow: View {
     /// repeat included: "4 chants · 23 min", or as its page says when it
     /// holds no chant
     private var holds: String {
-        self.set.sungCount == 0 ? "Nothing in it yet" : ChantSetCard.summary(count: set.sungCount, duration: set.duration)
+        self.set.sungCount == 0
+            ? String(localized: "Nothing in it yet", comment: "Add to a set sheet: under a set's name, the set holds no chant")
+            : ChantSetCard.summary(count: set.sungCount, duration: set.duration)
     }
 
     /// The line under the set's name, short enough to stand on one line:
     /// "Already in it · 4 chants · 23 min"
     private var detail: String {
-        count > 0 ? "Already in it · \(holds)" : holds
+        count > 0
+            ? String(
+                localized: "Already in it · \(holds)",
+                comment: "Add to a set sheet: under a set's name, the chant is already in it; then what the set holds, like 4 chants · 23 min"
+            )
+            : holds
     }
 }
 
@@ -268,18 +281,18 @@ extension ChantGroup {
     /// title has no room
     var shortTitle: String {
         switch id {
-        case "asperges": return "Asperges"
-        case "mass": return "Mass"
-        case "creed": return "Creed"
-        case "sequences": return "Sequences"
-        case "requiem": return "For the Dead"
-        case "hymns": return "Hymns"
-        case "ourLady": return "Our Lady"
-        case "seasons": return "Seasons"
-        case "canticles": return "Canticles"
-        case "litanies": return "Litanies"
-        case "benediction": return "Benediction"
-        case "rosary": return "Rosary"
+        case "asperges": return String(localized: "Asperges", comment: "Add a chant sheet: short name of a section of the chant book in the jump strip; the sprinkling of holy water before Sunday Mass (Asperges me)")
+        case "mass": return String(localized: "Mass", comment: "Add a chant sheet: short name of a section of the chant book in the jump strip; the chants of the Mass's Ordinary")
+        case "creed": return String(localized: "Creed", comment: "Add a chant sheet: short name of a section of the chant book in the jump strip; the sung Creed")
+        case "sequences": return String(localized: "Sequences", comment: "Add a chant sheet: short name of a section of the chant book in the jump strip; the feast poems sung before the Gospel")
+        case "requiem": return String(localized: "For the Dead", comment: "Add a chant sheet: short name of a section of the chant book in the jump strip; the Mass for the Dead")
+        case "hymns": return String(localized: "Hymns", comment: "Add a chant sheet: short name of a section of the chant book in the jump strip; general hymns")
+        case "ourLady": return String(localized: "Our Lady", comment: "Add a chant sheet: short name of a section of the chant book in the jump strip; hymns to Our Lady")
+        case "seasons": return String(localized: "Seasons", comment: "Add a chant sheet: short name of a section of the chant book in the jump strip; seasonal hymns and chants")
+        case "canticles": return String(localized: "Canticles", comment: "Add a chant sheet: short name of a section of the chant book in the jump strip; the Gospel canticles")
+        case "litanies": return String(localized: "Litanies", comment: "Add a chant sheet: short name of a section of the chant book in the jump strip; litanies")
+        case "benediction": return String(localized: "Benediction", comment: "Add a chant sheet: short name of a section of the chant book in the jump strip; Benediction of the Blessed Sacrament")
+        case "rosary": return String(localized: "Rosary", comment: "Add a chant sheet: short name of a section of the chant book in the jump strip; the Rosary sung in Latin")
         default: return title
         }
     }
@@ -316,7 +329,13 @@ extension ChantSet {
     /// The foot of the picker, counting what the rings count: "In the set:
     /// 3 chants · 7 min", in the words of the library's set cards
     var tally: String {
-        guard sungCount > 0 else { return "Nothing in the set yet" }
-        return "In the set: " + ChantSetCard.summary(count: sungCount, duration: duration)
+        guard sungCount > 0 else {
+            return String(localized: "Nothing in the set yet", comment: "Add a chant sheet, its foot: the set holds no chant yet")
+        }
+        let summary = ChantSetCard.summary(count: sungCount, duration: duration)
+        return String(
+            localized: "In the set: \(summary)",
+            comment: "Add a chant sheet, its foot: what the set holds, like 3 chants · 7 min"
+        )
     }
 }

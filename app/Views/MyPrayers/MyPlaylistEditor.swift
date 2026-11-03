@@ -47,10 +47,30 @@ struct MyPlaylistEditor: View {
             AppColors.appGradient.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                SheetHeader(kicker: "My Playlists", title: existing == nil ? "New Playlist" : "Edit Playlist") {
+                SheetHeader(
+                    kicker: String(
+                        localized: "My Playlists",
+                        comment: "Playlist editor: the small kicker over the sheet's title"
+                    ),
+                    title: existing == nil
+                        ? String(
+                            localized: "New Playlist",
+                            comment: "Playlist editor: the sheet's title when making a new playlist"
+                        )
+                        : String(
+                            localized: "Edit Playlist",
+                            comment: "Playlist editor: the sheet's title when changing a playlist"
+                        )
+                ) {
                     HStack(spacing: 4) {
-                        SheetHeaderAction(title: "Cancel") { dismiss() }
-                        SheetHeaderAction(title: "Save", action: save)
+                        SheetHeaderAction(title: String(
+                            localized: "Cancel",
+                            comment: "Sheet header action that closes the sheet without saving"
+                        )) { dismiss() }
+                        SheetHeaderAction(title: String(
+                            localized: "Save",
+                            comment: "Sheet header action that saves and closes the sheet"
+                        ), action: save)
                             .disabled(hasNoName)
                             .opacity(hasNoName ? 0.35 : 1)
                     }
@@ -68,7 +88,10 @@ struct MyPlaylistEditor: View {
                             .listRowInsets(EdgeInsets())
                             .listRowBackground(Color.clear)
                     } header: {
-                        sectionLabel("Name and image")
+                        sectionLabel(String(
+                            localized: "Name and image",
+                            comment: "Playlist editor: the heading over the playlist's name field and its image"
+                        ))
                     }
 
                     Section {
@@ -103,7 +126,17 @@ struct MyPlaylistEditor: View {
                         }
                         .listRowBackground(AppColors.cardBackground)
                     } header: {
-                        sectionLabel(items.isEmpty ? "Prayers" : "Prayers · \(items.count)")
+                        sectionLabel(
+                            items.isEmpty
+                                ? String(
+                                    localized: "Prayers",
+                                    comment: "Playlist editor: the heading over the playlist's prayers, while it has none"
+                                )
+                                : String(
+                                    localized: "Prayers · \(items.count)",
+                                    comment: "Playlist editor: the heading over the playlist's prayers, with how many it holds"
+                                )
+                        )
                     } footer: {
                         if items.count > 1 {
                             Text("Drag to change the order. Swipe to take one out.")
@@ -171,7 +204,13 @@ struct MyPlaylistEditor: View {
         return HStack(spacing: 12) {
             PrayersPaintingThumb(painting: .prayer(item.prayerID), width: 40, height: 40, radius: 7)
             VStack(alignment: .leading, spacing: 1) {
-                Text(prayer?.listTitle ?? "A prayer no longer kept")
+                Text(
+                    prayer?.listTitle
+                        ?? String(
+                            localized: "A prayer no longer kept",
+                            comment: "Playlist editor: a row whose prayer has been deleted or is no longer in the book"
+                        )
+                )
                     .font(AppFonts.readingFont(17))
                     .foregroundColor(prayer == nil ? AppColors.textSecondary : AppColors.cream)
                     .lineLimit(1)
@@ -232,12 +271,26 @@ struct MyPrayersPrayerPicker: View {
 
             VStack(spacing: 0) {
                 SheetHeader(
-                    kicker: picked.isEmpty ? "Add to playlist" : "\(PrayerBookView.prayerCount(picked.count)) to add",
-                    title: "Add Prayers"
+                    kicker: picked.isEmpty
+                        ? String(
+                            localized: "Add to playlist",
+                            comment: "Add Prayers sheet: the small kicker over the title, before anything is picked"
+                        )
+                        : String(
+                            localized: "\(picked.count) prayers to add",
+                            comment: "Add Prayers sheet: the small kicker over the title, how many prayers are picked"
+                        ),
+                    title: String(localized: "Add Prayers", comment: "Add Prayers sheet: its title")
                 ) {
                     HStack(spacing: 4) {
-                        SheetHeaderAction(title: "Cancel") { dismiss() }
-                        SheetHeaderAction(title: "Done") {
+                        SheetHeaderAction(title: String(
+                            localized: "Cancel",
+                            comment: "Sheet header action that closes the sheet without saving"
+                        )) { dismiss() }
+                        SheetHeaderAction(title: String(
+                            localized: "Done",
+                            comment: "Sheet header action that closes the sheet"
+                        )) {
                             add(picked)
                             dismiss()
                         }
@@ -260,11 +313,18 @@ struct MyPrayersPrayerPicker: View {
                         Section {
                             ForEach(mine) { prayer in
                                 row(
-                                    title: prayer.bookPrayer.title, note: "Your own",
+                                    title: prayer.bookPrayer.title,
+                                    note: String(
+                                        localized: "Your own",
+                                        comment: "Add Prayers sheet: the note under a prayer the reader wrote"
+                                    ),
                                     painting: .prayer(prayer.prayerID), ids: [prayer.prayerID])
                             }
                         } header: {
-                            sectionLabel("My Prayers")
+                            sectionLabel(String(
+                                localized: "My Prayers",
+                                comment: "Add Prayers sheet: the heading over the reader's own prayers"
+                            ))
                         }
                     }
 
@@ -275,13 +335,19 @@ struct MyPrayersPrayerPicker: View {
                                 let ids = order.prayers().map(\.id)
                                 row(
                                     title: order.title,
-                                    note: "All \(PrayerBookView.prayerCount(ids.count))",
+                                    note: String(
+                                        localized: "All \(ids.count) prayers",
+                                        comment: "Add Prayers sheet: the note under an order of prayer, adding all its prayers at once"
+                                    ),
                                     painting: .order(order),
                                     ids: ids
                                 )
                             }
                         } header: {
-                            sectionLabel("Orders of prayer")
+                            sectionLabel(String(
+                                localized: "Orders of prayer",
+                                comment: "Add Prayers sheet: the heading over the book's orders of prayer, prayers said together"
+                            ))
                         }
                     }
 
@@ -290,7 +356,10 @@ struct MyPrayersPrayerPicker: View {
                             row(title: prayer.listTitle, note: nil, painting: .prayer(prayer.id), ids: [prayer.id])
                         }
                     } header: {
-                        sectionLabel("The Prayer Book")
+                        sectionLabel(String(
+                            localized: "The Prayer Book",
+                            comment: "Add Prayers sheet: the heading over every prayer of the book"
+                        ))
                     }
                 }
                 .scrollContentBackground(.hidden)
@@ -318,7 +387,7 @@ struct MyPrayersPrayerPicker: View {
                 }
                 Spacer(minLength: 8)
                 if times > 0 {
-                    Text(times == 1 ? "ADDED" : "ADDED ×\(times)")
+                    (times == 1 ? Text("ADDED") : Text("ADDED ×\(times)"))
                         .font(AppFonts.labelFont(9))
                         .tracking(1.6)
                         .foregroundColor(AppColors.gold)
@@ -330,7 +399,7 @@ struct MyPrayersPrayerPicker: View {
             .contentShape(Rectangle())
         }
         .listRowBackground(AppColors.cardBackground)
-        .accessibilityLabel(times > 0 ? "\(title), added" : title)
+        .accessibilityLabel(times > 0 ? Text("\(title), added") : Text(title))
         .accessibilityHint("Adds to the playlist")
     }
 

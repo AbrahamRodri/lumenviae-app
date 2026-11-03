@@ -54,7 +54,12 @@ struct CustomPrayer: Identifiable, Codable, Hashable {
     var bookPrayer: BookPrayer {
         BookPrayer(
             id: prayerID,
-            title: title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Untitled Prayer" : title,
+            title: title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                ? String(
+                    localized: "Untitled Prayer",
+                    comment: "My Prayers: the name shown for a prayer of the reader's own left without a title"
+                )
+                : title,
             latinTitle: nil,
             origin: nil,
             note: nil,
@@ -88,6 +93,11 @@ struct PrayerPlaylist: Identifiable, Codable, Hashable {
     var orderID: String { "playlist_" + id.uuidString }
 
     var displayName: String {
-        name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Untitled Playlist" : name
+        name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? String(
+                localized: "Untitled Playlist",
+                comment: "My Prayers: the name shown for a playlist of the reader's own left without a name"
+            )
+            : name
     }
 }

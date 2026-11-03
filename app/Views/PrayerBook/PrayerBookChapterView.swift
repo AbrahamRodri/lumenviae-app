@@ -369,11 +369,19 @@ struct PrayerBookChapterView: View {
 
     /// "or back to Short Prayers", the name in pale gold
     private static func backLine(to title: String) -> AttributedString {
-        var lead = AttributedString("or back to ")
-        lead.foregroundColor = AppColors.textSecondary
-        var name = AttributedString(title)
-        name.foregroundColor = AppColors.goldLight
-        return lead + name
+        // One sentence, so a translation can place the name where its
+        // grammar wants it; the name is then found in it and lit
+        var line = AttributedString(
+            String(
+                localized: "or back to \(title)",
+                comment: "Prayer topic page, foot: a quiet door back to the topic before, under the next topic's card; the name is a topic's title, like Short Prayers"
+            )
+        )
+        line.foregroundColor = AppColors.textSecondary
+        if let range = line.range(of: title, options: .backwards) {
+            line[range].foregroundColor = AppColors.goldLight
+        }
+        return line
     }
 
     /// Fades the page out, swaps the topic and puts the scroll back to
@@ -533,9 +541,12 @@ private struct TopicPrayerRow: View {
     private var spokenLabel: String {
         [
             prayer.title,
-            seasonal ? "This season" : nil,
-            learned ? "Learned" : nil,
-            saved ? "Saved" : nil
+            seasonal
+                ? String(localized: "This season", comment: "VoiceOver, a prayer's row: marks the season's song to Mary, said for this season") : nil,
+            learned
+                ? String(localized: "Learned", comment: "VoiceOver, a prayer's row: the reader has marked this prayer as known by heart") : nil,
+            saved
+                ? String(localized: "Saved", comment: "VoiceOver, a prayer's row: the reader has saved this prayer") : nil
         ]
         .compactMap { $0 }
         .joined(separator: ", ")

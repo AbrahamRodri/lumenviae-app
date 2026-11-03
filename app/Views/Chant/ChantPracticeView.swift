@@ -208,7 +208,10 @@ struct ChantPracticeView: View {
                                 note: Self.note(of: each, timed: lines),
                                 place: place(of: each),
                                 lineNote: each == step && lines && line > 0
-                                    ? "Line \(line + 1)" : nil,
+                                    ? String(
+                                        localized: "Line \(line + 1)",
+                                        comment: "Chant practice, the path: the line the learner stopped at within the step under way, shown in capitals beside the step"
+                                    ) : nil,
                                 isFirst: each == .listen,
                                 isLast: each == .onYourOwn
                             ) {
@@ -265,7 +268,7 @@ struct ChantPracticeView: View {
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .minimumScaleFactor(0.75)
-            Text(lines ? "\(chant.englishTitle) · \(chant.lines.count) lines" : chant.englishTitle)
+            (lines ? Text("\(chant.englishTitle) · \(chant.lines.count) lines") : Text(chant.englishTitle))
                 .font(AppFonts.readingItalicFont(16))
                 .foregroundColor(AppColors.cream.opacity(0.8))
                 .multilineTextAlignment(.center)
@@ -347,7 +350,7 @@ struct ChantPracticeView: View {
             }
             .buttonStyle(QuietGlyphButtonStyle())
             .animation(Motion.crossfade, value: line)
-            .accessibilityLabel(lines ? "\(step.title), line \(line + 1) of \(chant.lines.count)" : step.title)
+            .accessibilityLabel(lines ? Text("\(step.title), line \(line + 1) of \(chant.lines.count)") : Text(step.title))
             .accessibilityHint("Back to the four steps")
 
             Spacer(minLength: 8)
@@ -452,8 +455,10 @@ struct ChantPracticeView: View {
         HStack(alignment: .top, spacing: 30) {
             PracticeQuietControl(
                 icon: lines ? "ph-repeat-once" : "ph-arrow-counter-clockwise",
-                label: "Again",
-                spokenLabel: lines ? "Play the line again" : "From the top"
+                label: String(localized: "Again", comment: "Chant practice, the name under the button that plays the line or the chant again"),
+                spokenLabel: lines
+                    ? String(localized: "Play the line again", comment: "Chant practice, VoiceOver: the Again button for a chant practised line by line")
+                    : String(localized: "From the top", comment: "Chant practice, VoiceOver: the Again button for a chant practised whole, which plays it from the start")
             ) {
                 again()
             }
@@ -494,7 +499,11 @@ struct ChantPracticeView: View {
                     .accessibilityHidden(true)
             }
 
-            PracticeQuietControl(icon: "ph-music-note", label: "Score", spokenLabel: "The sheet music") {
+            PracticeQuietControl(
+                icon: "ph-music-note",
+                label: String(localized: "Score", comment: "Chant practice, the name under the button that opens the sheet music"),
+                spokenLabel: String(localized: "The sheet music", comment: "Chant practice, VoiceOver: the button that opens the sheet music")
+            ) {
                 showsScore = true
             }
         }
@@ -511,7 +520,9 @@ struct ChantPracticeView: View {
         // The chant would not play: said where it was asked for, since the
         // mini player stands aside for the practice
         if player.current.id == chant.id, let error = player.error { return error.caption }
-        if player.isPlaying(chant) { return "Tap to pause" }
+        if player.isPlaying(chant) {
+            return String(localized: "Tap to pause", comment: "Chant practice, the caption under the play disc while the singer sings")
+        }
         return Self.restCaption(step: step, timed: lines)
     }
 
@@ -561,7 +572,7 @@ struct ChantPracticeView: View {
 
             Spacer(minLength: 16)
 
-            GoldCTAButton(title: "Done") {
+            GoldCTAButton(title: String(localized: "Done", comment: "Chant practice, closes the practice once the chant is learned by heart")) {
                 dismiss()
             }
             .padding(.horizontal, 20)
@@ -756,25 +767,40 @@ struct ChantPracticeView: View {
     static func note(of step: ChantLearningStep, timed: Bool) -> String {
         if timed {
             switch step {
-            case .listen:    return "Hear each line sung"
-            case .readAlong: return "Follow the Latin as it is sung"
-            case .singAlong: return "The singer sings, then you"
-            case .onYourOwn: return "You first, then the singer"
+            case .listen:
+                return String(localized: "Hear each line sung", comment: "Chant practice, the path: what step 1, Listen, is, for a chant practised line by line")
+            case .readAlong:
+                return String(localized: "Follow the Latin as it is sung", comment: "Chant practice, the path: what step 2, Read along, is, for a chant practised line by line")
+            case .singAlong:
+                return String(localized: "The singer sings, then you", comment: "Chant practice, the path: what step 3, Sing along, is, for a chant practised line by line")
+            case .onYourOwn:
+                return String(localized: "You first, then the singer", comment: "Chant practice, the path: what step 4, On your own, is, for a chant practised line by line")
             }
         }
         switch step {
-        case .listen:    return "Hear the whole chant sung"
-        case .readAlong: return "Follow the words as it is sung"
-        case .singAlong: return "Sing with the recording"
-        case .onYourOwn: return "Sing from memory, then play it to check"
+        case .listen:
+            return String(localized: "Hear the whole chant sung", comment: "Chant practice, the path: what step 1, Listen, is, for a chant practised whole")
+        case .readAlong:
+            return String(localized: "Follow the words as it is sung", comment: "Chant practice, the path: what step 2, Read along, is, for a chant practised whole")
+        case .singAlong:
+            return String(localized: "Sing with the recording", comment: "Chant practice, the path: what step 3, Sing along, is, for a chant practised whole")
+        case .onYourOwn:
+            return String(
+                localized: "Sing from memory, then play it to check",
+                comment: "Chant practice, the path: what step 4, On your own, is, for a chant practised whole"
+            )
         }
     }
 
     /// The path's act: BEGIN on a first visit, CONTINUE once begun, and
     /// PRACTISE AGAIN for a chant already learned — the chant page's words
     static func pathAction(begun: Bool, learned: Bool) -> String {
-        if learned { return "Practise again" }
-        return begun ? "Continue" : "Begin"
+        if learned {
+            return String(localized: "Practise again", comment: "Chant practice, the path's act for a chant already learned by heart")
+        }
+        return begun
+            ? String(localized: "Continue", comment: "Chant practice, the path's act once a practice is under way: back to where the learner stopped")
+            : String(localized: "Begin", comment: "Chant practice, the path's act on a first visit")
     }
 
     /// The gold act on the singing screen: the next line, then the next
@@ -782,28 +808,40 @@ struct ChantPracticeView: View {
     /// line of all
     static func forwardTitle(step: ChantLearningStep, timed: Bool, line: Int, count: Int) -> String {
         let lastLine = !timed || line >= count - 1
-        if step == .onYourOwn, lastLine { return "I know it by heart" }
-        return lastLine ? "Next step" : "Next line"
+        if step == .onYourOwn, lastLine {
+            return String(localized: "I know it by heart", comment: "Chant practice, the gold act on the last line of the last step: the learner marks the chant learned")
+        }
+        return lastLine
+            ? String(localized: "Next step", comment: "Chant practice, the gold act on a step's last line")
+            : String(localized: "Next line", comment: "Chant practice, the gold act: on to the next line of the chant")
     }
 
     /// Under the disc while it is the learner's turn
     static func turnCaption(step: ChantLearningStep) -> String {
-        step == .onYourOwn ? "You sing first" : "Sing it back"
+        step == .onYourOwn
+            ? String(localized: "You sing first", comment: "Chant practice, under the play disc during the learner's turn in step 4, before the singer")
+            : String(localized: "Sing it back", comment: "Chant practice, under the play disc during the learner's turn, after the singer sang the line")
     }
 
     /// Under the disc while nothing sounds: what a tap on it will do
     static func restCaption(step: ChantLearningStep, timed: Bool) -> String {
         if timed {
             switch step {
-            case .listen, .readAlong: return "Hear the line"
-            case .singAlong: return "The singer, then you"
-            case .onYourOwn: return "You, then the singer"
+            case .listen, .readAlong:
+                return String(localized: "Hear the line", comment: "Chant practice, under the play disc at rest: a tap plays the line")
+            case .singAlong:
+                return String(localized: "The singer, then you", comment: "Chant practice, under the play disc at rest in step 3: a tap plays the line, then gives the learner a turn")
+            case .onYourOwn:
+                return String(localized: "You, then the singer", comment: "Chant practice, under the play disc at rest in step 4: the learner sings first, then hears the line")
             }
         }
         switch step {
-        case .listen, .readAlong: return "Hear it sung"
-        case .singAlong: return "Sing with it"
-        case .onYourOwn: return "Play it to check"
+        case .listen, .readAlong:
+            return String(localized: "Hear it sung", comment: "Chant practice, under the play disc at rest: a tap plays the whole chant")
+        case .singAlong:
+            return String(localized: "Sing with it", comment: "Chant practice, under the play disc at rest in step 3: a tap plays the chant to sing along with")
+        case .onYourOwn:
+            return String(localized: "Play it to check", comment: "Chant practice, under the play disc at rest in step 4: a tap plays the chant to check the learner's memory")
         }
     }
 
@@ -911,8 +949,15 @@ private struct PracticeStepRow: View {
 
     private var spokenPlace: String {
         switch place {
-        case .taken: return "Taken"
-        case .here:  return lineNote.map { "Under way, \($0.lowercased())" } ?? "Under way"
+        case .taken:
+            return String(localized: "Taken", comment: "Chant practice, VoiceOver: a step on the path the learner has already done")
+        case .here:
+            return lineNote.map {
+                String(
+                    localized: "Under way, \($0.lowercased())",
+                    comment: "Chant practice, VoiceOver: the step under way, then the line reached, like: Under way, line 3"
+                )
+            } ?? String(localized: "Under way", comment: "Chant practice, VoiceOver: the step the learner is on")
         case .ahead: return ""
         }
     }
@@ -1099,8 +1144,8 @@ private struct PracticeTurnDisc: View {
         }
         .buttonStyle(GoldCTAButtonStyle())
         .accessibilityLabel("Your turn")
-        .accessibilityValue(turn.endsAt == nil ? "Held" : "Singing")
-        .accessibilityHint(turn.endsAt == nil ? "Takes up your turn" : "Holds your turn")
+        .accessibilityValue(turn.endsAt == nil ? Text("Held") : Text("Singing"))
+        .accessibilityHint(turn.endsAt == nil ? Text("Takes up your turn") : Text("Holds your turn"))
         .accessibilityAddTraits(.updatesFrequently)
     }
 }
@@ -1134,43 +1179,81 @@ private struct PracticeOptionsSheet: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
-                SheetHeader(kicker: step.title, title: "How to practise") {
-                    SheetHeaderAction(title: "Done") { dismiss() }
+                SheetHeader(
+                    kicker: step.title,
+                    title: String(localized: "How to practise", comment: "Chant practice, title of the sheet of practice settings (repeat, speed, hidden words)")
+                ) {
+                    SheetHeaderAction(title: String(localized: "Done", comment: "Chant practice settings: closes the sheet")) { dismiss() }
                 }
 
                 if chant.hasLines {
-                    SheetRow("Repeat each line", detail: "The singer sings it once, or three times") {
+                    let repeatEachLine = String(
+                        localized: "Repeat each line",
+                        comment: "Chant practice settings: how many times the singer sings each line"
+                    )
+                    SheetRow(
+                        repeatEachLine,
+                        detail: String(localized: "The singer sings it once, or three times", comment: "Chant practice settings, under Repeat each line")
+                    ) {
                         PracticeChoicePill(
-                            name: "Repeat each line",
-                            options: ["Once", "3 times"],
+                            name: repeatEachLine,
+                            options: [
+                                String(localized: "Once", comment: "Chant practice settings, Repeat each line: sung one time"),
+                                String(localized: "3 times", comment: "Chant practice settings, Repeat each line: sung three times")
+                            ],
                             selected: repeatsWanted == 1 ? 0 : 1
                         ) { repeatsWanted = $0 == 0 ? 1 : 3 }
                     }
                 } else {
-                    SheetRow("Repeat the chant", detail: "From the top when it ends") {
+                    let repeatTheChant = String(
+                        localized: "Repeat the chant",
+                        comment: "Chant practice settings: whether the whole chant plays again when it ends"
+                    )
+                    SheetRow(
+                        repeatTheChant,
+                        detail: String(localized: "From the top when it ends", comment: "Chant practice settings, under Repeat the chant")
+                    ) {
                         PracticeChoicePill(
-                            name: "Repeat the chant",
-                            options: ["Off", "On"],
+                            name: repeatTheChant,
+                            options: [
+                                String(localized: "Off", comment: "Chant practice settings, Repeat the chant: not repeated"),
+                                String(localized: "On", comment: "Chant practice settings, Repeat the chant: repeated")
+                            ],
                             selected: player.repeats ? 1 : 0
                         ) { player.repeats = $0 == 1 }
                     }
                 }
 
-                SheetRow("Speed", detail: speedDetail) {
-                    PracticeChoicePill(name: "Speed", options: ["Normal", "Slower"], selected: speedChoice) {
+                let speed = String(localized: "Speed", comment: "Chant practice settings: the singer's pace")
+                SheetRow(speed, detail: speedDetail) {
+                    PracticeChoicePill(
+                        name: speed,
+                        options: [
+                            String(localized: "Normal", comment: "Chant practice settings, Speed: the recording's own pace"),
+                            String(localized: "Slower", comment: "Chant practice settings, Speed: three quarters of the pace, for learning")
+                        ],
+                        selected: speedChoice
+                    ) {
                         player.setRate($0 == 0 ? 1.0 : 0.75)
                     }
                 }
 
+                let hideWords = String(localized: "Hide words", comment: "Chant practice settings: how many of the chant's words are hidden while practising")
                 SheetRow(
-                    "Hide words",
+                    hideWords,
                     detail: step == .listen
-                        ? "Listening shows the English alone"
-                        : "Each hidden word keeps its first letter",
+                        ? String(
+                            localized: "Listening shows the English alone",
+                            comment: "Chant practice settings, under Hide words, during step 1 (Listen), when hiding is not offered"
+                        )
+                        : String(
+                            localized: "Each hidden word keeps its first letter",
+                            comment: "Chant practice settings, under Hide words"
+                        ),
                     showsDivider: false
                 ) {
                     PracticeChoicePill(
-                        name: "Hide words",
+                        name: hideWords,
                         options: ChantPracticeView.Hiding.allCases.map(\.title),
                         selected: ChantPracticeView.Hiding.allCases.firstIndex(of: hidden)
                     ) { hidden = ChantPracticeView.Hiding.allCases[$0] }
@@ -1190,8 +1273,11 @@ private struct PracticeOptionsSheet: View {
 
     private var speedDetail: String {
         speedChoice == nil
-            ? "Sounding at \(ChantPlayer.speedLabel(player.speed))"
-            : "Slower is three quarters of the pace"
+            ? String(
+                localized: "Sounding at \(ChantPlayer.speedLabel(player.speed))",
+                comment: "Chant practice settings, under Speed, when another pace was chosen elsewhere; the pace is like 1.5×"
+            )
+            : String(localized: "Slower is three quarters of the pace", comment: "Chant practice settings, under Speed")
     }
 }
 

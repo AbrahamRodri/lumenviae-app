@@ -105,6 +105,38 @@
         }
       }
     },
+    "%@ · %lld lines" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %#@lines@"
+          },
+          "substitutions" : {
+            "lines" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg line"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lines"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%@ · %lld OF %lld" : {
       "localizations" : {
         "en" : {
@@ -126,6 +158,9 @@
         }
       }
     },
+    "%@ · Next, after a pause" : {
+      "comment" : "Lock Screen, during a silence in a sung set: the set's name, then that the chant shown comes next after the pause"
+    },
     "%@ · PRAYED" : {
 
     },
@@ -137,6 +172,17 @@
     },
     "%@ · waiting for you" : {
 
+    },
+    "%@ (%@)" : {
+      "comment" : "A chant's English title with its Latin title after it in brackets, like Hail, Holy Queen (Salve Regina)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ (%2$@)"
+          }
+        }
+      }
     },
     "%@ %@" : {
       "comment" : "VoiceOver: a narration position or length, minutes then seconds, like 3 minutes 20 seconds",
@@ -156,6 +202,17 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@ %2$@ Mystery"
+          }
+        }
+      }
+    },
+    "%@ and %@" : {
+      "comment" : "A sung set's summary: its chants and its pauses, like 5 chants and 2 pauses",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ and %2$@"
           }
         }
       }
@@ -188,6 +245,7 @@
       "comment" : "Where an unfinished Rosary stopped, set inside a sentence after an article (Continue at the …); the ordinal is a word like Third"
     },
     "%@ of %@" : {
+      "comment" : "Chant player: time sung so far of the recording's length, like 0:55 of 4:12\nVoiceOver, chant player: time sung so far of the recording's length, both in words, like 55 seconds of 4 minutes 12 seconds",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -210,7 +268,7 @@
       "comment" : "VoiceOver: the narration speed as a multiple, like 1.25 times"
     },
     "%@, %@" : {
-      "comment" : "VoiceOver for a book on the home shelf: title, author",
+      "comment" : "VoiceOver for a book on the home shelf: title, author\nVoiceOver: a chant's Latin title, then its English title\nVoiceOver: a chant's two titles, then its setting, like simple melody",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -220,7 +278,19 @@
         }
       }
     },
+    "%@, %@ of silence" : {
+      "comment" : "VoiceOver: a pause in a sung set: the note's words, then how long the silence is, like 10 minutes",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@ of silence"
+          }
+        }
+      }
+    },
     "%@, %@, %@" : {
+      "comment" : "VoiceOver: a chant on a shelf: its Latin name, its English name, how long it plays\nVoiceOver: a set of the reader's: its name, how many chants (like 4 chants), how long (like 20 minutes)",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -237,6 +307,17 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@, %2$@, consecrated today"
+          }
+        }
+      }
+    },
+    "%@, %@, playing now" : {
+      "comment" : "VoiceOver: a chant on a shelf, the one sounding: its Latin name, then its English name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@, playing now"
           }
         }
       }
@@ -342,6 +423,23 @@
         }
       }
     },
+    "%@, %lld times" : {
+      "comment" : "VoiceOver: a chant in a sung set that is sung more than once in a row, its Latin title then how many times, like: Ave Maria, 10 times",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$lld times"
+          }
+        }
+      }
+    },
+    "%@, a note" : {
+      "comment" : "VoiceOver: a pause in a sung set that is only a red note; first the note's words"
+    },
+    "%@, added" : {
+
+    },
     "%@, hidden. %@" : {
       "localizations" : {
         "en" : {
@@ -352,12 +450,57 @@
         }
       }
     },
+    "%@, line %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, line %2$lld of %3$lld"
+          }
+        }
+      }
+    },
+    "%@, no chants yet" : {
+      "comment" : "VoiceOver: a set of the reader's that holds no chant; the set's name the reader gave it"
+    },
+    "%@, now" : {
+
+    },
+    "%@, now, prayed today" : {
+
+    },
+    "%@, playing now" : {
+      "comment" : "VoiceOver: a chant in a sung set, the one sounding; first its name and length"
+    },
     "%@, playlist, %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@, playlist, %2$@"
+          }
+        }
+      }
+    },
+    "%@, prayed today" : {
+
+    },
+    "%@, prayed. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, prayed. %2$@"
+          }
+        }
+      }
+    },
+    "%@, the prayer for this hour. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, the prayer for this hour. %2$@"
           }
         }
       }
@@ -442,22 +585,15 @@
     "%@. Open the calendar" : {
 
     },
+    "%@. Prayed today" : {
+
+    },
     "%@%@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@%2$@"
-          }
-        }
-      }
-    },
-    "%@%@%@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@%2$@%3$@"
           }
         }
       }
@@ -485,6 +621,62 @@
     "%lld" : {
 
     },
+    "%lld chants" : {
+      "comment" : "A sung set's summary: how many chants it holds\nChant page: beside the All chants heading, how many chants there are, in small capitals\nHow many chants a section of the chant book or a shelf holds, like 8 chants\nVoiceOver: how many chants a shelf or set holds",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld chant"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld chants"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld chants · %lld min" : {
+      "comment" : "Under a set of chants: how many chants and how long they play, rounded to the minute, like 4 chants · 7 min",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@chants@ · %2$lld min"
+          },
+          "substitutions" : {
+            "chants" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg chant"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg chants"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld chapters" : {
 
     },
@@ -504,7 +696,7 @@
 
     },
     "%lld minutes" : {
-      "comment" : "VoiceOver: part of a narration position or length, a number of minutes",
+      "comment" : "VoiceOver: how long a set of chants plays, rounded to the minute\nVoiceOver: part of a narration position or length, a number of minutes",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -527,13 +719,32 @@
       }
     },
     "%lld minutes of silence" : {
-
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld minute of silence"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld minutes of silence"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "%lld notes on passages of this book" : {
 
     },
     "%lld of %lld" : {
-      "comment" : "Prayer screen, the closing prayers: which prayer of the close this is, like 1 of 3\nPrayer screen, the opening prayers on the cross: which prayer of the opening this is, like 2 of 7\nStrand margin, second of two short lines naming a Hail Mary bead: which Hail Mary of the decade, like 4 of 10",
+      "comment" : "Chant player: where a sung set stands, counting its chants, like 2 of 4\nPrayer screen, the closing prayers: which prayer of the close this is, like 1 of 3\nPrayer screen, the opening prayers on the cross: which prayer of the opening this is, like 2 of 7\nStrand margin, second of two short lines naming a Hail Mary bead: which Hail Mary of the decade, like 4 of 10",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -596,6 +807,98 @@
         }
       }
     },
+    "%lld pauses" : {
+      "comment" : "A sung set's summary: how many pauses it holds between chants",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld pause"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld pauses"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld prayers" : {
+      "comment" : "A count of prayers: in a topic, a playlist, the Saved page, or the whole Prayers book",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld prayer"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld prayers"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld prayers to add" : {
+      "comment" : "Add Prayers sheet: the small kicker over the title, how many prayers are picked",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld prayer to add"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld prayers to add"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld recordings" : {
+      "comment" : "The Chant page, under its title: how many chant recordings the library holds",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld recording"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld recordings"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld ROSARIES PRAYED" : {
 
     },
@@ -645,6 +948,16 @@
         }
       }
     },
+    "%lld. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld. %2$@"
+          }
+        }
+      }
+    },
     "%lld. %@, %@" : {
       "localizations" : {
         "en" : {
@@ -688,9 +1001,6 @@
     "1 earlier chapter" : {
 
     },
-    "1 minute of silence" : {
-
-    },
     "1 note on a passage of this book" : {
 
     },
@@ -699,6 +1009,12 @@
     },
     "1×" : {
 
+    },
+    "3 times" : {
+      "comment" : "Chant practice settings, Repeat each line: sung three times"
+    },
+    "6 AM, noon and 6 PM" : {
+      "comment" : "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
     },
     "15" : {
 
@@ -730,6 +1046,12 @@
     "A favourite" : {
 
     },
+    "A few minutes with Jesus in the tabernacle, where the Host is kept in church, or in spirit from anywhere." : {
+      "comment" : "Prayers tab: one sentence saying what an order of prayer is"
+    },
+    "A few short prayers on waking, giving the day to God." : {
+      "comment" : "Prayers tab: one sentence saying what an order of prayer is"
+    },
     "A GUIDED ROSARY" : {
 
     },
@@ -745,17 +1067,29 @@
     "A litany is a prayer of short petitions, each answered by the same response." : {
 
     },
+    "A look back on the day, ending with a song to Mary." : {
+      "comment" : "Prayers tab, home's hour row: one short line saying what an order of prayer of the day is, under its name"
+    },
     "A new set" : {
 
     },
     "A new set, begun with %@" : {
 
     },
+    "A painting" : {
+      "comment" : "An editor's image row: the chosen image is one of the app's paintings"
+    },
     "A passage" : {
 
     },
+    "A pause" : {
+      "comment" : "Add a pause sheet: its title; a pause is a red note or a silence between chants in a set"
+    },
     "A PRAYER ASKING HIS HELP" : {
 
+    },
+    "A prayer no longer kept" : {
+      "comment" : "Playlist editor: a row whose prayer has been deleted or is no longer in the book"
     },
     "A renewal of the promises of your baptism" : {
 
@@ -766,6 +1100,9 @@
     "A SAYING FOR TODAY" : {
 
     },
+    "A short prayer to Mary at 6 AM, noon and 6 PM." : {
+      "comment" : "Prayers tab, home's hour row: one short line saying what an order of prayer of the day is, under its name"
+    },
     "A single strike of a small bronze bell" : {
       "comment" : "Settings, Reminder Sound: what the sound is like"
     },
@@ -774,6 +1111,9 @@
     },
     "A verse is shown for each Hail Mary. You read and pray in silence." : {
       "comment" : "The line under a Rosary choice, saying what the chosen option does"
+    },
+    "A voice can read each prayer to you, or you can say the words yourself." : {
+      "comment" : "Sheet asked before the Prayers tab's book first speaks: the line under the question"
     },
     "A voice leads every prayer, with no readings between." : {
       "comment" : "The Audio Rosary's own page: the italic line under its name"
@@ -787,6 +1127,29 @@
     "About %@" : {
 
     },
+    "about %lld minutes" : {
+      "comment" : "A sung set's summary: how long its recordings run, rounded to minutes",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "about a minute"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "about %lld minutes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "About Lumen Viae" : {
       "comment" : "About: a row's name, a heading, or the line under it"
     },
@@ -796,17 +1159,29 @@
     "Add" : {
 
     },
+    "Add a chant" : {
+      "comment" : "Under the reader's own sung set: button that adds a chant, in capitals"
+    },
+    "Add a pause" : {
+      "comment" : "Under the reader's own sung set: button that adds a red note or a silence, in capitals"
+    },
     "Add a reflection" : {
       "comment" : "Prayer screen, More menu: row that opens the journal editor"
     },
     "Add chants in the order you will sing them, and pauses between them for silence or a note in red." : {
 
     },
+    "Add chants to" : {
+      "comment" : "Add a chant sheet: small kicker over the name of the set the chants are added to"
+    },
     "Add Prayers" : {
-
+      "comment" : "Add Prayers sheet: its title"
+    },
+    "ADD PRAYERS" : {
+      "comment" : "A playlist's page while it holds no prayer: the button to add some, in small capitals"
     },
     "Add the pause" : {
-
+      "comment" : "Add a pause sheet: the button that adds the pause to the set"
     },
     "ADD THE PAUSE" : {
 
@@ -819,6 +1194,9 @@
     },
     "Add to Favourites" : {
 
+    },
+    "Add to playlist" : {
+      "comment" : "Add Prayers sheet: the small kicker over the title, before anything is picked"
     },
     "ADDED" : {
 
@@ -844,6 +1222,18 @@
     "Adjusts your daily reading goal" : {
 
     },
+    "Advent to February 2" : {
+      "comment" : "Prayers tab: the part of the year a seasonal song to Mary is sung, in plain dates (February 2 is Candlemas)"
+    },
+    "After Communion" : {
+      "comment" : "Prayers tab: the name of an order of prayer, a few prayers said together"
+    },
+    "After Confession" : {
+      "comment" : "Prayers tab: the name of an order of prayer, a few prayers said together"
+    },
+    "After Mass" : {
+      "comment" : "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+    },
     "After prayer" : {
 
     },
@@ -859,8 +1249,43 @@
     "After you pray, write a reflection and it will appear here." : {
 
     },
+    "Again" : {
+      "comment" : "Chant practice, the name under the button that plays the line or the chant again"
+    },
+    "All" : {
+      "comment" : "Chant practice, Hide words option: every word is cut to its first letter"
+    },
+    "All %lld prayers" : {
+      "comment" : "Add Prayers sheet: the note under an order of prayer, adding all its prayers at once",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "All %lld prayer"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "All %lld prayers"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "ALL BOOKS" : {
 
+    },
+    "All chants" : {
+      "comment" : "Chant page: heading of the grid of every section of the chant book"
+    },
+    "All Chants" : {
+      "comment" : "Title of the page listing every section of the chant book"
     },
     "All chants saved" : {
 
@@ -868,14 +1293,23 @@
     "All the readings" : {
 
     },
+    "All Topics" : {
+      "comment" : "Prayers tab: the heading over the book's topics, grouped in its five parts"
+    },
     "Almost everything. Your journal, your prayer record and streak, your place in every book and your settings are kept on this device and never sent to us. They leave it only in your iPhone's own iCloud Backup, if you have it on, under Apple's privacy policy." : {
       "comment" : "Privacy Policy: a section's text; keep it as plain and exact as the English"
+    },
+    "Already in it · %@" : {
+      "comment" : "Add to a set sheet: under a set's name, the chant is already in it; then what the set holds, like 4 chants · 23 min"
     },
     "Already-downloaded files are kept" : {
       "comment" : "Settings, Offline: the line under a row"
     },
     "Also remembered today: %@" : {
 
+    },
+    "Also sung" : {
+      "comment" : "Chant page, heading over other musical settings of the same chant"
     },
     "Also what a tap on the Pray button does" : {
 
@@ -884,7 +1318,7 @@
       "comment" : "Settings, Reminder Sound: the name of a notification sound"
     },
     "Amen" : {
-      "comment" : "Drawn strand: the label beside the last bead, where the Rosary ends\nGold button on the Rosary's last bead that finishes the Rosary\nGuided Rosary, last step: the gold button that finishes the Rosary\nPrayer screen, last closing prayer: the gold button that finishes the Rosary"
+      "comment" : "Drawn strand: the label beside the last bead, where the Rosary ends\nGold button on the Rosary's last bead that finishes the Rosary\nGuided Rosary, last step: the gold button that finishes the Rosary\nPray-along screen: the gold act on the last prayer, finishing the prayers\nPrayer screen, last closing prayer: the gold button that finishes the Rosary"
     },
     "Amen — close the day and reflect" : {
 
@@ -937,6 +1371,33 @@
     "ASK FOR" : {
 
     },
+    "Ask for help before you start" : {
+      "comment" : "Chant library: the one line under a sung set's name saying what it is for"
+    },
+    "Ask for light, go through the Ten Commandments, and be sorry for your sins." : {
+      "comment" : "Prayers tab: one sentence saying what an order of prayer is"
+    },
+    "Asperges" : {
+      "comment" : "Add a chant sheet: short name of a section of the chant book in the jump strip; the sprinkling of holy water before Sunday Mass (Asperges me)"
+    },
+    "At 6 PM" : {
+      "comment" : "Prayers tab, home's hour row: when one of the day's three orders of prayer is said"
+    },
+    "At a death, or any day" : {
+      "comment" : "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+    },
+    "At a funeral, or any time in November" : {
+      "comment" : "Chant library: the one line under a sung set's name saying what it is for"
+    },
+    "At bedtime" : {
+      "comment" : "Prayers tab, home's hour row: when one of the day's three orders of prayer is said\nPrayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+    },
+    "At Meals" : {
+      "comment" : "Prayers tab: the name of an order of prayer, a few prayers said together"
+    },
+    "At noon" : {
+      "comment" : "Prayers tab, home's hour row: when one of the day's three orders of prayer is said"
+    },
     "Audio" : {
       "comment" : "Settings: a row's name"
     },
@@ -970,14 +1431,26 @@
     "Back to the player" : {
 
     },
+    "Before and after meals" : {
+      "comment" : "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+    },
+    "Before Confession" : {
+      "comment" : "Prayers tab: the name of an order of prayer, a few prayers said together"
+    },
     "BEFORE EACH DECADE" : {
 
+    },
+    "Before going in" : {
+      "comment" : "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+    },
+    "Before Mass" : {
+      "comment" : "Prayers tab: the name of an order of prayer, a few prayers said together"
     },
     "BEFORE YOU BEGIN" : {
 
     },
     "Begin" : {
-      "comment" : "Guided Rosary welcome: the gold button that begins the first Rosary"
+      "comment" : "Chant practice, the path's act on a first visit\nGuided Rosary welcome: the gold button that begins the first Rosary"
     },
     "BEGIN" : {
       "comment" : "Home, Today's Prayer: small capitals under the consecration row before it is started"
@@ -997,17 +1470,29 @@
     "Begun with this chant" : {
 
     },
+    "Benediction" : {
+      "comment" : "Add a chant sheet: short name of a section of the chant book in the jump strip; Benediction of the Blessed Sacrament\nChant book section card and shelf title: chants for Benediction of the Blessed Sacrament"
+    },
+    "Benediction: hymns before the Host, then the priest's blessing" : {
+      "comment" : "Chant library: the one line under a sung set's name saying what it is for"
+    },
     "BOOKMARK" : {
 
     },
     "Bookmark this passage" : {
 
     },
+    "Both" : {
+      "comment" : "Pray-along More menu, Language: show the prayer in English and Latin together"
+    },
+    "By heart" : {
+      "comment" : "Learn by Heart sheet: the last of four steps, the prayer said without the words"
+    },
     "By tradition handed down through St. Bridget of Sweden, Our Lady promises seven graces to those who honour her daily by meditating on her sorrows." : {
 
     },
     "Cancel" : {
-      "comment" : "Send Feedback: closes the sheet without sending"
+      "comment" : "Send Feedback: closes the sheet without sending\nSheet header action that closes the sheet without saving"
     },
     "CANCEL" : {
 
@@ -1018,20 +1503,41 @@
     "Candlelit" : {
       "comment" : "Settings, Appearance: the name of a color theme"
     },
+    "Canticles" : {
+      "comment" : "Add a chant sheet: short name of a section of the chant book in the jump strip; the Gospel canticles"
+    },
     "Carlo Acutis" : {
 
     },
     "CHANGE" : {
 
     },
+    "Change this any time with VOICE or SILENT at the top of the page, or in Settings." : {
+      "comment" : "Sheet asked before the Prayers tab's book first speaks: the note at its foot; VOICE and SILENT are the words on the pray-along screen's switch and must match them"
+    },
+    "Chant" : {
+      "comment" : "Lock Screen: the line under a chant's title when no set is being sung\nThe Chant tab's page title: the library of Gregorian chant"
+    },
     "CHANT" : {
       "comment" : "Tab bar label for the Gregorian chant library, in capitals"
+    },
+    "Chant · %@" : {
+      "comment" : "Lock Screen: the line under a chant's title, the word Chant then its setting, like simple melody"
     },
     "Chant position" : {
 
     },
+    "Chants" : {
+      "comment" : "Title of a chant shelf page whose section could not be found"
+    },
     "Chants sung one after another, for a time of prayer." : {
 
+    },
+    "Chants you have learned" : {
+      "comment" : "VoiceOver: the Learned tile on the Chant page"
+    },
+    "Chants you learn by heart are kept here." : {
+      "comment" : "Your Chants: the one line an empty Learned shelf says"
     },
     "Chants: %lld of %lld saved" : {
       "localizations" : {
@@ -1076,6 +1582,9 @@
     },
     "Choose a painting or a photo" : {
 
+    },
+    "Choose an Image" : {
+      "comment" : "Image picker: the sheet's title"
     },
     "Choose any that fit. We'll word your reminders to match." : {
       "comment" : "Settings, What Brings You to the Rosary sheet: the line under its title"
@@ -1129,7 +1638,7 @@
 
     },
     "Close" : {
-      "comment" : "A meditation set's page: button that folds away the first meditation's preview"
+      "comment" : "A meditation set's page: button that folds away the first meditation's preview\nPray-along screen, when its prayers could not be found: closes the screen"
     },
     "CLOSE" : {
 
@@ -1186,7 +1695,10 @@
 
     },
     "Continue" : {
-      "comment" : "Guided Rosary welcome, with a place kept: the gold button that takes it up"
+      "comment" : "Chant practice, the path's act once a practice is under way: back to where the learner stopped\nGuided Rosary welcome, with a place kept: the gold button that takes it up"
+    },
+    "Continue learning" : {
+      "comment" : "Chant page, the Learn card's title while a practice is under way"
     },
     "CONTINUE READING" : {
 
@@ -1224,11 +1736,17 @@
     "Couldn't load these meditations. Check your connection and try again." : {
 
     },
+    "Couldn't play" : {
+      "comment" : "Chant player: short caption under a play button, the recording would not load"
+    },
     "Count on your own rosary. The screen shows one mystery at a time." : {
       "comment" : "The line under a Rosary choice, saying what the chosen option does"
     },
     "Counting" : {
       "comment" : "One of the Rosary's two choices, its name: Rosary Audio (what the voice says) or Counting (where the beads are counted)"
+    },
+    "Creed" : {
+      "comment" : "Add a chant sheet: short name of a section of the chant book in the jump strip; the sung Creed"
     },
     "CURRENT STREAK" : {
 
@@ -1317,6 +1835,9 @@
     "Delete this reflection?" : {
 
     },
+    "Delete this set?" : {
+
+    },
     "Devotion" : {
       "comment" : "Settings, Daily Mysteries sheet: the small label over its title\nSettings: a section heading"
     },
@@ -1327,7 +1848,7 @@
 
     },
     "Done" : {
-      "comment" : "Send Feedback: closes the sheet after sending, or after the note was copied\nSheet header button that closes the sheet"
+      "comment" : "Chant practice settings: closes the sheet\nChant practice, closes the practice once the chant is learned by heart\nPray-along screen, after the Amen: the gold act that closes the screen\nSend Feedback: closes the sheet after sending, or after the note was copied\nSheet header action that closes the sheet\nSheet header button that closes the sheet"
     },
     "DONE" : {
 
@@ -1395,6 +1916,9 @@
     "During prayer" : {
 
     },
+    "Each hidden word keeps its first letter" : {
+      "comment" : "Chant practice settings, under Hide words"
+    },
     "Each mystery has its fruit — the grace, by long tradition, to ask for while its decade is prayed. The cards name it under Ask for." : {
 
     },
@@ -1404,6 +1928,9 @@
     "Each Rosary you pray is counted here, by its mysteries." : {
 
     },
+    "Easter to Pentecost" : {
+      "comment" : "Prayers tab: the part of the year a seasonal song to Mary is sung, in plain dates (February 2 is Candlemas)"
+    },
     "EDIT" : {
 
     },
@@ -1412,6 +1939,12 @@
     },
     "Edit playlist" : {
 
+    },
+    "Edit Playlist" : {
+      "comment" : "Playlist editor: the sheet's title when changing a playlist"
+    },
+    "Edit Prayer" : {
+      "comment" : "Prayer editor: the sheet's title when changing a prayer of one's own"
     },
     "Edit reflection" : {
 
@@ -1431,8 +1964,14 @@
     "End prayer" : {
       "comment" : "Prayer screen, More menu: row that leaves the Rosary\nPrayer screen: VoiceOver name of the close button that leaves the Rosary"
     },
+    "End the day with Mary" : {
+      "comment" : "Chant library: the one line under a sung set's name saying what it is for"
+    },
     "English" : {
-      "comment" : "Settings, Prayer Language: a choice of the language prayers are shown in"
+      "comment" : "Pray-along More menu, Language: show the prayer in English\nSettings, Prayer Language: a choice of the language prayers are shown in"
+    },
+    "English only" : {
+      "comment" : "Chant words option: show only the English under the chant"
     },
     "English with Latin" : {
       "comment" : "Settings, Prayer Language: a choice of the language prayers are shown in"
@@ -1443,6 +1982,12 @@
     "Erase Progress and Start Over" : {
 
     },
+    "Evening" : {
+      "comment" : "Prayers tab: the name of one of the day's three stations on the strip of hours, shown in small capitals (Morning, Noon, Evening, Night)"
+    },
+    "Every Day" : {
+      "comment" : "Prayers tab: the heading of one of the five shelves the prayer topics are gathered into"
+    },
     "EVERY MASS" : {
 
     },
@@ -1452,8 +1997,14 @@
     "Every mystery of the Rosary is a page of the Gospel. Read its verse before the decade (the ten Hail Marys said for it), and pray with the scene in front of you." : {
 
     },
+    "Every prayer of the Rosary, sung in Latin" : {
+      "comment" : "Chant library: the one line under a sung set's name saying what it is for"
+    },
     "Every Rosary will begin this way. You can change it on any Rosary's page, or in Settings." : {
 
+    },
+    "Everyday Prayers" : {
+      "comment" : "Prayers tab: the heading over the Our Father, Hail Mary, Glory Be and Creed"
     },
     "Everything in the app that is not our own writing, and the people and places it comes from. Every painting is by a painter dead more than a hundred years, and every text is in the public domain or used under an open licence." : {
       "comment" : "About, Sources & Credits: the line under the heading, or a section label"
@@ -1467,11 +2018,40 @@
     "Explore" : {
 
     },
+    "Falls silent at %@." : {
+      "comment" : "Sleep timer sheet: line under the title; the time of day the chant will stop, like 10:45 PM"
+    },
+    "Falls silent when this chant ends." : {
+      "comment" : "Sleep timer sheet: line under the title when the timer stops at the chant's end"
+    },
     "Family Morning Prayer" : {
 
     },
     "Fatima Prayer" : {
       "comment" : "Strand margin, second of two short lines naming the bead that closes a decade: Glory Be & / Fatima Prayer"
+    },
+    "Favourites" : {
+      "comment" : "Your Chants: name of the shelf of chants the reader has marked as favourites"
+    },
+    "Feast poem" : {
+      "comment" : "Chant library and search: one chant of this kind, for a small kicker like HYMN · 4:24"
+    },
+    "February 2 to Holy Week" : {
+      "comment" : "Prayers tab: the part of the year a seasonal song to Mary is sung, in plain dates (February 2 is Candlemas)"
+    },
+    "Fetching the recordings" : {
+      "comment" : "Pray-along screen, praying with a voice: a note at the foot while the prayers' recordings download"
+    },
+    "Fetching the recordings · %lld of %lld" : {
+      "comment" : "Pray-along screen, praying with a voice: a note at the foot while the prayers' recordings download, with how many have come",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Fetching the recordings · %1$lld of %2$lld"
+          }
+        }
+      }
     },
     "Fetching the text from Project Gutenberg.\nThis happens once." : {
 
@@ -1482,11 +2062,17 @@
     "Filter by kind" : {
       "comment" : "Mysteries' page: VoiceOver name of the funnel button that opens the kinds of meditation"
     },
+    "Find a chant, a prayer or a mystery, chants first" : {
+      "comment" : "VoiceOver hint on the Chant page's search glass: the app's one search, with chants listed first"
+    },
     "Find a line" : {
 
     },
     "Find a prayer" : {
 
+    },
+    "Find a prayer, a chant or a mystery, prayers first" : {
+      "comment" : "VoiceOver hint on the Prayers tab's search glass"
     },
     "Finding Peace" : {
       "comment" : "What brings you to the Rosary: one reason, as a short title"
@@ -1494,14 +2080,32 @@
     "First" : {
       "comment" : "Ordinal word for a decade's place, set before Mystery or Sorrow in titles like The First Joyful Mystery"
     },
+    "First letters" : {
+      "comment" : "Learn by Heart sheet: the third of four steps, each word cut to its first letter"
+    },
+    "Follow the Latin as it is sung" : {
+      "comment" : "Chant practice, the path: what step 2, Read along, is, for a chant practised line by line"
+    },
     "Follow the narration" : {
       "comment" : "Meditation reader, text options sheet: switch that scrolls the page with the voice"
+    },
+    "Follow the words" : {
+      "comment" : "Learning a chant: what this step of the four does, one short line"
+    },
+    "Follow the words as it is sung" : {
+      "comment" : "Chant practice, the path: what step 2, Read along, is, for a chant practised whole"
     },
     "For an intention of your own. It burns for a day, and stays on your device." : {
 
     },
+    "For Others, and in Need" : {
+      "comment" : "Prayers tab: the heading of one of the five shelves the prayer topics are gathered into"
+    },
     "For praying along with a book or a group" : {
 
+    },
+    "For the Dead" : {
+      "comment" : "Add a chant sheet: short name of a section of the chant book in the jump strip; the Mass for the Dead"
     },
     "FOR THE FIRST TIME" : {
 
@@ -1512,6 +2116,9 @@
     "For the Pope's intentions" : {
       "comment" : "Prayer screen: caption while the Our Father, Hail Mary and Glory Be for the Pope's intentions are said after the Rosary\nSettings, After the Rosary: name of a prayer said after the Rosary"
     },
+    "For Those Who Have Died" : {
+      "comment" : "Prayers tab: the name of an order of prayer, a few prayers said together"
+    },
     "Forward 10 seconds" : {
       "comment" : "Prayer screen: VoiceOver name of the button that skips the narration forward ten seconds"
     },
@@ -1520,6 +2127,9 @@
     },
     "Forward ten seconds" : {
 
+    },
+    "Four steps: listen, read along, sing along, on your own" : {
+      "comment" : "Chant page, the Learn card's note naming the practice's four steps"
     },
     "Fourth" : {
       "comment" : "Ordinal word for a decade's place, set before Mystery or Sorrow in titles like The Fourth Joyful Mystery"
@@ -1543,11 +2153,20 @@
     "From the home screen, tap \"Pray the Rosary\" under today's mysteries, or tap any mystery in the grid below. On the page that opens, choose a meditation (a short reading on each mystery), or another way to pray: the Scriptural Rosary, with a Bible verse for every Hail Mary, or the Audio Rosary, where you listen and pray along. The next page shows how you'll pray, the audio and the counting, just above Pray." : {
       "comment" : "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words"
     },
+    "From the top" : {
+      "comment" : "Chant practice, VoiceOver: the Again button for a chant practised whole, which plays it from the start"
+    },
+    "From the top when it ends" : {
+      "comment" : "Chant practice settings, under Repeat the chant"
+    },
     "FULL" : {
 
     },
     "Gallery" : {
       "comment" : "Mysteries' page: VoiceOver name of the button that shows the sets as a gallery of tiles"
+    },
+    "Gather the prayers you say together, in your order, and pray them one after another." : {
+      "comment" : "My Prayers page: the invitation shown while the reader has no playlist"
     },
     "Gets the latest meditations; saved audio stays" : {
       "comment" : "Settings, Offline: the line under a row"
@@ -1567,6 +2186,9 @@
     "Give yourself to Jesus through Mary" : {
       "comment" : "Home, Today's Prayer: line under the consecration before it begins"
     },
+    "Giving the day to God." : {
+      "comment" : "Prayers tab, home's hour row: one short line saying what an order of prayer of the day is, under its name"
+    },
     "Glory Be" : {
       "comment" : "Prayer screen: name of the bead that closes a sorrow of the chaplet, the Glory Be alone"
     },
@@ -1578,6 +2200,9 @@
     },
     "Go to the reading" : {
 
+    },
+    "God, Our Lady and the Saints" : {
+      "comment" : "Prayers tab: the heading of one of the five shelves the prayer topics are gathered into"
     },
     "Goes to choosing your feast" : {
 
@@ -1603,6 +2228,9 @@
     "Gospel" : {
       "comment" : "A kind of meditation: the Gospel passage of the mystery"
     },
+    "Grace before the meal, and thanks when it is done." : {
+      "comment" : "Prayers tab: one sentence saying what an order of prayer is"
+    },
     "GRACE TO ASK FOR" : {
 
     },
@@ -1627,7 +2255,13 @@
       }
     },
     "Hail, Holy Queen" : {
-      "comment" : "Prayer screen: caption while the Hail, Holy Queen is said after the last decade"
+      "comment" : "Prayer screen: caption while the Hail, Holy Queen is said after the last decade\nPrayers tab: the English name of one of the four seasonal songs to Mary (antiphons of Our Lady); its Latin name stands beside it"
+    },
+    "Hail, Queen of Heaven" : {
+      "comment" : "Prayers tab: the English name of one of the four seasonal songs to Mary (antiphons of Our Lady); its Latin name stands beside it"
+    },
+    "Half" : {
+      "comment" : "Chant practice, Hide words option: every other word is cut to its first letter"
     },
     "HALF" : {
 
@@ -1635,8 +2269,20 @@
     "Hear %@ read" : {
 
     },
+    "Hear each line sung" : {
+      "comment" : "Chant practice, the path: what step 1, Listen, is, for a chant practised line by line"
+    },
+    "Hear it sung" : {
+      "comment" : "Chant practice, under the play disc at rest: a tap plays the whole chant\nLearning a chant: what this step of the four does, one short line"
+    },
     "Hear It Sung" : {
 
+    },
+    "Hear the line" : {
+      "comment" : "Chant practice, under the play disc at rest: a tap plays the line"
+    },
+    "Hear the whole chant sung" : {
+      "comment" : "Chant practice, the path: what step 1, Listen, is, for a chant practised whole"
     },
     "Hear this chapter read" : {
 
@@ -1680,6 +2326,9 @@
     "Hide the prayer's words" : {
 
     },
+    "Hide words" : {
+      "comment" : "Chant practice settings: how many of the chant's words are hidden while practising"
+    },
     "His feast day is %@, the day he died. His tomb is in the Sanctuary of the Spoliation, Assisi." : {
 
     },
@@ -1688,6 +2337,9 @@
     },
     "Hold a rosary if you have one; if not, your ten fingers will count the beads. Pray aloud or silently, as you like.\n\nThe drawing above is a rosary. The bead you are on will light up as you go, so you can always find your place." : {
       "comment" : "Guided Rosary welcome: two paragraphs, separated by a blank line, on what to hold and the drawing of a rosary"
+    },
+    "Hold any chant to add it to your favourites." : {
+      "comment" : "Your Chants: the one line an empty Favourites shelf says"
     },
     "Holds your turn" : {
 
@@ -1712,6 +2364,9 @@
         }
       }
     },
+    "Hours, Seasons and Feasts" : {
+      "comment" : "Image picker: the heading over a group of paintings for times of day, seasons and feasts"
+    },
     "How do I adjust text size?" : {
       "comment" : "Help & Support: a question, or a button"
     },
@@ -1722,7 +2377,7 @@
       "comment" : "Help & Support: a question, or a button"
     },
     "How to practise" : {
-
+      "comment" : "Chant practice, title of the sheet of practice settings (repeat, speed, hidden words)"
     },
     "How to Pray\nthe Rosary" : {
 
@@ -1730,8 +2385,20 @@
     "How to Pray the Rosary" : {
       "comment" : "About Lumen Viae: a section heading"
     },
+    "Hymn" : {
+      "comment" : "Chant library and search: one chant of this kind, for a small kicker like HYMN · 4:24"
+    },
+    "Hymns" : {
+      "comment" : "Add a chant sheet: short name of a section of the chant book in the jump strip; general hymns"
+    },
+    "Hymns to Our Lady" : {
+      "comment" : "Chant book section card and shelf title: the hymns to Our Lady"
+    },
     "I am all yours" : {
 
+    },
+    "I know it by heart" : {
+      "comment" : "Chant practice, the gold act on the last line of the last step: the learner marks the chant learned\nLearn by Heart sheet: the gold act on the last step, marking the prayer as learned"
     },
     "Icon of St. Carlo Acutis" : {
 
@@ -1739,8 +2406,17 @@
     "If you have never prayed the Rosary, begin here. You need no beads — your fingers will do — and nothing by heart. Three short lessons, and then your first Rosary, with every word in front of you." : {
 
     },
+    "Image" : {
+      "comment" : "An editor's image row: the label over the chosen image's description\nImage picker: the small kicker over the sheet's title"
+    },
     "Image, %@" : {
 
+    },
+    "In %lld minutes" : {
+      "comment" : "Sleep timer sheet: a choice, stop the chant after this many minutes"
+    },
+    "In church, or from anywhere" : {
+      "comment" : "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
     },
     "In honor of her tears · %lld of 3" : {
       "comment" : "Prayer screen, end of the Seven Sorrows chaplet: caption for one of three Hail Marys said in honor of Mary's tears"
@@ -1748,8 +2424,64 @@
     "IN ONE SENTENCE" : {
 
     },
+    "In silence" : {
+      "comment" : "Sheet asked before the Prayers tab's book first speaks: the answer that keeps the book silent"
+    },
     "In Silence" : {
       "comment" : "Prayers Tab Audio option: no sound"
+    },
+    "In the pew" : {
+      "comment" : "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+    },
+    "In the set" : {
+      "comment" : "VoiceOver: a chant in the add-a-chant list is in the set once"
+    },
+    "In the set %lld times" : {
+      "comment" : "VoiceOver: a chant in the add-a-chant list is in the set this many times (three or more)"
+    },
+    "In the set it reads: %@" : {
+
+    },
+    "In the set it reads: %@, then %lld minutes of silence" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In the set it reads: %1$@, then %#@minutes@"
+          },
+          "substitutions" : {
+            "minutes" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "a minute of silence"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg minutes of silence"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "In the set twice" : {
+      "comment" : "VoiceOver: a chant in the add-a-chant list is in the set two times"
+    },
+    "In the set: %@" : {
+      "comment" : "Add a chant sheet, its foot: what the set holds, like 3 chants · 7 min"
+    },
+    "In Time of Trouble" : {
+      "comment" : "Prayers tab: the name of an order of prayer, a few prayers said together"
     },
     "Ink and gold on the page of an old book" : {
       "comment" : "Settings, App Icon: what the icon looks like"
@@ -1790,6 +2522,9 @@
     "KIND OF MEDITATION" : {
 
     },
+    "Kneeling afterwards" : {
+      "comment" : "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+    },
     "LA" : {
 
     },
@@ -1806,7 +2541,13 @@
       "comment" : "Privacy Policy: a heading, or the date the policy was last changed"
     },
     "Latin" : {
-      "comment" : "Settings, Prayer Language: a choice of the language prayers are shown in"
+      "comment" : "Pray-along More menu, Language: show the prayer in Latin\nSettings, Prayer Language: a choice of the language prayers are shown in"
+    },
+    "Latin and English" : {
+      "comment" : "Chant words option: show the Latin and the English under the chant"
+    },
+    "Latin only" : {
+      "comment" : "Chant words option: show only the Latin under the chant"
     },
     "Latin with English" : {
       "comment" : "Settings, Prayer Language: a choice of the language prayers are shown in"
@@ -1820,14 +2561,20 @@
     "Learn by heart: %@" : {
 
     },
+    "Learn this chant" : {
+      "comment" : "Chant page, the Learn card's title before any practice"
+    },
     "LEARN THIS ONE FIRST" : {
 
     },
     "Learned" : {
-
+      "comment" : "Chant page, the Learn card's note: the reader has marked this chant learned by heart\nChant page: tile that opens the chants the reader has learned by heart\nVoiceOver, a prayer's row: the reader has marked this prayer as known by heart\nYour Chants: name of the shelf of chants the reader has learned by heart"
     },
     "LEARNED" : {
 
+    },
+    "learned by heart" : {
+      "comment" : "VoiceOver, a prayer's row on an order of prayer page: the reader has marked it as known by heart"
     },
     "Learned by heart" : {
 
@@ -1874,6 +2621,9 @@
     "LIGHT OF THE WAY" : {
       "comment" : "Tagline under the app's name, Lumen Viae, in capitals"
     },
+    "Line %lld" : {
+      "comment" : "Chant practice, the path: the line the learner stopped at within the step under way, shown in capitals beside the step"
+    },
     "Line %lld of %lld" : {
       "localizations" : {
         "en" : {
@@ -1897,6 +2647,9 @@
     "List" : {
       "comment" : "Mysteries' page: VoiceOver name of the button that shows the sets as a list"
     },
+    "Listen" : {
+      "comment" : "Learning a chant: the name of one of the four steps"
+    },
     "LISTEN" : {
 
     },
@@ -1908,6 +2661,15 @@
     },
     "Listen to the meditation, then tap for the first Hail Mary" : {
       "comment" : "Meditation reader, bead row cue on the Our Father bead of a meditation with narration"
+    },
+    "Listening shows the English alone" : {
+      "comment" : "Chant practice settings, under Hide words, during step 1 (Listen), when hiding is not offered"
+    },
+    "Litanies" : {
+      "comment" : "Add a chant sheet: short name of a section of the chant book in the jump strip; litanies"
+    },
+    "Litany" : {
+      "comment" : "Chant library and search: one chant of this kind, for a small kicker like HYMN · 4:24"
     },
     "Loading %@" : {
 
@@ -1923,6 +2685,12 @@
     },
     "Loading..." : {
 
+    },
+    "Look back on the day, ask God's forgiveness, and end with a song to Mary." : {
+      "comment" : "Prayers tab: one sentence saying what an order of prayer is"
+    },
+    "Loving Mother of the Redeemer" : {
+      "comment" : "Prayers tab: the English name of one of the four seasonal songs to Mary (antiphons of Our Lady); its Latin name stands beside it"
     },
     "Lumen Viae" : {
 
@@ -1948,6 +2716,9 @@
     "Make a new set" : {
 
     },
+    "Make a playlist of the prayers you say together, with your own words and pictures." : {
+      "comment" : "Prayers tab, My Prayers shelf: the invitation shown while the reader has nothing of their own"
+    },
     "Make full width" : {
 
     },
@@ -1957,11 +2728,20 @@
     "Make sure notifications are enabled for Lumen Viae in your iPhone's Settings → Notifications. Then toggle Daily Reminders off and back on in the app to reschedule." : {
       "comment" : "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words"
     },
+    "Make the set" : {
+      "comment" : "New set sheet: the button that makes the set"
+    },
     "Make your own set" : {
 
     },
     "Marian Blue" : {
       "comment" : "Settings, App Icon: the name of an icon\nSettings, Appearance: the name of a color theme"
+    },
+    "Mass" : {
+      "comment" : "Add a chant sheet: short name of a section of the chant book in the jump strip; the chants of the Mass's Ordinary"
+    },
+    "Mass of the Angels" : {
+      "comment" : "Chant page: tile that opens the Mass of the Angels (Missa de Angelis, Mass VIII), a sung Mass setting\nTitle of the shelf of the Mass of the Angels (Missa de Angelis, Mass VIII), a sung Mass setting"
     },
     "Meditation" : {
       "comment" : "Strand margin, said aloud: the bead is named for the meditation being read"
@@ -2014,11 +2794,20 @@
     "More options" : {
 
     },
+    "Morning" : {
+      "comment" : "Prayers tab: the name of one of the day's three stations on the strip of hours, shown in small capitals (Morning, Noon, Evening, Night)"
+    },
     "Morning Offering" : {
 
     },
+    "Morning Prayers" : {
+      "comment" : "Prayers tab: the name of an order of prayer, a few prayers said together"
+    },
     "Move down" : {
-
+      "comment" : "VoiceOver action on a row of the reader's own sung set: move it one place down"
+    },
+    "Move Down" : {
+      "comment" : "Menu item on a row of the reader's own sung set: move it one place down"
     },
     "Move on to the medal, and close the last decade." : {
       "comment" : "Guided Rosary: what to do when the fifth and last decade closes"
@@ -2027,7 +2816,10 @@
       "comment" : "Guided Rosary: what to do when the first decade closes"
     },
     "Move up" : {
-
+      "comment" : "VoiceOver action on a row of the reader's own sung set: move it one place up"
+    },
+    "Move Up" : {
+      "comment" : "Menu item on a row of the reader's own sung set: move it one place up"
     },
     "Move up to the next large bead. Before anything else is said on it, give glory to the Holy Trinity." : {
       "comment" : "Guided Rosary: what to do before the Glory Be on the second large bead"
@@ -2041,8 +2833,17 @@
     "MOVING" : {
 
     },
+    "My Playlists" : {
+      "comment" : "Playlist editor: the small kicker over the sheet's title"
+    },
     "My Prayers" : {
-
+      "comment" : "Add Prayers sheet: the heading over the reader's own prayers\nPrayer editor: the small kicker over the sheet's title\nPrayers tab: the heading over the shelf of the reader's own prayers and playlists"
+    },
+    "My set" : {
+      "comment" : "The name offered for a new sung set of chants, which the reader may change"
+    },
+    "My set %lld" : {
+      "comment" : "The name offered for a new sung set of chants when My set is taken, with a number, like My set 2"
     },
     "Mysteries" : {
       "comment" : "A Rosary's own page: name of the row that opens the choice of mysteries"
@@ -2051,7 +2852,10 @@
 
     },
     "Name" : {
-
+      "comment" : "Prayer editor: the label over the prayer's name field"
+    },
+    "Name and image" : {
+      "comment" : "Playlist editor: the heading over the playlist's name field and its image"
     },
     "Narration" : {
 
@@ -2063,10 +2867,16 @@
       "comment" : "Heading over the choice of recorded voice that reads the meditations, in Settings and the player"
     },
     "New Playlist" : {
-
+      "comment" : "Playlist editor: the sheet's title when making a new playlist"
+    },
+    "NEW PLAYLIST" : {
+      "comment" : "My Prayers page: the button that makes a new playlist, in small capitals"
     },
     "New Prayer" : {
-
+      "comment" : "Prayer editor: the sheet's title when writing a new prayer of one's own"
+    },
+    "NEW PRAYER" : {
+      "comment" : "My Prayers page: the button that writes a new prayer, in small capitals"
     },
     "New reflection" : {
 
@@ -2090,7 +2900,7 @@
 
     },
     "Next line" : {
-
+      "comment" : "Chant practice, the gold act: on to the next line of the chant"
     },
     "Next month" : {
 
@@ -2108,7 +2918,7 @@
 
     },
     "Next step" : {
-
+      "comment" : "Chant practice, the gold act on a step's last line"
     },
     "Next step, %@" : {
 
@@ -2118,6 +2928,9 @@
     },
     "Next topic, %@" : {
 
+    },
+    "Next: %@" : {
+      "comment" : "Mini player's title while a sung set waits for a tap; the chant's Latin title follows"
     },
     "Next: %@. %@" : {
       "localizations" : {
@@ -2129,11 +2942,20 @@
         }
       }
     },
+    "Night" : {
+      "comment" : "Prayers tab: the name of one of the day's three stations on the strip of hours, shown in small capitals (Morning, Noon, Evening, Night)"
+    },
+    "Night Prayers" : {
+      "comment" : "Prayers tab: the name of an order of prayer, a few prayers said together"
+    },
     "No book open yet · choose one" : {
 
     },
     "No chant matches “%@”." : {
 
+    },
+    "No chants yet" : {
+      "comment" : "Your Chants: under a set of the reader's that holds no chant"
     },
     "No line in this book has those words." : {
 
@@ -2165,11 +2987,20 @@
     "No sound. The words are on screen for you to say." : {
       "comment" : "Settings, Prayers Tab Audio: the line under the chosen option"
     },
+    "No sound. The words stay on screen for you to say." : {
+      "comment" : "Sheet asked before the Prayers tab's book first speaks: under In silence"
+    },
     "None" : {
-
+      "comment" : "Chant practice, Hide words option: no words are hidden"
     },
     "None chosen yet." : {
 
+    },
+    "Noon" : {
+      "comment" : "Prayers tab: the name of one of the day's three stations on the strip of hours, shown in small capitals (Morning, Noon, Evening, Night)"
+    },
+    "Normal" : {
+      "comment" : "Chant practice settings, Speed: the recording's own pace"
     },
     "Normal speed" : {
       "comment" : "VoiceOver: the narration speed at 1x"
@@ -2195,11 +3026,20 @@
     "Not yet opened" : {
 
     },
+    "NOTE" : {
+      "comment" : "A sung set: beside a pause of the reader's that is a red note with no silence, in capitals"
+    },
     "NOTES" : {
 
     },
     "Nothing found" : {
 
+    },
+    "Nothing in it yet" : {
+      "comment" : "A sung set's page: under its name, the set holds no chant\nAdd to a set sheet: under a set's name, the set holds no chant"
+    },
+    "Nothing in the set yet" : {
+      "comment" : "Add a chant sheet, its foot: the set holds no chant yet"
     },
     "Nothing is deleted. Tap one to put it back." : {
 
@@ -2215,6 +3055,9 @@
     },
     "Notifications are turned off for Lumen Viae" : {
       "comment" : "Settings: the line under a row"
+    },
+    "Now" : {
+      "comment" : "Prayers tab: the heading over the card for the order of prayer for this hour"
     },
     "NOW" : {
 
@@ -2238,7 +3081,7 @@
 
     },
     "Off" : {
-      "comment" : "Settings: the line under a row\nVoiceOver: a switch is off"
+      "comment" : "Chant practice settings, Repeat the chant: not repeated\nSettings: the line under a row\nVoiceOver: a switch is off"
     },
     "Offline" : {
       "comment" : "A meditation set's page, ledger label of the row that saves the set for praying without a connection\nSettings: a section heading"
@@ -2247,7 +3090,7 @@
 
     },
     "On" : {
-      "comment" : "VoiceOver: a switch is on"
+      "comment" : "Chant practice settings, Repeat the chant: repeated\nVoiceOver: a switch is on"
     },
     "On %@" : {
 
@@ -2275,6 +3118,15 @@
     },
     "On the Screen" : {
       "comment" : "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen"
+    },
+    "On waking" : {
+      "comment" : "Prayers tab, home's hour row: when one of the day's three orders of prayer is said\nPrayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+    },
+    "On your own" : {
+      "comment" : "Learning a chant: the name of one of the four steps"
+    },
+    "Once" : {
+      "comment" : "Chant practice settings, Repeat each line: sung one time"
     },
     "Once opened, this book reads offline." : {
 
@@ -2360,8 +3212,14 @@
     "Opens Verbum Gloriae's website" : {
 
     },
+    "or back to %@" : {
+      "comment" : "Prayer topic page, foot: a quiet door back to the topic before, under the next topic's card; the name is a topic's title, like Short Prayers"
+    },
     "Or press and hold anywhere." : {
 
+    },
+    "Orders of prayer" : {
+      "comment" : "Add Prayers sheet: the heading over the book's orders of prayer, prayers said together"
     },
     "OTHER FEASTS" : {
 
@@ -2381,8 +3239,14 @@
     "Our heart is restless until it rests in thee. — St. Augustine" : {
 
     },
+    "Our Lady" : {
+      "comment" : "Add a chant sheet: short name of a section of the chant book in the jump strip; hymns to Our Lady\nImage picker: the heading over a group of paintings of the Virgin Mary"
+    },
     "Our Lady with the Marian monogram" : {
       "comment" : "Settings, App Icon: what the icon looks like"
+    },
+    "Our Lord" : {
+      "comment" : "Image picker: the heading over a group of paintings of Jesus"
     },
     "Our Mission" : {
       "comment" : "About Lumen Viae: a section heading"
@@ -2410,7 +3274,7 @@
 
     },
     "Pause" : {
-
+      "comment" : "A chant shelf page: the button that pauses the shelf being sung\nA sung set's page: the button that pauses the set being sung\nA sung set's play button while the set is being sung"
     },
     "PAUSE" : {
 
@@ -2433,6 +3297,9 @@
     "Pause the reading of %@" : {
 
     },
+    "Pentecost to Advent" : {
+      "comment" : "Prayers tab: the part of the year a seasonal song to Mary is sung, in plain dates (February 2 is Candlemas)"
+    },
     "Photograph of St. Carlo Acutis" : {
 
     },
@@ -2454,8 +3321,29 @@
     "Play %@" : {
 
     },
+    "Play all" : {
+      "comment" : "A chant shelf page: the button that plays every chant on the shelf, in capitals\nA sung set's page: the button that plays the whole set, in capitals"
+    },
+    "Play all of %@" : {
+
+    },
+    "Play from here" : {
+      "comment" : "VoiceOver action on a chant in a sung set: play the set from this chant on"
+    },
+    "Play from Here" : {
+      "comment" : "Menu item on a chant in a sung set: play the set from this chant on"
+    },
+    "Play it to check" : {
+      "comment" : "Chant practice, under the play disc at rest in step 4: a tap plays the chant to check the learner's memory"
+    },
+    "Play next" : {
+      "comment" : "A chant shelf page: the button, while the shelf waits between chants for a tap\nA sung set's page: the button, while the set waits between chants for a tap\nA sung set's play button while the set waits for a tap before its next chant"
+    },
     "Play the chant" : {
 
+    },
+    "Play the line again" : {
+      "comment" : "Chant practice, VoiceOver: the Again button for a chant practised line by line"
     },
     "Play the reading" : {
 
@@ -2476,13 +3364,16 @@
       "comment" : "Settings: the line under a row\nVoice & speed sheet, Audio Rosary: note under the prayers after the Rosary"
     },
     "Played lately" : {
-
+      "comment" : "Chant page: heading of the shelf of the last chants played"
     },
     "PLAYLIST" : {
 
     },
     "PLAYLIST · %@" : {
 
+    },
+    "Playlists" : {
+      "comment" : "My Prayers page: the heading over the reader's playlists"
     },
     "Plays at the normal speed" : {
 
@@ -2509,14 +3400,26 @@
         }
       }
     },
+    "Practise again" : {
+      "comment" : "Chant page, the Learn card's title once the chant is learned by heart\nChant practice, the path's act for a chant already learned by heart"
+    },
     "Pray" : {
-      "comment" : "A Rosary's own page: the gold button that begins the Rosary"
+      "comment" : "A Rosary's own page: the gold button that begins the Rosary\nOrder of prayer page: the gold act at its foot that begins praying the order"
     },
     "PRAY" : {
-
+      "comment" : "A playlist's card: the button that prays it, in small capitals\nA playlist's page: the button that prays it, in small capitals\nPrayers tab, the Now card: the act that prays the hour's order; in capitals"
     },
     "Pray %@" : {
-
+      "comment" : "VoiceOver, Prayers tab's Now card: the act; the name is an order of prayer, like Night Prayers\nVoiceOver: the button that prays a playlist of the reader's own, by its name"
+    },
+    "Pray %@ again" : {
+      "comment" : "VoiceOver, Prayers tab's Now card: the act once prayed; the name is an order of prayer, like Night Prayers"
+    },
+    "Pray again" : {
+      "comment" : "Pray-along screen, after the Amen: begins the same prayers again"
+    },
+    "PRAY AGAIN" : {
+      "comment" : "Prayers tab, the Now card: the act on the hour's order once it has been prayed; in capitals"
     },
     "Pray the %@ with a verse of Scripture on every bead." : {
 
@@ -2551,6 +3454,9 @@
     "Prayed with a guide: every step, every word, and the beads drawn so you always know where you are." : {
 
     },
+    "Prayer" : {
+      "comment" : "Chant library and search: one chant of this kind, for a small kicker like HYMN · 4:24"
+    },
     "Prayer Experience" : {
       "comment" : "Settings: a section heading"
     },
@@ -2567,19 +3473,40 @@
       "comment" : "Prayer screen: caption while the Prayer to Saint Michael is said after the Rosary"
     },
     "Prayers" : {
-      "comment" : "Strand margin, second of two short lines: Opening / Prayers or Closing / Prayers"
+      "comment" : "Lock Screen, a prayer from the Prayers tab read aloud: the book's name as the album line\nPlaylist editor: the heading over the playlist's prayers, while it has none\nPray-along screen, head: names the Prayers tab's book when a single prayer is open; shown in capitals\nPray-along screen: the kicker when a prayer's own title cannot be found\nPrayers tab, the page's title at its head; shown in capitals\nSheet asked before the Prayers tab's book first speaks: the kicker naming the book\nStrand margin, second of two short lines: Opening / Prayers or Closing / Prayers"
     },
     "PRAYERS" : {
       "comment" : "Tab bar label for the prayer book, in capitals"
     },
+    "Prayers · %lld" : {
+      "comment" : "Playlist editor: the heading over the playlist's prayers, with how many it holds"
+    },
     "Prayers and readings for today" : {
       "comment" : "Home, Today's Prayer: line under Today's Mass while the day's feast is loading"
+    },
+    "Prayers asking God to give rest and peace to those who have died." : {
+      "comment" : "Prayers tab: one sentence saying what an order of prayer is"
+    },
+    "Prayers for help and protection, to Mary and to St Michael." : {
+      "comment" : "Prayers tab: one sentence saying what an order of prayer is"
+    },
+    "Prayers I Wrote" : {
+      "comment" : "My Prayers page: the heading over the prayers the reader wrote"
+    },
+    "Prayers of thanks for the minutes after you receive Communion." : {
+      "comment" : "Prayers tab: one sentence saying what an order of prayer is"
     },
     "Prayers Tab" : {
       "comment" : "Settings: a section heading"
     },
     "Prayers Tab Audio" : {
       "comment" : "Settings: whether the Prayers tab reads its prayers aloud"
+    },
+    "Prayers to get ready for Mass: for light, a ready heart, and faith, hope and love." : {
+      "comment" : "Prayers tab: one sentence saying what an order of prayer is"
+    },
+    "Prayers to Mary" : {
+      "comment" : "Prayers tab: the heading over a sideways shelf of prayers to Our Lady"
     },
     "Praying Every Day" : {
       "comment" : "What brings you to the Rosary: one reason, as a short title"
@@ -2645,11 +3572,26 @@
         }
       }
     },
+    "Psalm" : {
+      "comment" : "Chant library and search: one chant of this kind, for a small kicker like HYMN · 4:24"
+    },
+    "Queen of Heaven" : {
+      "comment" : "Prayers tab: the Angelus's name in the Easter season, when the Regina Caeli is said in its place\nPrayers tab: the English name of one of the four seasonal songs to Mary (antiphons of Our Lady); its Latin name stands beside it"
+    },
     "QUESTIONS" : {
 
     },
     "Questions about privacy? Reach us at %@" : {
       "comment" : "Privacy Policy: a section's text; keep it as plain and exact as the English"
+    },
+    "Quiet time with Jesus, present in the Host" : {
+      "comment" : "Chant library: the one line under a sung set's name saying what it is for"
+    },
+    "Read" : {
+      "comment" : "Learn by Heart sheet: the first of four steps, the whole prayer shown to read"
+    },
+    "Read along" : {
+      "comment" : "Learning a chant: the name of one of the four steps"
     },
     "Read in Silence" : {
       "comment" : "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen"
@@ -2660,11 +3602,17 @@
     "Read the licence" : {
 
     },
+    "READ THE LICENCE" : {
+      "comment" : "Chant credit: link to the chant recordings' copyleft licence, in small capitals"
+    },
     "Read the meditation" : {
       "comment" : "Prayer screen: VoiceOver name of the button that opens the meditation as text"
     },
     "Read the meditation, then tap for the first Hail Mary" : {
       "comment" : "Meditation reader, bead row cue on the Our Father bead of a meditation with no narration"
+    },
+    "Read to you in the %@ voice" : {
+      "comment" : "Sheet asked before the Prayers tab's book first speaks: under With a voice; the name is the chosen narration voice's, in lower case, like male or female"
     },
     "Reading %lld of %lld, %@" : {
       "localizations" : {
@@ -2691,6 +3639,15 @@
     "RECENT" : {
 
     },
+    "Recording missing" : {
+      "comment" : "Chant player: short caption under a play button, the recording is not available"
+    },
+    "Recordings and scores by Verbum Gloriae" : {
+      "comment" : "Chant library page: its one line of credit, a link; Verbum Gloriae is the name of a Spanish chant apostolate"
+    },
+    "Recordings and sheet music by Verbum Gloriae" : {
+      "comment" : "Credit line on a chant's page and the Lock Screen; Verbum Gloriae is the name of a Spanish chant apostolate"
+    },
     "Reflection" : {
 
     },
@@ -2699,6 +3656,9 @@
     },
     "Reflections" : {
       "comment" : "A kind of meditation: a saint's reflections on a mystery"
+    },
+    "Remembering how God's Son became man, said three times a day when the church bell rings." : {
+      "comment" : "Prayers tab: one sentence saying what an order of prayer is"
     },
     "Reminder Sound" : {
       "comment" : "Settings, Reminder Sound sheet: its title\nSettings: a row's name"
@@ -2710,7 +3670,7 @@
       "comment" : "Privacy Policy: a heading, or the date the policy was last changed\nSettings, What Brings You to the Rosary sheet: the small label over its title"
     },
     "Remove" : {
-      "comment" : "A meditation set's page: button that deletes the saved offline copy"
+      "comment" : "A meditation set's page: button that deletes the saved offline copy\nMenu item on a row of the reader's own sung set: take it out of the set\nVoiceOver action on a row of the reader's own sung set: take it out of the set"
     },
     "REMOVE" : {
 
@@ -2739,6 +3699,9 @@
     "Remove the Learned mark" : {
 
     },
+    "Removed from Saved." : {
+      "comment" : "Pray-along screen: said for three seconds, and to VoiceOver, after the reader removes the prayer from Saved"
+    },
     "Rename" : {
 
     },
@@ -2748,8 +3711,11 @@
     "Renew it each year on this feast, and every day in your heart." : {
 
     },
+    "Repeat each line" : {
+      "comment" : "Chant practice settings: how many times the singer sings each line"
+    },
     "Repeat the chant" : {
-
+      "comment" : "Chant practice settings: whether the whole chant plays again when it ends"
     },
     "Repeat this line" : {
 
@@ -2762,6 +3728,9 @@
     },
     "Restart your consecration?" : {
 
+    },
+    "Resume" : {
+      "comment" : "A chant shelf page: the button that takes up the paused shelf\nA sung set's page: the button that takes up the paused set\nA sung set's play button while the set is paused"
     },
     "Return home" : {
 
@@ -2781,11 +3750,17 @@
     "Rosaries Prayed" : {
 
     },
+    "Rosary" : {
+      "comment" : "Add a chant sheet: short name of a section of the chant book in the jump strip; the Rosary sung in Latin"
+    },
     "Rosary Audio" : {
       "comment" : "One of the Rosary's two choices, its name: Rosary Audio (what the voice says) or Counting (where the beads are counted)"
     },
     "Rosary Mysteries" : {
 
+    },
+    "Said in place of the Angelus until Pentecost." : {
+      "comment" : "Order of prayer page for the Angelus, in the Easter season: a note under its list saying Queen of Heaven (Regina Caeli) takes the Angelus's place"
     },
     "Said in the voice you choose · ten Hail Marys to a mystery, seven to a sorrow" : {
 
@@ -2799,8 +3774,11 @@
     "Saints" : {
       "comment" : "A kind of meditation: written by a saint"
     },
+    "Saints and Angels" : {
+      "comment" : "Image picker: the heading over a group of paintings of saints and angels"
+    },
     "Save" : {
-
+      "comment" : "Sheet header action that saves and closes the sheet"
     },
     "SAVE" : {
 
@@ -2820,14 +3798,29 @@
     "SAVE FOR OFFLINE" : {
 
     },
+    "Save this prayer" : {
+      "comment" : "Pray-along screen, after the Amen: keeps the prayer just prayed under Saved"
+    },
     "Save this reading to the device" : {
 
     },
+    "saved" : {
+      "comment" : "VoiceOver, a prayer's row on an order of prayer page: the reader has saved it\nVoiceOver, a prayer's row on the Prayers tab: the reader has saved it"
+    },
     "Saved" : {
-
+      "comment" : "Prayers tab: the shortcut tile to the prayers the reader saved\nVoiceOver, a prayer's row: the reader has saved this prayer"
     },
     "Saved on this device" : {
 
+    },
+    "Saved prayers" : {
+      "comment" : "VoiceOver, Prayers tab: the Saved shortcut when nothing is saved"
+    },
+    "Saved prayers, %lld" : {
+      "comment" : "VoiceOver, Prayers tab: the Saved shortcut with how many prayers are saved"
+    },
+    "Saved. Find it under Saved on the Prayers tab." : {
+      "comment" : "Pray-along screen: said for three seconds, and to VoiceOver, after the reader saves the prayer from the More menu"
     },
     "SAVING" : {
 
@@ -2847,17 +3840,26 @@
     "Say it first, then check it" : {
 
     },
+    "Say it from the first letters." : {
+      "comment" : "Learn by Heart sheet: the hint under the step where each word is cut to its first letter"
+    },
     "say it, then reveal" : {
 
     },
     "Say the name of the next mystery, and picture the scene." : {
       "comment" : "Guided Rosary: what to do when each later mystery is announced"
     },
+    "Say the prayers the priest gave you (your penance), then thank God for His mercy." : {
+      "comment" : "Prayers tab: one sentence saying what an order of prayer is"
+    },
     "Scenes from the lives of Jesus and Mary" : {
 
     },
     "Scenes from the lives of Jesus and Mary. Choose which to pray." : {
 
+    },
+    "Score" : {
+      "comment" : "Chant practice, the name under the button that opens the sheet music"
     },
     "Scriptural Rosary" : {
       "comment" : "Scriptural Rosary's prayer screen: the header's name, set in capitals"
@@ -2903,6 +3905,9 @@
     "Searching the meditations…" : {
 
     },
+    "Seasons" : {
+      "comment" : "Add a chant sheet: short name of a section of the chant book in the jump strip; seasonal hymns and chants"
+    },
     "Second" : {
       "comment" : "Ordinal word for a decade's place, set before Mystery or Sorrow in titles like The Second Joyful Mystery"
     },
@@ -2927,6 +3932,12 @@
     "Send Feedback" : {
       "comment" : "About: a row's name, a heading, or the line under it\nThe feedback sheet's title"
     },
+    "Sequences" : {
+      "comment" : "Add a chant sheet: short name of a section of the chant book in the jump strip; the feast poems sung before the Gospel"
+    },
+    "Sets of chants" : {
+      "comment" : "Chant page: heading of the shelf of sets of chants sung one after another for a time of prayer"
+    },
     "Sets of Chants" : {
 
     },
@@ -2942,11 +3953,17 @@
     "SHARE" : {
 
     },
+    "Shared under Verbum Gloriae's free licence, a copyleft licence. Our copies are compressed and recoloured, and they carry the same licence." : {
+      "comment" : "Chant page: the note on the recordings' licence, under the credit"
+    },
     "SHEET MUSIC" : {
 
     },
     "Sheet music: %@" : {
 
+    },
+    "Short chant" : {
+      "comment" : "Chant library and search: one chant of this kind, for a small kicker like HYMN · 4:24"
     },
     "Show" : {
       "comment" : "Opening and Closing Prayers option: show them with their words"
@@ -2987,6 +4004,9 @@
     "Shows the word" : {
 
     },
+    "Silence" : {
+      "comment" : "A sung set: a pause of the reader's own that has no note, only silence\nMini player's title during a timed pause between chants in a sung set"
+    },
     "Silence · %@ left" : {
 
     },
@@ -3001,6 +4021,24 @@
     },
     "SILENT" : {
 
+    },
+    "Sing along" : {
+      "comment" : "Learning a chant: the name of one of the four steps"
+    },
+    "Sing from memory, then play it to check" : {
+      "comment" : "Chant practice, the path: what step 4, On your own, is, for a chant practised whole"
+    },
+    "Sing it back" : {
+      "comment" : "Chant practice, under the play disc during the learner's turn, after the singer sang the line"
+    },
+    "Sing with it" : {
+      "comment" : "Chant practice, under the play disc at rest in step 3: a tap plays the chant to sing along with"
+    },
+    "Sing with the recording" : {
+      "comment" : "Chant practice, the path: what step 3, Sing along, is, for a chant practised whole\nLearning a chant: what this step of the four does, one short line"
+    },
+    "Sing without help" : {
+      "comment" : "Learning a chant: what this step of the four does, one short line"
     },
     "Singing" : {
 
@@ -3018,13 +4056,22 @@
 
     },
     "Sleep timer" : {
-
+      "comment" : "Sleep timer sheet: its title; the chant stops playing after a while"
+    },
+    "Slower" : {
+      "comment" : "Chant practice settings, Speed: three quarters of the pace, for learning"
+    },
+    "Slower is three quarters of the pace" : {
+      "comment" : "Chant practice settings, under Speed"
     },
     "Small bead · %lld of 3" : {
       "comment" : "Guided Rosary: where on the rosary the fingers are, one of the three small beads, like Small bead · 2 of 3"
     },
     "Small bead %lld of 3" : {
       "comment" : "VoiceOver: the part of the rosary's pendant the voice is on, one of the three small beads, like Small bead 2 of 3"
+    },
+    "Some hidden" : {
+      "comment" : "Learn by Heart sheet: the second of four steps, some words of the prayer hidden"
     },
     "Some of it didn't download. What finished is saved." : {
 
@@ -3038,17 +4085,23 @@
     "Something's wrong" : {
       "comment" : "Send Feedback: a topic to choose, a problem with the app"
     },
+    "Songs to Mary" : {
+      "comment" : "Chant page: heading of the shelf of the four seasonal antiphons sung to Our Lady\nTitle of the shelf of the four seasonal antiphons sung to Our Lady"
+    },
     "SOONEST" : {
 
     },
     "Sorrowful" : {
       "comment" : "Settings, App Icon: the name of an icon"
     },
+    "Sounding at %@" : {
+      "comment" : "Chant practice settings, under Speed, when another pace was chosen elsewhere; the pace is like 1.5×"
+    },
     "Sources & Credits" : {
       "comment" : "About: a row's name, a heading, or the line under it"
     },
     "Speed" : {
-      "comment" : "Playback settings sheet: section label over the narration speed slider\nVoice & speed sheet: section label over the narration speed slider"
+      "comment" : "Chant practice settings: the singer's pace\nPlayback settings sheet: section label over the narration speed slider\nVoice & speed sheet: section label over the narration speed slider"
     },
     "SPEED AND SLEEP TIMER" : {
 
@@ -3123,6 +4176,17 @@
         }
       }
     },
+    "Step %lld of 4 · %@" : {
+      "comment" : "Chant page, the Learn card's note: which of the four practice steps the learner is on, then that step's name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Step %1$lld of 4 · %2$@"
+          }
+        }
+      }
+    },
     "Step %lld of 4, %@" : {
       "localizations" : {
         "en" : {
@@ -3154,6 +4218,9 @@
     },
     "Stop Learning" : {
 
+    },
+    "Sung by Verbum Gloriae · from Lumen Viae's Chant Library" : {
+      "comment" : "Last line of a sung set shared as plain text; Verbum Gloriae is the choir's name, Lumen Viae the app's"
     },
     "Sung so far" : {
 
@@ -3191,6 +4258,9 @@
     "Take up and read (St. Augustine's ‘Tolle, lege’)" : {
 
     },
+    "Taken" : {
+      "comment" : "Chant practice, VoiceOver: a step on the path the learner has already done"
+    },
     "Takes up your turn" : {
 
     },
@@ -3214,6 +4284,9 @@
     },
     "Tap to add a title" : {
 
+    },
+    "Tap to pause" : {
+      "comment" : "Chant practice, the caption under the play disc while the singer sings"
     },
     "Ten Hail Marys on %@." : {
       "comment" : "Guided Rosary, first Hail Mary of a later decade; the end is the mystery's name in running text, like the Annunciation"
@@ -3294,6 +4367,9 @@
     "The Act of Contrition" : {
       "comment" : "Prayer screen: caption while the Act of Contrition opens the Seven Sorrows chaplet"
     },
+    "The Angelus" : {
+      "comment" : "Angelus bell notification: its title, the name of the prayer\nPrayers tab: the name of an order of prayer, a few prayers said together"
+    },
     "The Angelus Bell" : {
       "comment" : "Settings: a row's name"
     },
@@ -3321,8 +4397,17 @@
     "The book this consecration comes from" : {
 
     },
+    "The book's own" : {
+      "comment" : "An editor's image row: no image chosen, so the book's own paintings are used"
+    },
     "The chain" : {
       "comment" : "VoiceOver: the part of the rosary's pendant the voice is on, the chain"
+    },
+    "The chant couldn't be played." : {
+      "comment" : "Chant player: error when the recording would not load"
+    },
+    "The Chant Library" : {
+      "comment" : "Sleep timer sheet: small kicker naming the Chant tab's library"
     },
     "The chime was made for Lumen Viae; the bell is a public domain recording." : {
       "comment" : "Settings, Reminder Sound sheet: the note at its foot"
@@ -3384,8 +4469,14 @@
     "The Devotion in Summary" : {
 
     },
+    "The Easter prayer to Mary, said in place of the Angelus." : {
+      "comment" : "Prayers tab, home's hour row: one short line saying what an order of prayer of the day is, under its name"
+    },
     "The End" : {
 
+    },
+    "The evening bell: time for the Angelus, a short prayer to Mary. Tap to pray it." : {
+      "comment" : "Angelus bell notification at 6 PM: its text"
     },
     "The Fatima Prayer" : {
       "comment" : "Prayer screen: caption while the Fatima Prayer is said"
@@ -3444,6 +4535,9 @@
     "THE MASS IS ENDED" : {
 
     },
+    "The Mass of the Angels" : {
+      "comment" : "VoiceOver: the Mass of the Angels tile on the Chant page"
+    },
     "The medal" : {
       "comment" : "Guided Rosary: where on the rosary the fingers are, the medal where the loop joins, shown in small capitals\nHow to Pray, the beads lesson: name of a part of the rosary, chosen to light it on a drawing\nVoiceOver: the part of the rosary's pendant the voice is on, the centrepiece medal where the decades join"
     },
@@ -3458,6 +4552,12 @@
     },
     "The modern schedule is St. John Paul II's, from his letter on the Rosary, Rosarium Virginis Mariae (2002). Both keep Sunday by the season: Joyful in Advent, Sorrowful in Lent, Glorious the rest of the year." : {
       "comment" : "Settings, Daily Mysteries sheet: a note at its foot; Rosarium Virginis Mariae is the Latin title of the letter"
+    },
+    "The morning bell: time for the Angelus, a short prayer to Mary. Tap to pray it." : {
+      "comment" : "Angelus bell notification at 6 AM: its text"
+    },
+    "The Mysteries" : {
+      "comment" : "Image picker: the heading over a group of paintings of the mysteries of the Rosary"
     },
     "The Mysteries\nin Scripture" : {
 
@@ -3488,6 +4588,9 @@
     },
     "The next small bead: a Hail Mary for an increase of hope." : {
       "comment" : "Guided Rosary: what to do on the second of the three small beads"
+    },
+    "The noon bell: time for the Angelus, a short prayer to Mary. Tap to pray it." : {
+      "comment" : "Angelus bell notification at noon: its text"
     },
     "The note, read in red between chants" : {
 
@@ -3525,6 +4628,12 @@
     "The prayer “Remember, O most gracious Virgin Mary” after the Rosary." : {
       "comment" : "Settings, After the Rosary: the line under a prayer said after the Rosary"
     },
+    "The Prayer Book" : {
+      "comment" : "Add Prayers sheet: the heading over every prayer of the book"
+    },
+    "The prayer it sings" : {
+      "comment" : "Chant page, heading over the prayer whose words this chant sings"
+    },
     "The Prayer to Saint Michael after the Rosary." : {
       "comment" : "Settings, After the Rosary: the line under a prayer said after the Rosary"
     },
@@ -3555,6 +4664,9 @@
     "The Rosary is five decades — sets of ten Hail Marys — each spent with one scene from the life of Jesus and Mary. Today's are chosen for you; you may pick others." : {
 
     },
+    "The Sacraments" : {
+      "comment" : "Prayers tab: the heading of one of the five shelves the prayer topics are gathered into"
+    },
     "The same three steps each day" : {
 
     },
@@ -3571,7 +4683,7 @@
 
     },
     "The sheet music" : {
-
+      "comment" : "Chant practice, VoiceOver: the button that opens the sheet music"
     },
     "The sheet music comes with a connection" : {
 
@@ -3579,8 +4691,20 @@
     "The Sign of the Cross" : {
       "comment" : "Prayer screen: caption while the Sign of the Cross is said, opening and closing the Rosary"
     },
+    "The singer sang the line. Now sing it back." : {
+      "comment" : "Chant page, Take turns: the line under Your turn, while the reader sings back the line just sung"
+    },
     "The singer sings a line, then waits while you sing it back" : {
 
+    },
+    "The singer sings it once, or three times" : {
+      "comment" : "Chant practice settings, under Repeat each line"
+    },
+    "The singer sings, then you" : {
+      "comment" : "Chant practice, the path: what step 3, Sing along, is, for a chant practised line by line"
+    },
+    "The singer, then you" : {
+      "comment" : "Chant practice, under the play disc at rest in step 3: a tap plays the line, then gives the learner a turn"
     },
     "The sorrow" : {
       "comment" : "Prayer screen: caption while a sorrow of the chaplet is announced"
@@ -3606,11 +4730,20 @@
     "THE WORD BEHIND THE BEADS" : {
 
     },
+    "The words" : {
+      "comment" : "Words sheet: its title, under the chant's name; the chant's words line by line"
+    },
+    "The words as they appear in Prayers. The chant may add a short verse and response, or a closing prayer." : {
+      "comment" : "Words sheet: note under a chant's words taken from the Prayers tab"
+    },
     "The words of prayers and meditations" : {
 
     },
     "The words of this chant are printed on its sheet music." : {
 
+    },
+    "The words of this chant aren't written out here yet. You can read them on its sheet music." : {
+      "comment" : "Words sheet: note when the app has no words for the chant"
     },
     "THEN" : {
 
@@ -3645,17 +4778,29 @@
     "These meditations aren't available yet." : {
 
     },
+    "These prayers aren't recorded in this voice yet." : {
+      "comment" : "Pray-along screen, read aloud: the note when the chosen voice has no recordings of these prayers"
+    },
     "These prayers could not be found." : {
 
     },
     "Third" : {
       "comment" : "Ordinal word for a decade's place, set before Mystery or Sorrow in titles like The Third Joyful Mystery"
     },
+    "This afternoon" : {
+      "comment" : "Your Chants, Played lately: when a chant was played, earlier today in the afternoon"
+    },
     "This chant could not be found." : {
 
     },
+    "This chant's recording is missing." : {
+      "comment" : "Chant player: error when the recording is not available"
+    },
     "This iPhone has no mail account set up, so we couldn't open a message. Your note has been copied — paste it into whichever mail app you use, addressed to %@." : {
 
+    },
+    "This morning" : {
+      "comment" : "Your Chants, Played lately: when a chant was played, earlier today before noon"
     },
     "This order of prayer could not be found." : {
 
@@ -3665,6 +4810,15 @@
     },
     "This page is yours to arrange" : {
 
+    },
+    "This playlist has no prayers yet." : {
+      "comment" : "A playlist's page while it holds no prayer"
+    },
+    "This prayer has no recording yet. Pray it in silence, then go on." : {
+      "comment" : "Pray-along screen, praying with a voice: a note at the foot when this prayer has no recording"
+    },
+    "This season" : {
+      "comment" : "Prayers tab, Prayers to Mary: under the season's song to Mary, the one said now\nVoiceOver, a prayer's row: marks the season's song to Mary, said for this season"
     },
     "THIS SEASON" : {
 
@@ -3677,6 +4831,9 @@
     },
     "Three Hail Marys, asking for an increase of faith, hope and charity." : {
       "comment" : "How to Pray, the beads lesson: what is prayed on this part of the rosary"
+    },
+    "Through the Year" : {
+      "comment" : "Prayers tab: the heading of one of the five shelves the prayer topics are gathered into"
     },
     "Title (optional)" : {
 
@@ -3711,6 +4868,9 @@
     "Today's Prayer" : {
 
     },
+    "Tonight" : {
+      "comment" : "Your Chants, Played lately: when a chant was played, today in the evening"
+    },
     "Topic before, %@" : {
 
     },
@@ -3719,6 +4879,9 @@
     },
     "Totus tuus ego sum" : {
 
+    },
+    "Touch a word to see it." : {
+      "comment" : "Learn by Heart sheet: the hint under the step where some words are hidden"
     },
     "Traditional" : {
       "comment" : "Settings, Daily Mysteries: the name of a weekly schedule of mysteries"
@@ -3741,14 +4904,29 @@
     "Try Again" : {
       "comment" : "Settings, Offline: a row's name"
     },
+    "Turn off the timer" : {
+      "comment" : "Sleep timer sheet: a choice that cancels the sleep timer"
+    },
     "Turn On in iPhone Settings" : {
       "comment" : "Settings: a row's name"
+    },
+    "Under way" : {
+      "comment" : "Chant practice, VoiceOver: the step the learner is on"
+    },
+    "Under way, %@" : {
+      "comment" : "Chant practice, VoiceOver: the step under way, then the line reached, like: Under way, line 3"
     },
     "UNMARK" : {
 
     },
     "Unpin this set" : {
 
+    },
+    "Untitled Playlist" : {
+      "comment" : "My Prayers: the name shown for a playlist of the reader's own left without a name"
+    },
+    "Untitled Prayer" : {
+      "comment" : "My Prayers: the name shown for a prayer of the reader's own left without a title"
     },
     "Update Download" : {
       "comment" : "Settings, Offline: a row's name"
@@ -3767,6 +4945,9 @@
     },
     "VIEW ALL" : {
 
+    },
+    "Visiting Jesus in Church" : {
+      "comment" : "Prayers tab: the name of an order of prayer, a few prayers said together"
     },
     "Voice" : {
       "comment" : "Playback settings sheet: section label over the narration voices\nVoice & speed sheet: section label over the narration voices"
@@ -3819,6 +5000,12 @@
     "When the beads are familiar" : {
 
     },
+    "When this chant ends" : {
+      "comment" : "Sleep timer sheet: a choice, stop when the chant playing ends"
+    },
+    "When you need help" : {
+      "comment" : "Prayers tab: when an order of prayer is said, shown as a short line or a small-capitals kicker"
+    },
     "Where the loop begins, and where the Rosary is closed with the Hail, Holy Queen." : {
       "comment" : "How to Pray, the beads lesson: what is prayed on this part of the rosary"
     },
@@ -3856,8 +5043,14 @@
     "Why are some meditations unavailable?" : {
       "comment" : "Help & Support: a question, or a button"
     },
+    "With a voice" : {
+      "comment" : "Sheet asked before the Prayers tab's book first speaks: the answer that has a voice read the prayers"
+    },
     "With a Voice" : {
       "comment" : "Prayers Tab Audio option: a voice reads the prayers"
+    },
+    "With a voice, or in silence?" : {
+      "comment" : "Sheet asked before the Prayers tab's book first speaks: its question"
     },
     "With the Whole Rosary, the voice moves the beads on the screen." : {
       "comment" : "A Rosary's own page and Settings: why the Counting choice is dimmed while the Whole Rosary is chosen"
@@ -3866,7 +5059,7 @@
       "comment" : "Settings, Opening and Closing Prayers: why the choice is dimmed while the Whole Rosary is chosen"
     },
     "Words" : {
-
+      "comment" : "Prayer editor: the label over the field for the prayer's words"
     },
     "Words: %@" : {
 
@@ -3876,6 +5069,12 @@
     },
     "Write a note or choose a silence first" : {
 
+    },
+    "Write a note or choose a silence to add a pause" : {
+
+    },
+    "Write a prayer of your own, or one your family says in its own words." : {
+      "comment" : "My Prayers page: the invitation shown while the reader has written no prayer"
     },
     "WRITE A REFLECTION" : {
 
@@ -3891,6 +5090,9 @@
     },
     "Written during prayer" : {
 
+    },
+    "Yesterday" : {
+      "comment" : "Your Chants, Played lately: when a chant was played"
     },
     "YOU" : {
 
@@ -3909,6 +5111,9 @@
     },
     "You do not need to know anything by heart. Every step will tell you where you are and what to do, and every word is written out." : {
       "comment" : "Guided Rosary welcome: the opening paragraph"
+    },
+    "You first, then the singer" : {
+      "comment" : "Chant practice, the path: what step 4, On your own, is, for a chant practised line by line"
     },
     "You have made your consecration to Jesus through Mary." : {
 
@@ -3934,6 +5139,12 @@
     "You hear the meditation. You say the prayers." : {
       "comment" : "The line under a Rosary choice, saying what the chosen option does"
     },
+    "You sing first" : {
+      "comment" : "Chant practice, under the play disc during the learner's turn in step 4, before the singer"
+    },
+    "You, then the singer" : {
+      "comment" : "Chant practice, under the play disc at rest in step 4: the learner sings first, then hears the line"
+    },
     "You're offline. The Whole Rosary needs the internet the first time." : {
       "comment" : "Prayer screen notice when the Rosary cannot be said aloud: no connection and the recordings were never downloaded"
     },
@@ -3951,6 +5162,12 @@
     },
     "Your Chants" : {
 
+    },
+    "Your favourite chants" : {
+      "comment" : "VoiceOver: the Your favourites tile on the Chant page"
+    },
+    "Your favourites" : {
+      "comment" : "Chant page: tile that opens the reader's favourite chants"
     },
     "Your first day's prayers open right away." : {
 
@@ -3974,7 +5191,10 @@
 
     },
     "Your own" : {
-
+      "comment" : "Add Prayers sheet: the note under a prayer the reader wrote"
+    },
+    "Your photo" : {
+      "comment" : "An editor's image row: the chosen image is a photo of the reader's"
     },
     "YOUR PLACE IS KEPT" : {
 

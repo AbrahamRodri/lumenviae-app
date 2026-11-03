@@ -120,10 +120,13 @@ struct PrayerBookView: View {
     /// trailing edge: the head the Chant page wears too
     private var head: some View {
         PageSearchHead(
-            title: "Prayers",
-            count: "\(PrayerBook.prayerCount) prayers",
+            title: String(localized: "Prayers", comment: "Prayers tab, the page's title at its head; shown in capitals"),
+            count: Self.prayerCount(PrayerBook.prayerCount),
             origin: .prayers,
-            hint: "Find a prayer, a chant or a mystery, prayers first"
+            hint: String(
+                localized: "Find a prayer, a chant or a mystery, prayers first",
+                comment: "VoiceOver hint on the Prayers tab's search glass"
+            )
         )
     }
 
@@ -140,7 +143,9 @@ struct PrayerBookView: View {
                 .padding(.horizontal, 18)
 
             VStack(alignment: .leading, spacing: 12) {
-                PrayersShelfHeading(title: "Now")
+                PrayersShelfHeading(
+                    title: String(localized: "Now", comment: "Prayers tab: the heading over the card for the order of prayer for this hour")
+                )
                 nowCard
             }
             .padding(.horizontal, 18)
@@ -172,9 +177,14 @@ struct PrayerBookView: View {
                 orderTile(order)
             }
             PrayersShortcutTile(
-                title: "Saved",
+                title: String(localized: "Saved", comment: "Prayers tab: the shortcut tile to the prayers the reader saved"),
                 painting: .saved,
-                spoken: kept == 0 ? "Saved prayers" : "Saved prayers, \(kept)"
+                spoken: kept == 0
+                    ? String(localized: "Saved prayers", comment: "VoiceOver, Prayers tab: the Saved shortcut when nothing is saved")
+                    : String(
+                        localized: "Saved prayers, \(kept)",
+                        comment: "VoiceOver, Prayers tab: the Saved shortcut with how many prayers are saved"
+                    )
             ) {
                 router.push(.prayerBookSaved)
             }
@@ -220,7 +230,8 @@ struct PrayerBookView: View {
 
     /// "11 prayers"
     static func prayerCount(_ count: Int) -> String {
-        count == 1 ? "1 prayer" : "\(count) prayers"
+        // "1 prayer" comes from the catalog's plural variations
+        String(localized: "\(count) prayers", comment: "A count of prayers: in a topic, a playlist, the Saved page, or the whole Prayers book")
     }
 }
 
@@ -234,7 +245,9 @@ private struct PrayersEverydayShelf: View {
         let prayers = PrayerBookView.everydayIDs.compactMap { PrayerBook.prayer($0) }
 
         VStack(alignment: .leading, spacing: 6) {
-            PrayersShelfHeading(title: "Everyday Prayers") {
+            PrayersShelfHeading(
+                title: String(localized: "Everyday Prayers", comment: "Prayers tab: the heading over the Our Father, Hail Mary, Glory Be and Creed")
+            ) {
                 router.push(.prayerBookChapter(id: "first"))
             }
             VStack(spacing: 0) {
@@ -270,7 +283,9 @@ private struct PrayersToMaryShelf: View {
             .compactMap { PrayerBook.prayer($0) }
 
         VStack(alignment: .leading, spacing: 12) {
-            PrayersShelfHeading(title: "Prayers to Mary") {
+            PrayersShelfHeading(
+                title: String(localized: "Prayers to Mary", comment: "Prayers tab: the heading over a sideways shelf of prayers to Our Lady")
+            ) {
                 router.push(.prayerBookChapter(id: PrayerBook.ourLady.id))
             }
             .padding(.horizontal, 18)
@@ -280,7 +295,10 @@ private struct PrayersToMaryShelf: View {
                     if let seasonal = PrayerBook.prayer(antiphon.prayerID) {
                         PrayersSquareCard(
                             title: seasonal.listTitle,
-                            note: "This season",
+                            note: String(
+                                localized: "This season",
+                                comment: "Prayers tab, Prayers to Mary: under the season's song to Mary, the one said now"
+                            ),
                             painting: .antiphon(antiphon)
                         ) {
                             router.push(.devotionPrayer(id: seasonal.id))
@@ -313,8 +331,10 @@ private struct PrayersAllTopics: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            PrayersShelfHeading(title: "All Topics")
-                .padding(.horizontal, 18)
+            PrayersShelfHeading(
+                title: String(localized: "All Topics", comment: "Prayers tab: the heading over the book's topics, grouped in its five parts")
+            )
+            .padding(.horizontal, 18)
 
             VStack(alignment: .leading, spacing: 26) {
                 ForEach(PrayerBookPart.allCases) { part in

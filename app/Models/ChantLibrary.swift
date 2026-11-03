@@ -56,12 +56,18 @@ enum ChantForm: String, CaseIterable, Identifiable {
     /// One of them, for a kicker: "HYMN · 4:24", in the tile's own word
     var singular: String {
         switch self {
-        case .shortChant:     return "Short chant"
-        case .hymn:           return "Hymn"
-        case .sequence:       return "Feast poem"
-        case .litany:         return "Litany"
-        case .psalm:          return "Psalm"
-        case .everydayPrayer: return "Prayer"
+        case .shortChant:
+            return String(localized: "Short chant", comment: "Chant library and search: one chant of this kind, for a small kicker like HYMN · 4:24")
+        case .hymn:
+            return String(localized: "Hymn", comment: "Chant library and search: one chant of this kind, for a small kicker like HYMN · 4:24")
+        case .sequence:
+            return String(localized: "Feast poem", comment: "Chant library and search: one chant of this kind, for a small kicker like HYMN · 4:24")
+        case .litany:
+            return String(localized: "Litany", comment: "Chant library and search: one chant of this kind, for a small kicker like HYMN · 4:24")
+        case .psalm:
+            return String(localized: "Psalm", comment: "Chant library and search: one chant of this kind, for a small kicker like HYMN · 4:24")
+        case .everydayPrayer:
+            return String(localized: "Prayer", comment: "Chant library and search: one chant of this kind, for a small kicker like HYMN · 4:24")
         }
     }
 
@@ -601,19 +607,27 @@ enum ChantLearningStep: Int, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .listen:    return "Listen"
-        case .readAlong: return "Read along"
-        case .singAlong: return "Sing along"
-        case .onYourOwn: return "On your own"
+        case .listen:
+            return String(localized: "Listen", comment: "Learning a chant: the name of one of the four steps")
+        case .readAlong:
+            return String(localized: "Read along", comment: "Learning a chant: the name of one of the four steps")
+        case .singAlong:
+            return String(localized: "Sing along", comment: "Learning a chant: the name of one of the four steps")
+        case .onYourOwn:
+            return String(localized: "On your own", comment: "Learning a chant: the name of one of the four steps")
         }
     }
 
     var note: String {
         switch self {
-        case .listen:    return "Hear it sung"
-        case .readAlong: return "Follow the words"
-        case .singAlong: return "Sing with the recording"
-        case .onYourOwn: return "Sing without help"
+        case .listen:
+            return String(localized: "Hear it sung", comment: "Learning a chant: what this step of the four does, one short line")
+        case .readAlong:
+            return String(localized: "Follow the words", comment: "Learning a chant: what this step of the four does, one short line")
+        case .singAlong:
+            return String(localized: "Sing with the recording", comment: "Learning a chant: what this step of the four does, one short line")
+        case .onYourOwn:
+            return String(localized: "Sing without help", comment: "Learning a chant: what this step of the four does, one short line")
         }
     }
 

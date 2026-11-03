@@ -61,6 +61,13 @@ final class PrayAlongVoice {
     /// the Rosary and the book alike
     private static let rosaryPrayerIDs = Set(RosaryPrayers.all.map(\.id))
 
+    /// The book's name on the Lock Screen: its album line, and the second
+    /// line for a prayer said alone
+    static let bookName = String(
+        localized: "Prayers",
+        comment: "Lock Screen, a prayer from the Prayers tab read aloud: the book's name as the album line"
+    )
+
     static func clipID(for prayerID: String) -> RosaryAudioPack.ClipID {
         rosaryPrayerIDs.contains(prayerID) ? .prayer(prayerID) : .book(prayerID)
     }
@@ -106,7 +113,10 @@ final class PrayAlongVoice {
             if found.isEmpty {
                 state = .unavailable(result.offline
                     ? SpokenRosaryPlayer.Failure.offline.message
-                    : "These prayers aren't recorded in this voice yet.")
+                    : String(
+                        localized: "These prayers aren't recorded in this voice yet.",
+                        comment: "Pray-along screen, read aloud: the note when the chosen voice has no recordings of these prayers"
+                    ))
             } else {
                 state = .ready
             }
@@ -154,9 +164,9 @@ final class PrayAlongVoice {
             title: prayer.title,
             // The order it is said in, or the book's name for a prayer
             // said alone, whose title is already the line above
-            subtitle: title == prayer.title ? "Prayers" : title,
+            subtitle: title == prayer.title ? Self.bookName : title,
             artworkAssetName: painting,
-            album: "Prayers",
+            album: Self.bookName,
             queueIndex: index,
             queueCount: count,
             claimNowPlaying: true
