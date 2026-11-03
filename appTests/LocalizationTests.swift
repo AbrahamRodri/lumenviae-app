@@ -158,3 +158,28 @@ struct SpanishCatalogTests {
         #expect(String(format: format, locale: locale, 12) == "12 días seguidos")
     }
 }
+
+/// The one-time AI notice (Spanish only): owed until its OK is pressed,
+/// never to an English reader
+struct TranslationNoticeTests {
+
+    private func freshDefaults() -> UserDefaults {
+        let name = "TranslationNoticeTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: name)!
+        defaults.removePersistentDomain(forName: name)
+        return defaults
+    }
+
+    @Test func owedInSpanishUntilDismissed() {
+        let defaults = freshDefaults()
+        #expect(AppLanguage.owesTranslationNotice(defaults: defaults, inSpanish: true))
+        // Raised but not dismissed (a sheet came up first): still owed
+        #expect(AppLanguage.owesTranslationNotice(defaults: defaults, inSpanish: true))
+        AppLanguage.markTranslationNoticeShown(defaults: defaults)
+        #expect(!AppLanguage.owesTranslationNotice(defaults: defaults, inSpanish: true))
+    }
+
+    @Test func neverOwedInEnglish() {
+        #expect(!AppLanguage.owesTranslationNotice(defaults: freshDefaults(), inSpanish: false))
+    }
+}

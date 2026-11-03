@@ -84,21 +84,15 @@ struct appApp: App {
             }
             // The first time the app opens in Spanish, a short notice that
             // its words were translated with AI (Settings keeps the same
-            // line under the language row). Never in English.
+            // line under the language row). Never in English. A new reader
+            // meets it over the introduction; anyone past it, on the home
+            // page, ahead of What's New (ContentView.presentFirstLook)
             .onChange(of: isLaunched) { _, launched in
-                if launched, AppLanguage.owesTranslationNotice() {
-                    AppLanguage.markTranslationNoticeShown()
+                if launched, !hasSeenOnboarding, AppLanguage.owesTranslationNotice() {
                     showsTranslationNotice = true
                 }
             }
-            .alert(
-                Text("Translated with AI", comment: "Shown only in Spanish: title of the one-time notice at first launch that the app's words were translated with AI"),
-                isPresented: $showsTranslationNotice
-            ) {
-                Button(String(localized: "OK", comment: "Button closing the one-time AI translation notice")) {}
-            } message: {
-                Text(AppLanguage.translationNotice)
-            }
+            .translationNotice(isPresented: $showsTranslationNotice)
             // The phone's Larger Text is followed up to the app's cap and
             // no further. Sheets and covers don't inherit this; each one
             // carries the same modifier on its content.

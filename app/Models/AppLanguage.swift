@@ -12,6 +12,7 @@
 //
 
 import Foundation
+import SwiftUI
 import UIKit
 
 enum AppLanguage {
@@ -45,9 +46,10 @@ enum AppLanguage {
 
     private static let noticeShownKey = "appLanguage.translationNoticeShown"
 
-    /// Owed the first time the app opens in Spanish, and never again
-    static func owesTranslationNotice(defaults: UserDefaults = .standard) -> Bool {
-        isSpanish && !defaults.bool(forKey: noticeShownKey)
+    /// Owed the first time the app opens in Spanish, until its OK is
+    /// pressed, and never again
+    static func owesTranslationNotice(defaults: UserDefaults = .standard, inSpanish: Bool = isSpanish) -> Bool {
+        inSpanish && !defaults.bool(forKey: noticeShownKey)
     }
 
     static func markTranslationNoticeShown(defaults: UserDefaults = .standard) {
@@ -79,5 +81,26 @@ extension DateFormatter {
             formatter.setLocalizedDateFormatFromTemplate(template)
         }
         return formatter
+    }
+}
+
+// MARK: - The notice, presented
+
+extension View {
+    /// The one-time AI translation notice. It counts as seen only once its
+    /// OK is pressed: marked when raised, a notice SwiftUI never drew (a
+    /// sheet came up in the same moment) was lost for good.
+    func translationNotice(isPresented: Binding<Bool>, onDismiss: @escaping () -> Void = {}) -> some View {
+        alert(
+            Text("Translated with AI", comment: "Shown only in Spanish: title of the one-time notice at first launch that the app's words were translated with AI"),
+            isPresented: isPresented
+        ) {
+            Button(String(localized: "OK", comment: "Button closing the one-time AI translation notice")) {
+                AppLanguage.markTranslationNoticeShown()
+                onDismiss()
+            }
+        } message: {
+            Text(AppLanguage.translationNotice)
+        }
     }
 }
