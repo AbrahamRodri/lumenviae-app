@@ -1217,9 +1217,11 @@ extension PrayerSessionViewModel: SpokenRosaryHost {
     /// Queen). Nil otherwise.
     var spokenBeadLines: [String]? {
         guard let spoken else { return nil }
+        // Keys of their own, so a language may set the two lines in its
+        // own order (Spanish: Oraciones / finales)
         let closingLines = [
-            String(localized: "Closing", comment: "Strand margin, first of two short lines: Closing / Prayers, the prayers after the last decade"),
-            String(localized: "Prayers", comment: "Strand margin, second of two short lines: Opening / Prayers or Closing / Prayers"),
+            String(localized: "strand.closing.line1", defaultValue: "Closing", comment: "Strand margin, first of two short lines naming the prayers after the last decade (English: Closing / Prayers); a language may put the noun first"),
+            String(localized: "strand.closing.line2", defaultValue: "Prayers", comment: "Strand margin, second of two short lines naming the prayers after the last decade (English: Closing / Prayers)"),
         ]
         if spoken.phase == .finished { return closingLines }
         guard spoken.phase == .running || spokenStatus != nil,
@@ -1227,8 +1229,8 @@ extension PrayerSessionViewModel: SpokenRosaryHost {
         switch segment.phase {
         case .opening:
             return [
-                String(localized: "Opening", comment: "Strand margin, first of two short lines: Opening / Prayers, the prayers on the cross and first beads"),
-                String(localized: "Prayers", comment: "Strand margin, second of two short lines: Opening / Prayers or Closing / Prayers"),
+                String(localized: "strand.opening.line1", defaultValue: "Opening", comment: "Strand margin, first of two short lines naming the prayers on the cross and first beads (English: Opening / Prayers); a language may put the noun first"),
+                String(localized: "strand.opening.line2", defaultValue: "Prayers", comment: "Strand margin, second of two short lines naming the prayers on the cross and first beads (English: Opening / Prayers)"),
             ]
         case .closing: return closingLines
         case .decade: break

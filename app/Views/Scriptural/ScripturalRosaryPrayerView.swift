@@ -1255,7 +1255,10 @@ struct ScripturalRosaryPrayerView: View {
                         isOn: Bindable(userSettings).prayAloud,
                         hint: RosaryChoice.audio.note(for: userSettings.prayAloud, form: .scriptural)
                     )
-                    .frame(width: 172)
+                    // At least its English width, and as wide as a longer
+                    // language's name needs ("Todo el Rosario")
+                    .frame(minWidth: 172)
+                    .fixedSize()
                 }
 
                 ReaderChromeButton(

@@ -55,6 +55,17 @@ struct StreakMilestone: Identifiable, Equatable {
         )
     }
 
+    /// The title as VoiceOver says it, "9 days, a novena": the line's dot
+    /// read as a pause, built from its parts rather than from the
+    /// translated line
+    var spokenTitle: String {
+        guard let meaning else { return name }
+        return String(
+            localized: "\(days) days, \(meaning)",
+            comment: "Streak milestone, VoiceOver: the number of days prayed in a row (3 or more), then what the Church calls a run of that length, like 9 days, a novena"
+        )
+    }
+
     // MARK: - All Milestones
 
     /// Ordered by days ascending.

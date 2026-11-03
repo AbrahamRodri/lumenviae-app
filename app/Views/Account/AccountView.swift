@@ -39,6 +39,16 @@ struct AccountView: View {
                         .padding(.top, 30)
                     }
 
+                    // MARK: Language
+                    // The app follows the phone; this opens the system's
+                    // own page for the app, where Español or English is
+                    // chosen for Lumen Viae alone. In Spanish the AI
+                    // translation notice stands beneath it, always.
+                    AccountSection(title: String(localized: "Language", comment: "Settings: a section heading, the language the app's words are shown in"), icon: "ph-globe") {
+                        AppLanguageRow()
+                    }
+                    .padding(.top, 30)
+
                     // MARK: Prayer Experience
                     // How the words look and who reads them, for every
                     // page that prays: the Rosary's own choices stand
@@ -953,6 +963,33 @@ struct ToggleRow: View {
         .accessibilityValue(isOn ? Text("On", comment: "VoiceOver: a switch is on") : Text("Off", comment: "VoiceOver: a switch is off"))
         .accessibilityHint(subtitle ?? "")
         .accessibilityAddTraits(.isToggle)
+    }
+}
+
+// MARK: - App Language Row
+
+/// The language the app's words are shown in, with the system's page for
+/// this app behind it; in Spanish, the AI translation notice beneath
+struct AppLanguageRow: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ActionRow(
+                icon: "ph-globe",
+                title: String(localized: "App Language", comment: "Settings: row naming the language the app's words are shown in; a tap opens the iPhone's settings page for this app, where the language is chosen"),
+                subtitle: AppLanguage.name,
+                action: AppLanguage.openLanguageSettings
+            )
+            .accessibilityHint(Text("Opens this app's page in the iPhone's Settings, where its language is chosen", comment: "VoiceOver hint, Settings: what a tap on the App Language row does"))
+
+            if AppLanguage.isSpanish {
+                Text(AppLanguage.translationNotice)
+                    .font(AppFonts.italicFont(13))
+                    .foregroundColor(AppColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 14)
+            }
+        }
     }
 }
 

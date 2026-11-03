@@ -115,7 +115,7 @@ struct TodaysPrayerSection: View {
 
     private static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEE d MMM"
+        formatter.setLocalizedDateFormatFromTemplate("EEEdMMM")
         return formatter
     }()
 

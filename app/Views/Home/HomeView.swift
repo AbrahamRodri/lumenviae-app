@@ -281,9 +281,11 @@ struct ResumePrayerCard: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
 
-                        // A Holy Rosary saved before it was renamed was
-                        // kept under its old name, The Rosary Aloud
-                        Text(session.spokenForm == .plain ? ScripturalRosaryViewModel.holyRosaryName : session.setName)
+                        // A form is named by its kind, never by the English
+                        // name it was stored under (an Audio Rosary saved
+                        // as The Rosary Aloud, a Scriptural Rosary in any
+                        // language); a meditation set by its own name
+                        Text(session.spokenForm.map(ScripturalRosaryViewModel.displayName(for:)) ?? session.setName)
                             .font(AppFonts.italicFont(12))
                             .foregroundColor(AppColors.textSecondary)
                             .lineLimit(1)

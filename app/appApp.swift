@@ -20,6 +20,7 @@ struct appApp: App {
 
     /// Whether the app has finished loading (splash screen complete)
     @State private var isLaunched = false
+    @State private var showsTranslationNotice = false
 
     /// True after the user completes onboarding once
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
@@ -80,6 +81,23 @@ struct appApp: App {
                         }
                     }
                 }
+            }
+            // The first time the app opens in Spanish, a short notice that
+            // its words were translated with AI (Settings keeps the same
+            // line under the language row). Never in English.
+            .onChange(of: isLaunched) { _, launched in
+                if launched, AppLanguage.owesTranslationNotice() {
+                    AppLanguage.markTranslationNoticeShown()
+                    showsTranslationNotice = true
+                }
+            }
+            .alert(
+                Text("Translated with AI", comment: "Shown only in Spanish: title of the one-time notice at first launch that the app's words were translated with AI"),
+                isPresented: $showsTranslationNotice
+            ) {
+                Button(String(localized: "OK", comment: "Button closing the one-time AI translation notice")) {}
+            } message: {
+                Text(AppLanguage.translationNotice)
             }
             // The phone's Larger Text is followed up to the app's cap and
             // no further. Sheets and covers don't inherit this; each one

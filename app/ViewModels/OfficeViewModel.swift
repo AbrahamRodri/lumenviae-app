@@ -106,7 +106,7 @@ final class OfficeViewModel {
 
     private static let displayFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE, MMMM d"
+        formatter.setLocalizedDateFormatFromTemplate("EEEEMMMMd")
         return formatter
     }()
 

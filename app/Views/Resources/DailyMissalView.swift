@@ -411,7 +411,7 @@ struct DailyMissalView: View {
             sheet = .calendar
         } label: {
             HStack(spacing: 9) {
-                Text(Self.pillDateFormatter.string(from: viewModel.date).uppercased())
+                Text(Self.pillDate(viewModel.date).uppercased())
                     .font(AppFonts.labelFont(9.5))
                     .tracking(1.6)
                     .minimumScaleFactor(0.8)
@@ -887,10 +887,21 @@ struct DailyMissalView: View {
         return trimmed
     }
 
-    /// "TUE · 25 AUG" — the long form ran under the ☰ button
-    private static let pillDateFormatter: DateFormatter = {
+    /// "TUE · 25 AUG" (the long form ran under the ☰ button): the
+    /// weekday, then the day and month in the language's own order
+    private static func pillDate(_ date: Date) -> String {
+        "\(pillWeekday.string(from: date)) · \(pillDayMonth.string(from: date))"
+    }
+
+    private static let pillWeekday: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEE '·' d MMM"
+        formatter.setLocalizedDateFormatFromTemplate("EEE")
+        return formatter
+    }()
+
+    private static let pillDayMonth: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.setLocalizedDateFormatFromTemplate("dMMM")
         return formatter
     }()
 }
