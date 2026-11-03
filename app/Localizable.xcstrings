@@ -31,7 +31,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "\"Orad sin cesar. En todo dad gracias, porque esta es la voluntad de Dios en Cristo Jesús respecto de vosotros.\""
+            "value" : "\"Oren sin cesar. Den gracias en toda ocasión, porque esta es la voluntad de Dios en Cristo Jesús respecto de ustedes.\""
           }
         }
       }
@@ -1142,7 +1142,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, añadida"
+            "value" : "%@, agregada"
           }
         }
       }
@@ -3003,13 +3003,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld oración por añadir"
+                  "value" : "%lld oración por agregar"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld oraciones por añadir"
+                  "value" : "%lld oraciones por agregar"
                 }
               }
             }
@@ -3332,6 +3332,7 @@
     },
     "6 AM" : {
       "comment" : "Onboarding, A Daily Reminder slide: the morning hour as the gold button says it, in Remind Me at 6 AM",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3365,6 +3366,7 @@
     },
     "8 PM" : {
       "comment" : "Onboarding, A Daily Reminder slide: the evening hour as the gold button says it, in Remind Me at 8 PM",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4412,7 +4414,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir"
+            "value" : "Agregar"
           }
         }
       }
@@ -4423,7 +4425,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir %@ al menú"
+            "value" : "Agregar %@ al menú"
           }
         }
       }
@@ -4434,7 +4436,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir %@ a tus oraciones diarias"
+            "value" : "Agregar %@ a tus oraciones diarias"
           }
         }
       }
@@ -4445,7 +4447,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir oraciones"
+            "value" : "Agregar oraciones"
           }
         }
       }
@@ -4456,7 +4458,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir un canto"
+            "value" : "Agregar un canto"
           }
         }
       }
@@ -4467,7 +4469,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir una pausa"
+            "value" : "Agregar una pausa"
           }
         }
       }
@@ -4478,7 +4480,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir una oración"
+            "value" : "Agregar una oración"
           }
         }
       }
@@ -4489,7 +4491,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir una reflexión"
+            "value" : "Agregar una reflexión"
           }
         }
       }
@@ -4499,7 +4501,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añade los cantos en el orden en que los cantarás, y pausas entre ellos para guardar silencio o leer una nota en rojo."
+            "value" : "Agrega los cantos en el orden en que los cantarás, y pausas entre ellos para guardar silencio o leer una nota en rojo."
           }
         }
       }
@@ -4510,7 +4512,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir cantos a"
+            "value" : "Agregar cantos a"
           }
         }
       }
@@ -4521,7 +4523,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir la pausa"
+            "value" : "Agregar la pausa"
           }
         }
       }
@@ -4531,7 +4533,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir a Favoritos"
+            "value" : "Agregar a Favoritos"
           }
         }
       }
@@ -4541,7 +4543,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir a una serie"
+            "value" : "Agregar a una serie"
           }
         }
       }
@@ -4551,7 +4553,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir a una serie"
+            "value" : "Agregar a una serie"
           }
         }
       }
@@ -4562,7 +4564,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir a la lista"
+            "value" : "Agregar a la lista"
           }
         }
       }
@@ -4573,7 +4575,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir al menú"
+            "value" : "Agregar al menú"
           }
         }
       }
@@ -4594,7 +4596,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo añade de nuevo al final de la serie"
+            "value" : "Lo agrega de nuevo al final de la serie"
           }
         }
       }
@@ -4604,7 +4606,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo añade al final de la serie"
+            "value" : "Lo agrega al final de la serie"
           }
         }
       }
@@ -4614,7 +4616,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añade el canto al final de esta serie"
+            "value" : "Agrega el canto al final de esta serie"
           }
         }
       }
@@ -4625,7 +4627,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añade la aspersión con agua bendita y el incienso; las oraciones después de la Misa son de la Misa rezada"
+            "value" : "Agrega la aspersión con agua bendita y el incienso; las oraciones después de la Misa son de la Misa rezada"
           }
         }
       }
@@ -4635,7 +4637,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añade a la lista"
+            "value" : "Agrega a la lista"
           }
         }
       }
@@ -4839,7 +4841,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La %lld oración"
+                  "value" : "%lld oración"
                 }
               },
               "other" : {
@@ -4988,7 +4990,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "También cantado"
+            "value" : "Otras melodías"
           }
         }
       }
@@ -5030,7 +5032,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Amén — cerrar el día y reflexionar"
+            "value" : "Amén: cerrar el día y reflexionar"
           }
         }
       }
@@ -5073,7 +5075,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un Padrenuestro, un avemaría y un Gloria después del Rosario, por lo que el Papa pide a la Iglesia que rece."
+            "value" : "Un Padrenuestro, una avemaría y un Gloria después del Rosario, por lo que el Papa pide a la Iglesia que rece."
           }
         }
       }
@@ -5116,7 +5118,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Y %lld más. Añade una palabra para afinar la búsqueda."
+            "value" : "Y %lld más. Agrega una palabra para afinar la búsqueda."
           }
         }
       }
@@ -5410,7 +5412,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El audio se detuvo — revisa tu conexión"
+            "value" : "El audio se detuvo. Revisa tu conexión"
           }
         }
       }
@@ -5421,7 +5423,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Audio no disponible — revisa tu conexión"
+            "value" : "Audio no disponible. Revisa tu conexión"
           }
         }
       }
@@ -5432,7 +5434,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Audio no disponible — inténtalo más tarde"
+            "value" : "Audio no disponible. Inténtalo más tarde"
           }
         }
       }
@@ -5539,7 +5541,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atrás 10 segundos"
+            "value" : "Retroceder 10 segundos"
           }
         }
       }
@@ -5560,7 +5562,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atrás quince segundos"
+            "value" : "Retroceder 15 segundos"
           }
         }
       }
@@ -5570,7 +5572,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retroceder diez segundos"
+            "value" : "Retroceder 10 segundos"
           }
         }
       }
@@ -5743,7 +5745,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comenzar %@"
+            "value" : "Comenzar: %@"
           }
         }
       }
@@ -6388,7 +6390,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cámbialo cuando quieras con VOZ o SILENCIO en la parte de arriba de la página, o en Ajustes."
+            "value" : "Cámbialo cuando quieras con VOZ o SILENCIO en la parte de arriba de la página, o en Configuración."
           }
         }
       }
@@ -6417,6 +6419,7 @@
     },
     "Chant Library" : {
       "comment" : "Explore page: small link beside a section heading; opens the Chant Library",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -6764,7 +6767,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elígelo en la página del Rosario antes de rezar, o en Ajustes, en El Rosario: con Solo la meditación escuchas la meditación y tú rezas las oraciones, y con Todo el Rosario escuchas cada oración, y las cuentas avanzan con la voz. Durante la oración, el botón de reproducir inicia y pausa la voz, y los botones a su lado avanzan o retroceden 10 segundos, o una oración entera con Todo el Rosario."
+            "value" : "Elígelo en la página del Rosario antes de rezar, o en Configuración, en El Rosario: con Solo la meditación escuchas la meditación y tú rezas las oraciones, y con el Rosario completo escuchas cada oración, y las cuentas avanzan con la voz. Durante la oración, el botón de reproducir inicia y pausa la voz, y los botones a su lado avanzan o retroceden 10 segundos, o una oración entera con el Rosario completo."
           }
         }
       }
@@ -7231,7 +7234,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Consagración hecha el %@ — renuévala cuando quieras"
+            "value" : "Consagración hecha el %@. Renuévala cuando quieras"
           }
         }
       }
@@ -7273,7 +7276,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Consagración completada — renuévala cuando quieras"
+            "value" : "Consagración completada. Renuévala cuando quieras"
           }
         }
       }
@@ -7631,7 +7634,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo cargar — revisa tu conexión"
+            "value" : "No se pudo cargar. Revisa tu conexión"
           }
         }
       }
@@ -8135,7 +8138,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿No lo encontraste aquí? Escríbenos desde la app — leemos cada mensaje."
+            "value" : "¿No lo encontraste aquí? Escríbenos desde la app: leemos cada mensaje."
           }
         }
       }
@@ -8290,7 +8293,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La descarga falló — revisa tu conexión e inténtalo de nuevo."
+            "value" : "La descarga falló. Revisa tu conexión e inténtalo de nuevo."
           }
         }
       }
@@ -8377,7 +8380,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descarga las grabaciones de Todo el Rosario"
+            "value" : "Descarga las grabaciones del Rosario completo"
           }
         }
       }
@@ -8967,7 +8970,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada Rosario empezará así. Puedes cambiarlo en la página de cualquier Rosario o en Ajustes."
+            "value" : "Cada Rosario empezará así. Puedes cambiarlo en la página de cualquier Rosario o en Configuración."
           }
         }
       }
@@ -9043,7 +9046,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo el que reza el Rosario empezó con un avemaría."
+            "value" : "Todo el que reza el Rosario empezó con una avemaría."
           }
         }
       }
@@ -9054,7 +9057,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo el que reza el Rosario empezó con un avemaría. La app cuenta las cuentas por ti."
+            "value" : "Todo el que reza el Rosario empezó con una avemaría. La app cuenta las cuentas por ti."
           }
         }
       }
@@ -9699,7 +9702,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adelante 10 segundos"
+            "value" : "Adelantar 10 segundos"
           }
         }
       }
@@ -9710,7 +9713,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adelante quince segundos"
+            "value" : "Adelantar 15 segundos"
           }
         }
       }
@@ -9720,7 +9723,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adelantar diez segundos"
+            "value" : "Adelantar 10 segundos"
           }
         }
       }
@@ -9797,7 +9800,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los viernes, y en Nuestra Señora de los Dolores, el 15 de septiembre"
+            "value" : "Los viernes, y en la fiesta de Nuestra Señora de los Dolores, el 15 de septiembre"
           }
         }
       }
@@ -9921,7 +9924,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reúne las oraciones que rezas juntas, en tu orden, y rézalas una tras otra."
+            "value" : "Reúne las oraciones que rezas seguidas, en tu orden, y rézalas una tras otra."
           }
         }
       }
@@ -10778,7 +10781,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantén presionado cualquier canto para añadirlo a tus favoritos."
+            "value" : "Mantén presionado cualquier canto para agregarlo a tus favoritos."
           }
         }
       }
@@ -11674,7 +11677,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guardado en Tus cantos, en Aprendidos."
+            "value" : "Guardado en Tus cantos, en «De memoria»."
           }
         }
       }
@@ -11802,7 +11805,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "APRENDIDA"
+            "value" : "DE MEMORIA"
           }
         }
       }
@@ -11812,7 +11815,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "APRENDIDO DE MEMORIA"
+            "value" : "DE MEMORIA"
           }
         }
       }
@@ -12083,7 +12086,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aprendidos"
+            "value" : "De memoria"
           }
         }
       }
@@ -12093,7 +12096,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aprendida de memoria"
+            "value" : "De memoria"
           }
         }
       }
@@ -12103,7 +12106,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aprendida de memoria"
+            "value" : "De memoria"
           }
         }
       }
@@ -12432,7 +12435,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escucha la meditación y luego toca para el primer avemaría"
+            "value" : "Escucha la meditación y luego toca para la primera avemaría"
           }
         }
       }
@@ -12774,7 +12777,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Haz una lista de las oraciones que rezas juntas, con tus propias palabras e imágenes."
+            "value" : "Haz una lista de las oraciones que rezas seguidas, con tus propias palabras e imágenes."
           }
         }
       }
@@ -12860,7 +12863,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Asegúrate de que las notificaciones de Lumen Viae estén activadas en Ajustes → Notificaciones de tu iPhone. Luego desactiva y vuelve a activar Recordatorios diarios en la app para reprogramarlos."
+            "value" : "Asegúrate de que las notificaciones de Lumen Viae estén activadas en Configuración → Notificaciones de tu iPhone. Luego desactiva y vuelve a activar Recordatorios diarios en la app para reprogramarlos."
           }
         }
       }
@@ -14308,7 +14311,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no hay oraciones. Añade las del devocionario o escribe las tuyas."
+            "value" : "Aún no hay oraciones. Agrega las del devocionario o escribe las tuyas."
           }
         }
       }
@@ -14399,7 +14402,7 @@
       }
     },
     "Noon" : {
-      "comment" : "Onboarding, A Daily Reminder slide: a choice card's name, a reminder at 12 PM\nOnboarding, A Daily Reminder slide: the noon hour as the gold button says it, in Remind Me at Noon\nPrayers tab: the name of one of the day's three stations on the strip of hours, shown in small capitals (Morning, Noon, Evening, Night)",
+      "comment" : "Onboarding, A Daily Reminder slide: a choice card's name, a reminder at 12 PM\nPrayers tab: the name of one of the day's three stations on the strip of hours, shown in small capitals (Morning, Noon, Evening, Night)",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -14649,7 +14652,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las notificaciones de Lumen Viae están desactivadas. Actívalas en la app Ajustes de tu iPhone y luego elige una hora en los Ajustes de Lumen Viae, en Devoción."
+            "value" : "Las notificaciones de Lumen Viae están desactivadas. Actívalas en la app Configuración de tu iPhone y luego elige una hora en los Configuración de Lumen Viae, en Devoción."
           }
         }
       }
@@ -14858,7 +14861,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En cada una de las tres cuentas pequeñas siguientes, un avemaría. Esta primera pide a Dios un aumento de fe."
+            "value" : "En cada una de las tres cuentas pequeñas siguientes, una avemaría. Esta primera pide a Dios un aumento de fe."
           }
         }
       }
@@ -15056,7 +15059,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un avemaría, y luego otra"
+            "value" : "Una avemaría, y luego otra"
           }
         }
       }
@@ -15100,7 +15103,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una breve nota, cuando terminas un Rosario rezado con meditaciones: cuáles meditaciones fueron, y si escuchaste Todo el Rosario. Nuestro servidor la guarda con la hora y una ciudad, región y país aproximados, obtenidos mediante ipapi.co a partir de la dirección desde la que se conecta tu teléfono, y guarda esa dirección solo en forma abreviada. No va con ella ningún nombre, cuenta ni identificador del dispositivo, así que dos Rosarios rezados en un mismo teléfono parecen rezados por dos desconocidos. Usamos estas notas solo para saber qué meditaciones se rezan, y más o menos dónde. El Rosario bíblico, el Rosario en audio y el Rosario guiado no envían nada, y nada más nos llega a menos que nos escribas."
+            "value" : "Una breve nota, cuando terminas un Rosario rezado con meditaciones: cuáles meditaciones fueron, y si escuchaste el Rosario completo. Nuestro servidor la guarda con la hora y una ciudad, región y país aproximados, obtenidos mediante ipapi.co a partir de la dirección desde la que se conecta tu teléfono, y guarda esa dirección solo en forma abreviada. No va con ella ningún nombre, cuenta ni identificador del dispositivo, así que dos Rosarios rezados en un mismo teléfono parecen rezados por dos desconocidos. Usamos estas notas solo para saber qué meditaciones se rezan, y más o menos dónde. El Rosario bíblico, el Rosario en audio y el Rosario guiado no envían nada, y nada más nos llega a menos que nos escribas."
           }
         }
       }
@@ -15496,7 +15499,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abre la página de esta app en Ajustes del iPhone, donde se elige su idioma"
+            "value" : "Abre la página de esta app en Configuración del iPhone, donde se elige su idioma"
           }
         }
       }
@@ -15550,7 +15553,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oraciones en orden"
+            "value" : "Oraciones para rezar seguidas"
           }
         }
       }
@@ -16369,7 +16372,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajustes de reproducción"
+            "value" : "Configuración de reproducción"
           }
         }
       }
@@ -16380,7 +16383,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se dicen después de la oración final, con Todo el Rosario."
+            "value" : "Se dicen después de la oración final, con el Rosario completo."
           }
         }
       }
@@ -16391,7 +16394,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se dicen después de la oración final, con Todo el Rosario. El audio está al inicio de esta sección."
+            "value" : "Se dicen después de la oración final, con el Rosario completo. El audio está al inicio de esta sección."
           }
         }
       }
@@ -16534,7 +16537,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rezar %@"
+            "value" : "Rezar: %@"
           }
         }
       }
@@ -16708,7 +16711,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para rezar juntas"
+            "value" : "Para rezar seguidas"
           }
         }
       }
@@ -16773,7 +16776,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se rezan juntas"
+            "value" : "Se rezan seguidas"
           }
         }
       }
@@ -17057,7 +17060,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oraciones rezadas juntas"
+            "value" : "Oraciones que se rezan seguidas"
           }
         }
       }
@@ -17143,7 +17146,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rezando con una voz"
+            "value" : "Rezando con voz"
           }
         }
       }
@@ -17745,7 +17748,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lee la meditación y luego toca para el primer avemaría"
+            "value" : "Lee la meditación y luego toca para la primera avemaría"
           }
         }
       }
@@ -17986,12 +17989,45 @@
       }
     },
     "Remind Me at %@" : {
-      "comment" : "Onboarding, A Daily Reminder slide: the gold button that sets the reminder; the hour is like 8 PM or Noon",
+      "comment" : "Onboarding, A Daily Reminder slide: the gold button that sets the reminder at a time kept from before, like 7:30 PM",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Recordarme a las %@"
+          }
+        }
+      }
+    },
+    "Remind Me at 6 AM" : {
+      "comment" : "Onboarding, A Daily Reminder slide: the gold button that sets a reminder at 6 in the morning",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recordarme a las 6 a. m."
+          }
+        }
+      }
+    },
+    "Remind Me at 8 PM" : {
+      "comment" : "Onboarding, A Daily Reminder slide: the gold button that sets a reminder at 8 in the evening",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recordarme a las 8 p. m."
+          }
+        }
+      }
+    },
+    "Remind Me at Noon" : {
+      "comment" : "Onboarding, A Daily Reminder slide: the gold button that sets a reminder at noon; a whole sentence of its own, since noon takes its own article in some languages",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recordarme al mediodía"
           }
         }
       }
@@ -18128,7 +18164,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quitar la marca de Aprendida"
+            "value" : "Quitar la marca «De memoria»"
           }
         }
       }
@@ -18445,7 +18481,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "GUARDAR PARA USAR SIN CONEXIÓN"
+            "value" : "DESCARGAR"
           }
         }
       }
@@ -18686,7 +18722,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guardar para usar sin conexión"
+            "value" : "Descargar"
           }
         }
       }
@@ -18697,7 +18733,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guardar para usar sin conexión"
+            "value" : "Descargar"
           }
         }
       }
@@ -19317,7 +19353,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajustes"
+            "value" : "Configuración"
           }
         }
       }
@@ -20331,7 +20367,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De pie, de rodillas y sentado, marcado en el texto"
+            "value" : "De pie, de rodillas y sentados, marcado en el texto"
           }
         }
       }
@@ -21066,7 +21102,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca para añadir un título"
+            "value" : "Toca para agregar un título"
           }
         }
       }
@@ -21326,7 +21362,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eso es todo lo que hoy necesita ser."
+            "value" : "Con eso basta por hoy."
           }
         }
       }
@@ -21621,7 +21657,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las oraciones comunes de la Iglesia, en la barra de pestañas donde estaba el Diario; el Diario ahora se abre desde Ajustes y después de cada Rosario"
+            "value" : "Las oraciones comunes de la Iglesia, en la barra de pestañas donde estaba el Diario; el Diario ahora se abre desde Configuración y después de cada Rosario"
           }
         }
       }
@@ -22406,7 +22442,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo el Rosario aún no está grabado en esta voz. Elige otra voz."
+            "value" : "El Rosario completo aún no está grabado en esta voz. Elige otra voz."
           }
         }
       }
@@ -22991,7 +23027,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La última descarga no terminó. Toca Reintentar para completarla — los archivos terminados se conservan."
+            "value" : "La última descarga no terminó. Toca Reintentar para completarla. Los archivos terminados se conservan."
           }
         }
       }
@@ -23090,7 +23126,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los misterios son escenas de la vida de Jesús y de María, cinco en cada Rosario. Hay cuatro series. En el calendario tradicional: Gozosos (lunes, jueves), Dolorosos (martes, viernes) y Gloriosos (miércoles, sábado). El domingo toma los Gozosos en Adviento, los Dolorosos en Cuaresma y los Gloriosos el resto del año. Los Misterios Luminosos, añadidos por san Juan Pablo II en 2002, se pueden rezar cualquier día desde Ver todo, junto a la cuadrícula de inicio. El calendario moderno (Ajustes, en Devoción) les da el jueves y pasa los Gozosos al sábado. Los Siete Dolores de María también se pueden rezar cualquier día."
+            "value" : "Los misterios son escenas de la vida de Jesús y de María, cinco en cada Rosario. Hay cuatro series. En el calendario tradicional: Gozosos (lunes, jueves), Dolorosos (martes, viernes) y Gloriosos (miércoles, sábado). El domingo toma los Gozosos en Adviento, los Dolorosos en Cuaresma y los Gloriosos el resto del año. Los Misterios Luminosos, agregados por san Juan Pablo II en 2002, se pueden rezar cualquier día desde Ver todo, junto a la cuadrícula de inicio. El calendario moderno (Configuración, en Devoción) les da el jueves y pasa los Gozosos al sábado. Los Siete Dolores de María también se pueden rezar cualquier día."
           }
         }
       }
@@ -23188,7 +23224,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La siguiente cuenta pequeña: un avemaría por un aumento de caridad."
+            "value" : "La siguiente cuenta pequeña: una avemaría por un aumento de caridad."
           }
         }
       }
@@ -23199,7 +23235,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La siguiente cuenta pequeña: un avemaría por un aumento de esperanza."
+            "value" : "La siguiente cuenta pequeña: una avemaría por un aumento de esperanza."
           }
         }
       }
@@ -23318,7 +23354,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las oraciones de tu lista diaria. Mientras te preparas para tu Consagración a María, se añade aquí por ti. Cada día empieza de nuevo: el de ayer nunca cuenta en tu contra."
+            "value" : "Las oraciones de tu lista diaria. Mientras te preparas para tu Consagración a María, se agrega aquí por ti. Cada día empieza de nuevo: el de ayer nunca cuenta en tu contra."
           }
         }
       }
@@ -23663,7 +23699,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El calendario tradicional asigna una serie de misterios a cada día de la semana: Gozosos el lunes y el jueves; Dolorosos el martes y el viernes; Gloriosos el miércoles y el sábado. El domingo sigue el tiempo litúrgico — Gozosos en Adviento, Dolorosos en Cuaresma y Gloriosos el resto del año. El calendario moderno, el de san Juan Pablo II, da el jueves a los Luminosos y el sábado a los Gozosos; elígelo en Ajustes, en Devoción."
+            "value" : "El calendario tradicional asigna una serie de misterios a cada día de la semana: Gozosos el lunes y el jueves; Dolorosos el martes y el viernes; Gloriosos el miércoles y el sábado. El domingo sigue el tiempo litúrgico — Gozosos en Adviento, Dolorosos en Cuaresma y Gloriosos el resto del año. El calendario moderno, el de san Juan Pablo II, da el jueves a los Luminosos y el sábado a los Gozosos; elígelo en Configuración, en Devoción."
           }
         }
       }
@@ -23739,7 +23775,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La letra tal como aparece en Oraciones. El canto puede añadir un breve versículo y respuesta, o una oración final."
+            "value" : "La letra tal como aparece en Oraciones. El canto puede agregar un breve versículo y respuesta, o una oración final."
           }
         }
       }
@@ -23955,7 +23991,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estos ajustes también se aplican a los textos de la Misa."
+            "value" : "Esta configuración también se aplica a los textos de la Misa."
           }
         }
       }
@@ -24118,7 +24154,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este iPhone no tiene una cuenta de correo configurada, así que no pudimos abrir un mensaje. Tu mensaje se copió — pégalo en la app de correo que uses, dirigido a %@."
+            "value" : "Este iPhone no tiene una cuenta de correo configurada, así que no pudimos abrir un mensaje. Tu mensaje se copió: pégalo en la app de correo que uses, dirigido a %@."
           }
         }
       }
@@ -24159,7 +24195,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta página es tuya para organizarla"
+            "value" : "Organiza esta página a tu gusto"
           }
         }
       }
@@ -24708,7 +24744,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Traducción con inteligencia artificial"
+            "value" : "Traducido con IA"
           }
         }
       }
@@ -24835,7 +24871,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activar en Ajustes del iPhone"
+            "value" : "Activar en Configuración del iPhone"
           }
         }
       }
@@ -25244,7 +25280,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No pudimos acceder a las meditaciones. Inténtalo de nuevo en unos segundos. Para rezar sin conexión, abre Ajustes y elige Guardar para usar sin conexión."
+            "value" : "No pudimos acceder a las meditaciones. Inténtalo de nuevo en unos segundos. Para rezar sin conexión, abre Configuración y elige Descargar."
           }
         }
       }
@@ -25299,7 +25335,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Feria"
+            "value" : "Día ferial"
           }
         }
       }
@@ -25431,7 +25467,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Qué notaste — una errata, una traducción, un pasaje?"
+            "value" : "¿Qué notaste? ¿Una errata, una traducción, un pasaje?"
           }
         }
       }
@@ -25670,7 +25706,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuando necesitas ayuda"
+            "value" : "Cuando necesites ayuda"
           }
         }
       }
@@ -25851,7 +25887,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo el Rosario"
+            "value" : "Rosario completo"
           }
         }
       }
@@ -25862,7 +25898,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo el Rosario · pausa cuando quieras"
+            "value" : "Rosario completo · pausa cuando quieras"
           }
         }
       }
@@ -25927,7 +25963,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con una voz"
+            "value" : "Con voz"
           }
         }
       }
@@ -25938,7 +25974,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Con una voz o en silencio?"
+            "value" : "¿Con voz o en silencio?"
           }
         }
       }
@@ -25949,7 +25985,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con Todo el Rosario, la voz mueve las cuentas en la pantalla."
+            "value" : "Con el Rosario completo, la voz mueve las cuentas en la pantalla."
           }
         }
       }
@@ -25960,7 +25996,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con Todo el Rosario, la voz las dice."
+            "value" : "Con el Rosario completo, la voz las dice."
           }
         }
       }
@@ -26021,7 +26057,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escribe una nota o elige un silencio para añadir una pausa"
+            "value" : "Escribe una nota o elige un silencio para agregar una pausa"
           }
         }
       }
@@ -26188,7 +26224,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puedes cambiar la hora o desactivarlo en Ajustes."
+            "value" : "Puedes cambiar la hora o desactivarlo en Configuración."
           }
         }
       }
@@ -26381,7 +26417,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No tienes conexión. Todo el Rosario necesita internet la primera vez."
+            "value" : "No tienes conexión. El Rosario completo necesita internet la primera vez."
           }
         }
       }
@@ -26615,7 +26651,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Luego tu iPhone te preguntará una vez si Lumen Viae puede enviarte recordatorios. Puedes cambiar la hora o desactivarlo en Ajustes."
+            "value" : "Luego tu iPhone te preguntará una vez si Lumen Viae puede enviarte recordatorios. Puedes cambiar la hora o desactivarlo en Configuración."
           }
         }
       }
@@ -27069,6 +27105,24 @@
         }
       }
     },
+    "explore.chantLink" : {
+      "comment" : "Explore page: small link beside the Chant heading, opening the Chant Library; keep it short",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Chant Library"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cantos"
+          }
+        }
+      }
+    },
     "for its grace, then begin the decade" : {
       "comment" : "In Scripture, Before each decade, step III: the rest of the phrase after the verb Ask, lower case",
       "localizations" : {
@@ -27127,7 +27181,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "aprendida de memoria"
+            "value" : "de memoria"
           }
         }
       }
@@ -27183,6 +27237,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "rezado hoy"
+          }
+        }
+      }
+    },
+    "prayerEditor.words" : {
+      "comment" : "Prayer editor: the label over the field for the prayer's words (its text, not song lyrics)",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Words"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Texto"
           }
         }
       }

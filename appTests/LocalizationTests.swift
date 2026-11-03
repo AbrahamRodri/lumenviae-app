@@ -139,6 +139,23 @@ struct SpanishCatalogTests {
         #expect(mismatched.isEmpty, "Spanish with other placeholders: \(mismatched.sorted().prefix(20))")
     }
 
+    /// The settled wording (Mexican usage, ustedes not vosotros), held:
+    /// these slipped past five translators and a proofreader once
+    @Test func spanishKeepsTheSettledWording() {
+        var broken: [String] = []
+        for (key, value) in Self.catalog {
+            guard let entry = value as? [String: Any],
+                  let spanish = (entry["localizations"] as? [String: Any])?["es"] else { continue }
+            let text = (try? JSONSerialization.data(withJSONObject: spanish))
+                .flatMap { String(data: $0, encoding: .utf8) } ?? ""
+            if text.contains("vosotros") || text.contains("Ajustes") || text.contains("añad")
+                || text.contains("Añad") || text.contains("un avemaría") || text.contains("Un avemaría") {
+                broken.append(key)
+            }
+        }
+        #expect(broken.isEmpty, "Spanish against the settled wording: \(broken.sorted().prefix(20))")
+    }
+
     @Test func theBuiltAppReadsSpanish() throws {
         let path = try #require(Bundle.main.path(forResource: "es", ofType: "lproj"))
         let spanish = try #require(Bundle(path: path))

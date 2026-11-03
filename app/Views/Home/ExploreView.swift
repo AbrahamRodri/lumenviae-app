@@ -313,7 +313,7 @@ struct ExploreView: View {
         // to Mary shelf.
         section(
             String(localized: "Chant", comment: "Explore page: heading of a section of the browse page"),
-            link: (String(localized: "Chant Library", comment: "Explore page: small link beside a section heading; opens the Chant Library"), { router.push(.chantLibrary) })) {
+            link: (String(localized: "explore.chantLink", defaultValue: "Chant Library", comment: "Explore page: small link beside the Chant heading, opening the Chant Library; keep it short"), { router.push(.chantLibrary) })) {
             chantTiles
         }
 
