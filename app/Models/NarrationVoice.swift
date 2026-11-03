@@ -44,6 +44,11 @@ struct NarrationVoice: nonisolated Codable, Identifiable, Hashable {
         }
     }
 
+    /// The name set mid-sentence ("Read to you in the male voice", "Leída
+    /// para ti con la voz masculina"): the displayed name, lowered, never
+    /// the server's English name
+    var nameInSentence: String { displayName.lowercased() }
+
     /// The server's line on the voice, said plainly: "emotive" is not a
     /// word for a newcomer
     var plainDescription: String? {

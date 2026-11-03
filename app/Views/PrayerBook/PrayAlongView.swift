@@ -1408,7 +1408,7 @@ struct PrayAloudChoiceSheet: View {
                     SheetRow(
                         String(localized: "With a voice", comment: "Sheet asked before the Prayers tab's book first speaks: the answer that has a voice read the prayers"),
                         detail: String(
-                            localized: "Read to you in the \(voices.chosenVoice.name.lowercased()) voice",
+                            localized: "Read to you in the \(voices.chosenVoice.nameInSentence) voice",
                             comment: "Sheet asked before the Prayers tab's book first speaks: under With a voice; the name is the chosen narration voice's, in lower case, like male or female"
                         ),
                         icon: "ph-speaker-high",
