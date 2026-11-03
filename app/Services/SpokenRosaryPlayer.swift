@@ -139,7 +139,13 @@ final class SpokenRosaryPlayer {
     /// Where the Rosary stands: what the host keeps to come back to
     var currentStep: SpokenStep? {
         guard let segment = currentSegment else { return nil }
-        return SpokenStep(index: index, mystery: segment.mystery, bead: segment.bead, caption: segment.caption)
+        return SpokenStep(
+            index: index,
+            mystery: segment.mystery,
+            bead: segment.bead,
+            caption: segment.caption,
+            kind: segment.kind.key
+        )
     }
 
     /// Between two segments, in the breath before the next begins

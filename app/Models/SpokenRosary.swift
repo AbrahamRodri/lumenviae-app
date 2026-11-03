@@ -100,6 +100,17 @@ struct SpokenSegment: Hashable {
         case meditation
         /// The Scriptural Rosary's verse for one Hail Mary, counted from 1
         case verse(Int)
+
+        /// A stable name for what is heard, the same in every language,
+        /// kept with a resume step so it can be matched again
+        var key: String {
+            switch self {
+            case .prayer(let id): return "prayer:\(id)"
+            case .announcement: return "announcement"
+            case .meditation: return "meditation"
+            case .verse(let number): return "verse:\(number)"
+            }
+        }
     }
 
     /// Where in the Rosary a segment falls. The opening and closing
@@ -430,8 +441,14 @@ enum SpokenRosaryScript {
     static func resumeIndex(in script: [SpokenSegment], step: SpokenStep?) -> Int? {
         guard let step, script.indices.contains(step.index) else { return nil }
         let segment = script[step.index]
-        guard segment.mystery == step.mystery, segment.bead == step.bead,
-              segment.caption == step.caption else { return nil }
+        guard segment.mystery == step.mystery, segment.bead == step.bead else { return nil }
+        // Matched on what is heard. A step saved before the kind was kept
+        // falls back to its caption, which is in the language it was saved in
+        if let kind = step.kind {
+            guard segment.kind.key == kind else { return nil }
+        } else {
+            guard segment.caption == step.caption else { return nil }
+        }
         return step.index
     }
 
@@ -488,4 +505,6 @@ struct SpokenStep: Codable, Equatable {
     let mystery: Int
     let bead: Int
     let caption: String
+    /// `SpokenSegment.Kind.key`; nil in a step saved before it was kept
+    var kind: String? = nil
 }
