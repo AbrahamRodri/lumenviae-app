@@ -273,7 +273,10 @@ final class AudioService {
             // and the "press play" this message asks for could never work.
             self.setupAudioSession()
             self.reset()
-            self.errorMessage = "The audio stopped. Open this mystery again to continue."
+            self.errorMessage = String(
+                localized: "The audio stopped. Open this mystery again to continue.",
+                comment: "Player error when the audio system was reset under a meditation (after another app took it)"
+            )
         }
         #endif
     }
@@ -1134,7 +1137,7 @@ final class AudioService {
     private func updateNowPlayingInfo() {
         let timeline = publishedTimeline
         var info: [String: Any] = [:]
-        info[MPMediaItemPropertyTitle] = nowPlayingTitle ?? "Meditation"
+        info[MPMediaItemPropertyTitle] = nowPlayingTitle ?? String(localized: "Meditation", comment: "Lock Screen: the title shown when the recording playing has no title of its own")
         info[MPMediaItemPropertyArtist] = nowPlayingSubtitle ?? "Lumen Viae"
         info[MPMediaItemPropertyPlaybackDuration] = timeline.duration
         info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = timeline.elapsed
@@ -1294,7 +1297,7 @@ final class AudioService {
         claim: AudioClaim?
     ) async -> Bool {
         guard let url = URL(string: urlString) else {
-            errorMessage = "This recording can't be played."
+            errorMessage = String(localized: "This recording can't be played.", comment: "Player error when a recording's address is broken")
             return false
         }
 
@@ -1368,7 +1371,10 @@ final class AudioService {
             // transport — say so instead.
             guard duration > 0 else {
                 reset()
-                errorMessage = "Audio unavailable — try again later"
+                errorMessage = String(
+                    localized: "Audio unavailable — try again later",
+                    comment: "Player error when a recording loaded but cannot be played"
+                )
                 return false
             }
         } catch {
@@ -1390,7 +1396,10 @@ final class AudioService {
             print("AudioService: Failed to load audio: \(error)")
             #endif
             reset()
-            errorMessage = "Audio unavailable — check your connection"
+            errorMessage = String(
+                localized: "Audio unavailable — check your connection",
+                comment: "Player error when a recording could not be loaded, most likely for want of a connection"
+            )
             return false
         }
 
@@ -1786,7 +1795,10 @@ final class AudioService {
         isBuffering = false
         userIntendsPlayback = false
         currentURL = nil
-        errorMessage = "Audio stopped — check your connection"
+        errorMessage = String(
+            localized: "Audio stopped — check your connection",
+            comment: "Player error when a recording stopped part-way, most likely for want of a connection"
+        )
         updateNowPlayingPlaybackState()
         if let owner = itemOwnerSerial {
             itemOwnerSerial = nil

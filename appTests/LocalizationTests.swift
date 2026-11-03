@@ -59,4 +59,30 @@ struct LocalizationTests {
         #expect(MeditationLabel.displayName("Saints") == "Saints")
         #expect(MeditationLabel.displayName("Something New") == "Something New")
     }
+
+    @Test func streakAndReadingCountsAreSingularForOne() {
+        #expect(String(localized: "\(1) days in a row") == "1 day in a row")
+        #expect(String(localized: "\(1) days away") == "1 day away")
+        #expect(String(localized: "Next: \("A novena") · \(1) days away") == "Next: A novena · 1 day away")
+        #expect(String(localized: "\(1) earlier chapters") == "1 earlier chapter")
+        #expect(String(localized: "Show the \(1) earlier chapters") == "Show the earlier chapter")
+        #expect(String(localized: "\("A chapter a day") · \(1) read today") == "A chapter a day · one read today")
+        #expect(String(localized: "\("A chapter a day") · \(2) read today") == "A chapter a day · 2 read today")
+        #expect(String(localized: "Sleep timer, \(1) minutes left") == "Sleep timer, 1 minute left")
+    }
+
+    @Test func chantOccasionsAreShownInTheirEnglishWording() {
+        for occasion in ChantLibraryData.occasions {
+            #expect(ChantLibraryData.displayWording(of: occasion.title) == occasion.title)
+            #expect(occasion.shownTitle == occasion.title)
+            for rubric in occasion.blocks.compactMap(\.rubric) {
+                #expect(ChantLibraryData.displayWording(of: rubric) == rubric)
+            }
+        }
+        #expect(ChantLibraryData.displayWording(of: "Silent prayer") == "Silent prayer")
+        // A kept set in older words is shown as the occasion reads now
+        #expect(ChantLibraryData.displayWording(of: "Benediction") == "Adoration and Blessing")
+        // The reader's own words pass through
+        #expect(ChantLibraryData.displayWording(of: "Thursday holy hour") == "Thursday holy hour")
+    }
 }

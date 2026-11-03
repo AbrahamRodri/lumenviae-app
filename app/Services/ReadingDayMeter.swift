@@ -47,10 +47,14 @@ enum ReadingGoal: String, CaseIterable, Identifiable {
     /// The measure as the reader chose it.
     var title: String {
         switch self {
-        case .fewMinutes: return "A few minutes a day"
-        case .quarterHour: return "A quarter-hour a day"
-        case .halfHour: return "Half an hour a day"
-        case .chapterADay: return "A chapter a day"
+        case .fewMinutes:
+            return String(localized: "A few minutes a day", comment: "Reading goal sheet: a choice of daily reading goal (5 minutes)")
+        case .quarterHour:
+            return String(localized: "A quarter-hour a day", comment: "Reading goal sheet: a choice of daily reading goal (15 minutes)")
+        case .halfHour:
+            return String(localized: "Half an hour a day", comment: "Reading goal sheet: a choice of daily reading goal (30 minutes)")
+        case .chapterADay:
+            return String(localized: "A chapter a day", comment: "Reading goal sheet: a choice of daily reading goal, one chapter finished")
         }
     }
 
@@ -70,10 +74,14 @@ enum ReadingGoal: String, CaseIterable, Identifiable {
     /// measure is not a span of reading and must not be phrased as one.
     var readingPhrase: String {
         switch self {
-        case .fewMinutes: return "A few minutes of reading"
-        case .quarterHour: return "A quarter-hour of reading"
-        case .halfHour: return "Half an hour of reading"
-        case .chapterADay: return "A chapter a day"
+        case .fewMinutes:
+            return String(localized: "A few minutes of reading", comment: "Daily reading goal band: the goal as a phrase, first in a line like A few minutes of reading · 2 of 5 minutes so far")
+        case .quarterHour:
+            return String(localized: "A quarter-hour of reading", comment: "Daily reading goal band: the goal as a phrase, first in a line like A quarter-hour of reading · 6 of 15 minutes so far")
+        case .halfHour:
+            return String(localized: "Half an hour of reading", comment: "Daily reading goal band: the goal as a phrase, first in a line like Half an hour of reading · 6 of 30 minutes so far")
+        case .chapterADay:
+            return String(localized: "A chapter a day", comment: "Reading goal sheet: a choice of daily reading goal, one chapter finished")
         }
     }
 
@@ -81,7 +89,18 @@ enum ReadingGoal: String, CaseIterable, Identifiable {
     /// The measures were once persisted as their own sentences.
     static func stored(_ raw: String) -> ReadingGoal? {
         if let goal = ReadingGoal(rawValue: raw) { return goal }
-        return allCases.first { $0.title == raw }
+        return allCases.first { $0.storedSentence == raw }
+    }
+
+    /// The English sentence a measure was once persisted as: matched
+    /// against old stored values, never shown
+    private var storedSentence: String {
+        switch self {
+        case .fewMinutes: return "A few minutes a day"
+        case .quarterHour: return "A quarter-hour a day"
+        case .halfHour: return "Half an hour a day"
+        case .chapterADay: return "A chapter a day"
+        }
     }
 }
 
@@ -193,13 +212,12 @@ final class ReadingDayMeter {
     /// "A quarter-hour of reading · 6 of 15 minutes so far"
     func goalLine(for goal: ReadingGoal) -> String {
         if let minutes = goal.minutes {
-            return "\(goal.readingPhrase) · \(min(minutesToday, minutes)) of \(minutes) minutes so far"
+            return String(
+                localized: "\(goal.readingPhrase) · \(min(minutesToday, minutes)) of \(minutes) minutes so far",
+                comment: "Daily reading goal band: the goal as a phrase, then minutes read today of the goal, like A quarter-hour of reading · 6 of 15 minutes so far"
+            )
         }
-        switch chaptersToday {
-        case 0: return "\(goal.readingPhrase) · not yet today"
-        case 1: return "\(goal.readingPhrase) · one read today"
-        default: return "\(goal.readingPhrase) · \(chaptersToday) read today"
-        }
+        return chapterLine(for: goal)
     }
 
     /// The daily reading goal card's line, under "Daily reading goal":
@@ -207,13 +225,26 @@ final class ReadingDayMeter {
     /// chapter measure, "A chapter a day · not yet today".
     func progressLine(for goal: ReadingGoal) -> String {
         if let minutes = goal.minutes {
-            return "\(min(minutesToday, minutes)) of \(minutes) minutes today"
+            return String(
+                localized: "\(min(minutesToday, minutes)) of \(minutes) minutes today",
+                comment: "Daily reading goal card: minutes read today of the goal, like 6 of 15 minutes today"
+            )
         }
-        switch chaptersToday {
-        case 0: return "\(goal.readingPhrase) · not yet today"
-        case 1: return "\(goal.readingPhrase) · one read today"
-        default: return "\(goal.readingPhrase) · \(chaptersToday) read today"
+        return chapterLine(for: goal)
+    }
+
+    /// "A chapter a day · not yet today", "· one read today", "· 2 read today"
+    private func chapterLine(for goal: ReadingGoal) -> String {
+        if chaptersToday == 0 {
+            return String(
+                localized: "\(goal.readingPhrase) · not yet today",
+                comment: "Daily reading goal: the chapter-a-day goal, then that no chapter has been finished today"
+            )
         }
+        return String(
+            localized: "\(goal.readingPhrase) · \(chaptersToday) read today",
+            comment: "Daily reading goal: the chapter-a-day goal, then how many chapters were finished today (read is a past participle)"
+        )
     }
 
     /// The figure set inside the goal's ring: minutes read today, or

@@ -32,17 +32,29 @@ enum RosaryLesson: Int, CaseIterable {
 
     var title: String {
         switch self {
-        case .beads:     return "The Beads and the Order"
-        case .prayers:   return "The Prayers"
-        case .mysteries: return "The Mysteries"
+        case .beads:     return String(localized: "The Beads and the Order", comment: "How to Pray: title of a lesson of the beginner's course")
+        case .prayers:   return String(localized: "The Prayers", comment: "How to Pray: title of a lesson of the beginner's course")
+        case .mysteries: return String(localized: "The Mysteries", comment: "How to Pray: title of a lesson of the beginner's course")
         }
     }
 
     var summary: String {
         switch self {
-        case .beads:     return "What a rosary is, each part of it, and what is said where."
-        case .prayers:   return "Eight prayers make the whole Rosary. Read them, then say them with the page until they are yours."
-        case .mysteries: return "The scenes from the Gospel you think about while you pray, and which to pray each day."
+        case .beads:
+            return String(
+                localized: "What a rosary is, each part of it, and what is said where.",
+                comment: "How to Pray: one line under the title of lesson 1, The Beads and the Order"
+            )
+        case .prayers:
+            return String(
+                localized: "Eight prayers make the whole Rosary. Read them, then say them with the page until they are yours.",
+                comment: "How to Pray: one line under the title of lesson 2, The Prayers"
+            )
+        case .mysteries:
+            return String(
+                localized: "The scenes from the Gospel you think about while you pray, and which to pray each day.",
+                comment: "How to Pray: one line under the title of lesson 3, The Mysteries"
+            )
         }
     }
 
@@ -187,7 +199,15 @@ struct HowToPrayRosaryView: View {
 
                 station(
                     marker: seen.contains(lesson.rawValue) ? .done : .numeral(lesson.numeral),
-                    kicker: isNext ? "Next · Lesson \(lesson.numeral)" : "Lesson \(lesson.numeral)",
+                    kicker: isNext
+                        ? String(
+                            localized: "Next · Lesson \(lesson.numeral)",
+                            comment: "How to Pray, the course: kicker over the lesson to open next, with its number, like Next · Lesson 2"
+                        )
+                        : String(
+                            localized: "Lesson \(lesson.numeral)",
+                            comment: "How to Pray, the course: kicker over a lesson, with its number, like Lesson 2"
+                        ),
                     title: lesson.title,
                     summary: lesson.summary,
                     isNext: isNext,
@@ -287,7 +307,7 @@ struct HowToPrayRosaryView: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isButton)
-        .accessibilityValue(opened ? "Opened" : "Not yet opened")
+        .accessibilityValue(opened ? Text("Opened") : Text("Not yet opened"))
     }
 
     /// The course's end: the first Rosary, the page's one gold act —
@@ -327,7 +347,13 @@ struct HowToPrayRosaryView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
-                GoldCTAButton(title: kept != nil ? "Continue" : "Begin", glyph: .play, fullWidth: false) {
+                GoldCTAButton(
+                    title: kept != nil
+                        ? String(localized: "Continue", comment: "How to Pray, Your First Rosary: the gold act, going on with a guided Rosary left part-way")
+                        : String(localized: "Begin", comment: "How to Pray, Your First Rosary: the gold act, beginning the guided Rosary"),
+                    glyph: .play,
+                    fullWidth: false
+                ) {
                     router.push(.guidedRosary(kept?.category ?? ScheduleService.categoryForToday()))
                 }
                 .padding(.top, 4)
@@ -438,15 +464,27 @@ struct HowToPrayRosaryView: View {
                 // The psalter's reading stands in the Marian Library, and
                 // stands down with it while that is archived
                 if !ArchivedPages.hides(.libraryReading(id: "psalter")) {
-                    deeperTile(icon: "ch-lily", title: "How the Rosary Began", note: "Our Lady's Psalter") {
+                    deeperTile(
+                        icon: "ch-lily",
+                        title: String(localized: "How the Rosary Began", comment: "How to Pray, Going Deeper: tile opening the reading on the Rosary's origin"),
+                        note: String(localized: "Our Lady's Psalter", comment: "How to Pray, Going Deeper: line under How the Rosary Began, the Rosary's old name")
+                    ) {
                         router.push(.libraryReading(id: "psalter"))
                     }
                 }
-                deeperTile(icon: "ch-bible", title: "The Scriptural Rosary", note: "A verse for every bead") {
+                deeperTile(
+                    icon: "ch-bible",
+                    title: String(localized: "The Scriptural Rosary", comment: "How to Pray, Going Deeper: tile opening the Scriptural Rosary's page"),
+                    note: String(localized: "A verse for every bead", comment: "How to Pray, Going Deeper: line under The Scriptural Rosary")
+                ) {
                     router.push(.scripturalRosary(ScheduleService.categoryForToday()))
                 }
                 if !ArchivedPages.hides(.scripture) {
-                    deeperTile(icon: "lv-breviary", title: "In Scripture", note: "Each mystery's passage") {
+                    deeperTile(
+                        icon: "lv-breviary",
+                        title: String(localized: "In Scripture", comment: "How to Pray, Going Deeper: tile opening the page of each mystery's Gospel passage"),
+                        note: String(localized: "Each mystery's passage", comment: "How to Pray, Going Deeper: line under In Scripture")
+                    ) {
                         router.push(.scripture)
                     }
                 }

@@ -209,7 +209,8 @@ struct LibraryChapterReaderView: View {
                     Spacer()
                     LibraryMiniPlayer(
                         session: session,
-                        title: sections[index].title ?? "The reading",
+                        title: sections[index].title
+                            ?? String(localized: "The reading", comment: "Spiritual Reading mini player: title of a recording that has no title of its own"),
                         onExpand: { sheet = .player }
                     )
                     .padding(.horizontal, 16)
@@ -310,10 +311,10 @@ struct LibraryChapterReaderView: View {
                     passage: passage,
                     citation: citation,
                     draft: $journalDraft,
-                    onCopied: { toast = "Copied" },
+                    onCopied: { toast = String(localized: "Copied", comment: "Reader toast: a passage was copied") },
                     onKeep: {
                         keepAsReflection(passage)
-                        toast = "Saved to your journal"
+                        toast = String(localized: "Saved to your journal", comment: "Reader toast: a note on a passage was saved to the journal")
                         selectedParagraph = nil
                     }
                 )
@@ -334,7 +335,7 @@ struct LibraryChapterReaderView: View {
                     passage: passage,
                     citeLine: shareCiteLine,
                     citation: citation,
-                    onCopied: { toast = "Copied" }
+                    onCopied: { toast = String(localized: "Copied", comment: "Reader toast: a passage was copied") }
                 )
                 .presentationDetents([.height(560), .large])
                 .presentationDragIndicator(.visible)
@@ -477,13 +478,21 @@ struct LibraryChapterReaderView: View {
             Spacer()
 
             ReaderChromeCapsule(buttons: [
-                ReaderCapsuleButton(id: "size", icon: "ph-text-aa", label: "SIZE") {
+                ReaderCapsuleButton(
+                    id: "size",
+                    icon: "ph-text-aa",
+                    label: String(localized: "SIZE", comment: "Book reader's top capsule: small capitals, opens the reading size sheet")
+                ) {
                     sheet = .textOptions
                 },
                 ReaderCapsuleButton(id: "mark", icon: nil, label: markButtonLabel) {
                     markCurrentParagraph()
                 },
-                ReaderCapsuleButton(id: "contents", icon: "ph-list", label: "CONTENTS") {
+                ReaderCapsuleButton(
+                    id: "contents",
+                    icon: "ph-list",
+                    label: String(localized: "CONTENTS", comment: "Book reader's top capsule: small capitals, opens the book's contents")
+                ) {
                     guard let book, let info else { return }
                     sheet = .contents(book: book, info: info)
                 }
@@ -497,7 +506,12 @@ struct LibraryChapterReaderView: View {
     /// "BOOKMARK · 2" once this chapter holds bookmarks, "BOOKMARK" before.
     private var markButtonLabel: String {
         let count = marks.filter { $0.chapter == currentIndex }.count
-        return count > 0 ? "BOOKMARK · \(count)" : "BOOKMARK"
+        return count > 0
+            ? String(
+                localized: "BOOKMARK · \(count)",
+                comment: "Book reader's top capsule: small capitals, bookmarks this passage, then how many bookmarks this chapter holds"
+            )
+            : String(localized: "BOOKMARK", comment: "Book reader's top capsule: small capitals, bookmarks this passage")
     }
 
     /// Withdraws or returns the chrome. The place rule stays either way.
@@ -603,7 +617,10 @@ struct LibraryChapterReaderView: View {
     /// heading already owns the title line.
     private func kicker(for chapter: LibraryChapter) -> String {
         if let part = chapter.part {
-            return "\(part) · \(chapter.heading)"
+            return String(
+                localized: "\(part) · \(chapter.heading)",
+                comment: "Book reader: kicker over a chapter's title, the part's name then the chapter's heading, like The Third Book · Chapter V"
+            )
         }
         if chapter.title != nil, chapter.title != chapter.heading {
             return chapter.heading
@@ -638,12 +655,14 @@ struct LibraryChapterReaderView: View {
                     HStack(spacing: 7) {
                         AppIcon(sounding ? "ph-pause-fill" : "ph-speaker-high", size: 13)
 
-                        Text(sounding ? "PAUSE THE READING" : "HEAR THIS READ")
+                        (sounding
+                            ? Text("PAUSE THE READING", comment: "Book reader: small capitals, pauses the recording of this chapter")
+                            : Text("HEAR THIS READ", comment: "Book reader: small capitals, plays the recording of this chapter"))
                             .font(AppFonts.labelFont(10))
                             .tracking(1.5)
 
                         if !whole, !sounding, let opening, let from = book?.chapter(at: opening) {
-                            Text("· from \(from.heading)")
+                            Text("· from \(from.heading)", comment: "Book reader: after HEAR THIS READ when the recording begins at an earlier chapter, naming it, like · from Chapter IV")
                                 .font(AppFonts.italicFont(11))
                                 .foregroundColor(AppColors.textSecondary)
                         }
@@ -655,9 +674,14 @@ struct LibraryChapterReaderView: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(
-                    sounding ? "Pause the reading"
-                             : (whole ? "Hear this chapter read"
-                                      : "Hear this read, from the start of this recording")
+                    sounding
+                        ? Text("Pause the reading", comment: "VoiceOver, book reader: pauses the recording")
+                        : (whole
+                            ? Text("Hear this chapter read", comment: "VoiceOver, book reader: plays the recording of this chapter")
+                            : Text(
+                                "Hear this read, from the start of this recording",
+                                comment: "VoiceOver, book reader: plays a recording that begins before this chapter"
+                            ))
                 )
 
                 Spacer(minLength: 8)
@@ -679,7 +703,11 @@ struct LibraryChapterReaderView: View {
     private func minutesLeftLabel(track: Int) -> String? {
         if session.isLoaded(track: track), session.duration > 0 {
             let left = max(session.duration - session.currentTime, 0)
-            return "\(ReadingSpans.chipMinutes(left)) LEFT"
+            let minutes = ReadingSpans.chipMinutes(left)
+            return String(
+                localized: "\(minutes) LEFT",
+                comment: "Book reader: small capitals, how much of the recording is left, like 12 MIN LEFT or 1 HR 5 MIN LEFT"
+            )
         }
         guard let seconds = sections[track].playtimeSeconds else { return nil }
         return ReadingSpans.chipMinutes(seconds)
@@ -824,7 +852,11 @@ struct LibraryChapterReaderView: View {
                 .padding(.horizontal, 40)
 
             if failure.isRetryable {
-                QuietGoldButton(title: "Try again", size: 11, color: AppColors.gold) {
+                QuietGoldButton(
+                    title: String(localized: "Try again", comment: "Book reader: tries again to fetch the book's text"),
+                    size: 11,
+                    color: AppColors.gold
+                ) {
                     loadFailed = false
                     Task {
                         await load()
@@ -927,7 +959,9 @@ struct LibraryChapterReaderView: View {
             in: modelContext
         )
         refreshMarks()
-        toast = nowMarked ? "Bookmarked" : "Bookmark removed"
+        toast = nowMarked
+            ? String(localized: "Bookmarked", comment: "Reader toast: a passage was bookmarked")
+            : String(localized: "Bookmark removed", comment: "Reader toast: a passage's bookmark was removed")
         if selectedParagraph == paragraph {
             withAnimation(.easeOut(duration: 0.2)) { selectedParagraph = nil }
         }
@@ -1096,16 +1130,32 @@ struct LibraryChapterReaderView: View {
     /// still deserves attribution, and the translator is a voice.
     private var citation: String {
         guard let info, let chapter else { return "" }
-        var line = "— \(info.author), \(info.title)"
-        if let part = chapter.part {
-            line += ", \(part), \(chapter.heading)"
-        } else {
-            line += ", \(chapter.heading)"
+        let author = info.author
+        let title = info.title
+        let heading = chapter.heading
+        // One sentence per case, so a translation never glues English pieces
+        switch (chapter.part, info.translator) {
+        case let (part?, translator?):
+            return String(
+                localized: "— \(author), \(title), \(part), \(heading) (trans. \(translator)). Project Gutenberg.",
+                comment: "Citation under a kept or copied passage: author, book, part, chapter, then the translator (trans. is short for translated by)"
+            )
+        case let (part?, nil):
+            return String(
+                localized: "— \(author), \(title), \(part), \(heading). Project Gutenberg.",
+                comment: "Citation under a kept or copied passage: author, book, part, then chapter"
+            )
+        case let (nil, translator?):
+            return String(
+                localized: "— \(author), \(title), \(heading) (trans. \(translator)). Project Gutenberg.",
+                comment: "Citation under a kept or copied passage: author, book, chapter, then the translator (trans. is short for translated by)"
+            )
+        case (nil, nil):
+            return String(
+                localized: "— \(author), \(title), \(heading). Project Gutenberg.",
+                comment: "Citation under a kept or copied passage: author, book, then chapter"
+            )
         }
-        if let translator = info.translator {
-            line += " (trans. \(translator))"
-        }
-        return line + ". Project Gutenberg."
     }
 
     /// "St. Thérèse of Lisieux · Chapter I" — the share card's short cite.
@@ -1152,8 +1202,8 @@ struct LibraryTextOptionsSheet: View {
         @Bindable var settings = settings
 
         LibraryTraySheet(
-            title: "Reading Size",
-            note: "Applies to every book in Spiritual Reading."
+            title: String(localized: "Reading Size", comment: "Spiritual Reading, the reading size sheet: title"),
+            note: String(localized: "Applies to every book in Spiritual Reading.", comment: "Spiritual Reading, the reading size sheet: note under the slider")
         ) {
             SheetSizeSlider(scale: $settings.readingTextScale)
 
@@ -1188,7 +1238,7 @@ struct LibraryKeepSheet: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
-                SheetHeader(title: "Note on This Passage")
+                SheetHeader(title: String(localized: "Note on This Passage", comment: "Book reader: title of the sheet for writing a note on a selected passage"))
 
                 VStack(alignment: .leading, spacing: 16) {
                     Text("\u{201C}\(passage)\u{201D}")
@@ -1216,7 +1266,7 @@ struct LibraryKeepSheet: View {
 
                     HStack(spacing: 14) {
                         QuietGoldButton(
-                            title: "Copy",
+                            title: String(localized: "Copy", comment: "Note on This Passage sheet: copies the passage and its citation"),
                             leadingIcon: "ph-export",
                             size: 10,
                             color: AppColors.gold.opacity(0.8),
@@ -1230,7 +1280,7 @@ struct LibraryKeepSheet: View {
                         Spacer()
 
                         QuietGoldButton(
-                            title: "Save to the journal",
+                            title: String(localized: "Save to the journal", comment: "Note on This Passage sheet: saves the passage and the note to the journal"),
                             trailingIcon: "ph-check",
                             size: 10,
                             color: AppColors.goldLight,

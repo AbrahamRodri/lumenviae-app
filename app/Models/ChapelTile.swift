@@ -36,15 +36,15 @@ enum ChapelTile: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .rule:         return "Today"
-        case .consecration: return "Consecration"
-        case .reading:      return "Reading"
-        case .liturgy:      return "Today in the Church"
-        case .library:      return "Library"
-        case .chant:        return "Chant"
-        case .reflections:  return "Journal"
-        case .flame:        return "Prayer Streak"
-        case .prayers:      return "Prayers"
+        case .rule:         return String(localized: "Today", comment: "The Chapel: name of a section (tile) of the page, on its title line, its folded row while arranging and its chip in the hidden-sections tray")
+        case .consecration: return String(localized: "Consecration", comment: "The Chapel: name of a section (tile) of the page, on its title line, its folded row while arranging and its chip in the hidden-sections tray")
+        case .reading:      return String(localized: "Reading", comment: "The Chapel: name of a section (tile) of the page, on its title line, its folded row while arranging and its chip in the hidden-sections tray")
+        case .liturgy:      return String(localized: "Today in the Church", comment: "The Chapel: name of a section (tile) of the page, on its title line, its folded row while arranging and its chip in the hidden-sections tray")
+        case .library:      return String(localized: "Library", comment: "The Chapel: name of a section (tile) of the page, on its title line, its folded row while arranging and its chip in the hidden-sections tray")
+        case .chant:        return String(localized: "Chant", comment: "The Chapel: name of a section (tile) of the page, on its title line, its folded row while arranging and its chip in the hidden-sections tray")
+        case .reflections:  return String(localized: "Journal", comment: "The Chapel: name of a section (tile) of the page, on its title line, its folded row while arranging and its chip in the hidden-sections tray")
+        case .flame:        return String(localized: "Prayer Streak", comment: "The Chapel: name of a section (tile) of the page, on its title line, its folded row while arranging and its chip in the hidden-sections tray")
+        case .prayers:      return String(localized: "Prayers", comment: "The Chapel: name of a section (tile) of the page, on its title line, its folded row while arranging and its chip in the hidden-sections tray")
         }
     }
 
@@ -53,8 +53,8 @@ enum ChapelTile: String, CaseIterable, Identifiable {
     /// tray and the lifted row keep the full name.
     var shortTitle: String {
         switch self {
-        case .flame:   return "Streak"
-        case .liturgy: return "Mass & Hours"
+        case .flame:   return String(localized: "Streak", comment: "The Chapel: short name of a section at half width, where the full name does not fit (Streak for Prayer Streak, Mass & Hours for Today in the Church)")
+        case .liturgy: return String(localized: "Mass & Hours", comment: "The Chapel: short name of a section at half width, where the full name does not fit (Streak for Prayer Streak, Mass & Hours for Today in the Church)")
         default:       return title
         }
     }
@@ -63,15 +63,15 @@ enum ChapelTile: String, CaseIterable, Identifiable {
     /// a hidden section's chip in the tray.
     var detail: String {
         switch self {
-        case .rule:         return "Your daily prayers, one by one"
-        case .consecration: return "Your place in the 33-day Consecration to Mary"
-        case .reading:      return "The book you have open"
-        case .liturgy:      return "Today's Mass and the Hours of Prayer"
-        case .library:      return "The books, the guides, and the saints"
-        case .chant:        return "Play a chant, or open the Chant Library"
-        case .reflections:  return "Your latest reflections"
-        case .flame:        return "Your streak and this week's prayer"
-        case .prayers:      return "Prayers for morning, noon and night"
+        case .rule:         return String(localized: "Your daily prayers, one by one", comment: "The Chapel: VoiceOver, one line saying what a hidden section shows, read on its chip in the tray")
+        case .consecration: return String(localized: "Your place in the 33-day Consecration to Mary", comment: "The Chapel: VoiceOver, one line saying what a hidden section shows, read on its chip in the tray")
+        case .reading:      return String(localized: "The book you have open", comment: "The Chapel: VoiceOver, one line saying what a hidden section shows, read on its chip in the tray")
+        case .liturgy:      return String(localized: "Today's Mass and the Hours of Prayer", comment: "The Chapel: VoiceOver, one line saying what a hidden section shows, read on its chip in the tray")
+        case .library:      return String(localized: "The books, the guides, and the saints", comment: "The Chapel: VoiceOver, one line saying what a hidden section shows, read on its chip in the tray")
+        case .chant:        return String(localized: "Play a chant, or open the Chant Library", comment: "The Chapel: VoiceOver, one line saying what a hidden section shows, read on its chip in the tray")
+        case .reflections:  return String(localized: "Your latest reflections", comment: "The Chapel: VoiceOver, one line saying what a hidden section shows, read on its chip in the tray")
+        case .flame:        return String(localized: "Your streak and this week's prayer", comment: "The Chapel: VoiceOver, one line saying what a hidden section shows, read on its chip in the tray")
+        case .prayers:      return String(localized: "Prayers for morning, noon and night", comment: "The Chapel: VoiceOver, one line saying what a hidden section shows, read on its chip in the tray")
         }
     }
 

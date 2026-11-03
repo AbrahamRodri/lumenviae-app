@@ -378,7 +378,12 @@ final class ChantPlayer {
     /// The Lock Screen's line under the title: the set and where it
     /// stands, or the setting
     private func nowPlayingSubtitle(for chant: Chant) -> String {
-        if let queue { return "\(queue.title) · \(queue.position)" }
+        if let queue {
+            return String(
+                localized: "\(queue.shownTitle) · \(queue.position)",
+                comment: "Lock Screen: the line under a chant's title while a set is sung: the set's name, then where it stands, like 2 of 4"
+            )
+        }
         return chant.setting.map {
             String(localized: "Chant · \($0)", comment: "Lock Screen: the line under a chant's title, the word Chant then its setting, like simple melody")
         } ?? String(localized: "Chant", comment: "Lock Screen: the line under a chant's title when no set is being sung")

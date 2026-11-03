@@ -152,7 +152,7 @@ private struct ChantContextMenu: ViewModifier {
             if !shelf.sets.isEmpty {
                 Menu {
                     ForEach(shelf.sets) { set in
-                        Button(set.name) {
+                        Button(set.shownName) {
                             shelf.addChant(chant.id, to: set.id)
                         }
                     }

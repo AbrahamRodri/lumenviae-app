@@ -66,27 +66,42 @@ struct ChapelAct: Identifiable {
         if resume != nil {
             switch shortcut {
             case .todaysRosary, .scripturalRosary, .rosaryAloud:
-                return "Continue the Rosary"
+                return String(localized: "Continue the Rosary", comment: "Chapel focus block: the gold act when the day's Rosary was left unfinished")
             case .sevenSorrows:
-                return "Continue Praying"
+                return String(localized: "Continue Praying", comment: "Chapel focus block: the gold act when the Seven Sorrows chaplet was left unfinished")
             default:
                 break
             }
         }
         switch shortcut {
         case .todaysRosary, .scripturalRosary, .rosaryAloud:
-            return "Pray the Rosary"
-        case .chooseMeditation: return "Choose How to Pray Today"
-        case .sevenSorrows:     return "Pray the Seven Sorrows"
-        case .mass:             return "Open Today\u{2019}s Mass"
-        case .office:           return "Open Hours of Prayer"
+            return String(localized: "Pray the Rosary", comment: "Chapel focus block: the gold act under the next daily prayer's name, for any of the Rosary's three forms")
+        case .chooseMeditation:
+            return String(localized: "Choose How to Pray Today", comment: "Chapel focus block: the gold act under the next daily prayer's name, for choosing a meditation")
+        case .sevenSorrows:
+            return String(localized: "Pray the Seven Sorrows", comment: "Chapel focus block: the gold act under the next daily prayer's name, for the Seven Sorrows of Mary chaplet")
+        case .mass:
+            return String(localized: "Open Today\u{2019}s Mass", comment: "Chapel focus block: the gold act under the next daily prayer's name, for Today's Mass")
+        case .office:
+            return String(localized: "Open Hours of Prayer", comment: "Chapel focus block: the gold act under the next daily prayer's name, for the Divine Office")
         case .consecration:
-            guard let day else { return "Open the Consecration" }
-            return day > 33 ? "Go to Consecration Day" : "Go to Day \(day)"
-        case .morningPrayers:   return "Begin Morning Prayers"
+            guard let day else {
+                return String(localized: "Open the Consecration", comment: "Chapel focus block: the gold act under the next daily prayer's name, for the consecration before it has begun")
+            }
+            return day > 33
+                ? String(localized: "Go to Consecration Day", comment: "Chapel focus block: the gold act under the next daily prayer's name, on the day of consecration itself")
+                : String(localized: "Go to Day \(day)", comment: "Chapel focus block: the gold act under the next daily prayer's name, for the day of the 33-day consecration preparation, like Go to Day 14")
+        case .morningPrayers:
+            return String(localized: "Begin Morning Prayers", comment: "Chapel focus block: the gold act under the next daily prayer's name, for Morning Prayers")
         case .angelus:
-            return PrayerBook.isEastertide(Date()) ? "Begin \(PrayerShortcut.angelusTitle)" : "Begin the Angelus"
-        case .nightPrayers:     return "Begin Night Prayers"
+            return PrayerBook.isEastertide(Date())
+                ? String(
+                    localized: "Begin \(PrayerShortcut.angelusTitle)",
+                    comment: "Chapel focus block: the gold act under the next daily prayer's name, for the Angelus in the Easter season; the prayer's name is Queen of Heaven (Regina Caeli)"
+                )
+                : String(localized: "Begin the Angelus", comment: "Chapel focus block: the gold act under the next daily prayer's name, for the Angelus")
+        case .nightPrayers:
+            return String(localized: "Begin Night Prayers", comment: "Chapel focus block: the gold act under the next daily prayer's name, for Night Prayers")
         }
     }
 
@@ -94,8 +109,14 @@ struct ChapelAct: Identifiable {
     /// preparation already under way or a Rosary left off today, BEGIN
     /// for everything else.
     var rowAction: String {
-        if shortcut == .consecration { return consecrationBegun ? "Continue" : "Begin" }
-        return resume != nil ? "Continue" : "Begin"
+        continues
+            ? String(localized: "Continue", comment: "Chapel, Today tile: small gold act at the end of a daily prayer's row, for one already under way (shown in capitals)")
+            : String(localized: "Begin", comment: "Chapel, Today tile: small gold act at the end of a daily prayer's row, for one not yet begun (shown in capitals)")
+    }
+
+    /// Whether the row's act takes up something already under way
+    var continues: Bool {
+        shortcut == .consecration ? consecrationBegun : resume != nil
     }
 }
 
@@ -674,12 +695,12 @@ private func chapelFigure(
         .font(AppFonts.titleFont(size))
         .foregroundColor(AppColors.cream)
     if let denominator {
-        line = line + Text(" \(denominator)")
+        line = line + Text(verbatim: " \(denominator)")
             .font(AppFonts.titleFont(denominatorSize))
             .foregroundColor(AppColors.cream.opacity(0.6))
     }
     if let caption {
-        line = line + Text("  \(caption)")
+        line = line + Text(verbatim: "  \(caption)")
             .font(AppFonts.italicFont(captionSize))
             .foregroundColor(AppColors.cream.opacity(0.85))
     }
@@ -709,7 +730,12 @@ struct ChapelRuleTile: View {
             tile: .rule,
             span: span,
             surface: .lit,
-            footNote: span == 2 && !acts.isEmpty ? "\(doneCount) of \(acts.count) prayed" : nil,
+            footNote: span == 2 && !acts.isEmpty
+                ? String(
+                    localized: "\(doneCount) of \(acts.count) prayed",
+                    comment: "Chapel, Today tile: italic note at the foot, how many of the daily prayers have been prayed today, like 3 of 5 prayed"
+                )
+                : nil,
             onEdit: onEditRule
         ) {
             if span == 2 { full } else { half }
@@ -826,7 +852,21 @@ struct ChapelRuleTile: View {
     }
 
     private func accessibility(for act: ChapelAct) -> String {
-        act.done ? "\(act.focusTitle), prayed." : "\(act.rowAction) \(act.focusTitle)"
+        if act.done {
+            return String(
+                localized: "\(act.focusTitle), prayed.",
+                comment: "VoiceOver, Chapel Today tile: a daily prayer's row once it has been prayed today; the prayer's name first"
+            )
+        }
+        return act.continues
+            ? String(
+                localized: "Continue \(act.focusTitle)",
+                comment: "VoiceOver, Chapel Today tile: a daily prayer's row for one already under way, like Continue Morning Prayers"
+            )
+            : String(
+                localized: "Begin \(act.focusTitle)",
+                comment: "VoiceOver, Chapel Today tile: a daily prayer's row for one not yet begun, like Begin Morning Prayers"
+            )
     }
 
     // MARK: Half — the figure and a row of cells
@@ -953,9 +993,12 @@ struct ChapelFlameTile: View {
 
     private var streakLabel: String {
         switch streak {
-        case 0:  return "Pray today to begin"
-        case 1:  return "1 day so far"
-        default: return "\(streak) days in a row"
+        case 0:
+            return String(localized: "Pray today to begin", comment: "Chapel, Prayer Streak tile: the figure's place when there is no streak yet")
+        case 1:
+            return String(localized: "1 day so far", comment: "Chapel, Prayer Streak tile: a streak of one day")
+        default:
+            return String(localized: "\(streak) days in a row", comment: "Chapel, Prayer Streak tile: a streak of two days or more")
         }
     }
 
@@ -967,10 +1010,17 @@ struct ChapelFlameTile: View {
     private var milestoneLine: String? {
         guard let next = StreakMilestone.next(after: streak) else { return nil }
         let away = next.days - streak
-        return "Next: \(next.title) · \(away == 1 ? "1 day away" : "\(away) days away")"
+        return String(
+            localized: "Next: \(next.title) · \(away) days away",
+            comment: "Chapel, Prayer Streak tile: the next milestone (like 9 days · a novena), then how many days off it is"
+        )
     }
 
-    private var litNote: String { hasPrayedToday ? "Prayed today" : "Not yet today" }
+    private var litNote: String {
+        hasPrayedToday
+            ? String(localized: "Prayed today", comment: "Chapel, Prayer Streak tile: note on the title line once the day has been prayed")
+            : String(localized: "Not yet today", comment: "Chapel, Prayer Streak tile: note on the title line before the day has been prayed; never a reproach")
+    }
 
     private static let weekdayName: DateFormatter = {
         let f = DateFormatter()
@@ -984,32 +1034,56 @@ struct ChapelFlameTile: View {
     private var daysPrayedThisWeek: String? {
         let names = weekStatus.filter(\.didPray).map { Self.weekdayName.string(from: $0.date) }
         guard let last = names.last else { return nil }
-        return names.count == 1 ? last : names.dropLast().joined(separator: ", ") + " and " + last
+        guard names.count > 1 else { return last }
+        let others = names.dropLast().joined(separator: ", ")
+        return String(
+            localized: "\(others) and \(last)",
+            comment: "VoiceOver, Chapel Prayer Streak tile: weekdays prayed this week; the first is a comma-separated list of weekdays, the second the last weekday, like Sunday, Monday and Tuesday"
+        )
     }
 
     /// The tile as one sentence, in the words the screen sets: the
     /// figure as "days in a row", the day, the week by name, and the
     /// milestone ahead
     private var accessibilityLabel: String {
-        var line = "Prayer Streak. "
+        var sentences = [
+            String(localized: "Prayer Streak.", comment: "VoiceOver, Chapel Prayer Streak tile: first sentence, the tile's name")
+        ]
         // With no streak the day is not yet prayed, and the figure says so
-        switch streak {
-        case 0:  line += "Pray today to begin."
-        case 1:  line += "1 day so far, \(litNote.lowercased())."
-        default: line += "\(streak) days in a row, \(litNote.lowercased())."
+        switch (streak, hasPrayedToday) {
+        case (0, _):
+            sentences.append(String(localized: "Pray today to begin.", comment: "VoiceOver, Chapel Prayer Streak tile: no streak yet"))
+        case (1, true):
+            sentences.append(String(localized: "1 day so far, prayed today.", comment: "VoiceOver, Chapel Prayer Streak tile: a streak of one day, prayed today"))
+        case (1, false):
+            sentences.append(String(localized: "1 day so far, not yet today.", comment: "VoiceOver, Chapel Prayer Streak tile: a streak of one day, today not yet prayed; never a reproach"))
+        case (_, true):
+            sentences.append(String(
+                localized: "\(streak) days in a row, prayed today.",
+                comment: "VoiceOver, Chapel Prayer Streak tile: a streak of two days or more, prayed today"
+            ))
+        case (_, false):
+            sentences.append(String(
+                localized: "\(streak) days in a row, not yet today.",
+                comment: "VoiceOver, Chapel Prayer Streak tile: a streak of two days or more, today not yet prayed; never a reproach"
+            ))
         }
         if let days = daysPrayedThisWeek {
-            line += " This week, prayed \(days)."
+            sentences.append(String(
+                localized: "This week, prayed \(days).",
+                comment: "VoiceOver, Chapel Prayer Streak tile: the weekdays prayed this week, by name, like Sunday, Monday and Tuesday"
+            ))
         }
-        if let milestoneLine {
-            // The line already opens on "Next:"; said, its colon and dot
-            // are commas
-            let said = milestoneLine
-                .replacingOccurrences(of: "Next: ", with: "Next, ")
-                .replacingOccurrences(of: " · ", with: ", ")
-            line += " \(said)."
+        if let next = StreakMilestone.next(after: streak) {
+            // Said, the milestone's dot is a comma
+            let title = next.title.replacingOccurrences(of: " · ", with: ", ")
+            sentences.append(String(
+                localized: "Next, \(title), \(next.days - streak) days away.",
+                comment: "VoiceOver, Chapel Prayer Streak tile: the next milestone (like 9 days, a novena), then how many days off it is"
+            ))
         }
-        return line + " Opens the Prayer Record."
+        sentences.append(String(localized: "Opens the Prayer Record.", comment: "VoiceOver, Chapel Prayer Streak tile: what a tap on the tile does"))
+        return sentences.joined(separator: " ")
     }
 
     var body: some View {
@@ -1056,7 +1130,9 @@ struct ChapelFlameTile: View {
                         chapelFigure(
                             "\(streak)",
                             size: 42,
-                            caption: streak == 1 ? "day so far" : "days in a row"
+                            caption: streak == 1
+                                ? String(localized: "day so far", comment: "Chapel, Prayer Streak tile: italic words beside the figure 1 (1 day so far); the figure is drawn apart in a larger face")
+                                : String(localized: "days in a row", comment: "Chapel, Prayer Streak tile: italic words beside a figure of 2 or more (12 days in a row); the figure is drawn apart in a larger face")
                         )
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
@@ -1070,7 +1146,7 @@ struct ChapelFlameTile: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
 
-                    Text(milestoneLine ?? "Each day you pray adds one")
+                    Text(milestoneLine ?? String(localized: "Each day you pray adds one", comment: "Chapel, Prayer Streak tile: italic line under the figure when there is no next milestone"))
                         .font(AppFonts.italicFont(13))
                         .foregroundColor(AppColors.textSecondary)
                         .lineLimit(1)
@@ -1136,7 +1212,14 @@ struct ChapelFlameTile: View {
             ChapelFlameMedallion(size: 48, isLit: hasPrayedToday)
 
             if streak > 0 {
-                chapelFigure("\(streak)", size: 30, caption: streak == 1 ? "day" : "days", captionSize: 14)
+                chapelFigure(
+                    "\(streak)",
+                    size: 30,
+                    caption: streak == 1
+                        ? String(localized: "day", comment: "Chapel, Prayer Streak tile at half width: the word beside the figure 1 (1 day); the figure is drawn apart in a larger face")
+                        : String(localized: "days", comment: "Chapel, Prayer Streak tile at half width: the word beside a figure of 2 or more (12 days); the figure is drawn apart in a larger face"),
+                    captionSize: 14
+                )
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
                     .contentTransition(.numericText())
@@ -1249,11 +1332,16 @@ struct ChapelConsecrationTile: View {
     /// rule's ledger row borrows this for the Consecration's line.
     static func phaseName(day: Int) -> String {
         switch day {
-        case ...12:   return "Letting go of the world"
-        case 13...19: return "Knowing yourself"
-        case 20...26: return "Knowing Mary"
-        case 27...33: return "Knowing Jesus"
-        default:      return "Consecration Day"
+        case ...12:
+            return String(localized: "Letting go of the world", comment: "Chapel, Consecration tile: name of the first preparation (days 1 to 12) of the 33-day consecration")
+        case 13...19:
+            return String(localized: "Knowing yourself", comment: "Chapel, Consecration tile: name of the second preparation (days 13 to 19) of the 33-day consecration")
+        case 20...26:
+            return String(localized: "Knowing Mary", comment: "Chapel, Consecration tile: name of the third preparation (days 20 to 26) of the 33-day consecration")
+        case 27...33:
+            return String(localized: "Knowing Jesus", comment: "Chapel, Consecration tile: name of the fourth preparation (days 27 to 33) of the 33-day consecration")
+        default:
+            return String(localized: "Consecration Day", comment: "Chapel, Consecration tile: the day of consecration itself, after the 33 days")
         }
     }
 
@@ -1262,10 +1350,21 @@ struct ChapelConsecrationTile: View {
     /// the full tile sets it. The day of consecration is not a
     /// thirty-fourth day of the preparation.
     private static func spoken(day: Int, begun: Bool) -> String {
-        let act = begun ? "Continue" : "Begin"
-        if day > 33 { return "Consecration to Mary, Consecration Day. \(act)." }
+        if day > 33 {
+            return begun
+                ? String(localized: "Consecration to Mary, Consecration Day. Continue.", comment: "VoiceOver, Chapel Consecration tile: on the day of consecration, already begun")
+                : String(localized: "Consecration to Mary, Consecration Day. Begin.", comment: "VoiceOver, Chapel Consecration tile: on the day of consecration, not yet begun")
+        }
         let title = ConsecrationData.day(day)?.title ?? phaseName(day: day)
-        return "Consecration to Mary, day \(day) of 33, \(title). \(act)."
+        return begun
+            ? String(
+                localized: "Consecration to Mary, day \(day) of 33, \(title). Continue.",
+                comment: "VoiceOver, Chapel Consecration tile: the day of the 33, the day's own title, and the act, for a day already begun"
+            )
+            : String(
+                localized: "Consecration to Mary, day \(day) of 33, \(title). Begin.",
+                comment: "VoiceOver, Chapel Consecration tile: the day of the 33, the day's own title, and the act, for a day not yet begun"
+            )
     }
 
     /// Where the user stands with the consecration, as the tile draws it
@@ -1347,7 +1446,11 @@ struct ChapelConsecrationTile: View {
 
                     if span == 2 {
                         Spacer(minLength: 0)
-                        ChapelFootAct(title: begun ? "Continue" : "Begin")
+                        ChapelFootAct(
+                            title: begun
+                                ? String(localized: "Continue", comment: "Chapel, Consecration tile: the act at the foot when today's day has been begun (shown in capitals)")
+                                : String(localized: "Begin", comment: "Chapel, Consecration tile: the act at the foot when today's day is not yet begun (shown in capitals)")
+                        )
                             .frame(minHeight: 44)
                     }
                 }
@@ -1375,7 +1478,9 @@ struct ChapelConsecrationTile: View {
                 .fixedSize(horizontal: false, vertical: true)
         } else {
             chapelFigure(
-                span == 2 ? "Day \(day)" : "\(day)",
+                span == 2
+                    ? String(localized: "Day \(day)", comment: "Chapel, Consecration tile: the large figure, the day of the 33, followed apart by / 33")
+                    : "\(day)",
                 size: span == 2 ? 30 : 32,
                 denominator: "/ 33",
                 denominatorSize: span == 2 ? 16 : 14
@@ -1404,7 +1509,7 @@ struct ChapelConsecrationTile: View {
             surface: .painting(Self.paintingName(.made)),
             padding: padding,
             onTap: open,
-            accessibilityLabel: "Consecration to Mary, completed. Opens it again."
+            accessibilityLabel: String(localized: "Consecration to Mary, completed. Opens it again.", comment: "VoiceOver, Chapel Consecration tile once the consecration has been made")
         ) {
             EmptyView()
         } floor: {
@@ -1431,7 +1536,7 @@ struct ChapelConsecrationTile: View {
 
                 if span == 2 {
                     Spacer(minLength: 0)
-                    ChapelFootAct(title: "Revisit")
+                    ChapelFootAct(title: String(localized: "Revisit", comment: "Chapel, Consecration tile: the act at the foot once the consecration has been made (shown in capitals)"))
                         .frame(minHeight: 44)
                 }
             }
@@ -1454,7 +1559,10 @@ struct ChapelConsecrationTile: View {
             surface: .painting(Self.paintingName(.notBegun)),
             padding: padding,
             onTap: open,
-            accessibilityLabel: "Consecration to Mary, begins \(long). Opens it."
+            accessibilityLabel: String(
+                localized: "Consecration to Mary, begins \(long). Opens it.",
+                comment: "VoiceOver, Chapel Consecration tile: a preparation chosen ahead, the date its Day 1 falls on (weekday, month, day)"
+            )
         ) {
             EmptyView()
         } floor: {
@@ -1475,7 +1583,7 @@ struct ChapelConsecrationTile: View {
 
                 if span == 2 {
                     Spacer(minLength: 0)
-                    ChapelFootAct(title: "Open")
+                    ChapelFootAct(title: String(localized: "Open", comment: "Chapel, Consecration tile: the act at the foot for a preparation chosen ahead (shown in capitals)"))
                         .frame(minHeight: 44)
                 }
             }
@@ -1493,7 +1601,10 @@ struct ChapelConsecrationTile: View {
             surface: .painting(Self.paintingName(.notBegun)),
             padding: padding,
             onTap: open,
-            accessibilityLabel: "Consecration to Mary. A 33-day preparation to give yourself to Jesus through Mary. Begin."
+            accessibilityLabel: String(
+                localized: "Consecration to Mary. A 33-day preparation to give yourself to Jesus through Mary. Begin.",
+                comment: "VoiceOver, Chapel Consecration tile before a preparation has been chosen"
+            )
         ) {
             EmptyView()
         } floor: {
@@ -1516,7 +1627,7 @@ struct ChapelConsecrationTile: View {
 
                 if span == 2 {
                     Spacer(minLength: 0)
-                    ChapelFootAct(title: "Begin")
+                    ChapelFootAct(title: String(localized: "Begin", comment: "Chapel, Consecration tile: the act at the foot before a preparation has been chosen (shown in capitals)"))
                         .frame(minHeight: 44)
                 }
             }
@@ -1620,7 +1731,7 @@ struct ChapelReadingTile: View {
                 span: span,
                 surface: .cloth,
                 note: span == 2 ? restNote(front) : nil,
-                act: "Continue",
+                act: String(localized: "Continue", comment: "Chapel, Reading tile: the act at the foot, continuing the book shown (shown in capitals)"),
                 footRuled: span == 1,
                 onAct: { takeUp(front.row, front.info) }
             ) {
@@ -1698,7 +1809,7 @@ struct ChapelReadingTile: View {
             }
             .buttonStyle(SacredCardButtonStyle())
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(entry.info.title), \(chapterLine(entry.row) ?? "under way"). Continue reading.")
+            .accessibilityLabel(spokenBook(entry))
         }
     }
 
@@ -1706,9 +1817,27 @@ struct ChapelReadingTile: View {
     private func restNote(_ entry: Entry) -> String? {
         switch others(than: entry).count {
         case 0:  return nil
-        case 1:  return "1 more book started"
-        case let count: return "\(count) more books started"
+        case let count:
+            return String(
+                localized: "\(count) more books started",
+                comment: "Chapel, Reading tile: note on the title line, how many other books are under way besides the one shown"
+            )
         }
+    }
+
+    /// What VoiceOver hears on a book: its title, where the reader left
+    /// it, and the act
+    private func spokenBook(_ entry: Entry) -> String {
+        guard let chapter = chapterLine(entry.row) else {
+            return String(
+                localized: "\(entry.info.title), under way. Continue reading.",
+                comment: "VoiceOver, Chapel Reading tile: a book under way whose chapter is not known; the book's title first"
+            )
+        }
+        return String(
+            localized: "\(entry.info.title), \(chapter). Continue reading.",
+            comment: "VoiceOver, Chapel Reading tile: a book under way, its title, then the chapter the reader left it at"
+        )
     }
 
     /// "St. Thérèse · Chapter IV" — whose book it is, and where the
@@ -1754,7 +1883,7 @@ struct ChapelReadingTile: View {
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(entry.info.title), \(chapterLine(entry.row) ?? "under way"). Continue reading.")
+            .accessibilityLabel(spokenBook(entry))
             .animation(Motion.crossfade, value: entry.row.bookID)
         }
     }
@@ -1830,10 +1959,10 @@ struct ChapelReadingTile: View {
             tile: .reading,
             span: span,
             surface: .cloth,
-            act: "All books",
+            act: String(localized: "All books", comment: "Chapel, Reading tile: the act at the foot when no book is open, opening the Spiritual Reading shelf (shown in capitals)"),
             footRuled: span == 1,
             onTap: { router.push(.spiritualReading) },
-            accessibilityLabel: "Reading. No book open yet: choose one. Opens all books."
+            accessibilityLabel: String(localized: "Reading. No book open yet: choose one. Opens all books.", comment: "VoiceOver, Chapel Reading tile when no book is open")
         ) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .bottom, spacing: 6) {
@@ -2144,16 +2273,27 @@ struct ChapelLiturgyTile: View {
     private var fullLedger: some View {
         VStack(spacing: 0) {
             ledgerRow(
-                kicker: "The Mass",
-                title: "Today\u{2019}s Mass",
-                line: today.introitIncipit.map { "Entrance chant: \($0)" } ?? "Prayers and readings for today",
+                kicker: String(localized: "The Mass", comment: "Chapel, Today in the Church tile: small kicker beside the Mass row (shown in capitals)"),
+                title: String(localized: "Today\u{2019}s Mass", comment: "Chapel, Today in the Church tile: name of the row opening the day's Mass"),
+                line: today.introitIncipit.map {
+                    String(
+                        localized: "Entrance chant: \($0)",
+                        comment: "Chapel, Today in the Church tile: the first words of the day's entrance chant (Introit), in English"
+                    )
+                } ?? String(
+                    localized: "Prayers and readings for today",
+                    comment: "Chapel, Today in the Church tile: the Mass row's line until the day's texts are known"
+                ),
                 route: .missal,
                 divided: true
             )
             ledgerRow(
-                kicker: "Hours of Prayer",
+                kicker: String(localized: "Hours of Prayer", comment: "Chapel, Today in the Church tile: small kicker beside the Divine Office row (shown in capitals, may take two lines)"),
                 title: hour.plainName,
-                line: "\(hour.label), the hour now",
+                line: String(
+                    localized: "\(hour.label), the hour now",
+                    comment: "Chapel, Today in the Church tile: the Church name of the hour of the Office now (like Vespers), then that it is the present hour"
+                ),
                 route: .office,
                 divided: false
             )
@@ -2244,7 +2384,11 @@ struct ChapelLiturgyTile: View {
 
     private var halfLedger: some View {
         VStack(spacing: 0) {
-            halfDoor("Today\u{2019}s Mass", route: .missal, divided: true)
+            halfDoor(
+                String(localized: "Today\u{2019}s Mass", comment: "Chapel, Today in the Church tile at half width: door opening the day's Mass"),
+                route: .missal,
+                divided: true
+            )
             halfDoor(hour.plainName, route: .office, divided: false)
         }
         .overlay(alignment: .top) {
@@ -2281,7 +2425,11 @@ struct ChapelLiturgyTile: View {
                     .frame(height: AppLine.hairline)
             }
         }
-        .accessibilityLabel(route == .office ? "Hours of Prayer: \(title), \(hour.label), the hour now" : title)
+        .accessibilityLabel(
+            route == .office
+                ? Text("Hours of Prayer: \(title), \(hour.label), the hour now", comment: "VoiceOver, Chapel Today in the Church tile at half width: the Office door, the hour's plain name and its Church name")
+                : Text(title)
+        )
     }
 }
 
@@ -2369,22 +2517,54 @@ struct ChapelLibraryTile: View {
     }
 
     private static let books: [Door] = [
-        Door(title: "True Devotion", line: "St. Louis de Montfort\u{2019}s book on Mary", route: .trueDevotionBook),
-        Door(title: "Spiritual Reading", line: "The saints\u{2019} own books", route: .spiritualReading),
-        Door(title: "Marian Library", line: "Mary\u{2019}s feasts, titles and saints", route: .marianLibrary)
+        Door(
+            title: String(localized: "True Devotion", comment: "Chapel, Library tile: door to the book True Devotion to Mary"),
+            line: String(localized: "St. Louis de Montfort\u{2019}s book on Mary", comment: "Chapel, Library tile: line under the True Devotion door"),
+            route: .trueDevotionBook
+        ),
+        Door(
+            title: String(localized: "Spiritual Reading", comment: "Chapel, Library tile: door to the Spiritual Reading shelf of books"),
+            line: String(localized: "The saints\u{2019} own books", comment: "Chapel, Library tile: line under the Spiritual Reading door"),
+            route: .spiritualReading
+        ),
+        Door(
+            title: String(localized: "Marian Library", comment: "Chapel, Library tile: door to the Marian Library"),
+            line: String(localized: "Mary\u{2019}s feasts, titles and saints", comment: "Chapel, Library tile: line under the Marian Library door"),
+            route: .marianLibrary
+        )
     ]
 
     private static let guides: [Door] = [
-        Door(title: "How to Pray", line: "The Rosary, step by step", route: .howToPray),
-        Door(title: "In Scripture", line: "Each mystery in the Gospel", route: .scripture),
-        Door(title: "Carlo Acutis", line: "A saint of our day", route: .carloAcutis)
+        Door(
+            title: String(localized: "How to Pray", comment: "Chapel, Library tile: door to How to Pray the Rosary"),
+            line: String(localized: "The Rosary, step by step", comment: "Chapel, Library tile: line under the How to Pray door"),
+            route: .howToPray
+        ),
+        Door(
+            title: String(localized: "In Scripture", comment: "Chapel, Library tile: door to the mysteries found in Scripture"),
+            line: String(localized: "Each mystery in the Gospel", comment: "Chapel, Library tile: line under the In Scripture door"),
+            route: .scripture
+        ),
+        Door(
+            title: String(localized: "Carlo Acutis", comment: "Chapel, Library tile: door to the page on St. Carlo Acutis; his name"),
+            line: String(localized: "A saint of our day", comment: "Chapel, Library tile: line under the Carlo Acutis door"),
+            route: .carloAcutis
+        )
     ]
 
     /// The reader's own pages, which had no door but the flame and the
     /// Journal tile, either of which can be put away
     private static let yourPages: [Door] = [
-        Door(title: "Prayer Record", line: "The days you have prayed", route: .prayerRecord),
-        Door(title: "Journal", line: "Your reflections", route: .journal)
+        Door(
+            title: String(localized: "Prayer Record", comment: "Chapel, Library tile: door to the Prayer Record, the history of days prayed"),
+            line: String(localized: "The days you have prayed", comment: "Chapel, Library tile: line under the Prayer Record door"),
+            route: .prayerRecord
+        ),
+        Door(
+            title: String(localized: "Journal", comment: "Chapel, Library tile: door to the Journal"),
+            line: String(localized: "Your reflections", comment: "Chapel, Library tile: line under the Journal door"),
+            route: .journal
+        )
     ]
 
     /// The doors whose pages are not archived (`ArchivedPages`)
@@ -2411,7 +2591,7 @@ struct ChapelLibraryTile: View {
                 tile: .library,
                 span: 1,
                 surface: .bound,
-                act: "See more",
+                act: String(localized: "See more", comment: "Chapel, Library tile at half width: the act at the foot, opening Explore (shown in capitals)"),
                 footRuled: false,
                 onAct: { router.push(.explore) }
             ) {
@@ -2426,12 +2606,15 @@ struct ChapelLibraryTile: View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 18) {
                 if Self.isSectioned {
-                    section("Books", Self.openBooks)
-                    section("Guides", Self.openGuides)
+                    section(String(localized: "Books", comment: "Chapel, Library tile: section heading over the book doors (shown in capitals)"), Self.openBooks)
+                    section(String(localized: "Guides", comment: "Chapel, Library tile: section heading over the guide doors (shown in capitals)"), Self.openGuides)
                 } else {
-                    section("Books and guides", Self.openBooks + Self.openGuides)
+                    section(
+                        String(localized: "Books and guides", comment: "Chapel, Library tile: one section heading over the book and guide doors together (shown in capitals)"),
+                        Self.openBooks + Self.openGuides
+                    )
                 }
-                section("Your pages", Self.yourPages)
+                section(String(localized: "Your pages", comment: "Chapel, Library tile: section heading over the reader's own pages, the Prayer Record and the Journal (shown in capitals)"), Self.yourPages)
             }
             .padding(.top, 18)
             .padding(.bottom, 10)
@@ -2564,7 +2747,9 @@ struct ChapelChantTile: View {
     /// not a clock: read here, the time changed every second and redrew
     /// the whole tile with it.
     private var note: String? {
-        ChantCatalog.antiphonOfTheSeason()?.id == chant.id ? "Tonight\u{2019}s song to Mary" : nil
+        ChantCatalog.antiphonOfTheSeason()?.id == chant.id
+            ? String(localized: "Tonight\u{2019}s song to Mary", comment: "Chapel, Chant tile: note on the title line when the chant is the season's antiphon of Our Lady, sung at night")
+            : nil
     }
 
     var body: some View {
@@ -2573,7 +2758,9 @@ struct ChapelChantTile: View {
             span: span,
             surface: .cloth,
             note: span == 2 ? note : nil,
-            act: span == 2 ? "Browse chants" : "Browse",
+            act: span == 2
+                ? String(localized: "Browse chants", comment: "Chapel, Chant tile: the act at the foot, opening the Chant Library (shown in capitals)")
+                : String(localized: "Browse", comment: "Chapel, Chant tile at half width: the act at the foot, opening the Chant Library (shown in capitals)"),
             onAct: onOpenLibrary
         ) {
             if span == 2 { full } else { half }
@@ -2790,10 +2977,15 @@ struct ChapelReflectionsTile: View {
                 span: span,
                 surface: .quote,
                 note: span == 2 ? day : nil,
-                act: span == 2 ? "Open the journal" : nil,
+                act: span == 2
+                    ? String(localized: "Open the journal", comment: "Chapel, Journal tile: the act at the foot (shown in capitals)")
+                    : nil,
                 footNote: span == 2 ? nil : day,
                 onTap: open,
-                accessibilityLabel: "Journal, \(day). \(text). Opens the journal."
+                accessibilityLabel: String(
+                    localized: "Journal, \(day). \(text). Opens the journal.",
+                    comment: "VoiceOver, Chapel Journal tile: when the latest reflection was written (Today, Yesterday, a weekday or a date), then its words"
+                )
             ) {
                 entryBlock(
                     text,
@@ -2809,9 +3001,14 @@ struct ChapelReflectionsTile: View {
                 tile: .reflections,
                 span: span,
                 surface: .quote,
-                act: span == 2 ? "Open the journal" : "Open",
+                act: span == 2
+                    ? String(localized: "Open the journal", comment: "Chapel, Journal tile: the act at the foot (shown in capitals)")
+                    : String(localized: "Open", comment: "Chapel, Journal tile at half width: the act at the foot, opening the journal (shown in capitals)"),
                 onTap: open,
-                accessibilityLabel: "Journal. After you pray, write a reflection and it will appear here. Opens the journal."
+                accessibilityLabel: String(
+                    localized: "Journal. After you pray, write a reflection and it will appear here. Opens the journal.",
+                    comment: "VoiceOver, Chapel Journal tile when nothing has been written yet"
+                )
             ) {
                 Text("After you pray, write a reflection and it will appear here.")
                     .font(AppFonts.italicFont(span == 2 ? 15 : 13))
@@ -2828,8 +3025,12 @@ struct ChapelReflectionsTile: View {
     /// When the entry was written, as a reader says it: "Today",
     /// "Yesterday", the weekday through the week, then the date.
     private static func dayNote(_ date: Date, now: Date = .now, calendar: Calendar = .current) -> String {
-        if calendar.isDateInToday(date) { return "Today" }
-        if calendar.isDateInYesterday(date) { return "Yesterday" }
+        if calendar.isDateInToday(date) {
+            return String(localized: "Today", comment: "Chapel, Journal tile: when the latest reflection was written, today")
+        }
+        if calendar.isDateInYesterday(date) {
+            return String(localized: "Yesterday", comment: "Chapel, Journal tile: when the latest reflection was written, yesterday")
+        }
         let days = calendar.dateComponents(
             [.day],
             from: calendar.startOfDay(for: date),

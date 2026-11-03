@@ -250,10 +250,20 @@ final class OfflineContentService {
            let manifest = try? Self.decoder().decode(Manifest.self, from: data) {
             state = manifest.complete
                 ? .downloaded(at: manifest.downloadedAt, bytes: manifest.bytes)
-                : .failed("The last download didn't finish. Try Again to complete it — finished files are kept.")
+                : .failed(
+                    String(
+                        localized: "The last download didn't finish. Try Again to complete it — finished files are kept.",
+                        comment: "Settings, Save for Offline: shown when the last download was broken off; Try Again is the button beside it"
+                    )
+                )
         } else if hasContentOnDisk {
             // Files but no readable manifest: a previous run was interrupted.
-            state = .failed("A previous download didn't finish. Try Again to complete it, or remove the partial files.")
+            state = .failed(
+                String(
+                    localized: "A previous download didn't finish. Try Again to complete it, or remove the partial files.",
+                    comment: "Settings, Save for Offline: shown when files of an interrupted download are on the phone; Try Again is the button beside it"
+                )
+            )
         }
     }
 
@@ -430,7 +440,12 @@ final class OfflineContentService {
             if failures == 0 {
                 state = .downloaded(at: manifest.downloadedAt, bytes: bytes)
             } else {
-                state = .failed("\(failures) file\(failures == 1 ? "" : "s") couldn't be downloaded. Try Again to finish — finished files are kept.")
+                state = .failed(
+                    String(
+                        localized: "\(failures) files couldn't be downloaded. Try Again to finish — finished files are kept.",
+                        comment: "Settings, Save for Offline: how many files failed in the last download; Try Again is the button beside it"
+                    )
+                )
             }
         } catch {
             // Stage 1 may already have written sets before the throw, so
@@ -441,7 +456,12 @@ final class OfflineContentService {
                 let manifest = Manifest(downloadedAt: Date(), bytes: bytes, setCount: 0, audioCount: 0, complete: false)
                 try? await Self.writeJSON(manifest, to: manifestURL)
             }
-            state = .failed("Download failed — check your connection and try again.")
+            state = .failed(
+                String(
+                    localized: "Download failed — check your connection and try again.",
+                    comment: "Settings, Save for Offline: shown when the download failed"
+                )
+            )
         }
     }
 

@@ -546,7 +546,7 @@ struct ConsecrationDayFlowView: View {
 
     private var topBar: some View {
         HStack(alignment: .center) {
-            PrayerHeaderButton(icon: "ph-x", size: 16, label: "Leave the day") {
+            PrayerHeaderButton(icon: "ph-x", size: 16, label: String(localized: "Leave the day", comment: "VoiceOver: the close button of a consecration day, leaving it")) {
                 // A second tap during the pop animation would call
                 // removeLast() on an empty path and crash
                 if !path.isEmpty { path.removeLast() }

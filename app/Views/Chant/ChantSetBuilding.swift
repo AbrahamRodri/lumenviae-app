@@ -207,7 +207,7 @@ struct ChantSetRow: View {
                 ChantThumbnail(name: set.painting, size: 44, radius: 8)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(set.name)
+                    Text(set.shownName)
                         .font(AppFonts.readingFont(16.5))
                         .foregroundColor(AppColors.cream)
                         .lineLimit(1)
@@ -226,7 +226,7 @@ struct ChantSetRow: View {
             .contentShape(Rectangle())
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(
-                [set.name, holds, ChantAddRing.spoken(count)].compactMap { $0 }.joined(separator: ", ")
+                [set.shownName, holds, ChantAddRing.spoken(count)].compactMap { $0 }.joined(separator: ", ")
             )
         }
         .buttonStyle(.plain)

@@ -113,17 +113,21 @@ final class JournalEntry {
         if isConsecrationEntry {
             if let day = consecrationDay {
                 if day == 34 {
-                    return "Consecration Day"
+                    return String(localized: "Consecration Day", comment: "Journal: subject of a reflection written on the day of consecration itself")
                 }
                 // What it is day 14 of: "Day 14" alone said nothing
-                return "Consecration \u{00B7} Day \(day)"
+                return String(
+                    localized: "Consecration \u{00B7} Day \(day)",
+                    comment: "Journal: subject of a reflection written on a day of the 33-day consecration, like Consecration · Day 14"
+                )
             }
-            return "Consecration"
+            return String(localized: "Consecration", comment: "Journal: subject of a reflection written during the consecration, when its day is unknown")
         }
         if let title = mysteryTitle, !title.isEmpty {
             return title
         }
-        return category?.displayName ?? "Reflection"
+        return category?.displayName
+            ?? String(localized: "Reflection", comment: "Journal: subject of a reflection with no title and no mysteries")
     }
 
     /// Icon name for the entry type. Categories defer to

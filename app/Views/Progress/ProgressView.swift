@@ -225,6 +225,17 @@ struct PrayerProgressView: View {
         return f
     }()
 
+    /// The calendar's column heads, Sunday first, in small capitals
+    private static let weekdayHeads: [String] = [
+        String(localized: "SUN", comment: "Prayer Record calendar: column head for Sunday, three-letter small capitals"),
+        String(localized: "MON", comment: "Prayer Record calendar: column head for Monday, three-letter small capitals"),
+        String(localized: "TUE", comment: "Prayer Record calendar: column head for Tuesday, three-letter small capitals"),
+        String(localized: "WED", comment: "Prayer Record calendar: column head for Wednesday, three-letter small capitals"),
+        String(localized: "THU", comment: "Prayer Record calendar: column head for Thursday, three-letter small capitals"),
+        String(localized: "FRI", comment: "Prayer Record calendar: column head for Friday, three-letter small capitals"),
+        String(localized: "SAT", comment: "Prayer Record calendar: column head for Saturday, three-letter small capitals"),
+    ]
+
     private var monthName: String {
         Self.monthFormatter.string(from: displayedMonth)
     }
@@ -251,7 +262,7 @@ struct PrayerProgressView: View {
         VStack(spacing: 16) {
             // Day headers
             HStack(spacing: 0) {
-                ForEach(["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], id: \.self) { day in
+                ForEach(Self.weekdayHeads, id: \.self) { day in
                     Text(day)
                         .font(AppFonts.bodyFont(10))
                         .tracking(1)
@@ -409,11 +420,11 @@ struct PrayerProgressView: View {
     private var devotionRows: [(name: String, count: Int, color: Color)] {
         let categoryBreakdown = service?.rosariesByCategory() ?? [:]
         return [
-            ("Joyful Mysteries", categoryBreakdown[.joyful] ?? 0, AppColors.gold),
-            ("Sorrowful Mysteries", categoryBreakdown[.sorrowful] ?? 0, AppColors.gold),
-            ("Glorious Mysteries", categoryBreakdown[.glorious] ?? 0, AppColors.gold),
-            ("Luminous Mysteries", categoryBreakdown[.luminous] ?? 0, AppColors.gold.opacity(0.5)),
-            ("Seven Sorrows", categoryBreakdown[.sevenSorrows] ?? 0, AppColors.gold)
+            (MysteryCategory.joyful.devotionTitle, categoryBreakdown[.joyful] ?? 0, AppColors.gold),
+            (MysteryCategory.sorrowful.devotionTitle, categoryBreakdown[.sorrowful] ?? 0, AppColors.gold),
+            (MysteryCategory.glorious.devotionTitle, categoryBreakdown[.glorious] ?? 0, AppColors.gold),
+            (MysteryCategory.luminous.devotionTitle, categoryBreakdown[.luminous] ?? 0, AppColors.gold.opacity(0.5)),
+            (MysteryCategory.sevenSorrows.displayName, categoryBreakdown[.sevenSorrows] ?? 0, AppColors.gold)
         ]
     }
 
@@ -479,7 +490,11 @@ struct MilestoneAheadRow: View {
         }
         .padding(.vertical, 14)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(isNext ? "Next: \(milestone.title). \(milestone.blessing)" : "\(milestone.title). \(milestone.blessing)")
+        .accessibilityLabel(
+            isNext
+                ? Text("Next: \(milestone.title). \(milestone.blessing)", comment: "VoiceOver, milestones ahead: the nearest milestone, its title then its blessing")
+                : Text("\(milestone.title). \(milestone.blessing)", comment: "VoiceOver, milestones ahead: a milestone's title then its blessing")
+        )
     }
 }
 
@@ -540,10 +555,17 @@ struct CalendarDayCell: View {
     }
 
     private var spokenLabel: String {
-        var parts = ["\(day)"]
-        if isToday { parts.append("today") }
-        if prayerCount > 0 { parts.append("prayed") }
-        return parts.joined(separator: ", ")
+        // One sentence per case, so a translation never glues pieces
+        switch (isToday, prayerCount > 0) {
+        case (true, true):
+            return String(localized: "\(day), today, prayed", comment: "VoiceOver, Prayer Record calendar: a day of the month that is today and was prayed")
+        case (true, false):
+            return String(localized: "\(day), today", comment: "VoiceOver, Prayer Record calendar: a day of the month that is today, not yet prayed")
+        case (false, true):
+            return String(localized: "\(day), prayed", comment: "VoiceOver, Prayer Record calendar: a day of the month that was prayed")
+        case (false, false):
+            return "\(day)"
+        }
     }
 
     private var dayTextColor: Color {

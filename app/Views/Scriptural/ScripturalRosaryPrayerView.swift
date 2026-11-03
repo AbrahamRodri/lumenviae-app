@@ -1124,7 +1124,15 @@ struct ScripturalRosaryPrayerView: View {
     /// The mystery before, faded on the first — present, so the foot
     /// never rearranges itself under the thumb
     private var previousMysteryArrow: some View {
-        TransportButton(icon: .asset("ph-arrow-left"), size: 20, label: "Previous mystery", action: previousMystery)
+        TransportButton(
+            icon: .asset("ph-arrow-left"),
+            size: 20,
+            label: String(
+                localized: "Previous mystery",
+                comment: "VoiceOver: the arrow that goes back to the mystery before, in the Rosary counted on one's own rosary"
+            ),
+            action: previousMystery
+        )
             .disabled(viewModel.isFirstBeadOfRosary)
             .opacity(viewModel.isFirstBeadOfRosary ? 0.25 : 1)
             .accessibilityHidden(viewModel.isFirstBeadOfRosary)

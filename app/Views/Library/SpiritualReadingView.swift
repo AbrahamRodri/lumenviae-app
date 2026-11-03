@@ -120,12 +120,25 @@ struct SpiritualReadingView: View {
         // The cover carries only title and author; the blurb still
         // belongs to the spoken label — it is what tells the books apart
         // before one is opened.
-        .accessibilityLabel("\(book.title), \(authorLine(book)). \(book.blurb)\(readingIDs.contains(book.id) ? " Reading under way." : "")")
+        .accessibilityLabel(
+            readingIDs.contains(book.id)
+                ? Text(
+                    "\(book.title), \(authorLine(book)). \(book.blurb) Reading under way.",
+                    comment: "VoiceOver, Spiritual Reading shelf: a book already started: title, author line, then its one-sentence description"
+                )
+                : Text(
+                    "\(book.title), \(authorLine(book)). \(book.blurb)",
+                    comment: "VoiceOver, Spiritual Reading shelf: a book: title, author line, then its one-sentence description"
+                )
+        )
     }
 
     private func authorLine(_ book: LibraryBookInfo) -> String {
         if let translator = book.translator {
-            return "\(book.author) · translated by \(translator)"
+            return String(
+                localized: "\(book.author) · translated by \(translator)",
+                comment: "Spiritual Reading shelf: a book's author, then its translator"
+            )
         }
         return book.author
     }

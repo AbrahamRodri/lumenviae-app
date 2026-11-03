@@ -58,7 +58,7 @@ struct MeditationSetTile: View {
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel(isPinned ? "Unpin this set" : "Pin this set to the top")
+                        .accessibilityLabel(isPinned ? Text("Unpin this set") : Text("Pin this set to the top"))
                         .padding(.top, -14)
                         .padding(.trailing, -14)
                     }
@@ -195,7 +195,7 @@ struct MeditationSetRow: View {
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(QuietGlyphButtonStyle())
-                        .accessibilityLabel(isPinned ? "Unpin this set" : "Pin this set to the top")
+                        .accessibilityLabel(isPinned ? Text("Unpin this set") : Text("Pin this set to the top"))
                         // The row's own padding keeps its height; the
                         // target overhangs it invisibly.
                         .padding(.vertical, -15)

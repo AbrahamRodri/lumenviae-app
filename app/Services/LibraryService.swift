@@ -30,17 +30,25 @@ enum LibraryError: LocalizedError {
 
     var title: String {
         switch self {
-        case .unreachable: "Couldn't reach the library"
-        case .unreadable: "This edition can't be opened"
+        case .unreachable:
+            String(localized: "Couldn't reach the library", comment: "Spiritual Reading: title when a book's text could not be fetched")
+        case .unreadable:
+            String(localized: "This edition can't be opened", comment: "Spiritual Reading: title when a book's text arrived but could not be cut into chapters")
         }
     }
 
     var detail: String {
         switch self {
         case .unreachable:
-            "The text comes from Project Gutenberg the first time a book is opened. Check your connection and try again."
+            String(
+                localized: "The text comes from Project Gutenberg the first time a book is opened. Check your connection and try again.",
+                comment: "Spiritual Reading: explanation under Couldn't reach the library"
+            )
         case .unreadable:
-            "Project Gutenberg's edition of this book has changed shape, so it can't be cut into chapters. It will return in a coming update."
+            String(
+                localized: "Project Gutenberg's edition of this book has changed shape, so it can't be cut into chapters. It will return in a coming update.",
+                comment: "Spiritual Reading: explanation under This edition can't be opened"
+            )
         }
     }
 

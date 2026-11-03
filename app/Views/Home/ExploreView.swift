@@ -737,7 +737,7 @@ struct ExploreView: View {
                 switch slot.item {
                 case .massOfTheAngels:
                     paintedTile(
-                        title: ChantBrowseScope.massSetting, note: nil,
+                        title: ChantBrowseScope.massOfTheAngels.title, note: nil,
                         asset: "luminous_proclamation", focal: UnitPoint(x: 0.5, y: 0.3)
                     ) { router.push(.chantBrowse(.massOfTheAngels)) }
                 case .sets:

@@ -224,10 +224,10 @@ struct ChantLibraryView: View {
 
     private func occasionTile(_ occasion: ChantOccasion) -> some View {
         tile(
-            occasion.title,
+            occasion.shownTitle,
             painting: occasion.painting,
             sounding: player.isSinging(ChantQueue.occasion(occasion)) && player.isGoingOn,
-            spoken: occasion.title
+            spoken: occasion.shownTitle
         ) {
             router.push(.chantSet(.occasion(occasion.id)))
         }
@@ -323,7 +323,7 @@ struct ChantLibraryView: View {
             HStack(alignment: .top, spacing: 14) {
                 ForEach(ChantLibraryData.occasions) { occasion in
                     ChantSetCard(
-                        title: occasion.title,
+                        title: occasion.shownTitle,
                         painting: occasion.painting,
                         chants: occasion.distinctChants(),
                         duration: occasion.duration(),
@@ -335,7 +335,7 @@ struct ChantLibraryView: View {
                 ForEach(shelf.sets.filter { $0.occasionID == nil && $0.chantCount > 0 }) { set in
                     let chants = set.items.compactMap(\.chant)
                     ChantSetCard(
-                        title: set.name,
+                        title: set.shownName,
                         painting: chants.first.map { ChantCatalog.painting(for: $0) } ?? ChantSet.emptyPainting,
                         chants: chants,
                         duration: set.duration,
@@ -519,7 +519,7 @@ struct ChantSongRow: View {
                 if !shelf.sets.isEmpty {
                     Menu {
                         ForEach(shelf.sets) { set in
-                            Button(set.name) { shelf.addChant(chant.id, to: set.id) }
+                            Button(set.shownName) { shelf.addChant(chant.id, to: set.id) }
                         }
                     } label: {
                         Label("Add to a Set", systemImage: "text.badge.plus")

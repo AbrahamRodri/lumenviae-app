@@ -60,13 +60,18 @@ struct JournalEntryEditorView: View {
     private var displayedSubject: String {
         if let title = lockedMysteryTitle { return title }
         if let cat = lockedCategory { return cat.displayName }
-        return subjectText.isEmpty ? "Reflection" : subjectText
+        return subjectText.isEmpty
+            ? String(localized: "Reflection", comment: "Journal editor: the subject shown for a reflection with no title")
+            : subjectText
     }
 
     private var placeholderText: String {
         isMidPrayer
-            ? "What is stirring in your heart during this mystery…"
-            : "Record your thoughts…"
+            ? String(
+                localized: "What is stirring in your heart during this mystery…",
+                comment: "Journal editor: placeholder in the empty writing area, when opened during a mystery being prayed"
+            )
+            : String(localized: "Record your thoughts…", comment: "Journal editor: placeholder in the empty writing area")
     }
 
     // Same source of truth as JournalEntry.categoryIcon — categories
@@ -137,7 +142,7 @@ struct JournalEntryEditorView: View {
                 // letter. The row keeps its height either way.
                 HStack {
                     Spacer()
-                    Text(text.count == 1 ? "1 character" : "\(text.count) characters")
+                    Text("\(text.count) characters")
                         .font(AppFonts.bodyFont(12))
                         .foregroundColor(AppColors.textSecondary.opacity(0.4))
                         .padding(.trailing, 24)
@@ -170,11 +175,16 @@ struct JournalEntryEditorView: View {
     /// CANCEL and SAVE beside them. It once read Cancel · DEVOTION · Save
     /// in a bar of its own, and DEVOTION named nothing a new reflection is
     private var editorHeader: some View {
-        SheetHeader(kicker: headerKicker, title: existingEntry == nil ? "New Reflection" : "Reflection") {
+        SheetHeader(
+            kicker: headerKicker,
+            title: existingEntry == nil
+                ? String(localized: "New Reflection", comment: "Journal editor: sheet title when writing a new reflection")
+                : String(localized: "Reflection", comment: "Journal editor: sheet title when editing a reflection already written")
+        ) {
             HStack(spacing: 4) {
-                SheetHeaderAction(title: "Cancel") { dismiss() }
+                SheetHeaderAction(title: String(localized: "Cancel", comment: "Journal editor: header act closing without saving")) { dismiss() }
 
-                SheetHeaderAction(title: "Save", action: saveEntry)
+                SheetHeaderAction(title: String(localized: "Save", comment: "Journal editor: header act saving the reflection"), action: saveEntry)
                     .disabled(hasNoText)
                     .opacity(hasNoText ? 0.35 : 1)
             }
@@ -184,7 +194,9 @@ struct JournalEntryEditorView: View {
     /// The day it is written, "Thursday, 1 October" (an entry's own when it
     /// is edited), or, opened from a mystery being prayed, that it is
     private var headerKicker: String {
-        if existingEntry == nil, isMidPrayer { return "During prayer" }
+        if existingEntry == nil, isMidPrayer {
+            return String(localized: "During prayer", comment: "Journal editor: kicker over the title when a reflection is written in the middle of praying")
+        }
         let date = existingEntry?.createdAt ?? Date()
         let weekday = date.formatted(.dateTime.weekday(.wide))
         let day = date.formatted(.dateTime.day())

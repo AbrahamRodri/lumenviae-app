@@ -198,10 +198,10 @@ struct TrueDevotionChapterReaderView: View {
                     passage: passage,
                     citation: citation,
                     draft: $journalDraft,
-                    onCopied: { toast = "Copied" },
+                    onCopied: { toast = String(localized: "Copied", comment: "Reader toast: a passage was copied") },
                     onKeep: {
                         keepAsReflection(passage)
-                        toast = "Saved to your journal"
+                        toast = String(localized: "Saved to your journal", comment: "Reader toast: a note on a passage was saved to the journal")
                         selectedParagraph = nil
                     }
                 )
@@ -215,7 +215,7 @@ struct TrueDevotionChapterReaderView: View {
                     passage: passage,
                     citeLine: shareCiteLine,
                     citation: citation,
-                    onCopied: { toast = "Copied" }
+                    onCopied: { toast = String(localized: "Copied", comment: "Reader toast: a passage was copied") }
                 )
                 .presentationDetents([.height(560), .large])
                 .presentationDragIndicator(.visible)
@@ -349,13 +349,21 @@ struct TrueDevotionChapterReaderView: View {
             Spacer()
 
             ReaderChromeCapsule(buttons: [
-                ReaderCapsuleButton(id: "size", icon: "ph-text-aa", label: "SIZE") {
+                ReaderCapsuleButton(
+                    id: "size",
+                    icon: "ph-text-aa",
+                    label: String(localized: "SIZE", comment: "Book reader's top capsule: small capitals, opens the reading size sheet")
+                ) {
                     sheet = .textOptions
                 },
                 ReaderCapsuleButton(id: "mark", icon: nil, label: markButtonLabel) {
                     markCurrentParagraph()
                 },
-                ReaderCapsuleButton(id: "contents", icon: "ph-list", label: "CONTENTS") {
+                ReaderCapsuleButton(
+                    id: "contents",
+                    icon: "ph-list",
+                    label: String(localized: "CONTENTS", comment: "Book reader's top capsule: small capitals, opens the book's contents")
+                ) {
                     sheet = .contents
                 }
             ])
@@ -367,7 +375,12 @@ struct TrueDevotionChapterReaderView: View {
 
     private var markButtonLabel: String {
         let count = viewModel.markCount(forChapter: currentChapterID)
-        return count > 0 ? "BOOKMARK · \(count)" : "BOOKMARK"
+        return count > 0
+            ? String(
+                localized: "BOOKMARK · \(count)",
+                comment: "Book reader's top capsule: small capitals, bookmarks this passage, then how many bookmarks this chapter holds"
+            )
+            : String(localized: "BOOKMARK", comment: "Book reader's top capsule: small capitals, bookmarks this passage")
     }
 
     private func setChrome(hidden: Bool) {
@@ -507,7 +520,9 @@ struct TrueDevotionChapterReaderView: View {
         let nowMarked = viewModel.toggleMark(
             chapterID: currentChapterID, paragraph: paragraph
         )
-        toast = nowMarked ? "Bookmarked" : "Bookmark removed"
+        toast = nowMarked
+            ? String(localized: "Bookmarked", comment: "Reader toast: a passage was bookmarked")
+            : String(localized: "Bookmark removed", comment: "Reader toast: a passage's bookmark was removed")
         if selectedParagraph == paragraph {
             withAnimation(.easeOut(duration: 0.2)) { selectedParagraph = nil }
         }
@@ -590,7 +605,7 @@ struct TrueDevotionChapterReaderView: View {
                 .multilineTextAlignment(.center)
 
             QuietGoldButton(
-                title: "Back to contents",
+                title: String(localized: "Back to contents", comment: "True Devotion reader, the end of the book: returns to the contents"),
                 size: 10,
                 color: AppColors.gold
             ) {
@@ -631,11 +646,19 @@ struct TrueDevotionChapterReaderView: View {
 
     private var citation: String {
         guard let book = library.book, let chapter else { return "" }
-        var line = "— \(book.author), \(book.title), \(chapter.title)"
+        let author = book.author
+        let title = book.title
+        let chapterTitle = chapter.title
         if let translator = translatorShort {
-            line += " (trans. \(translator))"
+            return String(
+                localized: "— \(author), \(title), \(chapterTitle) (trans. \(translator)). Public domain.",
+                comment: "Citation under a kept or copied passage of True Devotion: author, book, chapter, then the translator (trans. is short for translated by)"
+            )
         }
-        return line + ". Public domain."
+        return String(
+            localized: "— \(author), \(title), \(chapterTitle). Public domain.",
+            comment: "Citation under a kept or copied passage of True Devotion: author, book, then chapter"
+        )
     }
 
     /// "Fr. Frederick William Faber" out of the source page's fuller line.
@@ -687,7 +710,10 @@ struct TrueDevotionContentsSheet: View {
         ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    SheetHeader(kicker: library.book?.title, title: "Contents") {
+                    SheetHeader(
+                        kicker: library.book?.title,
+                        title: String(localized: "Contents", comment: "A book's contents sheet: title, under the book's name")
+                    ) {
                         place
                     }
 
@@ -716,18 +742,26 @@ struct TrueDevotionContentsSheet: View {
     private var place: some View {
         if let book = library.book,
            let index = book.chapterIndex(id: currentChapterID) {
-            Text("\(index + 1) of \(book.chapters.count)".uppercased())
+            Text(
+                String(
+                    localized: "\(index + 1) of \(book.chapters.count)",
+                    comment: "A book's contents sheet: which chapter the reader is on out of all, shown in small capitals, like 9 OF 13"
+                ).uppercased()
+            )
                 .font(AppFonts.labelFont(9))
                 .tracking(1.5)
                 .foregroundColor(AppColors.textSecondary)
                 .fixedSize()
-                .accessibilityLabel("Chapter \(index + 1) of \(book.chapters.count)")
+                .accessibilityLabel(Text("Chapter \(index + 1) of \(book.chapters.count)", comment: "VoiceOver, a book's contents sheet: which chapter the reader is on"))
         }
     }
 
     private var marksSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            SheetSectionLabel("Your bookmarks · \(viewModel.marks.count)")
+            SheetSectionLabel(String(
+                localized: "Your bookmarks · \(viewModel.marks.count)",
+                comment: "A book's contents sheet: section heading over the bookmarks, then how many there are"
+            ))
 
             ForEach(Array(viewModel.marks.enumerated()), id: \.offset) { _, mark in
                 markRow(mark.chapterID, paragraph: mark.paragraph)
@@ -743,7 +777,10 @@ struct TrueDevotionContentsSheet: View {
                 words: (chapter.paragraphs.first(where: { $0.id == paragraph })?.text).map { text in
                     text.count > 90 ? String(text.prefix(90)) + "\u{2026}" : text
                 },
-                spokenLabel: "Bookmark in \(chapter.title). Returns to that passage."
+                spokenLabel: String(
+                    localized: "Bookmark in \(chapter.title). Returns to that passage.",
+                    comment: "VoiceOver, a book's contents sheet: a bookmark row, naming its chapter"
+                )
             ) {
                 onSelectMark?(chapterID, paragraph)
                 dismiss()
@@ -759,7 +796,7 @@ struct TrueDevotionContentsSheet: View {
                 } else if index == 0, !viewModel.marks.isEmpty {
                     // The marks need a heading to end on where the book
                     // opens on chapters that belong to no part
-                    SheetSectionLabel("Chapters")
+                    SheetSectionLabel(String(localized: "Chapters", comment: "A book's contents sheet: section heading over the list of chapters"))
                 }
 
                 chapterRow(chapter)
@@ -785,7 +822,9 @@ struct TrueDevotionContentsSheet: View {
         } label: {
             SheetRow(
                 chapter.title,
-                accessory: isCurrent ? .label("Here") : .caret,
+                accessory: isCurrent
+                    ? .label(String(localized: "Here", comment: "A book's contents sheet: small capitals on the chapter being read now"))
+                    : .caret,
                 isLit: isCurrent
             )
             // The read-mark, in the gutter: a thin rule, never a checkbox
@@ -800,7 +839,11 @@ struct TrueDevotionContentsSheet: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityLabel(
-            "\(chapter.title)\(isCurrent ? ", where you are" : isCompleted ? ", read" : "")"
+            isCurrent
+                ? Text("\(chapter.title), where you are", comment: "VoiceOver, True Devotion's contents sheet: the chapter being read now")
+                : (isCompleted
+                    ? Text("\(chapter.title), read", comment: "VoiceOver, True Devotion's contents sheet: a chapter already read (read is a past participle)")
+                    : Text(chapter.title))
         )
         .accessibilityAddTraits(isCurrent ? [.isSelected] : [])
     }
