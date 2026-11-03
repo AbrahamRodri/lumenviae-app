@@ -47,12 +47,17 @@ struct ShareTextTests {
     @Test func aSpanishPrayerIsSharedInSpanish() {
         // In a Spanish app the vernacular slot holds the Spanish
         let spanish = BookPrayer(
-            id: "ave_es", title: "El Ave María", latinTitle: "Ave Maria", origin: nil, note: nil,
+            id: "ave_es", title: "El Ave María", latinTitle: "Ave Maria", origin: "Luke 1:28 · 15th century", note: nil,
             english: "Dios te salve, María, llena eres de gracia,", latin: "Ave Maria, gratia plena,"
         )
-        let text = ShareText.prayer(spanish, language: .english, invitation: "Rezado con Lumen Viae:")
+        let text = ShareText.prayer(spanish, language: .english, spanish: true, invitation: "Rezado con Lumen Viae:")
         #expect(text.hasPrefix("El Ave María\n\nDios te salve, María"))
         #expect(text.hasSuffix("Rezado con Lumen Viae:\nhttps://apps.apple.com/app/id6760320749"))
+        // The book's origins are English alone: never under a Spanish prayer,
+        // nor under its Latin in a Spanish app
+        #expect(!text.contains("Luke"))
+        #expect(!ShareText.prayer(spanish, language: .latin, spanish: true).contains("Luke"))
+        #expect(ShareText.prayer(spanish, language: .english, spanish: false).contains("— Luke 1:28"))
     }
 
     @Test func theSpanishCatalogCarriesTheLine() throws {

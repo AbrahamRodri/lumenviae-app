@@ -48,8 +48,13 @@ enum ShareText {
 
     /// A prayer in the language the page sets it in: Latin alone in
     /// Latin, the vernacular alone in the vernacular (Spanish in a Spanish
-    /// app), both, one after the other, in the bilingual modes
-    static func prayer(_ prayer: BookPrayer, language: PrayerLanguage, invitation: String = invitation) -> String {
+    /// app), both, one after the other, in the bilingual modes. In a
+    /// Spanish app the byline is left out: the book's origins are English
+    /// alone, and an English line under a Spanish prayer reads as a slip.
+    static func prayer(
+        _ prayer: BookPrayer, language: PrayerLanguage, spanish: Bool = SpanishContent.isActive,
+        invitation: String = invitation
+    ) -> String {
         let title: String
         let words: String
         switch (language, prayer.latin) {
@@ -66,7 +71,7 @@ enum ShareText {
             title = prayer.title
             words = prayer.english
         }
-        return compose(title: title, body: excerpt(plain(words)), byline: prayer.origin, invitation: invitation)
+        return compose(title: title, body: excerpt(plain(words)), byline: spanish ? nil : prayer.origin, invitation: invitation)
     }
 
     static func compose(title: String, body: String, byline: String?, invitation: String = invitation) -> String {
