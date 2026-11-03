@@ -297,9 +297,15 @@ final class LibraryAudioDownloads {
     /// download there is only the estimate below, and it says so.
     nonisolated static func size(_ bytes: Int64) -> String {
         let megabytes = Double(bytes) / 1_000_000
-        if megabytes < 1 { return "under 1 MB" }
-        if megabytes < 1000 { return "\(Int(megabytes.rounded())) MB" }
-        return String(format: "%.1f GB", megabytes / 1000)
+        if megabytes < 1 {
+            return String(localized: "under 1 MB", comment: "Size of saved recordings, under one megabyte; stands inside a line like Nothing saved yet · about under 1 MB")
+        }
+        if megabytes < 1000 {
+            let whole = Int(megabytes.rounded())
+            return String(localized: "\(whole) MB", comment: "Size of saved recordings in megabytes, like 11 MB")
+        }
+        let gigabytes = String(format: "%.1f", megabytes / 1000)
+        return String(localized: "\(gigabytes) GB", comment: "Size of saved recordings in gigabytes, one decimal, like 1.2 GB")
     }
 
     /// What a set of readings will weigh, from their stated lengths.

@@ -50,14 +50,23 @@ struct TrueDevotionView: View {
                         .padding(.top, 44)
                         .devotionalEntrance(delay: 0.08)
 
-                    heading("Contents", note: "The teaching, part by part")
+                    heading(
+                        String(localized: "Contents", comment: "The Devotion in Summary: section heading over its contents"),
+                        note: String(localized: "The teaching, part by part", comment: "The Devotion in Summary: italic note beside the Contents heading")
+                    )
                     contents
                         .padding(.horizontal, 24)
 
-                    heading("Short Prayers", note: "To say through the day")
+                    heading(
+                        String(localized: "Short Prayers", comment: "The Devotion in Summary: section heading over Montfort's short prayers"),
+                        note: String(localized: "To say through the day", comment: "The Devotion in Summary: italic note beside the Short Prayers heading")
+                    )
                     prayerCards
 
-                    heading("In His Words", note: "St. Louis de Montfort")
+                    heading(
+                        String(localized: "In His Words", comment: "The Devotion in Summary: section heading over Montfort's sayings"),
+                        note: String(localized: "St. Louis de Montfort", comment: "The Devotion in Summary: italic note beside In His Words, the saint's name")
+                    )
                     sayingCards
                         .padding(.bottom, 56)
                 }
@@ -139,7 +148,10 @@ struct TrueDevotionView: View {
 
             VStack(spacing: 6) {
                 // The page's one filled act; it goes on to a page
-                GoldCTAButton(title: "Read the Book", glyph: .chevron) {
+                GoldCTAButton(
+                    title: String(localized: "Read the Book", comment: "The Devotion in Summary: the gold act opening True Devotion to Mary"),
+                    glyph: .chevron
+                ) {
                     router.push(.trueDevotionBook)
                 }
 
@@ -147,7 +159,10 @@ struct TrueDevotionView: View {
                 // tab, so it says so rather than switching silently
                 VStack(spacing: 2) {
                     QuietGoldButton(
-                        title: "Begin the Consecration to Mary",
+                        title: String(
+                            localized: "Begin the Consecration to Mary",
+                            comment: "The Devotion in Summary: quiet button turning to the Consecration tab"
+                        ),
                         leadingIcon: PrayerShortcut.consecration.icon,
                         trailingIcon: "ph-caret-right",
                         size: 10
@@ -239,7 +254,12 @@ struct TrueDevotionView: View {
 
                             // Said in words: a bare figure after a dot
                             // leader reads as a page number
-                            Text("\(reading.parts.count) \(reading.parts.count == 1 ? "part" : "parts")".uppercased())
+                            Text(
+                                String(
+                                    localized: "\(reading.parts.count) parts",
+                                    comment: "The Devotion in Summary, contents: how many parts a reading has, shown in small capitals after a dot leader"
+                                ).uppercased()
+                            )
                                 .font(AppFonts.labelFont(8.5))
                                 .tracking(1.5)
                                 .foregroundColor(AppColors.gold.opacity(0.8))

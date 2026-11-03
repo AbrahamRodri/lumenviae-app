@@ -134,7 +134,10 @@ struct LibraryTransportBar: View {
         .accessibilityElement()
         .accessibilityLabel("Position in this reading")
         .accessibilityValue(
-            "\(LibraryListeningSession.time(displayedTime)) of \(LibraryListeningSession.time(session.duration))"
+            Text(
+                "\(LibraryListeningSession.time(displayedTime)) of \(LibraryListeningSession.time(session.duration))",
+                comment: "VoiceOver value, the reading's scrubber: time heard of the whole, as clock times like 3:05 of 27:40"
+            )
         )
         .accessibilityAdjustableAction { direction in
             guard isReady else { return }
@@ -184,8 +187,11 @@ struct LibraryTransportBar: View {
         .buttonStyle(GoldCTAButtonStyle())
         .disabled(session.isLoading)
         .accessibilityLabel(
-            session.isLoading ? "Loading the reading"
-                              : (session.isPlaying ? "Pause the reading" : "Play the reading")
+            session.isLoading
+                ? Text("Loading the reading", comment: "VoiceOver, the reading's player: the play button while the recording loads")
+                : (session.isPlaying
+                    ? Text("Pause the reading", comment: "VoiceOver, the reading's player: pauses the recording")
+                    : Text("Play the reading", comment: "VoiceOver, the reading's player: plays the recording"))
         )
     }
 
@@ -209,7 +215,11 @@ struct LibraryTransportBar: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(back ? "Back fifteen seconds" : "Forward fifteen seconds")
+        .accessibilityLabel(
+            back
+                ? Text("Back fifteen seconds", comment: "VoiceOver, the reading's player: skips back 15 seconds")
+                : Text("Forward fifteen seconds", comment: "VoiceOver, the reading's player: skips forward 15 seconds")
+        )
     }
 
     @ViewBuilder
@@ -226,7 +236,11 @@ struct LibraryTransportBar: View {
         }
         .buttonStyle(.plain)
         .disabled(!enabled)
-        .accessibilityLabel(back ? "Previous reading" : "Next reading")
+        .accessibilityLabel(
+            back
+                ? Text("Previous reading", comment: "VoiceOver, the reading's player: goes to the previous recording")
+                : Text("Next reading", comment: "VoiceOver, the reading's player: goes to the next recording")
+        )
     }
 }
 
@@ -277,7 +291,10 @@ struct LibrarySpeedSleepRow: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(
-            "Speed and sleep timer. \(Self.rateLabel(session.playbackRate)). \(sleepAccessibilityLabel)"
+            Text(
+                "Speed and sleep timer. \(Self.rateLabel(session.playbackRate)). \(sleepAccessibilityLabel)",
+                comment: "VoiceOver, the reading's player: the speed and sleep row, then the speed (like 1.5×) and the timer's state as a sentence"
+            )
         )
         .sheet(isPresented: $isRaised) {
             LibrarySpeedSleepSheet(session: session)
@@ -292,21 +309,33 @@ struct LibrarySpeedSleepRow: View {
     private var sleepLabel: String? {
         switch session.sleepTimer {
         case .none: return nil
-        case .endOfTrack: return "END"
+        case .endOfTrack:
+            return String(localized: "END", comment: "The reading's player, speed and sleep row: small capitals, the sleep timer stops at the end of this reading")
         case .after:
             guard let left = session.sleepRemaining else { return nil }
             let minutes = (left + 59) / 60
-            return "\(minutes)m"
+            return String(
+                localized: "\(minutes)m",
+                comment: "The reading's player, speed and sleep row: minutes left on the sleep timer, abbreviated, like 25m"
+            )
         }
     }
 
     private var sleepAccessibilityLabel: String {
         switch session.sleepTimer {
-        case .none: return "Sleep timer, off"
-        case .endOfTrack: return "Sleep timer, stopping at the end of this reading"
+        case .none:
+            return String(localized: "Sleep timer, off", comment: "VoiceOver, the reading's player: the sleep timer is not set")
+        case .endOfTrack:
+            return String(
+                localized: "Sleep timer, stopping at the end of this reading",
+                comment: "VoiceOver, the reading's player: the sleep timer stops at the end of this reading"
+            )
         case .after:
             let minutes = ((session.sleepRemaining ?? 0) + 59) / 60
-            return "Sleep timer, \(minutes) minutes left"
+            return String(
+                localized: "Sleep timer, \(minutes) minutes left",
+                comment: "VoiceOver, the reading's player: minutes left on the sleep timer"
+            )
         }
     }
 
@@ -326,10 +355,13 @@ struct LibrarySpeedSleepSheet: View {
 
     var body: some View {
         LibraryTraySheet(
-            title: "Speed and Sleep",
-            note: "The voice fades out rather than stopping suddenly. LibriVox readers are volunteers, and they read at their own pace."
+            title: String(localized: "Speed and Sleep", comment: "The reading's speed and sleep timer sheet: title"),
+            note: String(
+                localized: "The voice fades out rather than stopping suddenly. LibriVox readers are volunteers, and they read at their own pace.",
+                comment: "The reading's speed and sleep timer sheet: note at its foot"
+            )
         ) {
-            SheetSectionLabel("Speed")
+            SheetSectionLabel(String(localized: "Speed", comment: "The reading's speed and sleep timer sheet: section heading over the speeds"))
 
             HStack(spacing: 10) {
                 ForEach(AudioService.supportedRates, id: \.self) { rate in
@@ -338,22 +370,27 @@ struct LibrarySpeedSleepSheet: View {
             }
             .padding(.horizontal, SheetMetrics.gutter)
 
-            SheetSectionLabel("Sleep timer")
+            SheetSectionLabel(String(localized: "Sleep timer", comment: "The reading's speed and sleep timer sheet: section heading over the timer choices"))
 
             LibraryTrayRow(
-                title: "At the end of this reading",
+                title: String(localized: "At the end of this reading", comment: "The reading's sleep timer: stops at the end of the recording"),
                 isOn: session.sleepTimer == .endOfTrack
             ) { session.setSleepTimer(.endOfTrack); dismiss() }
 
             ForEach([15, 30, 60], id: \.self) { minutes in
                 LibraryTrayRow(
-                    title: minutes == 60 ? "In an hour" : "In \(minutes) minutes",
+                    title: minutes == 60
+                        ? String(localized: "In an hour", comment: "The reading's sleep timer: stops in an hour")
+                        : String(localized: "In \(minutes) minutes", comment: "The reading's sleep timer: stops in a number of minutes (15 or 30)"),
                     isOn: session.sleepTimer == .after(minutes: minutes)
                 ) { session.setSleepTimer(.after(minutes: minutes)); dismiss() }
             }
 
             if session.sleepTimer != nil {
-                LibraryTrayRow(title: "No timer", isOn: false) {
+                LibraryTrayRow(
+                    title: String(localized: "No timer", comment: "The reading's sleep timer: turns the timer off"),
+                    isOn: false
+                ) {
                     session.setSleepTimer(nil)
                     dismiss()
                 }
@@ -388,7 +425,7 @@ struct LibrarySpeedSleepSheet: View {
                 .contentShape(Capsule())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Reading speed \(LibrarySpeedSleepRow.rateLabel(rate))")
+        .accessibilityLabel(Text("Reading speed \(LibrarySpeedSleepRow.rateLabel(rate))", comment: "VoiceOver, the reading's speed pills: a speed, like 1.5×"))
         .accessibilityAddTraits(isOn ? [.isSelected] : [])
     }
 }
@@ -471,7 +508,7 @@ struct LibraryMiniPlayer: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("The reading: \(title). Opens the player.")
+            .accessibilityLabel(Text("The reading: \(title). Opens the player.", comment: "VoiceOver, the reading's mini player: the recording's title"))
 
             Button(action: { session.skip(by: -15) }) {
                 ZStack {
@@ -498,7 +535,11 @@ struct LibraryMiniPlayer: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(session.isPlaying ? "Pause" : "Play")
+            .accessibilityLabel(
+                session.isPlaying
+                    ? Text("Pause", comment: "VoiceOver, the reading's mini player: pauses")
+                    : Text("Play", comment: "VoiceOver, the reading's mini player: plays")
+            )
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
@@ -543,8 +584,9 @@ struct LibraryPlayerSheet: View {
             // The reading sounding is the sheet's title; the book stands
             // beside its cover beneath, so neither name is set twice.
             SheetHeader(
-                kicker: "Listening to this chapter",
-                title: section?.title ?? session.info?.title ?? "The reading"
+                kicker: String(localized: "Listening to this chapter", comment: "The reading's player sheet: kicker over the recording's title"),
+                title: section?.title ?? session.info?.title
+                    ?? String(localized: "The reading", comment: "The reading's player sheet: title of a recording that has no title of its own")
             )
 
             VStack(alignment: .leading, spacing: 0) {

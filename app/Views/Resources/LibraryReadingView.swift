@@ -314,19 +314,19 @@ struct LibraryReadingView: View {
         if entry.feast != nil || !prayerDoors.isEmpty || !pageDoors.isEmpty {
             VStack(spacing: 0) {
                 if let feast = entry.feast {
-                    SetSection(label: "Feast day") {
+                    SetSection(label: String(localized: "Feast day", comment: "Library reading: section heading over the feast the reading belongs to")) {
                         feastBlock(feast)
                     }
                 }
 
                 if !prayerDoors.isEmpty {
-                    SetSection(label: "Pray") {
+                    SetSection(label: String(localized: "Pray", comment: "Library reading: section heading over the doors that pray what the reading is about")) {
                         doorList(prayerDoors)
                     }
                 }
 
                 if !pageDoors.isEmpty {
-                    SetSection(label: "Read more") {
+                    SetSection(label: String(localized: "Read more", comment: "Library reading: section heading over the doors to other readings and pages")) {
                         doorList(pageDoors)
                     }
                 }
@@ -352,7 +352,14 @@ struct LibraryReadingView: View {
                 }
             }
 
-            Text(feast.keptBy.map { "\(feast.name) · celebrated in \($0)" } ?? feast.name)
+            Text(
+                feast.keptBy.map { place in
+                    String(
+                        localized: "\(feast.name) · celebrated in \(place)",
+                        comment: "Library reading, Feast day: the feast's name, then the country or people that keep it, like Our Lady of Guadalupe · celebrated in Mexico"
+                    )
+                } ?? feast.name
+            )
                 .font(AppFonts.readingItalicFont(15))
                 .foregroundColor(AppColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -370,7 +377,9 @@ struct LibraryReadingView: View {
                 // is let into it rather than added to it — as the door rows
                 // below do
                 QuietGoldButton(
-                    title: isToday ? "Read Today's Mass" : "Read the Day's Mass",
+                    title: isToday
+                        ? String(localized: "Read Today's Mass", comment: "Library reading, Feast day: quiet button opening today's Mass")
+                        : String(localized: "Read the Day's Mass", comment: "Library reading, Feast day: quiet button opening the feast day's Mass"),
                     trailingIcon: "ph-caret-right",
                     horizontalPadding: 0
                 ) {
@@ -460,13 +469,13 @@ struct LibraryReadingView: View {
 
             HStack(alignment: .top, spacing: 16) {
                 if let previous {
-                    stepButton(previous, label: "Previous", leading: true)
+                    stepButton(previous, label: String(localized: "Previous", comment: "Library reading, the foot: step to the previous reading on the shelf; its title follows"), leading: true)
                 } else {
                     Spacer()
                 }
 
                 if let next {
-                    stepButton(next, label: "Next", leading: false)
+                    stepButton(next, label: String(localized: "Next", comment: "Library reading, the foot: step to the next reading on the shelf; its title follows"), leading: false)
                 } else {
                     Spacer()
                 }

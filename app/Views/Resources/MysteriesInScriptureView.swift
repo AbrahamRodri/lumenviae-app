@@ -157,7 +157,7 @@ struct MysteriesInScriptureView: View {
                         } label: {
                             VStack(spacing: 8) {
                                 HStack(spacing: 5) {
-                                    Text(candidate == .sevenSorrows ? "Seven Sorrows" : candidate.displayName)
+                                    Text(candidate.displayName)
                                         .font(AppFonts.titleFont(15))
                                         .foregroundColor(chosen ? AppColors.goldLight : AppColors.cream.opacity(0.6))
 
@@ -179,7 +179,11 @@ struct MysteriesInScriptureView: View {
                         }
                         .buttonStyle(.plain)
                         .id(candidate)
-                        .accessibilityLabel(candidate.devotionTitle + (candidate == today ? ", today's" : ""))
+                        .accessibilityLabel(
+                            candidate == today
+                                ? Text("\(candidate.devotionTitle), today's")
+                                : Text(candidate.devotionTitle)
+                        )
                         .accessibilityAddTraits(chosen ? [.isSelected, .isButton] : .isButton)
                     }
                 }
@@ -251,7 +255,7 @@ struct MysteriesInScriptureView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("\(mystery.ordinalName) \(category == .sevenSorrows ? "Sorrow" : "Mystery")".uppercased())
+                        Text(Self.cardKicker(mystery, in: category))
                             .font(AppFonts.labelFont(8.5))
                             .tracking(1.8)
                             .foregroundColor(AppColors.gold.opacity(0.8))
@@ -333,6 +337,21 @@ struct MysteriesInScriptureView: View {
         .accessibilityAddTraits(.isButton)
     }
 
+    /// The card's kicker, "FIRST MYSTERY" or, in the chaplet, "FIRST
+    /// SORROW": one phrase per case, so a translation sets its own order
+    private static func cardKicker(_ mystery: Mystery, in category: MysteryCategory) -> String {
+        let ordinal = mystery.ordinalName
+        return category == .sevenSorrows
+            ? String(
+                localized: "\(ordinal) Sorrow",
+                comment: "In Scripture, a sorrow's card: small capitals kicker over its name; the ordinal is a word like First … Seventh"
+            ).uppercased()
+            : String(
+                localized: "\(ordinal) Mystery",
+                comment: "In Scripture, a mystery's card: small capitals kicker over its name; the ordinal is a word like First … Fifth"
+            ).uppercased()
+    }
+
     // MARK: - How to Read
 
     private var howToRead: some View {
@@ -343,9 +362,21 @@ struct MysteriesInScriptureView: View {
                 .foregroundColor(AppColors.gold.opacity(0.9))
 
             HStack(alignment: .top, spacing: 12) {
-                readStep("I", "Read", "the verse slowly, and let one phrase settle")
-                readStep("II", "Picture", "the scene, and stand in it beside Mary")
-                readStep("III", "Ask", "for its grace, then begin the decade")
+                readStep(
+                    "I",
+                    String(localized: "Read", comment: "In Scripture, Before each decade, step I: the verb that begins the step's phrase, set in brighter type; the rest follows it, the verse slowly, and let one phrase settle"),
+                    String(localized: "the verse slowly, and let one phrase settle", comment: "In Scripture, Before each decade, step I: the rest of the phrase after the verb Read, lower case")
+                )
+                readStep(
+                    "II",
+                    String(localized: "Picture", comment: "In Scripture, Before each decade, step II: the verb that begins the step's phrase, set in brighter type; the rest follows it, the scene, and stand in it beside Mary"),
+                    String(localized: "the scene, and stand in it beside Mary", comment: "In Scripture, Before each decade, step II: the rest of the phrase after the verb Picture, lower case")
+                )
+                readStep(
+                    "III",
+                    String(localized: "Ask", comment: "In Scripture, Before each decade, step III: the verb that begins the step's phrase, set in brighter type; the rest follows it, for its grace, then begin the decade"),
+                    String(localized: "for its grace, then begin the decade", comment: "In Scripture, Before each decade, step III: the rest of the phrase after the verb Ask, lower case")
+                )
             }
 
             // Said once, here, for every card above: what ASK FOR names
@@ -421,12 +452,19 @@ struct MysteriesInScriptureView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             // Named as the passage page names it: one act, one name
-            GoldCTAButton(title: "Pray the Scriptural Rosary", glyph: .play) {
+            GoldCTAButton(
+                title: String(localized: "Pray the Scriptural Rosary", comment: "In Scripture, foot of a set's page: the gold act, praying these mysteries with a verse on every bead"),
+                glyph: .play
+            ) {
                 router.push(.scripturalRosaryPrayer(ScripturalRosaryLaunch(category: category)))
             }
             .padding(.top, 4)
 
-            QuietGoldButton(title: "Or with a meditation", trailingIcon: "ph-caret-right", size: 10) {
+            QuietGoldButton(
+                title: String(localized: "Or with a meditation", comment: "In Scripture, under Pray the Scriptural Rosary: quiet link to these mysteries' meditation sets"),
+                trailingIcon: "ph-caret-right",
+                size: 10
+            ) {
                 router.navigateToMeditationSelection(category: category)
             }
         }
@@ -513,7 +551,14 @@ struct MysteryPassageView: View {
                 .id(Self.topAnchor)
 
             VStack(spacing: 16) {
-                Text("THE \(mystery.ordinalName.uppercased()) \(category == .sevenSorrows ? "SORROW" : "\(category.displayName.uppercased()) MYSTERY")")
+                Text(
+                    category == .sevenSorrows
+                        ? String(
+                            localized: "The \(mystery.ordinalName) Sorrow",
+                            comment: "In Scripture, a sorrow's passage page: small capitals kicker over its name; the ordinal is a word like First … Seventh"
+                        ).uppercased()
+                        : category.mysteryLabel(ordinal: mystery.order).uppercased()
+                )
                     .font(AppFonts.labelFont(9))
                     .tracking(2.4)
                     .foregroundColor(AppColors.gold)
@@ -579,7 +624,7 @@ struct MysteryPassageView: View {
 
             VStack(spacing: 0) {
                 if let fruit = MysteryData.traditionalFruits[key] {
-                    SetSection(label: "Ask for") {
+                    SetSection(label: String(localized: "Ask for", comment: "In Scripture, a passage page: section heading over the mystery's fruit, the grace to ask for")) {
                         Text(fruit)
                             .font(AppFonts.readingFont(16))
                             .foregroundColor(AppColors.goldLight)
@@ -587,15 +632,23 @@ struct MysteryPassageView: View {
                     }
                 }
 
-                SetSection(label: "Pray") {
+                SetSection(label: String(localized: "Pray", comment: "In Scripture, a passage page: section heading over the doors that pray these mysteries")) {
                     VStack(alignment: .leading, spacing: 0) {
                         // Straight to prayer in the set being read, as the
                         // list page's act does, and by the same name — this
                         // once opened the title page on today's set
-                        LedgerDoorRow(title: "Pray the Scriptural Rosary", note: "These verses, one on every bead", icon: "ch-bible") {
+                        LedgerDoorRow(
+                            title: String(localized: "Pray the Scriptural Rosary", comment: "In Scripture, a passage page: door praying these mysteries with a verse on every bead"),
+                            note: String(localized: "These verses, one on every bead", comment: "In Scripture, a passage page: line under Pray the Scriptural Rosary"),
+                            icon: "ch-bible"
+                        ) {
                             router.push(.scripturalRosaryPrayer(ScripturalRosaryLaunch(category: category)))
                         }
-                        LedgerDoorRow(title: category.devotionTitle, note: "Meditations on these mysteries", icon: "lv-rosary") {
+                        LedgerDoorRow(
+                            title: category.devotionTitle,
+                            note: String(localized: "Meditations on these mysteries", comment: "In Scripture, a passage page: line under the set's name, a door to its meditation sets"),
+                            icon: "lv-rosary"
+                        ) {
                             router.navigateToMeditationSelection(category: category)
                         }
                     }
@@ -682,13 +735,13 @@ struct MysteryPassageView: View {
 
             HStack(alignment: .top, spacing: 16) {
                 if let previous {
-                    stepButton(previous, label: "Previous", leading: true)
+                    stepButton(previous, label: String(localized: "Previous", comment: "In Scripture, foot of a passage page: step to the previous mystery; VoiceOver adds its name"), leading: true)
                 } else {
                     Spacer()
                 }
 
                 if let next {
-                    stepButton(next, label: "Next", leading: false)
+                    stepButton(next, label: String(localized: "Next", comment: "In Scripture, foot of a passage page: step to the next mystery; VoiceOver adds its name"), leading: false)
                 } else {
                     Spacer()
                 }

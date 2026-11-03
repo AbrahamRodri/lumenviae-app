@@ -364,7 +364,7 @@ struct SheetToggleRow: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(title)
-        .accessibilityValue(isOn ? "On" : "Off")
+        .accessibilityValue(isOn ? Text("On") : Text("Off"))
         .accessibilityHint(detail ?? "")
         .accessibilityAddTraits(.isToggle)
     }
@@ -375,7 +375,7 @@ struct SheetToggleRow: View {
 /// owns.
 struct SheetSizeSlider: View {
 
-    var label: String = "Text size"
+    var label: String = String(localized: "Text size", comment: "Reading options sheets: heading over the text size slider")
     @Binding var scale: Double
 
     var body: some View {

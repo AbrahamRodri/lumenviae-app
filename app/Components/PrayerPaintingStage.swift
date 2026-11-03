@@ -62,8 +62,14 @@ struct PrayerPaintingStage: View {
     /// closing prayers are said aloud
     static func tapHint(chromeHidden: Bool) -> String {
         chromeHidden
-            ? "Double-tap to bring back the controls"
-            : "Double-tap to hide the controls and see the whole picture"
+            ? String(
+                localized: "Double-tap to bring back the controls",
+                comment: "VoiceOver hint on the prayer screen's painting or pendant, while the controls are put away"
+            )
+            : String(
+                localized: "Double-tap to hide the controls and see the whole picture",
+                comment: "VoiceOver hint on the prayer screen's painting or pendant, while the controls are showing"
+            )
     }
 
     var body: some View {
@@ -113,7 +119,13 @@ struct PrayerPaintingStage: View {
         .animation(Motion.decadeTurn, value: paintingID)
         .contentShape(Rectangle())
         .onTapGesture(perform: onTap)
-        .modifier(StageTapAccessibility(label: "The mystery's painting", chromeHidden: chromeHidden, action: onTap))
+        .modifier(
+            StageTapAccessibility(
+                label: String(localized: "The mystery's painting", comment: "VoiceOver label for the painting behind the prayer screen"),
+                chromeHidden: chromeHidden,
+                action: onTap
+            )
+        )
     }
 
     /// Darker at the head, where the chrome is, and at the foot, where
@@ -182,7 +194,13 @@ struct PrayerPaintingStage: View {
         .animation(Motion.decadeTurn, value: paintingID)
         .contentShape(Rectangle())
         .onTapGesture(perform: onTap)
-        .modifier(StageTapAccessibility(label: "The mystery's painting", chromeHidden: chromeHidden, action: onTap))
+        .modifier(
+            StageTapAccessibility(
+                label: String(localized: "The mystery's painting", comment: "VoiceOver label for the painting behind the prayer screen"),
+                chromeHidden: chromeHidden,
+                action: onTap
+            )
+        )
     }
 
     /// The painting filling the frame, cropped around its focal point —

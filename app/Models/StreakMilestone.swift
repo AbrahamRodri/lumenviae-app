@@ -41,11 +41,19 @@ struct StreakMilestone: Identifiable, Equatable {
 
     /// The milestone as it is named, led by its number: "9 days". The
     /// blessing beneath it says what the Church calls it, and why.
-    var name: String { "\(days) days" }
+    var name: String {
+        String(localized: "\(days) days", comment: "Streak milestone: its name, the number of days prayed in a row, like 9 days")
+    }
 
     /// "9 days · a novena": the number, then the Church's name for it, for
     /// a line that has no blessing beneath it to explain
-    var title: String { meaning.map { "\(name) · \($0)" } ?? name }
+    var title: String {
+        guard let meaning else { return name }
+        return String(
+            localized: "\(days) days · \(meaning)",
+            comment: "Streak milestone: the number of days prayed in a row, then what the Church calls a run of that length (a phrase like a novena), like 9 days · a novena"
+        )
+    }
 
     // MARK: - All Milestones
 
@@ -55,73 +63,109 @@ struct StreakMilestone: Identifiable, Equatable {
             days: 3,
             meaning: nil,
             icon: "ph-number-circle-three",
-            blessing: "Three days in a row: what the Church calls a triduum, three days of prayer before a feast."
+            blessing: String(
+                localized: "Three days in a row: what the Church calls a triduum, three days of prayer before a feast.",
+                comment: "Streak milestone: the line of blessing shown when it is reached, saying what the run of days means"
+            )
         ),
         StreakMilestone(
             days: 7,
-            meaning: "a faithful week",
+            meaning: String(localized: "a faithful week", comment: "Streak milestone: what the Church calls a run of this many days of prayer, lower case, shown after the count, like 9 days · a novena"),
             icon: "ph-number-circle-seven",
-            blessing: "Seven days in a row: a whole week of the Rosary."
+            blessing: String(
+                localized: "Seven days in a row: a whole week of the Rosary.",
+                comment: "Streak milestone: the line of blessing shown when it is reached, saying what the run of days means"
+            )
         ),
         StreakMilestone(
             days: 9,
-            meaning: "a novena",
+            meaning: String(localized: "a novena", comment: "Streak milestone: what the Church calls a run of this many days of prayer, lower case, shown after the count, like 9 days · a novena"),
             icon: "ph-number-circle-nine",
-            blessing: "Nine days in a row: a novena, as the Apostles prayed for nine days before Pentecost."
+            blessing: String(
+                localized: "Nine days in a row: a novena, as the Apostles prayed for nine days before Pentecost.",
+                comment: "Streak milestone: the line of blessing shown when it is reached, saying what the run of days means"
+            )
         ),
         StreakMilestone(
             days: 33,
             meaning: nil,
             icon: "ch-consecration",
-            blessing: "Thirty-three days, as long as St. Louis de Montfort's Consecration to Mary."
+            blessing: String(
+                localized: "Thirty-three days, as long as St. Louis de Montfort's Consecration to Mary.",
+                comment: "Streak milestone: the line of blessing shown when it is reached, saying what the run of days means"
+            )
         ),
         StreakMilestone(
             days: 40,
-            meaning: "the length of Lent",
+            meaning: String(localized: "the length of Lent", comment: "Streak milestone: what the Church calls a run of this many days of prayer, lower case, shown after the count, like 9 days · a novena"),
             icon: "lv-crown-of-thorns",
-            blessing: "Forty days in a row: the length of Lent, and of the Lord's fast in the desert."
+            blessing: String(
+                localized: "Forty days in a row: the length of Lent, and of the Lord's fast in the desert.",
+                comment: "Streak milestone: the line of blessing shown when it is reached, saying what the run of days means"
+            )
         ),
         StreakMilestone(
             days: 50,
-            meaning: "Easter to Pentecost",
+            meaning: String(localized: "Easter to Pentecost", comment: "Streak milestone: what the Church calls a run of this many days of prayer, lower case, shown after the count, like 9 days · a novena"),
             icon: "ch-dove",
-            blessing: "Fifty days in a row: from Easter to Pentecost, when the Holy Ghost came down on the Apostles."
+            blessing: String(
+                localized: "Fifty days in a row: from Easter to Pentecost, when the Holy Ghost came down on the Apostles.",
+                comment: "Streak milestone: the line of blessing shown when it is reached, saying what the run of days means"
+            )
         ),
         StreakMilestone(
             days: 54,
-            meaning: "a Rosary novena",
+            meaning: String(localized: "a Rosary novena", comment: "Streak milestone: what the Church calls a run of this many days of prayer, lower case, shown after the count, like 9 days · a novena"),
             icon: "lv-rosary",
-            blessing: "54 days in a row, as long as the Rosary novena: 27 days asking, then 27 giving thanks."
+            blessing: String(
+                localized: "54 days in a row, as long as the Rosary novena: 27 days asking, then 27 giving thanks.",
+                comment: "Streak milestone: the line of blessing shown when it is reached, saying what the run of days means"
+            )
         ),
         StreakMilestone(
             days: 100,
             meaning: nil,
             icon: "lv-wheat",
-            blessing: "Some seed fell on good soil and brought forth fruit a hundredfold."
+            blessing: String(
+                localized: "Some seed fell on good soil and brought forth fruit a hundredfold.",
+                comment: "Streak milestone: the line of blessing shown when it is reached, saying what the run of days means"
+            )
         ),
         StreakMilestone(
             days: 150,
-            meaning: "Our Lady's Psalter",
+            meaning: String(localized: "Our Lady's Psalter", comment: "Streak milestone: what the Church calls a run of this many days of prayer, lower case, shown after the count, like 9 days · a novena"),
             icon: "ch-lily",
-            blessing: "A hundred and fifty days in a row: one for each Hail Mary of the full Rosary, Our Lady's Psalter."
+            blessing: String(
+                localized: "A hundred and fifty days in a row: one for each Hail Mary of the full Rosary, Our Lady's Psalter.",
+                comment: "Streak milestone: the line of blessing shown when it is reached, saying what the run of days means"
+            )
         ),
         StreakMilestone(
             days: 365,
-            meaning: "a year of grace",
+            meaning: String(localized: "a year of grace", comment: "Streak milestone: what the Church calls a run of this many days of prayer, lower case, shown after the count, like 9 days · a novena"),
             icon: "ch-chi-rho",
-            blessing: "A full year of daily prayer, for the greater glory of God."
+            blessing: String(
+                localized: "A full year of daily prayer, for the greater glory of God.",
+                comment: "Streak milestone: the line of blessing shown when it is reached, saying what the run of days means"
+            )
         ),
         StreakMilestone(
             days: 500,
             meaning: nil,
             icon: "ch-candle",
-            blessing: "Five hundred days in a row: a candle kept burning before her, day after day."
+            blessing: String(
+                localized: "Five hundred days in a row: a candle kept burning before her, day after day.",
+                comment: "Streak milestone: the line of blessing shown when it is reached, saying what the run of days means"
+            )
         ),
         StreakMilestone(
             days: 1000,
             meaning: nil,
             icon: "lv-hourglass",
-            blessing: "A thousand days in a row. A thousand years in His sight are as yesterday, which is past."
+            blessing: String(
+                localized: "A thousand days in a row. A thousand years in His sight are as yesterday, which is past.",
+                comment: "Streak milestone: the line of blessing shown when it is reached, saying what the run of days means"
+            )
         )
     ]
 

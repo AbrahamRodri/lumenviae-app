@@ -670,4 +670,83 @@ enum ChantLibraryData {
     static func currentWording(of words: String) -> String {
         formerWords[words] ?? words
     }
+
+    /// Words as they are shown: an occasion's title or red note, kept in
+    /// English in the occasions and in the sets kept from them (where the
+    /// shelf compares them), is shown in the reader's language. Anything
+    /// else, the reader's own words, is shown as written. Read for display
+    /// only, never to compare or store.
+    static func displayWording(of words: String) -> String {
+        switch currentWording(of: words) {
+        case "Adoration and Blessing":
+            return String(localized: "Adoration and Blessing", comment: "Chant library: the name of a set of chants for an occasion, on its card, its page, the mini player and the Lock Screen (Benediction: hymns before the Host, then the priest's blessing)")
+        case "A Visit to Jesus in Church":
+            return String(localized: "A Visit to Jesus in Church", comment: "Chant library: the name of a set of chants for an occasion, on its card, its page, the mini player and the Lock Screen (quiet time before the tabernacle)")
+        case "A Sung Rosary":
+            return String(localized: "A Sung Rosary", comment: "Chant library: the name of a set of chants for an occasion, on its card, its page, the mini player and the Lock Screen (every prayer of the Rosary sung in Latin)")
+        case "Before Bed":
+            return String(localized: "Before Bed", comment: "Chant library: the name of a set of chants for an occasion, on its card, its page, the mini player and the Lock Screen")
+        case "Before Work or Study":
+            return String(localized: "Before Work or Study", comment: "Chant library: the name of a set of chants for an occasion, on its card, its page, the mini player and the Lock Screen")
+        case "For Those Who Have Died":
+            return String(localized: "For Those Who Have Died", comment: "Chant library: the name of a set of chants for an occasion, on its card, its page, the mini player and the Lock Screen (chants for the dead)")
+        case "The Host is placed on the altar for all to see. Kneel.":
+            return String(localized: "The Host is placed on the altar for all to see. Kneel.", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; Adoration and Blessing, before the first hymn")
+        case "The priest offers incense.":
+            return String(localized: "The priest offers incense.", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; Adoration and Blessing")
+        case "The priest blesses everyone with the Host. Then pray together:":
+            return String(localized: "The priest blesses everyone with the Host. Then pray together:", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; Adoration and Blessing, before the Divine Praises, which follow the colon")
+        case "The Host is put back in the tabernacle, where it is kept in church.":
+            return String(localized: "The Host is put back in the tabernacle, where it is kept in church.", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; Adoration and Blessing, before the last chant")
+        case "Kneel before the tabernacle, where the Host is kept.":
+            return String(localized: "Kneel before the tabernacle, where the Host is kept.", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; A Visit to Jesus in Church")
+        case "Greet Our Lord, hidden there.":
+            return String(localized: "Greet Our Lord, hidden there.", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; A Visit to Jesus in Church, 'there' is the tabernacle")
+        case "Before you go, give thanks.":
+            return String(localized: "Before you go, give thanks.", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; A Visit to Jesus in Church, before the last chant")
+        case "On the crucifix: make the Sign of the Cross, then sing the Creed.":
+            return String(localized: "On the crucifix: make the Sign of the Cross, then sing the Creed.", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; A Sung Rosary, at its start")
+        case "On the large bead, then the three small beads, for faith, hope and charity.":
+            return String(localized: "On the large bead, then the three small beads, for faith, hope and charity.", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; A Sung Rosary: the Our Father, three Hail Marys and the Glory Be follow")
+        case "Name each mystery, then pray its decade of ten Hail Marys. Five times.":
+            return String(localized: "Name each mystery, then pray its decade of ten Hail Marys. Five times.", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; A Sung Rosary, before the decades")
+        case "After the fifth decade.":
+            return String(localized: "After the fifth decade.", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; A Sung Rosary, before the closing chants")
+        case "Put yourself under her protection for the night.":
+            return String(localized: "Put yourself under her protection for the night.", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; Before Bed, 'her' is Mary")
+        case "Then tonight's song to Mary.":
+            return String(localized: "Then tonight's song to Mary.", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; Before Bed: the seasonal antiphon of Our Lady follows")
+        case "Before you begin, ask the Holy Spirit to come.":
+            return String(localized: "Before you begin, ask the Holy Spirit to come.", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; Before Work or Study")
+        case "Then the hymn sung at the start of any work.":
+            return String(localized: "Then the hymn sung at the start of any work.", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; Before Work or Study: the Veni Creator follows")
+        case "The poem sung at the funeral Mass.":
+            return String(localized: "The poem sung at the funeral Mass.", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; For Those Who Have Died: the Dies Irae, a sequence, follows")
+        case "Then ask all the saints to pray for them.":
+            return String(localized: "Then ask all the saints to pray for them.", comment: "Chant library, a set of chants for an occasion: a red note between chants saying what happens or what to do; For Those Who Have Died: the Litany of the Saints follows")
+        case "Silent prayer":
+            return String(localized: "Silent prayer", comment: "A sung set of the reader's own: what a pause with no note of its own is called, a time of silent prayer between chants; red, also the placeholder of the pause's note field")
+        default:
+            return words
+        }
+    }
+}
+
+// MARK: - Shown words
+
+extension ChantOccasion {
+    /// The occasion's name as shown; `title` stays the English the shelf
+    /// compares and stores
+    var shownTitle: String { ChantLibraryData.displayWording(of: title) }
+}
+
+extension ChantSet {
+    /// The set's name as shown: a set kept from an occasion is shown in the
+    /// reader's language; `name` stays as stored
+    var shownName: String { ChantLibraryData.displayWording(of: name) }
+}
+
+extension ChantQueue {
+    /// The set's name as shown; `title` stays what the player compares
+    var shownTitle: String { ChantLibraryData.displayWording(of: title) }
 }

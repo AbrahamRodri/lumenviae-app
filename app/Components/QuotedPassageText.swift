@@ -58,9 +58,13 @@ struct QuotedPassageText: View {
     }
 
     private var spoken: String {
-        var parts = ["Quotation: \(passage)"]
-        if let citation, !citation.isEmpty { parts.append(citation) }
-        return parts.joined(separator: ". ")
+        if let citation, !citation.isEmpty {
+            return String(
+                localized: "Quotation: \(passage). \(citation)",
+                comment: "VoiceOver for a passage quoted from a book: the passage, then where it is from"
+            )
+        }
+        return String(localized: "Quotation: \(passage)", comment: "VoiceOver for a passage quoted from a book, with no citation")
     }
 }
 

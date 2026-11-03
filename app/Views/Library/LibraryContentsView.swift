@@ -212,8 +212,28 @@ struct LibraryContentsLedger: View {
             sheetPartLabel(run, isOpen: isOpen, holdsCurrent: holdsCurrent)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(run.title ?? "Part"), \(run.chapters.count) chapters")
-        .accessibilityHint(isOpen ? "Closes this part's chapters" : "Opens this part's chapters")
+        .accessibilityLabel(partSpokenLabel(run))
+        .accessibilityHint(
+            isOpen
+                ? Text("Closes this part's chapters", comment: "VoiceOver hint, a book's contents sheet: folds a part's chapter list")
+                : Text("Opens this part's chapters", comment: "VoiceOver hint, a book's contents sheet: unfolds a part's chapter list")
+        )
+    }
+
+    /// "The Third Book, 59 chapters", or "Part, 3 chapters" for a part
+    /// the edition prints no name for.
+    private func partSpokenLabel(_ run: LibraryPartRun) -> String {
+        let count = run.chapters.count
+        if let title = run.title {
+            return String(
+                localized: "\(title), \(count) chapters",
+                comment: "VoiceOver, a book's contents sheet: a part's name, then how many chapters it holds"
+            )
+        }
+        return String(
+            localized: "Part, \(count) chapters",
+            comment: "VoiceOver, a book's contents sheet: a part with no printed name, then how many chapters it holds"
+        )
     }
 
     /// The sheet's part heading: a `SheetSectionLabel` that still folds,
@@ -418,7 +438,10 @@ struct LibraryChapterRow: View {
                             // Only where the voice was left part-way: the
                             // exact place it rests, in the player's own hand.
                             if let resting = listening?.resting {
-                                Text("\(LibraryListeningSession.time(resting)) in")
+                                Text(
+                                    "\(LibraryListeningSession.time(resting)) in",
+                                    comment: "A book's contents sheet: where the recording was left part-way, a clock time like 12:05 in"
+                                )
                                     .font(AppFonts.italicFont(12))
                                     .foregroundColor(AppColors.goldLight.opacity(0.85))
                             }
@@ -500,7 +523,11 @@ struct LibraryChapterRow: View {
                             sheetMarkRibbon
                         }
 
-                        SheetRowAccessoryView(accessory: isCurrent ? .label("Here") : .caret)
+                        SheetRowAccessoryView(
+                            accessory: isCurrent
+                                ? .label(String(localized: "Here", comment: "A book's contents sheet: small capitals on the chapter being read now"))
+                                : .caret
+                        )
                     }
                 }
 
@@ -642,8 +669,8 @@ struct LibraryChapterRow: View {
         .buttonStyle(.plain)
         .accessibilityLabel(
             sounding
-                ? "Pause the reading of \(chapter.displayTitle)"
-                : "Hear \(chapter.displayTitle) read"
+                ? Text("Pause the reading of \(chapter.displayTitle)", comment: "VoiceOver, a book's contents sheet: pauses a chapter's recording, naming the chapter")
+                : Text("Hear \(chapter.displayTitle) read", comment: "VoiceOver, a book's contents sheet: plays a chapter's recording, naming the chapter")
         )
     }
 
@@ -651,14 +678,26 @@ struct LibraryChapterRow: View {
         var parts: [String] = []
         if hasDistinctTitle { parts.append(chapter.heading) }
         parts.append(chapter.displayTitle)
-        if isCurrent { parts.append("where you are") }
-        else if isFinished { parts.append("read") }
-        if markCount > 0 { parts.append("\(markCount) bookmarks") }
+        if isCurrent {
+            parts.append(String(localized: "where you are", comment: "VoiceOver, a book's contents sheet: said after the chapter being read now; a separate phrase"))
+        } else if isFinished {
+            parts.append(String(localized: "read", comment: "VoiceOver, a book's contents sheet: said after a chapter already read (past participle); a separate phrase"))
+        }
+        if markCount > 0 {
+            parts.append(String(
+                localized: "\(markCount) bookmarks",
+                comment: "VoiceOver, a book's contents sheet: how many bookmarks a chapter holds; a separate phrase"
+            ))
+        }
         if let seconds = listening?.playtimeSeconds {
             parts.append(ReadingSpans.chipMinutes(seconds).lowercased())
         }
         if let resting = listening?.resting {
-            parts.append("\(LibraryListeningSession.elapsedLabel(resting)) in")
+            let elapsed = LibraryListeningSession.elapsedLabel(resting)
+            parts.append(String(
+                localized: "\(elapsed) in",
+                comment: "VoiceOver, a book's contents sheet: how far into the recording the reader left off, like 12 min in"
+            ))
         }
         return parts.joined(separator: ". ")
     }
@@ -738,7 +777,10 @@ struct LibraryContentsSheet: View {
         ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    SheetHeader(kicker: info.title, title: "Contents") {
+                    SheetHeader(
+                        kicker: info.title,
+                        title: String(localized: "Contents", comment: "A book's contents sheet: title, under the book's name")
+                    ) {
                         place
                     }
 
@@ -756,7 +798,7 @@ struct LibraryContentsSheet: View {
                             // A book with no parts has no heading of its
                             // own to end the marks on
                             if runs.count == 1 {
-                                SheetSectionLabel("Chapters")
+                                SheetSectionLabel(String(localized: "Chapters", comment: "A book's contents sheet: section heading over the list of chapters"))
                             }
                         }
 
@@ -795,12 +837,17 @@ struct LibraryContentsSheet: View {
 
     /// Where the reader stands in the book, level with the kicker
     private var place: some View {
-        Text("\(currentIndex + 1) of \(book.chapters.count)".uppercased())
+        Text(
+            String(
+                localized: "\(currentIndex + 1) of \(book.chapters.count)",
+                comment: "A book's contents sheet: which chapter the reader is on out of all, shown in small capitals, like 9 OF 13"
+            ).uppercased()
+        )
             .font(AppFonts.labelFont(9))
             .tracking(1.5)
             .foregroundColor(AppColors.textSecondary)
             .fixedSize()
-            .accessibilityLabel("Chapter \(currentIndex + 1) of \(book.chapters.count)")
+            .accessibilityLabel(Text("Chapter \(currentIndex + 1) of \(book.chapters.count)", comment: "VoiceOver, a book's contents sheet: which chapter the reader is on"))
     }
 
     private var searchField: some View {
@@ -844,7 +891,10 @@ struct LibraryContentsSheet: View {
     /// door straight back to its paragraph.
     private var marksSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            SheetSectionLabel("Your bookmarks · \(marks.count)")
+            SheetSectionLabel(String(
+                localized: "Your bookmarks · \(marks.count)",
+                comment: "A book's contents sheet: section heading over the bookmarks, then how many there are"
+            ))
 
             ForEach(Array(marks.enumerated()), id: \.offset) { _, mark in
                 markRow(mark)
@@ -860,7 +910,10 @@ struct LibraryContentsSheet: View {
                 words: chapter.paragraphs.indices.contains(mark.paragraph)
                     ? openingWords(of: chapter.paragraphs[mark.paragraph])
                     : nil,
-                spokenLabel: "Bookmark in \(chapter.displayTitle). Returns to that passage."
+                spokenLabel: String(
+                    localized: "Bookmark in \(chapter.displayTitle). Returns to that passage.",
+                    comment: "VoiceOver, a book's contents sheet: a bookmark row, naming its chapter"
+                )
             ) {
                 onSelectMark?(mark.chapter, mark.paragraph)
                 dismiss()

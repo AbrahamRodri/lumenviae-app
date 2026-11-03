@@ -540,7 +540,7 @@ struct StreakCelebrationChip: View {
                 AppIcon("lv-rosary", size: 14)
                     .foregroundColor(AppColors.goldLight)
 
-                Text(totalRosaries == 1 ? "1 ROSARY PRAYED" : "\(totalRosaries) ROSARIES PRAYED")
+                Text("\(totalRosaries) ROSARIES PRAYED")
                     .font(AppFonts.labelFont(11))
                     .tracking(1.5)
                     .foregroundColor(AppColors.cream)

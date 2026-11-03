@@ -124,7 +124,8 @@ struct LibraryBookView: View {
                     Spacer()
                     LibraryMiniPlayer(
                         session: session,
-                        title: sections[index].title ?? "The reading",
+                        title: sections[index].title
+                            ?? String(localized: "The reading", comment: "Spiritual Reading mini player: title of a recording that has no title of its own"),
                         onExpand: { sheet = .player }
                     )
                     .padding(.horizontal, 16)
@@ -374,8 +375,11 @@ struct LibraryBookView: View {
         if let opening = resume ?? book.chapters.first {
             GoldCTAButton(
                 title: resume == nil
-                    ? "Begin reading"
-                    : "Continue · \(LibraryBookPlace.shortName(of: opening, in: runs))",
+                    ? String(localized: "Begin reading", comment: "Spiritual Reading, a book's page: the gold act when the book has not been opened")
+                    : String(
+                        localized: "Continue · \(LibraryBookPlace.shortName(of: opening, in: runs))",
+                        comment: "Spiritual Reading, a book's page: the gold act, then the place to continue at as a short numeral, like III.V"
+                    ),
                 prominence: .inline,
                 trailingIcon: "ph-caret-right",
                 fullWidth: false,
@@ -389,7 +393,11 @@ struct LibraryBookView: View {
     /// "Continue reading, The Third Book, Chapter V, Of the wonderful
     /// power of the Divine Love"
     private func spokenAct(_ chapter: LibraryChapter, isResume: Bool) -> String {
-        var parts = [isResume ? "Continue reading" : "Begin reading"]
+        var parts = [
+            isResume
+                ? String(localized: "Continue reading", comment: "VoiceOver, a book's page: start of the gold act's label, followed by the part and chapter")
+                : String(localized: "Begin reading", comment: "VoiceOver, a book's page: start of the gold act's label, followed by the part and chapter")
+        ]
         if let part = chapter.part, part != chapter.heading { parts.append(part) }
         parts.append(chapter.heading)
         if let title = chapter.title, title != chapter.heading { parts.append(title) }
@@ -452,7 +460,11 @@ struct LibraryBookView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(isSearching ? "Close the search" : "Search inside this book")
+                .accessibilityLabel(
+                    isSearching
+                        ? Text("Close the search", comment: "VoiceOver, a book's page: closes the search inside the book")
+                        : Text("Search inside this book", comment: "VoiceOver, a book's page: opens the search inside the book")
+                )
             }
             .padding(.horizontal, 20)
 
@@ -558,7 +570,7 @@ struct LibraryBookView: View {
         } label: {
             HStack(spacing: 8) {
                 AppIcon("ph-caret-up", size: 11)
-                Text(count == 1 ? "1 earlier chapter" : "\(count) earlier chapters")
+                Text("\(count) earlier chapters", comment: "Spiritual Reading, a book's chapter list: the chapters before the reader's place, folded into one row")
                     .font(AppFonts.italicFont(14))
                 Spacer()
                 Text("SHOW")
@@ -571,7 +583,7 @@ struct LibraryBookView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(count == 1 ? "Show the earlier chapter" : "Show the \(count) earlier chapters")
+        .accessibilityLabel(Text("Show the \(count) earlier chapters", comment: "VoiceOver, a book's chapter list: opens the folded earlier chapters"))
     }
 
     /// A part's name, pinned over its chapters while they pass under it
@@ -586,7 +598,7 @@ struct LibraryBookView: View {
                 .lineLimit(1)
                 .truncationMode(.tail)
 
-            Text(totalChapters(of: run) == 1 ? "1 chapter" : "\(totalChapters(of: run)) chapters")
+            Text("\(totalChapters(of: run)) chapters", comment: "Spiritual Reading, a book's chapter list: how many chapters a part holds, beside its pinned name")
                 .font(AppFonts.bodyFont(13))
                 .foregroundColor(AppColors.textSecondary)
                 .lineLimit(1)
@@ -646,8 +658,15 @@ struct LibraryBookView: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(QuietGlyphButtonStyle())
-                .accessibilityLabel(run.title ?? "Part \(position + 1)")
-                .accessibilityHint(position == reading ? "Where you are reading. Goes to this part." : "Goes to this part")
+                .accessibilityLabel(
+                    run.title
+                        ?? String(localized: "Part \(position + 1)", comment: "VoiceOver, a book's part index: a part with no printed name, by its number")
+                )
+                .accessibilityHint(
+                    position == reading
+                        ? Text("Where you are reading. Goes to this part.", comment: "VoiceOver hint, a book's part index: the part being read")
+                        : Text("Goes to this part", comment: "VoiceOver hint, a book's part index")
+                )
             }
         }
     }
@@ -806,7 +825,7 @@ struct LibraryBookView: View {
 
                 if tally.isSaving {
                     QuietGoldButton(
-                        title: "Stop",
+                        title: String(localized: "Stop", comment: "Spiritual Reading, a book's offline row: stops saving the recordings"),
                         size: 10,
                         color: AppColors.gold.opacity(0.8),
                         horizontalPadding: 0
@@ -816,7 +835,9 @@ struct LibraryBookView: View {
                     .padding(.vertical, -10)
                 } else if !tally.missing.isEmpty {
                     QuietGoldButton(
-                        title: tally.savedCount == 0 ? "Save for offline" : "Save the rest",
+                        title: tally.savedCount == 0
+                            ? String(localized: "Save for offline", comment: "Spiritual Reading, a book's offline row: saves every recording of the book to the device")
+                            : String(localized: "Save the rest", comment: "Spiritual Reading, a book's offline row: saves the recordings not yet on the device"),
                         leadingIcon: "ph-download-simple",
                         size: 10,
                         color: AppColors.gold,
@@ -827,7 +848,7 @@ struct LibraryBookView: View {
                     .padding(.vertical, -10)
                 } else {
                     QuietGoldButton(
-                        title: "Remove",
+                        title: String(localized: "Remove", comment: "Spiritual Reading, a book's offline row: removes the saved recordings from the device"),
                         size: 10,
                         color: AppColors.textSecondary,
                         horizontalPadding: 0
@@ -843,13 +864,24 @@ struct LibraryBookView: View {
 
     private func offlineLine(_ tally: LibraryAudioDownloads.Tally, total: Int) -> String {
         if tally.savedCount == 0 {
-            return "Nothing saved yet · about \(LibraryAudioDownloads.size(LibraryAudioDownloads.estimate(sections)))"
+            let estimate = LibraryAudioDownloads.size(LibraryAudioDownloads.estimate(sections))
+            return String(
+                localized: "Nothing saved yet · about \(estimate)",
+                comment: "Spiritual Reading, a book's offline row: no recording saved, then the size they would take, like about 188 MB"
+            )
         }
-        var line = "\(tally.savedCount) of \(total) readings saved · \(LibraryAudioDownloads.size(tally.savedBytes))"
-        if !tally.missing.isEmpty {
-            line += " · about \(LibraryAudioDownloads.size(LibraryAudioDownloads.estimate(tally.missing))) more"
+        let saved = LibraryAudioDownloads.size(tally.savedBytes)
+        if tally.missing.isEmpty {
+            return String(
+                localized: "\(tally.savedCount) of \(total) readings saved · \(saved)",
+                comment: "Spiritual Reading, a book's offline row: how many of the book's recordings are saved, then their size, like 13 of 13 readings saved · 160 MB"
+            )
         }
-        return line
+        let more = LibraryAudioDownloads.size(LibraryAudioDownloads.estimate(tally.missing))
+        return String(
+            localized: "\(tally.savedCount) of \(total) readings saved · \(saved) · about \(more) more",
+            comment: "Spiritual Reading, a book's offline row: how many recordings are saved, their size, then the size of the rest, like 1 of 13 readings saved · 11 MB · about 188 MB more"
+        )
     }
 
     /// A recording the catalog promises but the network could not fetch
@@ -862,7 +894,7 @@ struct LibraryBookView: View {
                 .foregroundColor(AppColors.textSecondary)
 
             QuietGoldButton(
-                title: "Try again",
+                title: String(localized: "Try again", comment: "Spiritual Reading, a book's page: tries again to fetch the recording"),
                 size: 11,
                 color: AppColors.gold,
                 horizontalPadding: 0
@@ -920,7 +952,7 @@ struct LibraryBookView: View {
             // time, and each attempt re-downloads the whole book.
             if failure.isRetryable {
                 QuietGoldButton(
-                    title: "Try again",
+                    title: String(localized: "Try again", comment: "Spiritual Reading, a book's page: tries again to fetch the book's text"),
                     size: 11,
                     color: AppColors.gold
                 ) {
@@ -952,11 +984,16 @@ struct LibraryBookView: View {
     }
 
     private func creditText(_ info: LibraryBookInfo) -> String {
-        var line = "Text: Project Gutenberg eBook #\(info.gutenbergID)."
         if info.librivoxID != nil {
-            line += " Recording: LibriVox volunteers."
+            return String(
+                localized: "Text: Project Gutenberg eBook #\(info.gutenbergID). Recording: LibriVox volunteers. Public domain.",
+                comment: "Spiritual Reading, the credit at the foot of a book's page with a recording; the number is the eBook's number"
+            )
         }
-        return line + " Public domain."
+        return String(
+            localized: "Text: Project Gutenberg eBook #\(info.gutenbergID). Public domain.",
+            comment: "Spiritual Reading, the credit at the foot of a book's page without a recording; the number is the eBook's number"
+        )
     }
 
     // MARK: - Loading

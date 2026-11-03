@@ -419,7 +419,7 @@ struct MyChapelView: View {
                 Spacer(minLength: 0)
 
                 GoldCTAButton(
-                    title: "Done",
+                    title: String(localized: "Done", comment: "Chapel, arranging the page: the gold act that ends arranging"),
                     prominence: .inline,
                     silhouette: .rounded(14),
                     trailingIcon: "ph-check",
@@ -539,7 +539,7 @@ struct MyChapelView: View {
     private var dayLine: String {
         let weekday = Date.now.formatted(.dateTime.weekday(.wide))
         guard let feast = today.feastTitle else { return weekday }
-        return "\(weekday) · \(feast)"
+        return String(localized: "\(weekday) · \(feast)", comment: "Chapel day strip, VoiceOver: the weekday, then the day's feast, like Thursday · St. Monica")
     }
 
     // MARK: - The rule, resolved for today
@@ -648,23 +648,33 @@ struct MyChapelView: View {
         case .scripturalRosary, .rosaryAloud:
             return item.trayDetail(today: ScheduleService.categoryForToday(), praysAloud: true)
         case .consecration:
-            guard let progress = activeConsecration else { return "Not yet begun" }
+            guard let progress = activeConsecration else {
+                return String(localized: "Not yet begun", comment: "Chapel, Today tile: the consecration row's second line before the preparation has begun")
+            }
             let day = progress.currentDayNumber
-            guard day <= 33 else { return "Consecration Day" }
-            return "Day \(day) of 33"
+            guard day <= 33 else {
+                return String(localized: "Consecration Day", comment: "Chapel, Today tile: the consecration row's second line on the day of consecration itself")
+            }
+            return String(localized: "Day \(day) of 33", comment: "Chapel, Today tile: the consecration row's second line, the day of the 33-day preparation")
         case .sevenSorrows:
-            return "Seven Hail Marys for each sorrow"
+            return String(localized: "Seven Hail Marys for each sorrow", comment: "Chapel, Today tile: second line of the Seven Sorrows of Mary row")
         // The three orders in the Prayers page's own words for when each
         // is said ("On waking", "At bedtime") and for the season's song
         // to Mary, read from the book rather than written again here
         case .morningPrayers:
             guard let order = Self.bookOrder(of: item) else { return item.subtitle }
-            return "\(order.occasion) · \(order.prayers().count) prayers"
+            return String(
+                localized: "\(order.occasion) · \(order.prayers().count) prayers",
+                comment: "Chapel, Today tile: second line of the Morning Prayers row, when it is said (like On waking), then how many prayers it holds"
+            )
         case .angelus:
             return Self.bookOrder(of: item)?.occasion ?? item.subtitle
         case .nightPrayers:
             guard let order = Self.bookOrder(of: item) else { return item.subtitle }
-            return "\(order.occasion) · \(PrayerBook.antiphon(on: Date()).name)"
+            return String(
+                localized: "\(order.occasion) · \(PrayerBook.antiphon(on: Date()).name)",
+                comment: "Chapel, Today tile: second line of the Night Prayers row, when it is said (like At bedtime), then the season's song to Mary"
+            )
         case .chooseMeditation, .mass, .office:
             // Never on the rule (`isRuleEligible`)
             return item.subtitle
@@ -736,63 +746,126 @@ struct MyChapelView: View {
     }
 
     private func focusKicker(acts: [ChapelAct], next: ChapelAct?) -> String {
-        if acts.isEmpty { return "Daily prayers" }
-        return next != nil ? "Next" : "All prayed today"
+        if acts.isEmpty {
+            return String(localized: "Daily prayers", comment: "Chapel focus block: small kicker (shown in capitals) when no daily prayers are chosen yet")
+        }
+        return next != nil
+            ? String(localized: "Next", comment: "Chapel focus block: small kicker (shown in capitals) over the next daily prayer to pray")
+            : String(localized: "All prayed today", comment: "Chapel focus block: small kicker (shown in capitals) when every daily prayer has been prayed today")
     }
 
     private func focusTitle(acts: [ChapelAct], next: ChapelAct?) -> String {
-        if acts.isEmpty { return "Choose your daily prayers" }
+        if acts.isEmpty {
+            return String(localized: "Choose your daily prayers", comment: "Chapel focus block: large title when no daily prayers are chosen yet")
+        }
         // True at any hour: the rule can be offered by half past six in
         // the morning, where "Rest now" sent someone back to bed. The
         // space before "God" does not break, so a title that needs two
         // lines reads "Thanks be / to God", never leaving "God" alone
-        return next?.focusTitle ?? "Thanks be to\u{00A0}God"
+        return next?.focusTitle ?? String(
+            localized: "Thanks be to\u{00A0}God",
+            comment: "Chapel focus block: large title once every daily prayer is prayed. Keep a no-break space before the last word so it never stands alone on a line"
+        )
     }
 
     private func focusDetail(acts: [ChapelAct], next: ChapelAct?) -> String {
         if acts.isEmpty {
-            return "Pick the prayers you mean to pray each day, and this page will keep track of them."
+            return String(
+                localized: "Pick the prayers you mean to pray each day, and this page will keep track of them.",
+                comment: "Chapel focus block: italic line under the title when no daily prayers are chosen yet"
+            )
         }
         guard let next else {
-            return "You have prayed all your daily prayers today. They begin again tomorrow."
+            return String(
+                localized: "You have prayed all your daily prayers today. They begin again tomorrow.",
+                comment: "Chapel focus block: italic line once every daily prayer is prayed today"
+            )
         }
         // Taken up where it stopped, as the guide's own welcome says it
         if let session = next.resume {
-            return "You stopped at the \(session.placeLabel)."
+            return String(
+                localized: "You stopped at the \(session.placeLabel).",
+                comment: "Chapel focus block: where an unfinished Rosary stopped; the place reads like Third Joyful Mystery and follows the article"
+            )
         }
         switch next.shortcut {
         case .todaysRosary:
-            return "The \(ScheduleService.categoryForToday().devotionTitle), with meditations drawn from the saints."
+            return String(
+                localized: "The \(ScheduleService.categoryForToday().devotionTitle), with meditations drawn from the saints.",
+                comment: "Chapel focus block: italic line for Today's Rosary; the set's full name without an article (like Joyful Mysteries, Seven Sorrows of Mary), all plural"
+            )
         case .sevenSorrows:
-            return "Seven Hail Marys for each of Mary's seven sorrows, prayed on beads of their own."
+            return String(
+                localized: "Seven Hail Marys for each of Mary's seven sorrows, prayed on beads of their own.",
+                comment: "Chapel focus block: italic line for the Seven Sorrows of Mary chaplet"
+            )
         case .scripturalRosary:
-            return "The \(ScheduleService.categoryForToday().devotionTitle), with a Bible verse for every Hail Mary."
+            return String(
+                localized: "The \(ScheduleService.categoryForToday().devotionTitle), with a Bible verse for every Hail Mary.",
+                comment: "Chapel focus block: italic line for the Scriptural Rosary; the set's full name without an article (like Joyful Mysteries), all plural"
+            )
         case .rosaryAloud:
-            return "The \(ScheduleService.categoryForToday().devotionTitle), every prayer read to you and the beads moving with the voice."
+            return String(
+                localized: "The \(ScheduleService.categoryForToday().devotionTitle), every prayer read to you and the beads moving with the voice.",
+                comment: "Chapel focus block: italic line for the Audio Rosary; the set's full name without an article (like Joyful Mysteries), all plural"
+            )
         case .mass:
-            return "Today\u{2019}s prayers and readings, in the traditional Latin Mass (1962 Missal)."
+            return String(
+                localized: "Today\u{2019}s prayers and readings, in the traditional Latin Mass (1962 Missal).",
+                comment: "Chapel focus block: italic line for Today's Mass"
+            )
         case .office:
-            return "The Church\u{2019}s prayer for each hour of the day, the Divine Office."
+            return String(
+                localized: "The Church\u{2019}s prayer for each hour of the day, the Divine Office.",
+                comment: "Chapel focus block: italic line for the Hours of Prayer"
+            )
         case .consecration:
             let day = activeConsecration.map { min($0.currentDayNumber, 33) }
-            return day.map { "Day \($0) of 33, preparing to give yourself to Jesus through Mary." }
-                ?? "A 33-day preparation to give yourself to Jesus through Mary."
+            return day.map {
+                String(
+                    localized: "Day \($0) of 33, preparing to give yourself to Jesus through Mary.",
+                    comment: "Chapel focus block: italic line for the consecration under way, the day of the 33-day preparation"
+                )
+            } ?? String(
+                localized: "A 33-day preparation to give yourself to Jesus through Mary.",
+                comment: "Chapel focus block: italic line for the consecration before it has begun"
+            )
         case .chooseMeditation:
-            return "Browse today's meditations and choose one to pray."
+            return String(
+                localized: "Browse today's meditations and choose one to pray.",
+                comment: "Chapel focus block: italic line for choosing a meditation"
+            )
         case .morningPrayers:
-            return "Give the day to God before it begins: the Morning Offering and the acts of faith, hope and love."
+            return String(
+                localized: "Give the day to God before it begins: the Morning Offering and the acts of faith, hope and love.",
+                comment: "Chapel focus block: italic line for Morning Prayers"
+            )
         case .angelus:
             return PrayerBook.isEastertide(Date())
-                ? "Queen of Heaven (Regina Cæli), the Easter season's prayer to Mary, said in place of the Angelus."
-                : "A short prayer to Mary at 6 AM, noon and 6 PM, recalling the angel's message to her."
+                ? String(
+                    localized: "Queen of Heaven (Regina Cæli), the Easter season's prayer to Mary, said in place of the Angelus.",
+                    comment: "Chapel focus block: italic line for the Angelus in the Easter season, when the Regina Caeli replaces it; keep the Latin name"
+                )
+                : String(
+                    localized: "A short prayer to Mary at 6 AM, noon and 6 PM, recalling the angel's message to her.",
+                    comment: "Chapel focus block: italic line for the Angelus"
+                )
         case .nightPrayers:
-            return "Look back over the day, ask forgiveness, and end with a song to Mary."
+            return String(
+                localized: "Look back over the day, ask forgiveness, and end with a song to Mary.",
+                comment: "Chapel focus block: italic line for Night Prayers"
+            )
         }
     }
 
     private func focusAction(acts: [ChapelAct], next: ChapelAct?) -> String {
-        if acts.isEmpty { return "Choose Prayers" }
-        return next?.focusAction ?? "Pray the Rosary"
+        if acts.isEmpty {
+            return String(localized: "Choose Prayers", comment: "Chapel focus block: the gold act when no daily prayers are chosen yet; opens the editor")
+        }
+        return next?.focusAction ?? String(
+            localized: "Pray the Rosary",
+            comment: "Chapel focus block: the gold act once every daily prayer is prayed"
+        )
     }
 
     private func performFocusAction(acts: [ChapelAct], next: ChapelAct?) {
@@ -966,12 +1039,8 @@ struct MyChapelView: View {
             }
         }
         .accessibilityElement(children: arranging ? .ignore : .contain)
-        .accessibilityLabel(
-            arranging
-                ? "\(placement.tile.title), \(placement.span == 2 ? "full width" : "half width")"
-                : placement.tile.title
-        )
-        .accessibilityHint(arranging ? "Arranging the page." : "")
+        .accessibilityLabel(arrangingLabel(for: placement))
+        .accessibilityHint(arranging ? Text("Arranging the page.") : Text(verbatim: ""))
         // VoiceOver cannot drag: every move the hand makes on a row, the
         // rotor makes as an action
         .accessibilityActions {
@@ -1169,8 +1238,26 @@ struct MyChapelView: View {
             settings.setChapelLayout(placed + stowed)
         }
         AccessibilityNotification.Announcement(
-            "\(tile.title), \(to + 1) of \(placed.count)"
+            String(
+                localized: "\(tile.title), \(to + 1) of \(placed.count)",
+                comment: "VoiceOver, Chapel arranging: announced after a section is moved; its name, then its place among the sections on the page, like Reading, 3 of 8"
+            )
         ).post()
+    }
+
+    /// What VoiceOver hears on a section: its name, and while arranging
+    /// its width, one sentence per width
+    private func arrangingLabel(for placement: ChapelPlacement) -> String {
+        guard arranging else { return placement.tile.title }
+        return placement.span == 2
+            ? String(
+                localized: "\(placement.tile.title), full width",
+                comment: "VoiceOver, Chapel arranging: a section's name, then that it stands at full width"
+            )
+            : String(
+                localized: "\(placement.tile.title), half width",
+                comment: "VoiceOver, Chapel arranging: a section's name, then that it stands at half width"
+            )
     }
 
     // MARK: - The carry

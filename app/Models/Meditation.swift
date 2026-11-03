@@ -88,7 +88,8 @@ struct Meditation: nonisolated Codable, Identifiable, Hashable {
 
     /// Title for display, with fallback chain: title → mystery name → "Meditation"
     var displayTitle: String {
-        title ?? mystery?.name ?? "Meditation"
+        title ?? mystery?.name
+            ?? String(localized: "Meditation", comment: "The title shown for a meditation that has no title and no mystery")
     }
 
     /// Whether this meditation has any narration at all

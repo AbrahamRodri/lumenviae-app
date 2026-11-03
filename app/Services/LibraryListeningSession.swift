@@ -264,7 +264,10 @@ final class LibraryListeningSession {
                 // queue that isn't there.
                 audio.clearTrackNavigation(owner: token)
                 trackIndex = nil
-                failure = "The recording couldn't be reached. Check your connection and try again."
+                failure = String(
+                    localized: "The recording couldn't be reached. Check your connection and try again.",
+                    comment: "Spiritual Reading player: shown when a book's recording could not be loaded"
+                )
                 return
             }
             audio.play()
@@ -541,12 +544,19 @@ final class LibraryListeningSession {
     /// sentence: "31 min in" in the contents ledger.
     static func elapsedLabel(_ seconds: Double) -> String {
         let minutes = Int(seconds) / 60
-        if minutes < 1 { return "a minute" }
+        if minutes < 1 {
+            return String(localized: "a minute", comment: "How far into a recording the reader got, under a minute; stands inside a sentence like a minute in")
+        }
         if minutes >= 60 {
             let hours = minutes / 60
             let rest = minutes % 60
-            return rest == 0 ? "\(hours) hr" : "\(hours) hr \(rest) min"
+            return rest == 0
+                ? String(localized: "\(hours) hr", comment: "How far into a recording, whole hours, abbreviated, like 2 hr; stands inside a sentence like 2 hr in")
+                : String(
+                    localized: "\(hours) hr \(rest) min",
+                    comment: "How far into a recording, hours and minutes, abbreviated, like 1 hr 5 min; stands inside a sentence like 1 hr 5 min in"
+                )
         }
-        return "\(minutes) min"
+        return String(localized: "\(minutes) min", comment: "How far into a recording, minutes, abbreviated, like 31 min; stands inside a sentence like 31 min in")
     }
 }

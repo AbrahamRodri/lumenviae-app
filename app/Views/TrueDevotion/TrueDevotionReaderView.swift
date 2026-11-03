@@ -204,7 +204,9 @@ struct TrueDevotionReaderView: View {
                 // left the link nothing to press, and the tap fell
                 // through to the page.
                 ContinueReadingActLabel(
-                    kicker: viewModel.hasStartedReading ? "CONTINUE READING" : "BEGIN READING",
+                    kicker: viewModel.hasStartedReading
+                        ? String(localized: "CONTINUE READING", comment: "True Devotion's book page: small capitals, kicker of the gold act once the book is opened")
+                        : String(localized: "BEGIN READING", comment: "True Devotion's book page: small capitals, kicker of the gold act before the book is opened"),
                     destination: opening.title,
                     fraction: chapterFraction(opening),
                     meta: actMeta(for: opening)
@@ -234,7 +236,9 @@ struct TrueDevotionReaderView: View {
     /// recording's length or stays quiet. True Devotion is bundled text
     /// with no recording, so here it stays quiet.
     private func actMeta(for chapter: TrueDevotionChapter) -> String? {
-        viewModel.hasStartedReading ? nil : "NOT YET OPENED"
+        viewModel.hasStartedReading
+            ? nil
+            : String(localized: "NOT YET OPENED", comment: "True Devotion's book page: small capitals under the gold act before the book is first opened")
     }
 
     // MARK: - Today's goal
@@ -333,8 +337,12 @@ struct TrueDevotionReaderView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(part.title), \(chapters.count) chapters")
-        .accessibilityHint(isOpen ? "Closes this part's chapters" : "Opens this part's chapters")
+        .accessibilityLabel(Text("\(part.title), \(chapters.count) chapters", comment: "VoiceOver, True Devotion's contents: a part's name, then how many chapters it holds"))
+        .accessibilityHint(
+            isOpen
+                ? Text("Closes this part's chapters", comment: "VoiceOver hint, a book's contents: folds a part's chapter list")
+                : Text("Opens this part's chapters", comment: "VoiceOver hint, a book's contents: unfolds a part's chapter list")
+        )
     }
 
     /// "PART I" from "Part I — On Devotion to Our Lady in General"; the
@@ -418,8 +426,11 @@ struct TrueDevotionReaderView: View {
         isCurrent: Bool
     ) -> String {
         var parts = [chapter.title]
-        if isCurrent { parts.append("where you are") }
-        else if isCompleted { parts.append("read") }
+        if isCurrent {
+            parts.append(String(localized: "where you are", comment: "VoiceOver, a book's contents: said after the chapter being read now; a separate phrase"))
+        } else if isCompleted {
+            parts.append(String(localized: "read", comment: "VoiceOver, a book's contents: said after a chapter already read (past participle); a separate phrase"))
+        }
         return parts.joined(separator: ". ")
     }
 

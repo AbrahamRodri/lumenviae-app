@@ -174,7 +174,7 @@ struct ChantSilenceNowPlaying: Equatable {
     init(queue: ChantQueue?, current: Chant) {
         let next = queue?.nextChant
         let shown = next ?? current
-        let set = queue?.title
+        let set = queue?.shownTitle
             ?? String(localized: "Chant", comment: "Lock Screen: the line under a chant's title when no set is being sung")
         title = shown.latinTitle
         subtitle = next == nil

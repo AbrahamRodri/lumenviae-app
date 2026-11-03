@@ -18,33 +18,33 @@ enum JournalPrompts {
         switch category {
         case .joyful:
             return [
-                "What did Mary say yes to today?",
-                "Where did you find Jesus after looking for Him?",
-                "What is the good news you were given this week?",
+                String(localized: "What did Mary say yes to today?", comment: "Journal, empty page: a starter question on today's mysteries; tapped, it begins a reflection with the question as its title"),
+                String(localized: "Where did you find Jesus after looking for Him?", comment: "Journal, empty page: a starter question on today's mysteries; tapped, it begins a reflection with the question as its title"),
+                String(localized: "What is the good news you were given this week?", comment: "Journal, empty page: a starter question on today's mysteries; tapped, it begins a reflection with the question as its title")
             ]
         case .sorrowful:
             return [
-                "What is the cup you would rather not drink?",
-                "Who helped you carry something this week?",
-                "What did you stand by, as Mary stood by the cross?",
+                String(localized: "What is the cup you would rather not drink?", comment: "Journal, empty page: a starter question on today's mysteries; tapped, it begins a reflection with the question as its title"),
+                String(localized: "Who helped you carry something this week?", comment: "Journal, empty page: a starter question on today's mysteries; tapped, it begins a reflection with the question as its title"),
+                String(localized: "What did you stand by, as Mary stood by the cross?", comment: "Journal, empty page: a starter question on today's mysteries; tapped, it begins a reflection with the question as its title")
             ]
         case .glorious:
             return [
-                "What rose again in your life, after you thought it was over?",
-                "Where did you feel the Holy Ghost give you words?",
-                "What do you hope for, with Mary, in heaven?",
+                String(localized: "What rose again in your life, after you thought it was over?", comment: "Journal, empty page: a starter question on today's mysteries; tapped, it begins a reflection with the question as its title"),
+                String(localized: "Where did you feel the Holy Ghost give you words?", comment: "Journal, empty page: a starter question on today's mysteries; tapped, it begins a reflection with the question as its title"),
+                String(localized: "What do you hope for, with Mary, in heaven?", comment: "Journal, empty page: a starter question on today's mysteries; tapped, it begins a reflection with the question as its title")
             ]
         case .luminous:
             return [
-                "What are the empty jars you would bring to Cana?",
-                "Where did you hear the Father say you are His?",
-                "When was the last time you were fed at Mass?",
+                String(localized: "What are the empty jars you would bring to Cana?", comment: "Journal, empty page: a starter question on today's mysteries; tapped, it begins a reflection with the question as its title"),
+                String(localized: "Where did you hear the Father say you are His?", comment: "Journal, empty page: a starter question on today's mysteries; tapped, it begins a reflection with the question as its title"),
+                String(localized: "When was the last time you were fed at Mass?", comment: "Journal, empty page: a starter question on today's mysteries; tapped, it begins a reflection with the question as its title")
             ]
         case .sevenSorrows:
             return [
-                "What sword has pierced your own heart?",
-                "Whom did you meet on the way to Calvary this week?",
-                "What have you had to lay in the tomb and leave with God?",
+                String(localized: "What sword has pierced your own heart?", comment: "Journal, empty page: a starter question on today's mysteries; tapped, it begins a reflection with the question as its title"),
+                String(localized: "Whom did you meet on the way to Calvary this week?", comment: "Journal, empty page: a starter question on today's mysteries; tapped, it begins a reflection with the question as its title"),
+                String(localized: "What have you had to lay in the tomb and leave with God?", comment: "Journal, empty page: a starter question on today's mysteries; tapped, it begins a reflection with the question as its title")
             ]
         }
     }

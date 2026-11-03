@@ -661,7 +661,7 @@ struct ChantSavedSetCover: View {
                     radius: 14
                 )
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(set.name)
+                    Text(set.shownName)
                         .font(AppFonts.readingFont(15.5))
                         .foregroundColor(AppColors.cream)
                         .lineLimit(2)
@@ -695,13 +695,13 @@ struct ChantSavedSetCover: View {
     static func spoken(_ set: ChantSet) -> String {
         guard let chants = ChantSavedShelf.spokenCount(set.chantCount) else {
             return String(
-                localized: "\(set.name), no chants yet",
+                localized: "\(set.shownName), no chants yet",
                 comment: "VoiceOver: a set of the reader's that holds no chant; the set's name the reader gave it"
             )
         }
         let minutes = spokenMinutes(set.duration)
         return String(
-            localized: "\(set.name), \(chants), \(minutes)",
+            localized: "\(set.shownName), \(chants), \(minutes)",
             comment: "VoiceOver: a set of the reader's: its name, how many chants (like 4 chants), how long (like 20 minutes)"
         )
     }

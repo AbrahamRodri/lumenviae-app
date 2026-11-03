@@ -125,9 +125,15 @@ struct StreakWidget: View {
 
     private var streakLabel: String {
         switch streak {
-        case 0: return "Pray today to begin"
-        case 1: return "1 day so far"
-        default: return "\(streak) days in a row"
+        case 0:
+            return String(localized: "Pray today to begin", comment: "Streak card: the figure's line before any day is prayed")
+        case 1:
+            return String(localized: "1 day so far", comment: "Streak card: the figure's line after the first day prayed")
+        default:
+            return String(
+                localized: "\(streak) days in a row",
+                comment: "Streak card: the figure's line, two days or more prayed in a row, like 12 days in a row"
+            )
         }
     }
 
@@ -141,19 +147,33 @@ struct StreakWidget: View {
     /// name, never a count out of seven
     private var weekSpoken: String {
         let names = weekStatus.filter(\.didPray).map { Self.weekdayName.string(from: $0.date) }
-        guard let last = names.last else { return "This week, no days prayed yet." }
-        let days = names.count == 1 ? last : names.dropLast().joined(separator: ", ") + " and " + last
-        return "This week, prayed \(days)."
+        guard let last = names.last else {
+            return String(localized: "This week, no days prayed yet.", comment: "VoiceOver, streak card: no day of this week prayed yet")
+        }
+        if names.count == 1 {
+            return String(
+                localized: "This week, prayed \(last).",
+                comment: "VoiceOver, streak card: the one weekday prayed this week, like This week, prayed Sunday."
+            )
+        }
+        let earlier = names.dropLast().joined(separator: ", ")
+        return String(
+            localized: "This week, prayed \(earlier) and \(last).",
+            comment: "VoiceOver, streak card: the weekdays prayed this week; the first is the earlier days joined by commas, the second the last day, like This week, prayed Sunday, Monday and Tuesday."
+        )
     }
 
     private var nudgeMessage: String {
         if hasPrayedToday {
-            return "You have prayed today. Well done."
+            return String(localized: "You have prayed today. Well done.", comment: "Streak card: the line once today is prayed")
         }
         if streak > 0 {
-            return "A quiet moment awaits, whenever you are ready."
+            return String(
+                localized: "A quiet moment awaits, whenever you are ready.",
+                comment: "Streak card: an invitation to pray today, while a streak is under way; never a reproach"
+            )
         }
-        return "Each day you pray adds one to your streak."
+        return String(localized: "Each day you pray adds one to your streak.", comment: "Streak card: the line before any streak has begun")
     }
 }
 
@@ -253,7 +273,7 @@ struct MilestoneProgressLine: View {
 
                 Spacer()
 
-                Text(daysAway == 1 ? "1 day away" : "\(daysAway) days away")
+                Text("\(daysAway) days away")
                     .font(AppFonts.italicFont(12))
                     .foregroundColor(AppColors.textSecondary)
             }

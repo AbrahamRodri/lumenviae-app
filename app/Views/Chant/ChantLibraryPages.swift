@@ -777,7 +777,7 @@ struct ChantSetsPage: View {
                     ForEach(ChantLibraryData.occasions) { occasion in
                         let chants = occasion.distinctChants()
                         card(
-                            title: occasion.title,
+                            title: occasion.shownTitle,
                             note: occasion.note,
                             painting: occasion.painting,
                             summary: ChantSetCard.summary(count: chants.count, duration: occasion.duration()),
@@ -797,7 +797,7 @@ struct ChantSetsPage: View {
 
                         ForEach(ownSets) { set in
                             card(
-                                title: set.name,
+                                title: set.shownName,
                                 note: nil,
                                 painting: set.painting,
                                 summary: ChantSavedSetCover.summary(of: set),

@@ -70,15 +70,24 @@ struct CarloAcutisView: View {
                             .padding(.top, 8)
                             .devotionalEntrance(delay: 0.1)
 
-                        sectionTitle("His Life", kicker: "London · Milan · Assisi")
+                        sectionTitle(
+                            String(localized: "His Life", comment: "St. Carlo Acutis page: section title over his life as a dated timeline; the kicker names the three cities of his life"),
+                            kicker: String(localized: "London · Milan · Assisi", comment: "St. Carlo Acutis page: small capitals kicker over the section title His Life")
+                        )
                         lifeTimeline
                             .padding(.horizontal, 24)
 
-                        sectionTitle("Live a Day as He Did", kicker: "His daily habits")
+                        sectionTitle(
+                            String(localized: "Live a Day as He Did", comment: "St. Carlo Acutis page: section title over his rule of life and the acts to keep it"),
+                            kicker: String(localized: "His daily habits", comment: "St. Carlo Acutis page: small capitals kicker over the section title Live a Day as He Did")
+                        )
                         ruleOfLife
                             .padding(.horizontal, 20)
 
-                        sectionTitle("The Shrine", kicker: "A candle, a prayer")
+                        sectionTitle(
+                            String(localized: "The Shrine", comment: "St. Carlo Acutis page: section title over a votive candle and a prayer for his help"),
+                            kicker: String(localized: "A candle, a prayer", comment: "St. Carlo Acutis page: small capitals kicker over the section title The Shrine")
+                        )
                         shrine
                             .padding(.horizontal, 20)
                             .padding(.bottom, 56)
@@ -183,7 +192,7 @@ struct CarloAcutisView: View {
             .animation(Motion.crossfade, value: sayingIndex)
 
             QuietGoldButton(
-                title: "Another saying",
+                title: String(localized: "Another saying", comment: "St. Carlo Acutis page: quiet button under A saying for today, showing another of his sayings"),
                 leadingIcon: "ph-arrow-counter-clockwise",
                 leadingIconSize: 10,
                 size: 9.5
@@ -377,12 +386,12 @@ struct CarloAcutisView: View {
                 .padding(.top, 8)
 
             VStack(spacing: 6) {
-                Text(isCandleLit ? "Your candle is lit" : "Light a candle")
+                (isCandleLit ? Text("Your candle is lit") : Text("Light a candle"))
                     .font(AppFonts.titleFont(20))
                     .foregroundColor(isCandleLit ? AppColors.goldLight : AppColors.cream)
                     .contentTransition(.opacity)
 
-                Text(isCandleLit ? "St. Carlo Acutis, pray for this intention." : "For an intention of your own. It burns for a day, and stays on your device.")
+                (isCandleLit ? Text("St. Carlo Acutis, pray for this intention.") : Text("For an intention of your own. It burns for a day, and stays on your device."))
                     .font(AppFonts.readingItalicFont(14))
                     .foregroundColor(AppColors.textSecondary)
                     .multilineTextAlignment(.center)
@@ -404,7 +413,7 @@ struct CarloAcutisView: View {
                         // Puts the candle out and gives the line back with
                         // the intention still on it, so to change it is
                         // to put it out, rewrite it, and light it again
-                        QuietGoldButton(title: "Put out", size: 9.5, horizontalPadding: 0) {
+                        QuietGoldButton(title: String(localized: "Put out", comment: "St. Carlo Acutis page, the shrine: quiet button putting out the lit votive candle"), size: 9.5, horizontalPadding: 0) {
                             withAnimation(Motion.crossfade) {
                                 draftIntention = intention
                                 candleLitAt = 0
@@ -435,7 +444,7 @@ struct CarloAcutisView: View {
                                 .frame(height: AppLine.hairline)
                         }
 
-                        GoldCTAButton(title: "Light the candle", fullWidth: false) {
+                        GoldCTAButton(title: String(localized: "Light the candle", comment: "St. Carlo Acutis page, the shrine: the gold act, lighting a votive candle for a day"), fullWidth: false) {
                             withAnimation(Motion.crossfade) {
                                 intention = draftIntention.trimmingCharacters(in: .whitespacesAndNewlines)
                                 candleLitAt = Date().timeIntervalSince1970

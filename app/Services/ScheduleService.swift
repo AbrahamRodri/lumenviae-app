@@ -139,7 +139,9 @@ struct ScheduleService {
             .filter { weekdayCategory($0, in: schedule) == category }
             .map { weekdayNames[$0 - 1] }
         let sundays: [(Season, String)] = [
-            (.ordinary, "Sunday"), (.advent, "Sundays of Advent"), (.lent, "Sundays of Lent")
+            (.ordinary, String(localized: "Sunday", comment: "Days a set of mysteries is prayed, in a comma-separated list under its name: Sunday outside Advent and Lent")),
+            (.advent, String(localized: "Sundays of Advent", comment: "Days a set of mysteries is prayed, in a comma-separated list under its name, like Monday, Saturday, Sundays of Advent")),
+            (.lent, String(localized: "Sundays of Lent", comment: "Days a set of mysteries is prayed, in a comma-separated list under its name, like Tuesday, Friday, Sundays of Lent"))
         ]
         let days = weekdays + sundays
             .filter { sundayCategory(in: $0.0) == category }
@@ -147,11 +149,18 @@ struct ScheduleService {
         return days.isEmpty ? nil : days.joined(separator: ", ")
     }
 
-    /// Sunday first, as `Calendar` numbers them. In English, like every
-    /// other word on these pages.
-    private static let weekdayNames = [
-        "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
-    ]
+    /// Sunday first, as `Calendar` numbers them, in the reader's language
+    private static var weekdayNames: [String] {
+        [
+            String(localized: "Sunday", comment: "A day a set of mysteries is prayed, in a comma-separated list under its name, like Monday, Thursday; capitalized as a day name in English"),
+            String(localized: "Monday", comment: "A day a set of mysteries is prayed, in a comma-separated list under its name, like Monday, Thursday; capitalized as a day name in English"),
+            String(localized: "Tuesday", comment: "A day a set of mysteries is prayed, in a comma-separated list under its name, like Monday, Thursday; capitalized as a day name in English"),
+            String(localized: "Wednesday", comment: "A day a set of mysteries is prayed, in a comma-separated list under its name, like Monday, Thursday; capitalized as a day name in English"),
+            String(localized: "Thursday", comment: "A day a set of mysteries is prayed, in a comma-separated list under its name, like Monday, Thursday; capitalized as a day name in English"),
+            String(localized: "Friday", comment: "A day a set of mysteries is prayed, in a comma-separated list under its name, like Monday, Thursday; capitalized as a day name in English"),
+            String(localized: "Saturday", comment: "A day a set of mysteries is prayed, in a comma-separated list under its name, like Monday, Thursday; capitalized as a day name in English")
+        ]
+    }
 
     // MARK: - Today
 

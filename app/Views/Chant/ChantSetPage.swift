@@ -144,7 +144,11 @@ struct ChantSetPage: View {
         ) {
             TextField("Name", text: $renameText)
             Button("Save") {
-                if let renaming { shelf.rename(renaming.id, to: renameText) }
+                // The name was offered as shown: left as it was, the set
+                // keeps the name it is stored under
+                if let renaming, renameText != ChantLibraryData.displayWording(of: renaming.name) {
+                    shelf.rename(renaming.id, to: renameText)
+                }
                 renaming = nil
             }
             Button("Cancel", role: .cancel) { renaming = nil }
@@ -211,7 +215,7 @@ struct ChantSetPage: View {
         for (blockIndex, block) in occasion.blocks.enumerated() {
             if let rubric = block.rubric {
                 rows.append(
-                    Row(id: "rubric-\(blockIndex)", kind: .rubric(rubric, seconds: nil), origin: nil, itemID: nil))
+                    Row(id: "rubric-\(blockIndex)", kind: .rubric(ChantLibraryData.displayWording(of: rubric), seconds: nil), origin: nil, itemID: nil))
             }
             for (stepIndex, step) in block.steps.enumerated() {
                 guard let chant = step.chant.resolve() else { continue }
@@ -222,7 +226,7 @@ struct ChantSetPage: View {
         }
         let unrolled = occasion.unrolled()
         return Content(
-            title: occasion.title,
+            title: ChantLibraryData.displayWording(of: occasion.title),
             note: occasion.note,
             painting: occasion.painting,
             chantCount: unrolled.distinct.count,
@@ -241,14 +245,14 @@ struct ChantSetPage: View {
             case .pause(let note, let seconds):
                 return Row(
                     id: item.id.uuidString,
-                    kind: .rubric(note.isEmpty ? String(localized: "Silence", comment: "A sung set: a pause of the reader's own that has no note, only silence") : note, seconds: seconds),
+                    kind: .rubric(note.isEmpty ? String(localized: "Silence", comment: "A sung set: a pause of the reader's own that has no note, only silence") : ChantLibraryData.displayWording(of: note), seconds: seconds),
                     origin: index,
                     itemID: item.id
                 )
             }
         }
         return Content(
-            title: set.name,
+            title: ChantLibraryData.displayWording(of: set.name),
             note: nil,
             painting: set.items.lazy.compactMap(\.chant).first.map { ChantCatalog.painting(for: $0) }
                 ?? ChantSet.emptyPainting,
@@ -446,7 +450,7 @@ struct ChantSetPage: View {
         case .rename:
             if let set {
                 Button {
-                    renameText = set.name
+                    renameText = ChantLibraryData.displayWording(of: set.name)
                     renaming = set
                 } label: {
                     Label("Rename", systemImage: "pencil")
@@ -734,7 +738,7 @@ struct ChantSetPage: View {
 
     /// The set as plain words, to send to a prayer group
     static func shareText(_ set: ChantSet) -> String {
-        var lines = [set.name, ""]
+        var lines = [ChantLibraryData.displayWording(of: set.name), ""]
         var number = 1
         for item in set.items {
             switch item.kind {
@@ -747,7 +751,7 @@ struct ChantSetPage: View {
                 number += 1
             case .pause(let note, let seconds):
                 let silence = seconds > 0 ? " (\(ChantPlayer.clock(TimeInterval(seconds))))" : ""
-                let words = note.isEmpty ? String(localized: "Silence", comment: "A sung set: a pause of the reader's own that has no note, only silence") : note
+                let words = note.isEmpty ? String(localized: "Silence", comment: "A sung set: a pause of the reader's own that has no note, only silence") : ChantLibraryData.displayWording(of: note)
                 lines.append("    \(words)\(silence)")
             }
         }

@@ -56,7 +56,12 @@ struct KeptFeast: Hashable {
     /// Mass door never reads as a door that failed to draw — Kolbe, Padre
     /// Pio and St. Carlo were raised to the altars after 1962
     var calendarNote: String? {
-        inMissal ? nil : "Not on the Church-wide calendar of the traditional Latin Mass (1962 Missal), so there is no Mass for it here"
+        inMissal
+            ? nil
+            : String(
+                localized: "Not on the Church-wide calendar of the traditional Latin Mass (1962 Missal), so there is no Mass for it here",
+                comment: "Library reading, Feast day door: note under a feast kept only locally or added after 1962, which has no Mass to open"
+            )
     }
 }
 
@@ -189,9 +194,15 @@ enum LibraryReadings {
     static func home(of shelf: ReadingShelf) -> ReadingDoor? {
         switch page(of: shelf) {
         case .marianLibrary:
-            return .page(.marianLibrary, icon: "ch-lily", title: "The Marian Library", note: shelf.title)
+            return .page(.marianLibrary, icon: "ch-lily", title: String(
+                localized: "The Marian Library",
+                comment: "Library reading: the door home to the Marian Library page, at the foot of one of its readings"
+            ), note: shelf.title)
         case .carloAcutis:
-            return .page(.carloAcutis, icon: "ch-monstrance", title: "St. Carlo Acutis", note: shelf.title)
+            return .page(.carloAcutis, icon: "ch-monstrance", title: String(
+                localized: "St. Carlo Acutis",
+                comment: "Library reading: the door home to St. Carlo Acutis's page, at the foot of one of its readings"
+            ), note: shelf.title)
         default:
             return nil
         }

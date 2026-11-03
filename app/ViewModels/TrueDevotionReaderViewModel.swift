@@ -69,7 +69,10 @@ final class TrueDevotionReaderViewModel {
             progress = try modelContext.fetch(descriptor).first
             refreshPublishedState()
         } catch {
-            errorMessage = "Could not load your reading progress: \(error.localizedDescription)"
+            errorMessage = String(
+                localized: "Could not load your reading progress: \(error.localizedDescription)",
+                comment: "True Devotion: alert message when the reading place could not be loaded, then the system's error"
+            )
         }
     }
 
@@ -168,7 +171,10 @@ final class TrueDevotionReaderViewModel {
         do {
             try modelContext.save()
         } catch {
-            errorMessage = "Your place in the book could not be saved: \(error.localizedDescription)"
+            errorMessage = String(
+                localized: "Your place in the book could not be saved: \(error.localizedDescription)",
+                comment: "True Devotion: alert message when the reading place could not be saved, then the system's error"
+            )
         }
     }
 }

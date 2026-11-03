@@ -253,17 +253,20 @@ struct RosaryLessonView: View {
     private var beadsLesson: some View {
         VStack(alignment: .leading, spacing: 0) {
             ReadingText(
-                text: "The Rosary is a prayer drawn from the Gospels. It is prayed in five decades — sets of ten Hail Marys. For each decade we call to mind one scene from the life of Jesus and His Mother — a mystery — and while we think about it, we pray: an Our Father, ten Hail Marys, a Glory Be, and the Fatima Prayer.\n\nThe words are simple and the same each time, and that is the point. They become a quiet rhythm under the heart, leaving the mind free to look at Christ. The beads keep the count, so you do not have to.",
+                text: String(
+                    localized: "The Rosary is a prayer drawn from the Gospels. It is prayed in five decades — sets of ten Hail Marys. For each decade we call to mind one scene from the life of Jesus and His Mother — a mystery — and while we think about it, we pray: an Our Father, ten Hail Marys, a Glory Be, and the Fatima Prayer.\n\nThe words are simple and the same each time, and that is the point. They become a quiet rhythm under the heart, leaving the mind free to look at Christ. The beads keep the count, so you do not have to.",
+                    comment: "How to Pray, lesson 1, The Beads and the Order: the lesson's opening paragraphs; a blank line divides them"
+                ),
                 size: 17,
                 showsDropCap: true
             )
             .padding(.horizontal, 24)
             .padding(.top, 22)
 
-            sectionLabel("Meet the beads")
+            sectionLabel(String(localized: "Meet the beads", comment: "How to Pray lesson: section heading over the parts of a rosary, one by one"))
             anatomy
 
-            sectionLabel("The order")
+            sectionLabel(String(localized: "The order", comment: "How to Pray lesson: section heading over the steps of the Rosary in the order they are prayed"))
             steps
                 .padding(.horizontal, 24)
         }
@@ -438,7 +441,10 @@ struct RosaryLessonView: View {
     private var prayersLesson: some View {
         VStack(alignment: .leading, spacing: 0) {
             ReadingText(
-                text: "Eight prayers make the whole Rosary, and most of them you may already half know. Read each one through. Then try \u{201C}Say it with me\u{201D}: the prayer comes a line at a time, so you can say each line before you see it.\n\nStart with the Hail Mary. It is said fifty-three times in one Rosary, and after a week it will be yours.",
+                text: String(
+                    localized: "Eight prayers make the whole Rosary, and most of them you may already half know. Read each one through. Then try \u{201C}Say it with me\u{201D}: the prayer comes a line at a time, so you can say each line before you see it.\n\nStart with the Hail Mary. It is said fifty-three times in one Rosary, and after a week it will be yours.",
+                    comment: "How to Pray, lesson 2, The Prayers: the lesson's opening paragraphs; a blank line divides them"
+                ),
                 size: 17,
                 showsDropCap: true
             )
@@ -523,23 +529,23 @@ struct RosaryLessonView: View {
                         // page follows it up: a long one — the Creed, the
                         // Hail, Holy Queen — once collapsed from under the
                         // finger and left the next prayer in its place
-                        practiceButton("Say it with me", icon: "ch-praying-hands", outlined: true) {
+                        practiceButton(String(localized: "Say it with me", comment: "How to Pray, lesson 2: small capitals button under a prayer; starts revealing the prayer a line at a time, for the reader to say each line before seeing it"), icon: "ch-praying-hands", outlined: true) {
                             practice[prayer.id] = 1
                             practiceTarget = prayer.id
                         }
                     } else {
                         let total = practiceLineList(prayer).count
                         if (revealed ?? 0) < total {
-                            practiceButton("Next line", icon: "ph-caret-down", outlined: true) {
+                            practiceButton(String(localized: "Next line", comment: "How to Pray, lesson 2: small capitals button under a prayer; reveals the next line of the prayer being learned"), icon: "ph-caret-down", outlined: true) {
                                 practice[prayer.id] = (revealed ?? 0) + 1
                             }
                         } else {
-                            practiceButton("Again", icon: "ph-arrow-counter-clockwise", outlined: true) {
+                            practiceButton(String(localized: "Again", comment: "How to Pray, lesson 2: small capitals button under a prayer; starts the prayer over from its first line"), icon: "ph-arrow-counter-clockwise", outlined: true) {
                                 practice[prayer.id] = 1
                                 practiceTarget = prayer.id
                             }
                         }
-                        practiceButton("Show all", icon: nil, outlined: false) {
+                        practiceButton(String(localized: "Show all", comment: "How to Pray, lesson 2: small capitals button under a prayer; shows the whole prayer again"), icon: nil, outlined: false) {
                             practice[prayer.id] = nil
                         }
                     }
@@ -656,14 +662,17 @@ struct RosaryLessonView: View {
     private var mysteriesLesson: some View {
         VStack(alignment: .leading, spacing: 0) {
             ReadingText(
-                text: "A mystery is a moment in the life of Jesus and Mary — His birth, His agony in the garden, His rising. There are twenty, in four sets of five. Each day has its own set, and the Luminous can be prayed any day you choose. While your lips say the Hail Marys of a decade, your mind stays with its mystery.",
+                text: String(
+                    localized: "A mystery is a moment in the life of Jesus and Mary — His birth, His agony in the garden, His rising. There are twenty, in four sets of five. Each day has its own set, and the Luminous can be prayed any day you choose. While your lips say the Hail Marys of a decade, your mind stays with its mystery.",
+                    comment: "How to Pray, lesson 3, The Mysteries: the lesson's opening paragraphs; a blank line divides them"
+                ),
                 size: 17,
                 showsDropCap: true
             )
             .padding(.horizontal, 24)
             .padding(.top, 22)
 
-            sectionLabel("The four sets")
+            sectionLabel(String(localized: "The four sets", comment: "How to Pray lesson: section heading over the four sets of mysteries of the Rosary"))
             VStack(spacing: 16) {
                 ForEach([MysteryCategory.joyful, .sorrowful, .glorious, .luminous], id: \.self) { category in
                     mysteryCard(category)
@@ -671,15 +680,36 @@ struct RosaryLessonView: View {
             }
             .padding(.horizontal, 20)
 
-            sectionLabel("How to dwell on a mystery")
+            sectionLabel(String(localized: "How to dwell on a mystery", comment: "How to Pray lesson: section heading over three ways to keep the mind on a mystery"))
             VStack(alignment: .leading, spacing: 22) {
-                dwell("I", "Name it", "Say the mystery's name before the decade: \u{201C}The first Joyful Mystery, the Annunciation.\u{201D}")
-                dwell("II", "Picture it", "Place yourself in the scene. Where is Mary? What does she see, and hear? What would you say to her Son?")
-                dwell("III", "Ask for its grace", "Each mystery teaches a virtue — humility, patience, faith. Ask for it as you begin the ten Hail Marys.")
+                dwell(
+                    "I",
+                    String(localized: "Name it", comment: "How to Pray, lesson 3, How to dwell on a mystery: title of way I (I, II, III)"),
+                    String(
+                        localized: "Say the mystery's name before the decade: \u{201C}The first Joyful Mystery, the Annunciation.\u{201D}",
+                        comment: "How to Pray, lesson 3, How to dwell on a mystery: what way I means"
+                    )
+                )
+                dwell(
+                    "II",
+                    String(localized: "Picture it", comment: "How to Pray, lesson 3, How to dwell on a mystery: title of way II (I, II, III)"),
+                    String(
+                        localized: "Place yourself in the scene. Where is Mary? What does she see, and hear? What would you say to her Son?",
+                        comment: "How to Pray, lesson 3, How to dwell on a mystery: what way II means"
+                    )
+                )
+                dwell(
+                    "III",
+                    String(localized: "Ask for its grace", comment: "How to Pray, lesson 3, How to dwell on a mystery: title of way III (I, II, III)"),
+                    String(
+                        localized: "Each mystery teaches a virtue — humility, patience, faith. Ask for it as you begin the ten Hail Marys.",
+                        comment: "How to Pray, lesson 3, How to dwell on a mystery: what way III means"
+                    )
+                )
             }
             .padding(.horizontal, 24)
 
-            sectionLabel("This week")
+            sectionLabel(String(localized: "This week", comment: "How to Pray lesson: section heading over which mysteries are prayed on each day of this week"))
             week
                 .padding(.horizontal, 20)
         }
@@ -796,12 +826,14 @@ struct RosaryLessonView: View {
             return weekdayFormatter.string(from: day)
         }
         // Outside the traditional rotation; Thursday's on the modern one
-        if category == .luminous, names.isEmpty { return "Any day you choose" }
+        if category == .luminous, names.isEmpty {
+            return String(localized: "Any day you choose", comment: "How to Pray, lesson 3: when the Luminous Mysteries are prayed, outside the weekly schedule")
+        }
         let sundays: String
         switch category {
-        case .joyful:    sundays = "Sundays of Advent"
-        case .sorrowful: sundays = "Sundays of Lent"
-        case .glorious:  sundays = "most Sundays"
+        case .joyful:    sundays = String(localized: "Sundays of Advent", comment: "How to Pray, lesson 3: days the Joyful Mysteries are prayed, after the weekday names, joined by ·")
+        case .sorrowful: sundays = String(localized: "Sundays of Lent", comment: "How to Pray, lesson 3: days the Sorrowful Mysteries are prayed, after the weekday names, joined by ·")
+        case .glorious:  sundays = String(localized: "most Sundays", comment: "How to Pray, lesson 3: days the Glorious Mysteries are prayed, after the weekday names, joined by ·; lower case")
         default:         sundays = ""
         }
         return (names + [sundays]).filter { !$0.isEmpty }.joined(separator: " · ")
@@ -905,7 +937,11 @@ struct RosaryLessonView: View {
                 }
                 .buttonStyle(SacredCardButtonStyle())
                 .accessibilityElement(children: .combine)
-                .accessibilityLabel("\(Self.weekdayFormatter.string(from: day)): the \(category.devotionTitle)\(isToday ? ", today" : "")")
+                .accessibilityLabel(
+                    isToday
+                        ? Text("\(Self.weekdayFormatter.string(from: day)): the \(category.devotionTitle), today")
+                        : Text("\(Self.weekdayFormatter.string(from: day)): the \(category.devotionTitle)")
+                )
                 .accessibilityHint("Prays them as your first Rosary")
             }
         }
@@ -930,7 +966,11 @@ struct RosaryLessonView: View {
                     .font(AppFonts.titleFont(20))
                     .foregroundColor(AppColors.cream)
 
-                GoldCTAButton(title: "Continue", glyph: .chevron, fullWidth: false) {
+                GoldCTAButton(
+                    title: String(localized: "Continue", comment: "How to Pray lesson: the gold act at the foot, turning to the next lesson"),
+                    glyph: .chevron,
+                    fullWidth: false
+                ) {
                     // One turn at a time
                     guard turnTarget == nil else { return }
                     turnTarget = next.rawValue
@@ -950,7 +990,13 @@ struct RosaryLessonView: View {
                     .font(AppFonts.titleFont(20))
                     .foregroundColor(AppColors.cream)
 
-                GoldCTAButton(title: kept != nil ? "Continue" : "Begin", glyph: .play, fullWidth: false) {
+                GoldCTAButton(
+                    title: kept != nil
+                        ? String(localized: "Continue", comment: "How to Pray, last lesson's foot: the gold act, going on with a guided Rosary left part-way")
+                        : String(localized: "Begin", comment: "How to Pray, last lesson's foot: the gold act, beginning the guided Rosary"),
+                    glyph: .play,
+                    fullWidth: false
+                ) {
                     router.pop()
                     router.push(.guidedRosary(kept?.category ?? ScheduleService.categoryForToday()))
                 }

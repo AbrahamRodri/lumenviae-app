@@ -287,7 +287,7 @@ struct ChantPauseSheet: View {
                 SheetHeaderAction(title: String(localized: "Cancel", comment: "Sheet header action that closes the sheet without saving")) { dismiss() }
             }
 
-            TextField("", text: $note, prompt: Text(Self.silentPrayer).foregroundColor(Rubric.text.opacity(0.45)))
+            TextField("", text: $note, prompt: Text(ChantLibraryData.displayWording(of: Self.silentPrayer)).foregroundColor(Rubric.text.opacity(0.45)))
                 .font(AppFonts.readingItalicFont(22))
                 .foregroundColor(Rubric.text)
                 .tint(Rubric.text)
@@ -439,7 +439,7 @@ struct ChantPauseSheet: View {
     /// The pause as it will stand in the set: under the set's last chant,
     /// dimmed, the note in red with its silence beside it
     private func preview(after last: Chant) -> some View {
-        let shown = words.isEmpty ? Self.silentPrayer : words
+        let shown = words.isEmpty ? ChantLibraryData.displayWording(of: Self.silentPrayer) : words
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 10) {
                 ChantThumbnail(name: ChantCatalog.painting(for: last), size: 28, radius: 6)

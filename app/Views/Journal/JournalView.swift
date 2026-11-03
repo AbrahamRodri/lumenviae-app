@@ -275,7 +275,7 @@ struct JournalView: View {
         HStack(spacing: 12) {
             layoutButton(
                 icon: "ph-list",
-                label: "List view",
+                label: String(localized: "List view", comment: "Journal: VoiceOver name of the glyph that shows reflections as a list"),
                 isSelected: usesListLayout
             ) {
                 usesListLayout = true
@@ -283,7 +283,7 @@ struct JournalView: View {
 
             layoutButton(
                 icon: "ph-cards",
-                label: "Gallery view",
+                label: String(localized: "Gallery view", comment: "Journal: VoiceOver name of the glyph that shows reflections as a gallery of cards"),
                 isSelected: !usesListLayout
             ) {
                 usesListLayout = false
@@ -551,8 +551,12 @@ private enum JournalDate {
     /// "TODAY" / "YESTERDAY", else a short uppercased date.
     static func label(for date: Date) -> String {
         let calendar = Calendar.current
-        if calendar.isDateInToday(date) { return "TODAY" }
-        if calendar.isDateInYesterday(date) { return "YESTERDAY" }
+        if calendar.isDateInToday(date) {
+            return String(localized: "TODAY", comment: "Journal: small capitals over a reflection written today")
+        }
+        if calendar.isDateInYesterday(date) {
+            return String(localized: "YESTERDAY", comment: "Journal: small capitals over a reflection written yesterday")
+        }
         return shortFormatter.string(from: date).uppercased()
     }
 

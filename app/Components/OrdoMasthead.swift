@@ -78,7 +78,7 @@ struct OrdoMasthead<Feast: View>: View {
 
             if !isToday {
                 QuietGoldButton(
-                    title: "Return to today",
+                    title: String(localized: "Return to today", comment: "Missal's day header: the quiet act that goes back to today's Mass after stepping to another day"),
                     leadingIcon: "ph-arrow-counter-clockwise",
                     leadingIconSize: 10,
                     size: 10
@@ -103,7 +103,7 @@ struct OrdoMasthead<Feast: View>: View {
     /// a door to the calendar — in the middle.
     private var dateStrip: some View {
         HStack(spacing: 0) {
-            stepButton(icon: "ph-caret-left", label: "Previous day", days: -1)
+            stepButton(icon: "ph-caret-left", label: String(localized: "Previous day", comment: "VoiceOver, Missal's day header: the arrow stepping to the day before"), days: -1)
 
             Button(action: onCalendar) {
                 HStack(spacing: 8) {
@@ -122,7 +122,7 @@ struct OrdoMasthead<Feast: View>: View {
             .buttonStyle(SacredCardButtonStyle())
             .accessibilityLabel("\(dateLabel). Open the calendar")
 
-            stepButton(icon: "ph-caret-right", label: "Next day", days: 1)
+            stepButton(icon: "ph-caret-right", label: String(localized: "Next day", comment: "VoiceOver, Missal's day header: the arrow stepping to the day after"), days: 1)
         }
     }
 

@@ -218,7 +218,7 @@ struct TodaysGoalBand: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Daily reading goal. \(line). Opens your reading goal.")
+        .accessibilityLabel(Text("Daily reading goal. \(line). Opens your reading goal.", comment: "VoiceOver, True Devotion's daily reading goal band: the day's measure as a phrase"))
     }
 
     /// A 38-point dial whose ring fills as the day's reading does —
@@ -330,7 +330,7 @@ struct DailyReadingGoalCard: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Daily reading goal. \(line).")
+        .accessibilityLabel(Text("Daily reading goal. \(line).", comment: "VoiceOver, a book's daily reading goal card: the day's measure as a phrase, like 6 of 15 minutes today"))
         .accessibilityHint("Adjusts your daily reading goal")
     }
 
@@ -382,10 +382,13 @@ struct ReadingGoalSheet: View {
 
     var body: some View {
         LibraryTraySheet(
-            kicker: "Daily reading goal",
-            title: "How Much to Read",
-            lead: "Spiritual reading asks for a little every day rather than an evening every month.",
-            note: "A day without reading is never counted against you."
+            kicker: String(localized: "Daily reading goal", comment: "Reading goal sheet: kicker over the title"),
+            title: String(localized: "How Much to Read", comment: "Reading goal sheet: title"),
+            lead: String(
+                localized: "Spiritual reading asks for a little every day rather than an evening every month.",
+                comment: "Reading goal sheet: one line under the title"
+            ),
+            note: String(localized: "A day without reading is never counted against you.", comment: "Reading goal sheet: note at its foot")
         ) {
             ForEach(ReadingGoal.allCases) { goal in
                 LibraryTrayRow(
@@ -642,7 +645,11 @@ struct PassageActionBar: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            action(icon: "ph-note-pencil", label: "NOTE", handler: onNote)
+            action(
+                icon: "ph-note-pencil",
+                label: String(localized: "NOTE", comment: "Capsule over a selected passage: small capitals, writes a note on it"),
+                handler: onNote
+            )
 
             divider
 
@@ -652,7 +659,9 @@ struct PassageActionBar: View {
                         .fill(isMarked ? AppColors.goldLight : AppColors.gold)
                         .frame(width: 8, height: 15)
 
-                    Text(isMarked ? "REMOVE" : "BOOKMARK")
+                    (isMarked
+                        ? Text("REMOVE", comment: "Capsule over a selected passage: small capitals, removes its bookmark")
+                        : Text("BOOKMARK", comment: "Capsule over a selected passage: small capitals, bookmarks it"))
                         .font(AppFonts.labelFont(10))
                         .tracking(1.5)
                 }
@@ -662,11 +671,19 @@ struct PassageActionBar: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(isMarked ? "Remove the bookmark from this passage" : "Bookmark this passage")
+            .accessibilityLabel(
+                isMarked
+                    ? Text("Remove the bookmark from this passage", comment: "VoiceOver, capsule over a selected passage")
+                    : Text("Bookmark this passage", comment: "VoiceOver, capsule over a selected passage")
+            )
 
             divider
 
-            action(icon: "ph-export", label: "SHARE", handler: onShare)
+            action(
+                icon: "ph-export",
+                label: String(localized: "SHARE", comment: "Capsule over a selected passage: small capitals, shares it"),
+                handler: onShare
+            )
         }
         .background(
             RoundedRectangle(cornerRadius: 22)
@@ -760,7 +777,10 @@ struct LibraryFootnoteSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            SheetHeader(kicker: "Editor's note", title: "Footnote \(number)")
+            SheetHeader(
+                kicker: String(localized: "Editor's note", comment: "A book's footnote sheet: kicker over the title"),
+                title: String(localized: "Footnote \(number)", comment: "A book's footnote sheet: title, the footnote's number")
+            )
 
             Text(text)
                 .font(AppFonts.bodyFont(15))
@@ -799,7 +819,7 @@ struct PassageShareSheet: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
-                SheetHeader(title: "Share This Passage")
+                SheetHeader(title: String(localized: "Share This Passage", comment: "Share sheet for a selected passage: title"))
 
                 VStack(alignment: .leading, spacing: 18) {
                     card
@@ -931,9 +951,7 @@ struct BookNotesRow: View {
                 AppIcon("ph-note-pencil", size: 15)
                     .foregroundColor(AppColors.gold.opacity(0.8))
 
-                Text(count == 1
-                     ? "1 note on a passage of this book"
-                     : "\(count) notes on passages of this book")
+                Text("\(count) notes on passages of this book", comment: "A book's page: row opening the reader's notes on the book")
                     .font(AppFonts.bodyFont(14))
                     .foregroundColor(AppColors.cream)
 
@@ -947,7 +965,7 @@ struct BookNotesRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Your notes on this book, \(count)")
+        .accessibilityLabel(Text("Your notes on this book, \(count)", comment: "VoiceOver, a book's page: row opening the reader's notes, then how many"))
     }
 }
 
@@ -969,9 +987,12 @@ struct BookNotesSheet: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
                 SheetHeader(
-                    kicker: "On this book",
-                    title: "Your Notes",
-                    lead: "Passages you wrote something about. Each one is in your journal as well."
+                    kicker: String(localized: "On this book", comment: "A book's notes sheet: kicker over the title"),
+                    title: String(localized: "Your Notes", comment: "A book's notes sheet: title"),
+                    lead: String(
+                        localized: "Passages you wrote something about. Each one is in your journal as well.",
+                        comment: "A book's notes sheet: one line under the title"
+                    )
                 )
 
                 // Quoted passages, not choices: set on the gutter and
@@ -1050,8 +1071,13 @@ enum ReadingSpans {
         if minutes >= 60 {
             let hours = minutes / 60
             let rest = minutes % 60
-            return rest == 0 ? "\(hours) HR" : "\(hours) HR \(rest) MIN"
+            return rest == 0
+                ? String(localized: "\(hours) HR", comment: "A recording's length on a chip: small capitals, whole hours, like 2 HR")
+                : String(
+                    localized: "\(hours) HR \(rest) MIN",
+                    comment: "A recording's length on a chip: small capitals, hours and minutes, like 1 HR 5 MIN"
+                )
         }
-        return "\(minutes) MIN"
+        return String(localized: "\(minutes) MIN", comment: "A recording's length on a chip: small capitals, minutes, like 24 MIN")
     }
 }

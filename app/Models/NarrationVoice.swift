@@ -31,15 +31,27 @@ struct NarrationVoice: nonisolated Codable, Identifiable, Hashable {
     }
 
     /// The picker's wording is the server's own: "Male", "Female", with
-    /// the description beneath it.
-    var displayName: String { name }
+    /// the description beneath it. The two names the server sends today
+    /// are translated here for display; any other name is shown as sent.
+    var displayName: String {
+        switch name {
+        case "Male":
+            return String(localized: "Male", comment: "Name of a narration voice, in Settings and the player's voice choice: the man's voice")
+        case "Female":
+            return String(localized: "Female", comment: "Name of a narration voice, in Settings and the player's voice choice: the woman's voice")
+        default:
+            return name
+        }
+    }
 
     /// The server's line on the voice, said plainly: "emotive" is not a
     /// word for a newcomer
     var plainDescription: String? {
         switch description {
-        case "A gentle, emotive narrator": return "A gentle, warm voice"
-        case "A warm, reverent narrator":  return "A warm, reverent voice"
+        case "A gentle, emotive narrator":
+            return String(localized: "A gentle, warm voice", comment: "Settings, narration voice: the line under the woman's voice describing it")
+        case "A warm, reverent narrator":
+            return String(localized: "A warm, reverent voice", comment: "Settings, narration voice: the line under the man's voice describing it")
         default:                           return description
         }
     }

@@ -105,7 +105,7 @@ struct ChantMiniPlayer: View {
         if let silence = player.silence {
             return silence.note.isEmpty
                 ? String(localized: "Silence", comment: "Mini player's title during a timed pause between chants in a sung set")
-                : silence.note
+                : ChantLibraryData.displayWording(of: silence.note)
         }
         if player.waitingForNext {
             return String(
@@ -134,9 +134,9 @@ struct ChantMiniPlayer: View {
                     .accessibilityLabel("Silence, paused, \(ChantPlayer.spoken(silence.remaining)) left")
             }
         } else if player.waitingForNext, let queue = player.queue {
-            Text("\(queue.title) · waiting for you")
+            Text("\(queue.shownTitle) · waiting for you")
         } else if let queue = player.queue {
-            Text("\(queue.title) · \(queue.position)")
+            Text("\(queue.shownTitle) · \(queue.position)")
         } else if let time = player.timeLabel {
             // The English name beside the Latin title above, and the time
             // kept whole however long the name runs

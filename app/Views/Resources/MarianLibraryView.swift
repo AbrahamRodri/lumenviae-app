@@ -152,7 +152,7 @@ struct MarianLibraryView: View {
             )
 
             VStack(alignment: .leading, spacing: 8) {
-                Text(isToday ? "TODAY · A FEAST OF OUR LADY" : whenLabel(date))
+                (isToday ? Text("TODAY · A FEAST OF OUR LADY") : Text(whenLabel(date)))
                     .font(AppFonts.labelFont(9))
                     .tracking(2.4)
                     .foregroundColor(AppColors.goldLight)
@@ -163,7 +163,14 @@ struct MarianLibraryView: View {
                     .lineSpacing(3)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text(feast.keptBy.map { "\(feast.dateLabel) · celebrated in \($0)" } ?? feast.dateLabel)
+                Text(
+                    feast.keptBy.map { place in
+                        String(
+                            localized: "\(feast.dateLabel) · celebrated in \(place)",
+                            comment: "Marian Library, the next feast: its date, then the country or people that keep it, like 12 December · celebrated in Mexico"
+                        )
+                    } ?? feast.dateLabel
+                )
                     .font(AppFonts.readingItalicFont(15))
                     .foregroundColor(AppColors.textPrimary.opacity(0.8))
 
@@ -193,12 +200,23 @@ struct MarianLibraryView: View {
     }
 
     private func whenLabel(_ date: Date?) -> String {
-        guard let date else { return "A FEAST OF OUR LADY" }
+        guard let date else {
+            return String(localized: "A FEAST OF OUR LADY", comment: "Marian Library, the next feast: small capitals kicker when its date is unknown")
+        }
         let days = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: .now), to: date).day ?? 0
         switch days {
-        case 1: return "TOMORROW"
-        case 2...45: return "IN \(days) DAYS"
-        default: return "COMING IN \(Self.month.string(from: date).uppercased())"
+        case 1:
+            return String(localized: "TOMORROW", comment: "Marian Library, the next feast: small capitals kicker, the feast is tomorrow")
+        case 2...45:
+            return String(
+                localized: "In \(days) days",
+                comment: "Marian Library, the next feast: kicker, how many days until the feast (2 to 45); shown in small capitals"
+            ).uppercased()
+        default:
+            return String(
+                localized: "Coming in \(Self.month.string(from: date))",
+                comment: "Marian Library, the next feast: kicker naming the month the feast falls in, like Coming in December; shown in small capitals"
+            ).uppercased()
         }
     }
 
@@ -213,12 +231,27 @@ struct MarianLibraryView: View {
     @ViewBuilder
     private func featureActs(_ feast: KeptFeast, date: Date?, isToday: Bool, reading: (id: String, name: String?)?) -> some View {
         if feast.inMissal, let date {
-            featureButton(isToday ? "Read Today's Mass" : "Read the Day's Mass", icon: "ch-altar", filled: true) {
+            featureButton(
+                isToday
+                    ? String(localized: "Read Today's Mass", comment: "Marian Library, the next feast: button opening today's Mass; shown in small capitals")
+                    : String(localized: "Read the Day's Mass", comment: "Marian Library, the next feast: button opening the feast day's Mass; shown in small capitals"),
+                icon: "ch-altar",
+                filled: true
+            ) {
                 router.push(.missalDay(date))
             }
         }
         if let reading {
-            featureButton(reading.name.map { "Read · \($0)" } ?? "Read", icon: "ph-book-open", filled: false) {
+            featureButton(
+                reading.name.map { name in
+                    String(
+                        localized: "Read · \(name)",
+                        comment: "Marian Library, the next feast: button opening the library's reading, named when it has another title, like Read · Behold Thy Mother; shown in small capitals"
+                    )
+                } ?? String(localized: "Read", comment: "Marian Library, the next feast: button opening the library's reading of the feast; shown in small capitals"),
+                icon: "ph-book-open",
+                filled: false
+            ) {
                 router.push(.libraryReading(id: reading.id))
             }
         }
@@ -748,10 +781,10 @@ struct MarianLibraryView: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
-                prayerDoor("Pray the Litany of Loreto", id: "litany_loreto")
+                prayerDoor(String(localized: "Pray the Litany of Loreto", comment: "Marian Library, her titles: door praying the Litany of Loreto"), id: "litany_loreto")
                 HStack(spacing: 10) {
-                    prayerDoor("Hail, Star of the Sea", id: "ave_maris_stella")
-                    prayerDoor("Mary's Song", id: "magnificat")
+                    prayerDoor(String(localized: "Hail, Star of the Sea", comment: "Marian Library, her titles: door to the hymn Ave Maris Stella, by its English name"), id: "ave_maris_stella")
+                    prayerDoor(String(localized: "Mary's Song", comment: "Marian Library, her titles: door to the Magnificat, by its plain English name"), id: "magnificat")
                 }
             }
         }

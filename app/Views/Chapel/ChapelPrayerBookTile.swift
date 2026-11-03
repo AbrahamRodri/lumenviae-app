@@ -66,7 +66,9 @@ struct ChapelPrayerBookTile: View {
 
     /// "At noon", or "Prayed today" once it has been
     private var momentLine: String {
-        offered ? "Prayed today" : PrayerBook.dayOrderMoment(at: Date())
+        offered
+            ? String(localized: "Prayed today", comment: "Chapel, Prayers tile: note when the hour's order of prayer has been prayed today")
+            : PrayerBook.dayOrderMoment(at: Date())
     }
 
     /// The part of the day the book is at, for the title line's note, in
@@ -117,7 +119,7 @@ struct ChapelPrayerBookTile: View {
                 .accessibilityHint("Opens Prayers.")
 
                 GoldCTAButton(
-                    title: "Pray",
+                    title: String(localized: "Pray", comment: "Chapel, Prayers tile: outlined button that prays the order for the hour"),
                     fill: .outline,
                     prominence: .inline,
                     silhouette: .rounded(14),
@@ -147,7 +149,15 @@ struct ChapelPrayerBookTile: View {
             span: 1,
             surface: .leaf,
             onTap: { pray(order) },
-            accessibilityLabel: "\(order.title(on: Date())), \(momentLine.lowercased()). Double-tap to pray."
+            accessibilityLabel: offered
+                ? String(
+                    localized: "\(order.title(on: Date())), prayed today. Double-tap to pray.",
+                    comment: "VoiceOver, Chapel Prayers tile at half width: the hour's order of prayer, prayed today"
+                )
+                : String(
+                    localized: "\(order.title(on: Date())), \(PrayerBook.dayOrderMoment(at: Date()).lowercased()). Double-tap to pray.",
+                    comment: "VoiceOver, Chapel Prayers tile at half width: the hour's order of prayer, then when it is said (a phrase like at noon)"
+                )
         ) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(order.title(on: Date()))
@@ -252,7 +262,9 @@ struct ChapelPrayerBookTile: View {
             .accessibilityElement(children: .ignore)
             // Led by the word on the glass, so Voice Control finds it by
             // what it shows: "Noon, the Angelus, the hour it is now"
-            .accessibilityLabel("\(name), \(dayOrder.title(on: Date())), \(Self.spoken(place))")
+            .accessibilityLabel(
+                Text("\(name), \(dayOrder.title(on: Date())), \(Self.spoken(place))", comment: "VoiceOver, Chapel Prayers tile: an hour of the strip (like Noon), its order of prayer, then where it stands (prayed, the hour it is now, or when it is said)")
+            )
             .accessibilityHint("Double-tap to pray.")
             .accessibilityAddTraits(.isButton)
         } else {
@@ -265,8 +277,10 @@ struct ChapelPrayerBookTile: View {
     /// when it is said, in the Prayers page's words ("At noon")
     private static func word(for standing: PrayerBook.HourStanding) -> String {
         switch standing {
-        case .offered:      return "Prayed"
-        case .now:          return "Now"
+        case .offered:
+            return String(localized: "Prayed", comment: "Chapel, Prayers tile: under an hour's bead, when its order has been prayed")
+        case .now:
+            return String(localized: "Now", comment: "Chapel, Prayers tile: under an hour's bead, when it is the hour now")
         case .at(let when): return when
         }
     }
@@ -274,8 +288,10 @@ struct ChapelPrayerBookTile: View {
     /// The same, as VoiceOver hears it
     private static func spoken(_ standing: PrayerBook.HourStanding) -> String {
         switch standing {
-        case .offered:      return "prayed"
-        case .now:          return "the hour it is now"
+        case .offered:
+            return String(localized: "prayed", comment: "VoiceOver, Chapel Prayers tile: an hour's standing when its order has been prayed; lower case, follows a comma")
+        case .now:
+            return String(localized: "the hour it is now", comment: "VoiceOver, Chapel Prayers tile: an hour's standing when it is the hour now; lower case, follows a comma")
         case .at(let when): return when.lowercased()
         }
     }
