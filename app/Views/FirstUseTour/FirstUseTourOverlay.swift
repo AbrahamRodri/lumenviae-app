@@ -133,7 +133,7 @@ struct FirstUseTourOverlay: View {
 
             HStack {
                 QuietGoldButton(
-                    title: "Leave the tour",
+                    title: String(localized: "Leave the tour", comment: "First-use tour card: quiet act that ends the tour for good"),
                     color: AppColors.textSecondary,
                     horizontalPadding: 0
                 ) {
@@ -144,7 +144,9 @@ struct FirstUseTourOverlay: View {
                 Spacer(minLength: 12)
 
                 QuietGoldButton(
-                    title: isLast ? "Done" : "Next",
+                    title: isLast
+                        ? String(localized: "Done", comment: "First-use tour card: act on the last stop that ends the tour")
+                        : String(localized: "Next", comment: "First-use tour card: act that moves to the next stop"),
                     trailingIcon: isLast ? nil : "ph-caret-right",
                     color: AppColors.goldLight,
                     horizontalPadding: 0

@@ -152,7 +152,7 @@ struct OrdoMissaeView: View {
                 .multilineTextAlignment(.center)
 
             GoldCTAButton(
-                title: "Try again",
+                title: String(localized: "Try again", comment: "The Order of Mass page: quiet act that retries loading it after it failed"),
                 prominence: .inline,
                 fullWidth: false
             ) {
@@ -179,7 +179,7 @@ struct OrdoMissaeView: View {
             if let stored = MissalCacheService.shared.loadOrdo() {
                 sections = stored
             } else {
-                errorMessage = "The Order of Mass could not be reached. Check your connection and try again."
+                errorMessage = String(localized: "The Order of Mass could not be reached. Check your connection and try again.", comment: "The Order of Mass page: message when its texts could not be loaded")
             }
         }
 

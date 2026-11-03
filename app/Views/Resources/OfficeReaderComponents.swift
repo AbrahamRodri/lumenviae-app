@@ -40,7 +40,10 @@ extension CanonicalHour {
     /// scribe wrote "Expliciunt Laudes". Said in English: the Latin
     /// close stood in the chrome with nothing to say what it meant.
     var explicit: String {
-        "END OF \(plainName.uppercased())"
+        String(
+            localized: "END OF \(plainName)",
+            comment: "Hours of Prayer: the close at the foot of a finished hour, set in capitals, like END OF EVENING PRAYER; the hour's plain name"
+        ).uppercased()
     }
 }
 
@@ -51,7 +54,10 @@ extension CanonicalHour {
 /// work, said short. It once ran "The traditional Latin Office, as prayed
 /// before 1970 · texts from the Divinum Officium Project".
 enum OfficeCredit {
-    static let line = "Texts: Divinum Officium"
+    static let line = String(
+        localized: "Texts: Divinum Officium",
+        comment: "Hours of Prayer: credit line at the foot naming the source of the texts, the Divinum Officium Project (a name, not translated)"
+    )
 }
 
 // MARK: - The Hours' Paintings
@@ -187,43 +193,43 @@ struct OfficeReadingSheet: View {
     var body: some View {
         @Bindable var settings = settings
 
-        return MissalSheetShell(kicker: "Hours of Prayer", title: "Text options") {
+        return MissalSheetShell(kicker: String(localized: "Hours of Prayer", comment: "Small kicker over a sheet opened from the Hours of Prayer (the Divine Office)"), title: String(localized: "Text options", comment: "Hours of Prayer, text options sheet (the Aa button): title")) {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    MissalSheetChipGroup("Language") {
+                    MissalSheetChipGroup(String(localized: "Language", comment: "Hours of Prayer, text options sheet (the Aa button): heading over the language choice")) {
                         MissalSheetChip(
-                            title: "Latin",
+                            title: String(localized: "Latin", comment: "Hours of Prayer, text options sheet (the Aa button): language choice: Latin only"),
                             isSelected: settings.prayerLanguage == .latin
                         ) { choose(.latin) }
 
                         MissalSheetChip(
-                            title: "English",
+                            title: String(localized: "English", comment: "Hours of Prayer, text options sheet (the Aa button): language choice: English only"),
                             isSelected: settings.prayerLanguage == .english
                         ) { choose(.english) }
 
                         MissalSheetChip(
-                            title: "Both",
+                            title: String(localized: "Both", comment: "Hours of Prayer, text options sheet (the Aa button): language choice: Latin and English together"),
                             isSelected: settings.prayerLanguage.isBilingual
                         ) { chooseBoth() }
                     }
 
-                    MissalSheetChipGroup("Latin and English") {
+                    MissalSheetChipGroup(String(localized: "Latin and English", comment: "Hours of Prayer, text options sheet (the Aa button): heading over how the Latin and English are laid out")) {
                         MissalSheetChip(
-                            title: "Line by line",
+                            title: String(localized: "Line by line", comment: "The Mass layout choice: each Latin line with its English under it"),
                             isSelected: settings.missalLayout == .interlinear
                         ) {
                             settings.missalLayoutPreference = MissalLayout.interlinear.rawValue
                         }
 
                         MissalSheetChip(
-                            title: "Side by side",
+                            title: String(localized: "Side by side", comment: "The Mass layout choice: Latin and English in two columns"),
                             isSelected: settings.missalLayout == .sideBySide
                         ) { chooseSideBySide() }
                     }
 
                     SheetSizeSlider(scale: $settings.missalTextScale)
 
-                    SheetNote("These settings apply to the Mass texts as well.")
+                    SheetNote(String(localized: "These settings apply to the Mass texts as well.", comment: "Hours of Prayer, text options sheet (the Aa button): note that the same settings also change the Mass"))
                         .padding(.top, 8)
                 }
                 .padding(.bottom, 36)
@@ -269,7 +275,7 @@ struct OfficeIndexSheet: View {
     let onJump: (String) -> Void
 
     var body: some View {
-        MissalSheetShell(kicker: "In this prayer", title: hour.plainName) {
+        MissalSheetShell(kicker: String(localized: "In this prayer", comment: "Hours of Prayer, index sheet: small kicker over the hour's name, above the list of its parts"), title: hour.plainName) {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     let reading = readingIndex
@@ -300,7 +306,7 @@ struct OfficeIndexSheet: View {
         } label: {
             SheetRow(
                 section.railName,
-                accessory: isActive ? .label("Here") : .none,
+                accessory: isActive ? .label(String(localized: "Here", comment: "Hours of Prayer, index sheet: small capitals on the part being read now")) : .none,
                 isLit: isActive
             )
         }

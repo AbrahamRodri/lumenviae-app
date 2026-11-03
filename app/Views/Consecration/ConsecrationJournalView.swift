@@ -66,17 +66,25 @@ struct ConsecrationJournalView: View {
     /// The day's own question, in the slot the journal editor keeps for
     /// its invitation to write
     private var placeholderText: String {
-        day?.journalPrompt ?? "Record your thoughts…"
+        day?.journalPrompt
+            ?? String(localized: "Record your thoughts…", comment: "Consecration reflection editor: placeholder in the empty writing field when the day has no question of its own")
     }
 
     private var subjectLine: String {
-        day?.title ?? "Reflection"
+        day?.title ?? String(localized: "Reflection", comment: "Consecration reflection editor: title when the day's own title is missing")
     }
 
     private var contextLine: String {
-        guard let phase else { return "Day \(dayNumber)" }
-        if phase == .consecrationDay { return "Consecration Day" }
-        return "Day \(dayNumber) · \(phase.displayName)"
+        guard let phase else {
+            return String(localized: "Day \(dayNumber)", comment: "Consecration reflection editor: kicker naming the day of the preparation")
+        }
+        if phase == .consecrationDay {
+            return String(localized: "Consecration Day", comment: "Consecration reflection editor: kicker on day 34, when the act of consecration is made")
+        }
+        return String(
+            localized: "Day \(dayNumber) · \(phase.displayName)",
+            comment: "Consecration reflection editor: kicker naming the day and its period of the preparation, like Day 14 · Week 1"
+        )
     }
 
     private static let dateFormatter: DateFormatter = {
@@ -331,8 +339,12 @@ struct ConsecrationJournalView: View {
     }
 
     private var completeTitle: String {
-        if isConsecrationDay { return "Make my consecration" }
-        return isAlreadyComplete ? "Save this reflection" : "Complete this day"
+        if isConsecrationDay {
+            return String(localized: "Make my consecration", comment: "Consecration reflection editor: the gold act on day 34, which goes on to the act of consecration")
+        }
+        return isAlreadyComplete
+            ? String(localized: "Save this reflection", comment: "Consecration reflection editor: the gold act on a day already completed")
+            : String(localized: "Complete this day", comment: "Consecration reflection editor: the gold act that saves the reflection and marks the day prayed")
     }
 }
 

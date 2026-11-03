@@ -60,7 +60,7 @@ struct PrayShortcutTray: View {
         VStack(alignment: .leading, spacing: 0) {
             SheetHeader(
                 kicker: Date.now.formatted(.dateTime.weekday(.wide).month(.wide).day()),
-                title: "Your Devotions"
+                title: String(localized: "Your Devotions", comment: "Pray button tray (opened by holding the Pray button): the sheet's title over the devotions it lists")
             )
 
             ForEach(Array(settings.prayTrayShortcuts.enumerated()), id: \.element) { index, shortcut in
@@ -93,15 +93,24 @@ struct PrayShortcutTray: View {
                 shortcut.title,
                 detail: subtitle(for: shortcut),
                 icon: shortcut.icon,
-                accessory: isQuickTap ? .label("On a tap") : .caret,
+                accessory: isQuickTap
+                    ? .label(String(localized: "On a tap", comment: "Pray button tray: small tracked label on the devotion a single tap on the Pray button also starts"))
+                    : .caret,
                 isLit: isQuickTap
             )
             .frame(height: Self.rowHeight)
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityLabel(shortcut.title)
-        .accessibilityValue(continuation(for: shortcut).map { "Continues at the \($0.placeLabel)" } ?? "")
-        .accessibilityHint(isQuickTap ? "Also what a tap on the Pray button does" : "")
+        .accessibilityValue(
+            continuation(for: shortcut).map {
+                String(
+                    localized: "Continues at the \($0.placeLabel)",
+                    comment: "VoiceOver, Pray button tray: an unfinished Rosary is taken up at this place; the place is like Third Joyful Mystery"
+                )
+            } ?? ""
+        )
+        .accessibilityHint(isQuickTap ? Text("Also what a tap on the Pray button does") : Text(verbatim: ""))
     }
 
     /// The tray's own door to its editor — edited in place, not in
@@ -132,7 +141,10 @@ struct PrayShortcutTray: View {
     /// again, and the row says where.
     private func subtitle(for shortcut: PrayerShortcut) -> String {
         if let session = continuation(for: shortcut) {
-            return "Continue at the \(session.placeLabel)"
+            return String(
+                localized: "Continue at the \(session.placeLabel)",
+                comment: "Pray button tray: line under a Rosary left unfinished today; the place is like Third Joyful Mystery"
+            )
         }
         return shortcut.trayDetail(
             today: ScheduleService.categoryForToday(),

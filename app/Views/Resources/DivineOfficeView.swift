@@ -62,9 +62,9 @@ struct DivineOfficeView: View {
     }
 
     private static let groups: [HourGroup] = [
-        HourGroup(heading: "THE NIGHT AND THE DAWN", hours: [.matins, .lauds]),
-        HourGroup(heading: "THROUGH THE DAY", hours: [.prime, .terce, .sext, .nones]),
-        HourGroup(heading: "EVENING AND NIGHT", hours: [.vespers, .compline])
+        HourGroup(heading: String(localized: "THE NIGHT AND THE DAWN", comment: "Hours of Prayer landing: small capitals heading over a group of the eight hours: the night vigil and dawn prayer"), hours: [.matins, .lauds]),
+        HourGroup(heading: String(localized: "THROUGH THE DAY", comment: "Hours of Prayer landing: small capitals heading over a group of the eight hours: the four little hours of the day"), hours: [.prime, .terce, .sext, .nones]),
+        HourGroup(heading: String(localized: "EVENING AND NIGHT", comment: "Hours of Prayer landing: small capitals heading over a group of the eight hours: evening prayer and bedtime prayer"), hours: [.vespers, .compline])
     ]
 
     // MARK: - Body
@@ -274,7 +274,7 @@ struct DivineOfficeView: View {
                 .foregroundColor(AppColors.cream.opacity(0.55))
                 .contentTransition(.opacity)
 
-            GoldCTAButton(title: "Pray", prominence: .inline, glyph: .play, fullWidth: false) {
+            GoldCTAButton(title: String(localized: "Pray", comment: "Hours of Prayer landing: the gold act that opens the hour of prayer it is now"), prominence: .inline, glyph: .play, fullWidth: false) {
                 openHour = hour
             }
             .accessibilityLabel("Pray \(hour.plainName)")
@@ -329,7 +329,7 @@ struct DivineOfficeView: View {
                         .foregroundColor(AppColors.textSecondary)
 
                     QuietGoldButton(
-                        title: "Try again",
+                        title: String(localized: "Try again", comment: "Hours of Prayer landing: quiet act that retries loading the day's feast"),
                         leadingIcon: "ph-arrow-counter-clockwise",
                         leadingIconSize: 10,
                         size: 10,
@@ -451,8 +451,8 @@ struct DivineOfficeView: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityLabel(isPresent
-            ? "\(hour.plainName), \(hour.label), the prayer for now"
-            : "\(hour.plainName), \(hour.label)")
+            ? Text("\(hour.plainName), \(hour.label), the prayer for now")
+            : Text("\(hour.plainName), \(hour.label)"))
     }
 
     /// The hour's place in the day, said as a colour, punching a hole in

@@ -26,19 +26,28 @@ enum MissalVestment: String {
 
     var name: String {
         switch self {
-        case .white: return "White"
-        case .red: return "Red"
-        case .green: return "Green"
-        case .violet: return "Violet"
-        case .black: return "Black"
-        case .rose: return "Rose"
+        case .white: return String(localized: "White", comment: "The Mass and Home: a liturgical vestment colour, on its own")
+        case .red: return String(localized: "Red", comment: "The Mass and Home: a liturgical vestment colour, on its own")
+        case .green: return String(localized: "Green", comment: "The Mass and Home: a liturgical vestment colour, on its own")
+        case .violet: return String(localized: "Violet", comment: "The Mass and Home: a liturgical vestment colour, on its own")
+        case .black: return String(localized: "Black", comment: "The Mass and Home: a liturgical vestment colour, on its own")
+        case .rose: return String(localized: "Rose", comment: "The Mass and Home: a liturgical vestment colour, on its own")
         }
     }
 
     /// The colour as it is said, never bare: "Green vestments". Where a
     /// dot or silk already shows the colour, the screen may drop the
     /// words and keep these for VoiceOver.
-    var plainName: String { "\(name) vestments" }
+    var plainName: String {
+        switch self {
+        case .white: return String(localized: "White vestments", comment: "The Mass, the Hours and Home: the day's liturgical colour said in words")
+        case .red: return String(localized: "Red vestments", comment: "The Mass, the Hours and Home: the day's liturgical colour said in words")
+        case .green: return String(localized: "Green vestments", comment: "The Mass, the Hours and Home: the day's liturgical colour said in words")
+        case .violet: return String(localized: "Violet vestments", comment: "The Mass, the Hours and Home: the day's liturgical colour said in words")
+        case .black: return String(localized: "Black vestments", comment: "The Mass, the Hours and Home: the day's liturgical colour said in words")
+        case .rose: return String(localized: "Rose vestments", comment: "The Mass, the Hours and Home: the day's liturgical colour said in words")
+        }
+    }
 }
 
 // MARK: - MissalRubric
@@ -656,13 +665,16 @@ struct MissalLayoutChoiceSheet: View {
         // specimen, the button), so nothing asks the column to be centred.
         VStack(alignment: .leading, spacing: 0) {
             SheetHeader(
-                kicker: "The Mass",
-                title: "The Mass is in Latin with English beside it. How should they sit?"
+                kicker: String(localized: "The Mass", comment: "The Mass's one-time layout question: small kicker over the title"),
+                title: String(
+                    localized: "The Mass is in Latin with English beside it. How should they sit?",
+                    comment: "The Mass's one-time layout question, asked on first opening: line-by-line or side-by-side Latin and English"
+                )
             )
 
             HStack(spacing: 10) {
-                capsule(.interlinear, "Line by line")
-                capsule(.sideBySide, "Side by side")
+                capsule(.interlinear, String(localized: "Line by line", comment: "The Mass layout choice: each Latin line with its English under it"))
+                capsule(.sideBySide, String(localized: "Side by side", comment: "The Mass layout choice: Latin and English in two columns"))
             }
             .padding(.horizontal, SheetMetrics.gutter)
             .padding(.top, 8)
@@ -673,9 +685,9 @@ struct MissalLayoutChoiceSheet: View {
 
             Spacer(minLength: 12)
 
-            SheetNote("You can change this any time from the Aa button.")
+            SheetNote(String(localized: "You can change this any time from the Aa button.", comment: "The Mass layout question: note that the choice can be changed later in the text options (the Aa button)"))
 
-            GoldCTAButton(title: "Read the Mass") {
+            GoldCTAButton(title: String(localized: "Read the Mass", comment: "The Mass layout question: the gold act that saves the choice and opens the Mass")) {
                 settings.missalLayoutPreference = chosen.rawValue
                 dismiss()
             }
@@ -770,7 +782,7 @@ struct MissalLayoutChoiceSheet: View {
                 .strokeBorder(AppColors.gold.opacity(0.18), lineWidth: AppLine.hairline)
         )
         .animation(.easeInOut(duration: 0.3), value: chosen)
-        .accessibilityLabel("Preview of the \(chosen == .interlinear ? "line by line" : "side by side") setting")
+        .accessibilityLabel(chosen == .interlinear ? Text("Preview of the line by line setting") : Text("Preview of the side by side setting"))
     }
 }
 
@@ -788,17 +800,20 @@ struct MissalTextSizeSheet: View {
         @Bindable var settings = userSettings
 
         return VStack(alignment: .leading, spacing: 0) {
-            SheetHeader(kicker: "Order of Mass", title: "Text options") {
-                SheetHeaderAction(title: "Done") { dismiss() }
+            SheetHeader(
+                kicker: String(localized: "Order of Mass", comment: "The Order of Mass page's text options sheet: small kicker"),
+                title: String(localized: "Text options", comment: "The Order of Mass page's text options sheet: title")
+            ) {
+                SheetHeaderAction(title: String(localized: "Done", comment: "Sheet header act that closes the sheet")) { dismiss() }
             }
 
-            SheetSizeSlider(label: "Size", scale: $settings.textSizeScale)
+            SheetSizeSlider(label: String(localized: "Size", comment: "Text options sheet: the text size slider's name"), scale: $settings.textSizeScale)
 
-            SheetSectionLabel("Translation")
+            SheetSectionLabel(String(localized: "Translation", comment: "The Order of Mass text options: heading over the layout of the Latin and its English translation"))
 
             HStack(spacing: 6) {
-                layoutCapsule("Line by line", layout: .interlinear)
-                layoutCapsule("Side by side", layout: .sideBySide)
+                layoutCapsule(String(localized: "Line by line", comment: "The Mass layout choice: each Latin line with its English under it"), layout: .interlinear)
+                layoutCapsule(String(localized: "Side by side", comment: "The Mass layout choice: Latin and English in two columns"), layout: .sideBySide)
             }
             .padding(.horizontal, SheetMetrics.gutter)
         }

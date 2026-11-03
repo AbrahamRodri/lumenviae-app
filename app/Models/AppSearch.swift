@@ -56,18 +56,20 @@ enum AppSearch {
         /// The section's heading and the chip's word
         var title: String {
             switch self {
-            case .mysteries: return "Rosary Mysteries"
-            case .pages: return "Pages"
-            case .readings: return "Readings"
-            case .prayers: return "Prayers"
-            case .chants: return "Chants"
-            case .meditations: return "Meditations"
+            case .mysteries: return String(localized: "Rosary Mysteries", comment: "Search results: the heading of a section of results, and the word on its chip under the search field")
+            case .pages: return String(localized: "Pages", comment: "Search results: the heading of a section of results, and the word on its chip under the search field")
+            case .readings: return String(localized: "Readings", comment: "Search results: the heading of a section of results, and the word on its chip under the search field")
+            case .prayers: return String(localized: "Prayers", comment: "Search results: the heading of a section of results, and the word on its chip under the search field")
+            case .chants: return String(localized: "Chants", comment: "Search results: the heading of a section of results, and the word on its chip under the search field")
+            case .meditations: return String(localized: "Meditations", comment: "Search results: the heading of a section of results, and the word on its chip under the search field")
             }
         }
 
         /// The chip's word, where the heading is too long for one
         var chipTitle: String {
-            self == .mysteries ? "Mysteries" : title
+            self == .mysteries
+                ? String(localized: "Mysteries", comment: "Search results: the chip under the search field for the Rosary Mysteries section, where the full heading is too long")
+                : title
         }
     }
 

@@ -444,17 +444,23 @@ struct OnboardingView: View {
 
     private var welcomeSlide: some View {
         OnboardingSlideLayout(
-            title: "Lumen Viae",
-            titleNote: "Light of the Way",
+            title: String(localized: "Lumen Viae", comment: "Onboarding, first slide: the app's name as its title; Latin, usually kept as is"),
+            titleNote: String(
+                localized: "Light of the Way",
+                comment: "Onboarding, first slide: the app name Lumen Viae translated, set small under it"
+            ),
             page: .welcome,
             stage: stage
         ) {
             OnboardingLead(
-                "A quiet place to pray the Rosary, with Scripture and a reflection on each of its mysteries: scenes from the lives of Jesus and Mary.",
+                String(
+                    localized: "A quiet place to pray the Rosary, with Scripture and a reflection on each of its mysteries: scenes from the lives of Jesus and Mary.",
+                    comment: "Onboarding, first slide: the line saying what the app is"
+                ),
                 italic: true
             )
         } bottomContent: {
-            continueButton("Begin", to: .intention)
+            continueButton(String(localized: "Begin", comment: "Onboarding, first slide: the gold button that starts the introduction"), to: .intention)
         }
     }
 
@@ -462,12 +468,20 @@ struct OnboardingView: View {
 
     private var intentionSlide: some View {
         OnboardingSlideLayout(
-            title: "What Brings You to the Rosary?",
+            title: String(
+                localized: "What Brings You to the Rosary?",
+                comment: "Onboarding, second slide: its title, asking the reader's reasons for praying the Rosary"
+            ),
             page: .intention,
             stage: stage
         ) {
             VStack(spacing: 18) {
-                OnboardingLead("Choose any that fit. Your answers shape your reminders and where we suggest you begin.")
+                OnboardingLead(
+                    String(
+                        localized: "Choose any that fit. Your answers shape your reminders and where we suggest you begin.",
+                        comment: "Onboarding, reasons slide: the line under its title; more than one reason may be chosen"
+                    )
+                )
 
                 VStack(spacing: 10) {
                     ForEach(PrayerIntention.allCases) { intention in
@@ -490,7 +504,7 @@ struct OnboardingView: View {
                 .sensoryFeedback(.selection, trigger: selectedIntentions)
             }
         } bottomContent: {
-            continueButton("Continue", to: .voice)
+            continueButton(String(localized: "Continue", comment: "Onboarding: the gold button at a slide's foot that goes on to the next slide"), to: .voice)
         }
     }
 
@@ -498,8 +512,10 @@ struct OnboardingView: View {
 
     /// One lead for both choices: each card's own line says what the
     /// voice does, so a lead that said it again read twice
-    private static let voiceLead =
-        "Choose what the voice says. You can change it on any Rosary's page."
+    private static let voiceLead = String(
+        localized: "Choose what the voice says. You can change it on any Rosary's page.",
+        comment: "Onboarding, What You'll Hear slide: the line under its title; the choice is how much of the Rosary the narration voice says"
+    )
 
     /// How much of the Rosary the voice says (`UserSettings.prayAloud`),
     /// asked first of the two because it decides whether the beads
@@ -509,8 +525,10 @@ struct OnboardingView: View {
         OnboardingSlideLayout(
             // With the whole Rosary said aloud the beads question stands
             // aside, and "1 of 2" promised a second that never came
-            kicker: praysAloud ? "Make it yours" : "Make it yours · 1 of 2",
-            title: "What You'll Hear",
+            kicker: praysAloud
+                ? String(localized: "Make it yours", comment: "Onboarding, What You'll Hear slide: small kicker over the title when it is the only personal choice")
+                : String(localized: "Make it yours · 1 of 2", comment: "Onboarding, What You'll Hear slide: small kicker over the title, the first of two personal choices"),
+            title: String(localized: "What You'll Hear", comment: "Onboarding: title of the slide choosing how much of the Rosary the voice says"),
             page: .voice,
             stage: stage
         ) {
@@ -521,16 +539,22 @@ struct OnboardingView: View {
 
                 VStack(spacing: 10) {
                     OnboardingChoiceCard(
-                        label: "Meditation Only",
-                        detail: "You hear the meditation; you say the prayers",
+                        label: String(localized: "Meditation Only", comment: "Onboarding, What You'll Hear slide: a choice card's name; the voice reads only the meditation"),
+                        detail: String(
+                            localized: "You hear the meditation; you say the prayers",
+                            comment: "Onboarding, What You'll Hear slide: the line under the Meditation Only choice"
+                        ),
                         isSelected: !praysAloud
                     ) {
                         choose(aloud: false)
                     }
 
                     OnboardingChoiceCard(
-                        label: "Whole Rosary",
-                        detail: "You hear every prayer; pray along with the voice",
+                        label: String(localized: "Whole Rosary", comment: "Onboarding, What You'll Hear slide: a choice card's name; the voice says every prayer of the Rosary"),
+                        detail: String(
+                            localized: "You hear every prayer; pray along with the voice",
+                            comment: "Onboarding, What You'll Hear slide: the line under the Whole Rosary choice"
+                        ),
                         isSelected: praysAloud
                     ) {
                         choose(aloud: true)
@@ -545,7 +569,7 @@ struct OnboardingView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         } bottomContent: {
-            continueButton("Continue", to: page(after: .voice))
+            continueButton(String(localized: "Continue", comment: "Onboarding: the gold button at a slide's foot that goes on to the next slide"), to: page(after: .voice))
         }
     }
 
@@ -564,10 +588,14 @@ struct OnboardingView: View {
 
     // MARK: - 4. Where Will You Count?
 
-    private static let onScreenLead =
-        "The beads are on the screen. Swipe for each Hail Mary, and the next mystery begins on its own."
-    private static let ownRosaryLead =
-        "Count on your own rosary. The screen shows one mystery at a time."
+    private static let onScreenLead = String(
+        localized: "The beads are on the screen. Swipe for each Hail Mary, and the next mystery begins on its own.",
+        comment: "Onboarding, How Will You Keep Count slide: the line under its title when counting on the screen is chosen"
+    )
+    private static let ownRosaryLead = String(
+        localized: "Count on your own rosary. The screen shows one mystery at a time.",
+        comment: "Onboarding, How Will You Keep Count slide: the line under its title when counting on one's own rosary is chosen"
+    )
 
     /// The prayer screen's one new idea, tried rather than described, and
     /// chosen rather than imposed. On the screen, a strand moves under the
@@ -584,8 +612,11 @@ struct OnboardingView: View {
     /// whole Rosary aloud, the voice moves the beads on the screen.
     private var beadsSlide: some View {
         OnboardingSlideLayout(
-            kicker: "Make it yours · 2 of 2",
-            title: "How Will You Keep Count?",
+            kicker: String(localized: "Make it yours · 2 of 2", comment: "Onboarding, How Will You Keep Count slide: small kicker over the title, the second of two personal choices"),
+            title: String(
+                localized: "How Will You Keep Count?",
+                comment: "Onboarding: title of the slide choosing to count the Hail Marys on the screen's beads or on one's own rosary"
+            ),
             page: .beads,
             stage: stage
         ) {
@@ -609,16 +640,22 @@ struct OnboardingView: View {
 
                 VStack(spacing: 10) {
                     OnboardingChoiceCard(
-                        label: "On My Rosary",
-                        detail: "Count on your own rosary; the screen shows one mystery at a time",
+                        label: String(localized: "On My Rosary", comment: "Onboarding, How Will You Keep Count slide: a choice card's name; counting the Hail Marys on one's own rosary"),
+                        detail: String(
+                            localized: "Count on your own rosary; the screen shows one mystery at a time",
+                            comment: "Onboarding, How Will You Keep Count slide: the line under the On My Rosary choice"
+                        ),
                         isSelected: !praysOnBeads
                     ) {
                         withAnimation(Motion.ease(0.25)) { praysOnBeads = false }
                     }
 
                     OnboardingChoiceCard(
-                        label: "On the Screen",
-                        detail: "The beads are on the screen; swipe for each Hail Mary",
+                        label: String(localized: "On the Screen", comment: "Onboarding, How Will You Keep Count slide: a choice card's name; counting on beads drawn on the screen"),
+                        detail: String(
+                            localized: "The beads are on the screen; swipe for each Hail Mary",
+                            comment: "Onboarding, How Will You Keep Count slide: the line under the On the Screen choice"
+                        ),
                         isSelected: praysOnBeads
                     ) {
                         withAnimation(Motion.ease(0.25)) { praysOnBeads = true }
@@ -627,7 +664,7 @@ struct OnboardingView: View {
                 .sensoryFeedback(.selection, trigger: praysOnBeads)
             }
         } bottomContent: {
-            continueButton("Continue", to: .forYou)
+            continueButton(String(localized: "Continue", comment: "Onboarding: the gold button at a slide's foot that goes on to the next slide"), to: .forYou)
         }
     }
 
@@ -650,38 +687,146 @@ struct OnboardingView: View {
         switch intention {
         case .peace:
             return [
-                Offer(icon: "ph-book-open", text: "A meditation on each mystery, to read or to hear"),
-                Offer(icon: "ch-bible", text: "The Scriptural Rosary, with a verse for every bead"),
-                Offer(icon: "ph-book-open", text: "A private journal, kept only on your phone")
+                Offer(
+                    icon: "ph-book-open",
+                    text: String(
+                        localized: "A meditation on each mystery, to read or to hear",
+                        comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+                    )
+                ),
+                Offer(
+                    icon: "ch-bible",
+                    text: String(
+                        localized: "The Scriptural Rosary, with a verse for every bead",
+                        comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+                    )
+                ),
+                Offer(
+                    icon: "ph-book-open",
+                    text: String(
+                        localized: "A private journal, kept only on your phone",
+                        comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+                    )
+                )
             ]
         case .habit:
             return [
-                Offer(icon: "ph-calendar-dots", text: "Today's mysteries, chosen by the day of the week"),
-                Offer(icon: "ph-bell", text: "One gentle reminder a day, at the hour you choose"),
-                Offer(icon: "ph-flame", text: "A quiet record of the days you pray")
+                Offer(
+                    icon: "ph-calendar-dots",
+                    text: String(
+                        localized: "Today's mysteries, chosen by the day of the week",
+                        comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+                    )
+                ),
+                Offer(
+                    icon: "ph-bell",
+                    text: String(
+                        localized: "One gentle reminder a day, at the hour you choose",
+                        comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+                    )
+                ),
+                Offer(
+                    icon: "ph-flame",
+                    text: String(
+                        localized: "A quiet record of the days you pray",
+                        comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+                    )
+                )
             ]
         case .devotion:
             return [
-                Offer(icon: "ch-consecration", text: "A 33-day preparation to give yourself to Jesus through Mary, by St. Louis de Montfort"),
-                Offer(icon: "ph-crown", text: "True Devotion to Mary, the complete book"),
-                Offer(icon: "lv-pierced-heart", text: "The Seven Sorrows of Mary, prayed on their own beads")
+                Offer(
+                    icon: "ch-consecration",
+                    text: String(
+                        localized: "A 33-day preparation to give yourself to Jesus through Mary, by St. Louis de Montfort",
+                        comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+                    )
+                ),
+                Offer(
+                    icon: "ph-crown",
+                    text: String(
+                        localized: "True Devotion to Mary, the complete book",
+                        comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+                    )
+                ),
+                Offer(
+                    icon: "lv-pierced-heart",
+                    text: String(
+                        localized: "The Seven Sorrows of Mary, prayed on their own beads",
+                        comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+                    )
+                )
             ]
         case .learning:
             return [
-                Offer(icon: "lv-rosary", text: "How to Pray the Rosary in three short lessons, then a guided first Rosary"),
-                Offer(icon: "lv-prayer-book", text: "Every prayer written out, in English or in Latin"),
-                Offer(icon: "ph-book-open", text: "A meditation on each mystery, to read or to hear")
+                Offer(
+                    icon: "lv-rosary",
+                    text: String(
+                        localized: "How to Pray the Rosary in three short lessons, then a guided first Rosary",
+                        comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+                    )
+                ),
+                Offer(
+                    icon: "lv-prayer-book",
+                    text: String(
+                        localized: "Every prayer written out, in English or in Latin",
+                        comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+                    )
+                ),
+                Offer(
+                    icon: "ph-book-open",
+                    text: String(
+                        localized: "A meditation on each mystery, to read or to hear",
+                        comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+                    )
+                )
             ]
         }
     }
 
     private static let generalOffers = [
-        Offer(icon: "ph-calendar-dots", text: "Today's mysteries, chosen by the day of the week"),
-        Offer(icon: "ph-book-open", text: "A meditation on each mystery, to read or to hear"),
-        Offer(icon: "ch-consecration", text: "A 33-day preparation to give yourself to Jesus through Mary, by St. Louis de Montfort"),
-        Offer(icon: "ch-altar", text: "The traditional Latin Mass and the Church's Hours of Prayer, for each day"),
-        Offer(icon: "lv-prayer-book", text: "Catholic prayers for every day and every need"),
-        Offer(icon: "ph-book", text: "Classic spiritual books and sung chant, to read and hear")
+        Offer(
+            icon: "ph-calendar-dots",
+            text: String(
+                localized: "Today's mysteries, chosen by the day of the week",
+                comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+            )
+        ),
+        Offer(
+            icon: "ph-book-open",
+            text: String(
+                localized: "A meditation on each mystery, to read or to hear",
+                comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+            )
+        ),
+        Offer(
+            icon: "ch-consecration",
+            text: String(
+                localized: "A 33-day preparation to give yourself to Jesus through Mary, by St. Louis de Montfort",
+                comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+            )
+        ),
+        Offer(
+            icon: "ch-altar",
+            text: String(
+                localized: "The traditional Latin Mass and the Church's Hours of Prayer, for each day",
+                comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+            )
+        ),
+        Offer(
+            icon: "lv-prayer-book",
+            text: String(
+                localized: "Catholic prayers for every day and every need",
+                comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+            )
+        ),
+        Offer(
+            icon: "ph-book",
+            text: String(
+                localized: "Classic spiritual books and sung chant, to read and hear",
+                comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+            )
+        )
     ]
 
     /// With several reasons chosen, each one's best line comes first, so
@@ -704,15 +849,45 @@ struct OnboardingView: View {
     private var forYouCopy: (title: String, lead: String) {
         switch primaryIntention {
         case .peace:
-            return (PrayerIntention.peace.displayName, "Pray one mystery at a time, with words to rest your mind on.")
+            return (
+                PrayerIntention.peace.displayName,
+                String(
+                    localized: "Pray one mystery at a time, with words to rest your mind on.",
+                    comment: "Onboarding, What the app holds slide: the line under its title for a reader who came for peace"
+                )
+            )
         case .habit:
-            return (PrayerIntention.habit.displayName, "The day's prayer is set out for you each morning.")
+            return (
+                PrayerIntention.habit.displayName,
+                String(
+                    localized: "The day's prayer is set out for you each morning.",
+                    comment: "Onboarding, What the app holds slide: the line under its title for a reader who came to pray every day"
+                )
+            )
         case .devotion:
-            return (PrayerIntention.devotion.displayName, "Pray with Mary, and learn from the saints who loved her.")
+            return (
+                PrayerIntention.devotion.displayName,
+                String(
+                    localized: "Pray with Mary, and learn from the saints who loved her.",
+                    comment: "Onboarding, What the app holds slide: the line under its title for a reader who came to grow closer to Mary"
+                )
+            )
         case .learning:
-            return (PrayerIntention.learning.displayName, "Everything you need to begin is here.")
+            return (
+                PrayerIntention.learning.displayName,
+                String(
+                    localized: "Everything you need to begin is here.",
+                    comment: "Onboarding, What the app holds slide: the line under its title for a reader who came to learn the Rosary"
+                )
+            )
         case nil:
-            return ("What You Will Find", "The Rosary is at the heart of the app. Around it are other prayers of the Church.")
+            return (
+                String(localized: "What You Will Find", comment: "Onboarding: title of the slide listing what the app holds, when no reason was chosen"),
+                String(
+                    localized: "The Rosary is at the heart of the app. Around it are other prayers of the Church.",
+                    comment: "Onboarding, What You Will Find slide: the line under its title when no reason was chosen"
+                )
+            )
         }
     }
 
@@ -733,9 +908,12 @@ struct OnboardingView: View {
             }
         } bottomContent: {
             VStack(spacing: 4) {
-                continueButton("Continue", to: .colors)
+                continueButton(String(localized: "Continue", comment: "Onboarding: the gold button at a slide's foot that goes on to the next slide"), to: .colors)
 
-                QuietGoldButton(title: "See the Kinds of Meditation", trailingIcon: "ph-caret-right") {
+                QuietGoldButton(
+                    title: String(localized: "See the Kinds of Meditation", comment: "Onboarding, What the app holds slide: quiet act opening a sheet that explains the kinds of meditation set"),
+                    trailingIcon: "ph-caret-right"
+                ) {
                     showMethodsSheet = true
                 }
                 .frame(minHeight: 44)
@@ -747,17 +925,22 @@ struct OnboardingView: View {
 
     private var colorsSlide: some View {
         OnboardingSlideLayout(
-            title: "Choose Your Colors",
+            title: String(localized: "Choose Your Colors", comment: "Onboarding: title of the slide choosing the app's colour theme"),
             page: .colors,
             stage: stage
         ) {
             VStack(spacing: 18) {
-                OnboardingLead("Pick the colors you find easiest to pray with. The whole app changes as you tap.")
+                OnboardingLead(
+                    String(
+                        localized: "Pick the colors you find easiest to pray with. The whole app changes as you tap.",
+                        comment: "Onboarding, Choose Your Colors slide: the line under its title"
+                    )
+                )
 
                 OnboardingThemePicker()
             }
         } bottomContent: {
-            continueButton("Continue", to: .language)
+            continueButton(String(localized: "Continue", comment: "Onboarding: the gold button at a slide's foot that goes on to the next slide"), to: .language)
         }
     }
 
@@ -765,10 +948,26 @@ struct OnboardingView: View {
 
     private func detail(for language: PrayerLanguage) -> String {
         switch language {
-        case .english:           return "Every prayer in English"
-        case .latin:             return "The Church's traditional language of prayer"
-        case .both:              return "Latin with English beneath each line"
-        case .latinUnderEnglish: return "English with Latin beneath each line"
+        case .english:
+            return String(
+                localized: "Every prayer in English",
+                comment: "Onboarding, Choose a Language slide: the line under a prayer-language choice"
+            )
+        case .latin:
+            return String(
+                localized: "The Church's traditional language of prayer",
+                comment: "Onboarding, Choose a Language slide: the line under a prayer-language choice"
+            )
+        case .both:
+            return String(
+                localized: "Latin with English beneath each line",
+                comment: "Onboarding, Choose a Language slide: the line under a prayer-language choice"
+            )
+        case .latinUnderEnglish:
+            return String(
+                localized: "English with Latin beneath each line",
+                comment: "Onboarding, Choose a Language slide: the line under a prayer-language choice"
+            )
         }
     }
 
@@ -781,12 +980,17 @@ struct OnboardingView: View {
 
     private var languageSlide: some View {
         OnboardingSlideLayout(
-            title: "Choose a Language",
+            title: String(localized: "Choose a Language", comment: "Onboarding: title of the slide choosing the language prayers are shown in"),
             page: .language,
             stage: stage
         ) {
             VStack(spacing: 16) {
-                OnboardingLead("Pray in English, in Latin, or in both, with the English beneath each line of Latin.")
+                OnboardingLead(
+                    String(
+                        localized: "Pray in English, in Latin, or in both, with the English beneath each line of Latin.",
+                        comment: "Onboarding, Choose a Language slide: the line under its title"
+                    )
+                )
 
                 LanguagePreviewCard(language: selectedLanguage)
 
@@ -806,7 +1010,7 @@ struct OnboardingView: View {
                 .sensoryFeedback(.selection, trigger: selectedLanguage)
             }
         } bottomContent: {
-            continueButton("Continue", to: .reminder)
+            continueButton(String(localized: "Continue", comment: "Onboarding: the gold button at a slide's foot that goes on to the next slide"), to: .reminder)
         }
     }
 
@@ -816,9 +1020,27 @@ struct OnboardingView: View {
     /// hour (24h). Noon is an hour of the Angelus; morning and evening are
     /// not tied to it, so they do not claim it.
     private static let reminderOptions: [(label: String, spoken: String, detail: String, hour: Int)] = [
-        ("Morning", "6 AM", "6 AM, to begin the day with prayer", 6),
-        ("Noon", "Noon", "12 PM, when church bells ring for the noon prayer", 12),
-        ("Evening", "8 PM", "8 PM, to end the day with prayer", 20)
+        (
+            String(localized: "Morning", comment: "Onboarding, A Daily Reminder slide: a choice card's name, a reminder at 6 AM"),
+            String(localized: "6 AM", comment: "Onboarding, A Daily Reminder slide: the morning hour as the gold button says it, in Remind Me at 6 AM"),
+            String(localized: "6 AM, to begin the day with prayer", comment: "Onboarding, A Daily Reminder slide: the line under the Morning choice"),
+            6
+        ),
+        (
+            String(localized: "Noon", comment: "Onboarding, A Daily Reminder slide: a choice card's name, a reminder at 12 PM"),
+            String(localized: "Noon", comment: "Onboarding, A Daily Reminder slide: the noon hour as the gold button says it, in Remind Me at Noon"),
+            String(
+                localized: "12 PM, when church bells ring for the noon prayer",
+                comment: "Onboarding, A Daily Reminder slide: the line under the Noon choice; the noon prayer is the Angelus"
+            ),
+            12
+        ),
+        (
+            String(localized: "Evening", comment: "Onboarding, A Daily Reminder slide: a choice card's name, a reminder at 8 PM"),
+            String(localized: "8 PM", comment: "Onboarding, A Daily Reminder slide: the evening hour as the gold button says it, in Remind Me at 8 PM"),
+            String(localized: "8 PM, to end the day with prayer", comment: "Onboarding, A Daily Reminder slide: the line under the Evening choice"),
+            20
+        )
     ]
 
     /// The reminder slide's first choice. A first run offers evening. A
@@ -843,18 +1065,26 @@ struct OnboardingView: View {
             ?? ""
 
         return OnboardingSlideLayout(
-            title: "A Daily Reminder",
+            title: String(localized: "A Daily Reminder", comment: "Onboarding: title of the slide choosing a time for the daily prayer reminder"),
             page: .reminder,
             stage: stage
         ) {
             VStack(spacing: 18) {
-                OnboardingLead("Choose a time, and we will send one gentle reminder each day.")
+                OnboardingLead(
+                    String(
+                        localized: "Choose a time, and we will send one gentle reminder each day.",
+                        comment: "Onboarding, A Daily Reminder slide: the line under its title"
+                    )
+                )
 
                 VStack(spacing: 10) {
                     if let keptReminderTime {
                         OnboardingChoiceCard(
-                            label: "Your Current Time",
-                            detail: "\(keptReminderTime), as you set it",
+                            label: String(localized: "Your Current Time", comment: "Onboarding, A Daily Reminder slide, when it is run again: a choice card keeping the reminder time already set"),
+                            detail: String(
+                                localized: "\(keptReminderTime), as you set it",
+                                comment: "Onboarding, A Daily Reminder slide: the line under Your Current Time; the time is like 6:45 AM"
+                            ),
                             isSelected: selectedReminderHour == nil
                         ) {
                             withAnimation(.easeInOut(duration: 0.2)) {
@@ -896,11 +1126,13 @@ struct OnboardingView: View {
         } bottomContent: {
             VStack(spacing: 4) {
                 GoldCTAButton(
-                    title: denied ? "Continue" : "Remind Me at \(spoken)",
+                    title: denied
+                        ? String(localized: "Continue", comment: "Onboarding, A Daily Reminder slide: the gold button when notifications are turned off, which only goes on")
+                        : String(localized: "Remind Me at \(spoken)", comment: "Onboarding, A Daily Reminder slide: the gold button that sets the reminder; the hour is like 8 PM or Noon"),
                     action: reminderAct
                 )
 
-                QuietGoldButton(title: "Not Now") {
+                QuietGoldButton(title: String(localized: "Not Now", comment: "Onboarding, A Daily Reminder slide: quiet act that goes on without a reminder")) {
                     reminderAnswered = true
                     UserSettings.shared.remindersEnabled = false
                     go(to: .threshold)
@@ -984,8 +1216,19 @@ struct OnboardingView: View {
     /// mysteries, or, for someone learning, the guide to praying them.
     private var firstStep: (title: String, glyph: GoldCTAButton.Glyph, step: OnboardingFirstStep) {
         selectedIntentions.contains(.learning)
-            ? ("Learn How to Pray It", .chevron, .howToPray)
-            : ("Pray Today's Rosary", .play, .todaysRosary)
+            ? (
+                String(
+                    localized: "Learn How to Pray It",
+                    comment: "Onboarding, last slide: the gold button for someone learning the Rosary, opening How to Pray"
+                ),
+                .chevron,
+                .howToPray
+            )
+            : (
+                String(localized: "Pray Today's Rosary", comment: "Onboarding, last slide: the gold button that begins today's Rosary"),
+                .play,
+                .todaysRosary
+            )
     }
 
     /// The closing line for the reason given. Learning speaks first when it
@@ -996,24 +1239,45 @@ struct OnboardingView: View {
             // on the screen counts, and so does a voice that says every
             // prayer and moves the beads with it
             return praysOnBeads || praysAloud
-                ? "Everyone who prays the Rosary began with one Hail Mary. The app counts the beads for you."
-                : "Everyone who prays the Rosary began with one Hail Mary."
+                ? String(
+                    localized: "Everyone who prays the Rosary began with one Hail Mary. The app counts the beads for you.",
+                    comment: "Onboarding, last slide: closing line for someone learning the Rosary who counts on the screen or hears every prayer"
+                )
+                : String(
+                    localized: "Everyone who prays the Rosary began with one Hail Mary.",
+                    comment: "Onboarding, last slide: closing line for someone learning the Rosary who counts on their own rosary"
+                )
         }
         switch primaryIntention {
         case .peace:
-            return "May each prayer bring you stillness. Today's mysteries are ready when you are."
+            return String(
+                localized: "May each prayer bring you stillness. Today's mysteries are ready when you are.",
+                comment: "Onboarding, last slide: closing line for a reader who came for peace"
+            )
         case .habit:
-            return "Faithfulness grows one day at a time. Begin with today's mysteries."
+            return String(
+                localized: "Faithfulness grows one day at a time. Begin with today's mysteries.",
+                comment: "Onboarding, last slide: closing line for a reader who came to pray every day"
+            )
         case .devotion:
-            return "With Mary, we look on the face of Christ in every mystery."
+            return String(
+                localized: "With Mary, we look on the face of Christ in every mystery.",
+                comment: "Onboarding, last slide: closing line for a reader who came to grow closer to Mary"
+            )
         case .learning, nil:
-            return "Today's mysteries are ready when you are."
+            return String(
+                localized: "Today's mysteries are ready when you are.",
+                comment: "Onboarding, last slide: closing line for a reader who gave no reason"
+            )
         }
     }
 
     private var thresholdSlide: some View {
         OnboardingSlideLayout(
-            title: "In the Name of the Father",
+            title: String(
+                localized: "In the Name of the Father",
+                comment: "Onboarding, last slide: its title, the first words of the Sign of the Cross; the line under it completes the prayer"
+            ),
             usesCross: true,
             page: .threshold,
             stage: stage
@@ -1037,7 +1301,7 @@ struct OnboardingView: View {
                     onComplete(firstStep.step)
                 }
 
-                QuietGoldButton(title: "Look Around First") {
+                QuietGoldButton(title: String(localized: "Look Around First", comment: "Onboarding, last slide: quiet act that ends the introduction on the home page")) {
                     settleUnaskedReminder()
                     onComplete(nil)
                 }
@@ -1581,7 +1845,12 @@ private struct OnboardingLeadSlot: View {
 private struct DecadeVoicePreview: View {
     let praysAloud: Bool
 
-    private static let parts = ["A short reading on the mystery", "Our Father", "Ten Hail Marys", "Glory Be"]
+    private static let parts = [
+        String(localized: "A short reading on the mystery", comment: "Onboarding, What You'll Hear slide: the first of a decade's four parts, the meditation"),
+        String(localized: "Our Father", comment: "Onboarding, What You'll Hear slide: a decade's second part, the prayer's name"),
+        String(localized: "Ten Hail Marys", comment: "Onboarding, What You'll Hear slide: a decade's third part"),
+        String(localized: "Glory Be", comment: "Onboarding, What You'll Hear slide: a decade's last part, the prayer's name")
+    ]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -1609,7 +1878,7 @@ private struct DecadeVoicePreview: View {
         .frame(minHeight: 40)
         .overlay(alignment: .bottom) { rule }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(part): \(byVoice ? "said by the voice" : "said by you")")
+        .accessibilityLabel(byVoice ? Text("\(part): said by the voice") : Text("\(part): said by you"))
     }
 
     private func tag(byVoice: Bool) -> some View {
@@ -1776,8 +2045,6 @@ private struct BeadStrandDemo: View {
         "The Finding in the Temple"
     ]
 
-    private static let ordinals = ["First", "Second", "Third", "Fourth", "Fifth"]
-
     @State private var mystery = 0
     @State private var bead = 0
     @State private var dragOffset: CGFloat = 0
@@ -1814,7 +2081,7 @@ private struct BeadStrandDemo: View {
         .sensoryFeedback(.selection, trigger: position)
         .sensoryFeedback(.impact(weight: .medium), trigger: turnPulse)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Practice beads. The \(Self.ordinals[mystery]) Joyful Mystery, \(strand.label(bead: bead))")
+        .accessibilityLabel("Practice beads. \(MysteryCategory.joyful.mysteryLabel(ordinal: mystery + 1)), \(strand.label(bead: bead))")
         .accessibilityHint("Swipe up or down to move between beads")
         .accessibilityAdjustableAction { direction in
             switch direction {
@@ -1829,7 +2096,7 @@ private struct BeadStrandDemo: View {
     /// hold their room whatever they say, so nothing moves as they change.
     private var reading: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("The \(Self.ordinals[mystery]) Joyful Mystery".uppercased())
+            Text(MysteryCategory.joyful.mysteryLabel(ordinal: mystery + 1).uppercased())
                 .font(AppFonts.labelFont(9))
                 .tracking(2)
                 .foregroundColor(AppColors.gold)
@@ -1844,7 +2111,7 @@ private struct BeadStrandDemo: View {
                 .contentTransition(.opacity)
 
             ZStack(alignment: .topLeading) {
-                Text(hasMoved ? openingWords : "Try it here. Swipe down on the beads.")
+                (hasMoved ? Text(openingWords) : Text("Try it here. Swipe down on the beads."))
                     .font(AppFonts.italicFont(15))
                     .foregroundColor(AppColors.cream.opacity(hasMoved ? 0.8 : 0.62))
                     .lineLimit(4, reservesSpace: true)
@@ -1932,8 +2199,6 @@ private struct MysteryStepDemo: View {
         "The Finding in the Temple"
     ]
 
-    private static let ordinals = ["First", "Second", "Third", "Fourth", "Fifth"]
-
     @State private var mystery = 0
 
     var body: some View {
@@ -1950,7 +2215,7 @@ private struct MysteryStepDemo: View {
             .animation(Motion.beadSlide, value: mystery)
 
             VStack(spacing: 6) {
-                Text("The \(Self.ordinals[mystery]) Joyful Mystery".uppercased())
+                Text(MysteryCategory.joyful.mysteryLabel(ordinal: mystery + 1).uppercased())
                     .font(AppFonts.labelFont(9))
                     .tracking(2)
                     .foregroundColor(AppColors.gold)
@@ -1964,7 +2229,11 @@ private struct MysteryStepDemo: View {
             .animation(Motion.words, value: mystery)
 
             HStack(spacing: 16) {
-                arrow("ph-caret-left", label: "Previous mystery", enabled: mystery > 0) {
+                arrow(
+                "ph-caret-left",
+                label: String(localized: "Previous mystery", comment: "Onboarding, counting on one's own rosary demo: VoiceOver name of the arrow back a mystery"),
+                enabled: mystery > 0
+            ) {
                     mystery -= 1
                 }
 
@@ -1975,7 +2244,11 @@ private struct MysteryStepDemo: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity)
 
-                arrow("ph-caret-right", label: "Next mystery", enabled: mystery < Self.mysteries.count - 1) {
+                arrow(
+                "ph-caret-right",
+                label: String(localized: "Next mystery", comment: "Onboarding, counting on one's own rosary demo: VoiceOver name of the arrow on a mystery"),
+                enabled: mystery < Self.mysteries.count - 1
+            ) {
                     mystery += 1
                 }
             }

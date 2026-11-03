@@ -31,8 +31,11 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     /// Human-readable name (e.g., "Joyful")
     var displayName: String {
         switch self {
-        case .sevenSorrows: return "Seven Sorrows"
-        default: return rawValue.capitalized
+        case .joyful: return String(localized: "Joyful", comment: "Short name of a set of mysteries, on cards and rows (Joyful, Sorrowful, Glorious, Luminous, Seven Sorrows)")
+        case .sorrowful: return String(localized: "Sorrowful", comment: "Short name of a set of mysteries, on cards and rows (Joyful, Sorrowful, Glorious, Luminous, Seven Sorrows)")
+        case .glorious: return String(localized: "Glorious", comment: "Short name of a set of mysteries, on cards and rows (Joyful, Sorrowful, Glorious, Luminous, Seven Sorrows)")
+        case .luminous: return String(localized: "Luminous", comment: "Short name of a set of mysteries, on cards and rows (Joyful, Sorrowful, Glorious, Luminous, Seven Sorrows)")
+        case .sevenSorrows: return String(localized: "Seven Sorrows", comment: "Short name of a set of mysteries, on cards and rows (Joyful, Sorrowful, Glorious, Luminous, Seven Sorrows)")
         }
     }
 
@@ -41,8 +44,11 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     /// header, the detail's context line and the prayer screen agree.
     var devotionTitle: String {
         switch self {
-        case .sevenSorrows: return "Seven Sorrows of Mary"
-        default: return "\(displayName) Mysteries"
+        case .joyful: return String(localized: "Joyful Mysteries", comment: "Full name of a set of mysteries, without an article; used alone as a title and inside sentences")
+        case .sorrowful: return String(localized: "Sorrowful Mysteries", comment: "Full name of a set of mysteries, without an article; used alone as a title and inside sentences")
+        case .glorious: return String(localized: "Glorious Mysteries", comment: "Full name of a set of mysteries, without an article; used alone as a title and inside sentences")
+        case .luminous: return String(localized: "Luminous Mysteries", comment: "Full name of a set of mysteries, without an article; used alone as a title and inside sentences")
+        case .sevenSorrows: return String(localized: "Seven Sorrows of Mary", comment: "Full name of a set of mysteries, without an article; used alone as a title and inside sentences")
         }
     }
 

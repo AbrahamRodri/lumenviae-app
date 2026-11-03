@@ -93,7 +93,9 @@ struct ConsecrationDateSelectionView: View {
 
     private var header: some View {
         VStack(spacing: 12) {
-            ConsecrationIntroKicker(text: "Your consecration day")
+            ConsecrationIntroKicker(
+                text: String(localized: "Your consecration day", comment: "Consecration feast chooser: kicker over the title Choose your feast")
+            )
 
             Text("Choose your feast")
                 .font(AppFonts.headlineFont(26))
@@ -190,7 +192,7 @@ struct ConsecrationDateSelectionView: View {
             .tracking(2.5)
             .foregroundColor(AppColors.gold)
 
-        let date = Text(days == 0 ? "Today" : Self.longDate(preparation.start, weekday: true))
+        let date = (days == 0 ? Text("Today") : Text(Self.longDate(preparation.start, weekday: true)))
             .font(AppFonts.bodyFont(15))
             .foregroundColor(AppColors.cream)
 
@@ -218,12 +220,33 @@ struct ConsecrationDateSelectionView: View {
     }
 
     private func chosenLabel(_ preparation: FeastPreparation, days: Int, isSoonest: Bool) -> String {
-        var parts = ["Chosen: \(preparation.feast.name), \(Self.longDate(preparation.feastDate, weekday: true))"]
-        if isSoonest { parts.append("the soonest") }
-        parts.append(days == 0
-            ? "Day 1 is today"
-            : "Day 1 is \(Self.longDate(preparation.start, weekday: true)), \(Self.countdown(days))")
-        return parts.joined(separator: ". ") + "."
+        let feast = preparation.feast.name
+        let feastDate = Self.longDate(preparation.feastDate, weekday: true)
+        let start = Self.longDate(preparation.start, weekday: true)
+        let countdown = Self.countdown(days)
+        // One sentence per case, so a translation never glues English pieces
+        switch (isSoonest, days == 0) {
+        case (true, true):
+            return String(
+                localized: "Chosen: \(feast), \(feastDate). the soonest. Day 1 is today.",
+                comment: "VoiceOver, consecration feast chooser: the chosen feast (name, then date), the soonest of the feasts, beginning today"
+            )
+        case (true, false):
+            return String(
+                localized: "Chosen: \(feast), \(feastDate). the soonest. Day 1 is \(start), \(countdown).",
+                comment: "VoiceOver, consecration feast chooser: the chosen feast (name, then date), the soonest of the feasts, then the date Day 1 falls on and how far off it is, like in 12 days"
+            )
+        case (false, true):
+            return String(
+                localized: "Chosen: \(feast), \(feastDate). Day 1 is today.",
+                comment: "VoiceOver, consecration feast chooser: the chosen feast (name, then date), beginning today"
+            )
+        case (false, false):
+            return String(
+                localized: "Chosen: \(feast), \(feastDate). Day 1 is \(start), \(countdown).",
+                comment: "VoiceOver, consecration feast chooser: the chosen feast (name, then date), then the date Day 1 falls on and how far off it is, like in 12 days"
+            )
+        }
     }
 
     // MARK: - Other Feasts
@@ -385,16 +408,26 @@ struct ConsecrationDateSelectionView: View {
 
     /// "in 12 days", "tomorrow", "today"
     static func countdown(_ days: Int) -> String {
-        if days <= 0 { return "today" }
-        if days == 1 { return "tomorrow" }
-        return "in \(days) days"
+        if days <= 0 {
+            return String(localized: "today", comment: "Consecration: how far off Day 1 is, when it is today; lower case, stands after a date or alone")
+        }
+        if days == 1 {
+            return String(localized: "tomorrow", comment: "Consecration: how far off Day 1 is, when it is tomorrow; lower case, stands after a date or alone")
+        }
+        return String(
+            localized: "in \(days) days",
+            comment: "Consecration: how far off Day 1 is, two days or more, like in 12 days; lower case, stands after a date"
+        )
     }
 
     /// "Begin today", or "Begin on October 19"
     static func beginTitle(_ preparation: FeastPreparation, days: Int, today: Date = Date()) -> String {
         days <= 0
-            ? "Begin today"
-            : "Begin on \(longDate(preparation.start, weekday: false, today: today))"
+            ? String(localized: "Begin today", comment: "Consecration feast chooser: the gold act when the chosen preparation's Day 1 is today")
+            : String(
+                localized: "Begin on \(longDate(preparation.start, weekday: false, today: today))",
+                comment: "Consecration feast chooser: the gold act naming the date Day 1 falls on, like Begin on October 19"
+            )
     }
 
     // MARK: - Custom Start Sheet
@@ -402,9 +435,12 @@ struct ConsecrationDateSelectionView: View {
     private var customStartSheet: some View {
         VStack(alignment: .leading, spacing: 0) {
             SheetHeader(
-                kicker: "Consecration to Mary",
-                title: "Start at Any Day",
-                lead: "Praying along with a book or a group? Begin wherever they are."
+                kicker: String(localized: "Consecration to Mary", comment: "Consecration, Start at Any Day sheet: kicker over the title"),
+                title: String(localized: "Start at Any Day", comment: "Consecration: title of the sheet for joining the 33 days partway"),
+                lead: String(
+                    localized: "Praying along with a book or a group? Begin wherever they are.",
+                    comment: "Consecration, Start at Any Day sheet: one line under the title saying who it is for"
+                )
             )
 
             VStack(spacing: 14) {
@@ -432,7 +468,13 @@ struct ConsecrationDateSelectionView: View {
                         .foregroundColor(AppColors.textSecondary)
                 }
 
-                GoldCTAButton(title: "Begin today at Day \(customStartDay)", glyph: .chevron) {
+                GoldCTAButton(
+                    title: String(
+                        localized: "Begin today at Day \(customStartDay)",
+                        comment: "Consecration, Start at Any Day sheet: the gold act, beginning today on the chosen day of the 33"
+                    ),
+                    glyph: .chevron
+                ) {
                     showCustomStart = false
                     viewModel.startConsecration(startingAt: customStartDay)
                 }

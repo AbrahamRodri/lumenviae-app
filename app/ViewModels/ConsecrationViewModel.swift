@@ -97,7 +97,10 @@ final class ConsecrationViewModel {
 
             loadCurrentDay()
         } catch {
-            errorMessage = "Your progress could not be loaded. Please try again."
+            errorMessage = String(
+                localized: "Your progress could not be loaded. Please try again.",
+                comment: "Consecration: error shown when the reader's consecration progress fails to load"
+            )
         }
     }
 
@@ -113,7 +116,10 @@ final class ConsecrationViewModel {
             progress = newProgress
             loadCurrentDay()
         } catch {
-            errorMessage = "Your consecration could not be started. Please try again."
+            errorMessage = String(
+                localized: "Your consecration could not be started. Please try again.",
+                comment: "Consecration: error shown when starting a new preparation fails to save"
+            )
         }
     }
 
@@ -185,7 +191,10 @@ final class ConsecrationViewModel {
         do {
             try context.save()
         } catch {
-            errorMessage = "Today could not be saved as prayed. Please try again."
+            errorMessage = String(
+                localized: "Today could not be saved as prayed. Please try again.",
+                comment: "Consecration: error shown when marking today's day as prayed fails to save"
+            )
         }
     }
 
@@ -253,7 +262,10 @@ final class ConsecrationViewModel {
             }
             try context.save()
         } catch {
-            errorMessage = "Your reflection could not be saved. Please try again."
+            errorMessage = String(
+                localized: "Your reflection could not be saved. Please try again.",
+                comment: "Consecration: error shown when the day's written reflection fails to save"
+            )
         }
     }
 
@@ -316,7 +328,10 @@ final class ConsecrationViewModel {
             self.currentDay = nil
             self.journalText = ""
         } catch {
-            errorMessage = "Your consecration could not be reset. Please try again."
+            errorMessage = String(
+                localized: "Your consecration could not be reset. Please try again.",
+                comment: "Consecration: error shown when starting the preparation over fails"
+            )
         }
     }
 

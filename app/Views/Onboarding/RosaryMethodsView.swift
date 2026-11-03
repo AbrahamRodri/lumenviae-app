@@ -47,33 +47,60 @@ struct RosaryMethodsView: View {
         MeditationKind(
             label: "Considerations",
             icon: "lv-rosary",
-            title: "A reading and a prayer",
-            description: "A short reflection on the mystery, often with a prayer at the end. The words come from preachers and the Church's great teachers. Read it once, then keep it in mind through the ten Hail Marys.\n\nSt. Alphonsus Liguori · Venerable Fulton J. Sheen · St. John Henry Newman · St. Thomas Aquinas"
+            title: String(
+                localized: "A reading and a prayer",
+                comment: "Kinds of Meditation sheet, the Reflections card: its headline, what praying with this kind is like"
+            ),
+            description: String(
+                localized: "A short reflection on the mystery, often with a prayer at the end. The words come from preachers and the Church's great teachers. Read it once, then keep it in mind through the ten Hail Marys.\n\nSt. Alphonsus Liguori · Venerable Fulton J. Sheen · St. John Henry Newman · St. Thomas Aquinas",
+                comment: "Kinds of Meditation sheet, the Reflections card: what this kind of meditation is, then after a blank line some authors who wrote it (keep the names; the blank line stays)"
+            )
         ),
         MeditationKind(
             label: "Contemplative",
             icon: "ch-candle",
-            title: "Step into the scene as it happened",
-            description: "Longer passages that place you within the mystery: what was seen, heard, and felt there. Read slowly. You do not need to finish the page before the ten Hail Marys end.\n\nBlessed Anne Catherine Emmerich · Venerable Mary of Agreda · St. Ignatius of Loyola · Fr. Frederick William Faber"
+            title: String(
+                localized: "Step into the scene as it happened",
+                comment: "Kinds of Meditation sheet, the Inside the Scene card: its headline, what praying with this kind is like"
+            ),
+            description: String(
+                localized: "Longer passages that place you within the mystery: what was seen, heard, and felt there. Read slowly. You do not need to finish the page before the ten Hail Marys end.\n\nBlessed Anne Catherine Emmerich · Venerable Mary of Agreda · St. Ignatius of Loyola · Fr. Frederick William Faber",
+                comment: "Kinds of Meditation sheet, the Inside the Scene card: what this kind of meditation is, then after a blank line some authors who wrote it (keep the names; the blank line stays)"
+            )
         ),
         MeditationKind(
             label: "Saints",
             icon: "lv-saint",
-            title: "In a saint's own words",
-            description: "Meditations written by saints. Each also appears under a second kind.\n\nSt. Alphonsus's, for example, are under both Saints and Reflections."
+            title: String(
+                localized: "In a saint's own words",
+                comment: "Kinds of Meditation sheet, the Saints card: its headline, what praying with this kind is like"
+            ),
+            description: String(
+                localized: "Meditations written by saints. Each also appears under a second kind.\n\nSt. Alphonsus's, for example, are under both Saints and Reflections.",
+                comment: "Kinds of Meditation sheet, the Saints card: what this kind of meditation is, then after a blank line some authors who wrote it (keep the names; the blank line stays)"
+            )
         ),
         MeditationKind(
             label: "Scriptural",
             icon: "ch-bible",
-            title: "The Gospel first",
-            description: "The Scripture passage for the mystery, then a few lines of meditation on it.\n\nThe Seven Sorrows are set this way, because the Gospel tells the whole scene. For a verse on every bead, open any of the mysteries and choose The Scriptural Rosary, above the meditations."
+            title: String(
+                localized: "The Gospel first",
+                comment: "Kinds of Meditation sheet, the Gospel card: its headline, what praying with this kind is like"
+            ),
+            description: String(
+                localized: "The Scripture passage for the mystery, then a few lines of meditation on it.\n\nThe Seven Sorrows are set this way, because the Gospel tells the whole scene. For a verse on every bead, open any of the mysteries and choose The Scriptural Rosary, above the meditations.",
+                comment: "Kinds of Meditation sheet, the Gospel card: what this kind of meditation is, then after a blank line some authors who wrote it (keep the names; the blank line stays)"
+            )
         )
     ]
 
     var body: some View {
         VStack(spacing: 0) {
-            SheetHeader(kicker: "Meditation sets", title: "Kinds of Meditation") {
-                SheetHeaderAction(title: "Close") { dismiss() }
+            SheetHeader(
+                kicker: String(localized: "Meditation sets", comment: "Kinds of Meditation sheet: small kicker over its title"),
+                title: String(localized: "Kinds of Meditation", comment: "Kinds of Meditation sheet: its title, a sheet explaining the kinds of meditation set")
+            ) {
+                SheetHeaderAction(title: String(localized: "Close", comment: "Kinds of Meditation sheet: header act that closes it")) { dismiss() }
             }
 
             // Content

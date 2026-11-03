@@ -91,7 +91,7 @@ struct LiturgicalMonthGrid<DayMark: View, Offline: View>: View {
 
     private var monthHeader: some View {
         HStack {
-            PrayerHeaderButton(icon: "ph-caret-left", size: 14, label: "Previous month") {
+            PrayerHeaderButton(icon: "ph-caret-left", size: 14, label: String(localized: "Previous month", comment: "VoiceOver: the liturgical calendar sheet's arrow to the month before (the Mass and the Hours of Prayer)")) {
                 step(by: -1)
             }
 
@@ -105,7 +105,7 @@ struct LiturgicalMonthGrid<DayMark: View, Offline: View>: View {
 
             Spacer()
 
-            PrayerHeaderButton(icon: "ph-caret-right", size: 14, label: "Next month") {
+            PrayerHeaderButton(icon: "ph-caret-right", size: 14, label: String(localized: "Next month", comment: "VoiceOver: the liturgical calendar sheet's arrow to the month after (the Mass and the Hours of Prayer)")) {
                 step(by: 1)
             }
         }

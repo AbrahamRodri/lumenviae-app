@@ -430,11 +430,23 @@ struct FeaturedMysteryCard: View {
     /// The devotion's name — "The Sorrowful Mysteries" — the thing the
     /// button beneath begins.
     private var devotionTitle: some View {
-        Text("The \(category.devotionTitle)")
+        Text(theDevotion)
             .font(AppFonts.headlineFont(24))
             .foregroundColor(AppColors.cream)
             .multilineTextAlignment(.center)
             .minimumScaleFactor(0.85)
+    }
+
+    /// The devotion's name with its article, one sentence per set, so a
+    /// translation gives each its own article
+    private var theDevotion: String {
+        switch category {
+        case .joyful: return String(localized: "The Joyful Mysteries", comment: "Home, the featured card under TODAY'S MYSTERIES: the day's devotion with its article")
+        case .sorrowful: return String(localized: "The Sorrowful Mysteries", comment: "Home, the featured card under TODAY'S MYSTERIES: the day's devotion with its article")
+        case .glorious: return String(localized: "The Glorious Mysteries", comment: "Home, the featured card under TODAY'S MYSTERIES: the day's devotion with its article")
+        case .luminous: return String(localized: "The Luminous Mysteries", comment: "Home, the featured card under TODAY'S MYSTERIES: the day's devotion with its article")
+        case .sevenSorrows: return String(localized: "The Seven Sorrows of Mary", comment: "Home, the featured card under TODAY'S MYSTERIES: the day's devotion with its article")
+        }
     }
 
     /// The card's one act — the screen's one filled gold shape. (The

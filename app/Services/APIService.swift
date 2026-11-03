@@ -32,16 +32,28 @@ enum APIError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidURL:
-            return "Invalid URL"
+            return String(localized: "Invalid URL", comment: "Error message, rarely shown: the app built a bad web address for its server")
         case .networkError(let error):
-            return "Network error: \(error.localizedDescription)"
+            return String(
+                localized: "Network error: \(error.localizedDescription)",
+                comment: "Error message: the server could not be reached; the system's own description of the failure follows"
+            )
         case .decodingError(let error):
-            return "Failed to decode response: \(error.localizedDescription)"
+            return String(
+                localized: "Failed to decode response: \(error.localizedDescription)",
+                comment: "Error message, rarely shown: the server's answer could not be read; the system's description follows"
+            )
         case .serverError(let statusCode, let code):
             if let code {
-                return "Server error \(statusCode) (\(code))"
+                return String(
+                    localized: "Server error \(statusCode) (\(code))",
+                    comment: "Error message: the server answered with an error; an HTTP status number, then a technical code in English like not_found"
+                )
             }
-            return "Server error with status code: \(statusCode)"
+            return String(
+                localized: "Server error with status code: \(statusCode)",
+                comment: "Error message: the server answered with an error; an HTTP status number follows"
+            )
         }
     }
 }

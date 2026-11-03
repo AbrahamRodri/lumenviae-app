@@ -31,8 +31,11 @@ struct RuleEditorSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             EditorHeader(
-                title: "Daily Prayers",
-                subtitle: "The prayers you mean to pray each day, what the saints called a rule of prayer.",
+                title: String(localized: "Daily Prayers", comment: "Daily prayers editor sheet: its title"),
+                subtitle: String(
+                    localized: "The prayers you mean to pray each day, what the saints called a rule of prayer.",
+                    comment: "Daily prayers editor sheet: the line under its title"
+                ),
                 onDone: { dismiss() }
             )
 
@@ -63,7 +66,9 @@ struct RuleEditorSections: View {
                     title: item.actName,
                     detail: nil
                 ) {
-                    EditorRemoveButton(label: "Remove \(item.actName) from your daily prayers") {
+                    EditorRemoveButton(
+                        label: String(localized: "Remove \(item.actName) from your daily prayers", comment: "VoiceOver, daily prayers editor: button taking a prayer off the daily list")
+                    ) {
                         withAnimation(Motion.settle) {
                             settings.setRuleItems(enabled.filter { $0 != item })
                         }
@@ -76,9 +81,14 @@ struct RuleEditorSections: View {
                 settings.setRuleItems(items)
             }
         } header: {
-            EditorSectionHeader("Your daily prayers")
+            EditorSectionHeader(String(localized: "Your daily prayers", comment: "Daily prayers editor: section heading over the prayers on the daily list"))
         } footer: {
-            EditorSectionFooter("The prayers on your daily checklist. While you are preparing for your Consecration to Mary, it is added here for you. Each day starts fresh — yesterday is never held against you.")
+            EditorSectionFooter(
+                String(
+                    localized: "The prayers on your daily checklist. While you are preparing for your Consecration to Mary, it is added here for you. Each day starts fresh — yesterday is never held against you.",
+                    comment: "Daily prayers editor: note under the list; it is the consecration"
+                )
+            )
         }
 
         if !available.isEmpty {
@@ -88,7 +98,7 @@ struct RuleEditorSections: View {
                         icon: item.icon,
                         title: item.actName,
                         detail: item.subtitle,
-                        accessibilityLabel: "Add \(item.actName) to your daily prayers"
+                        accessibilityLabel: String(localized: "Add \(item.actName) to your daily prayers", comment: "VoiceOver, daily prayers editor: row adding a prayer to the daily list")
                     ) {
                         withAnimation(Motion.settle) {
                             settings.setRuleItems(enabled + [item])
@@ -96,7 +106,7 @@ struct RuleEditorSections: View {
                     }
                 }
             } header: {
-                EditorSectionHeader("Add a prayer")
+                EditorSectionHeader(String(localized: "Add a prayer", comment: "Daily prayers editor: section heading over prayers that can be added to the daily list"))
             }
         }
     }
@@ -124,7 +134,7 @@ struct EditorHeader: View {
 
     var body: some View {
         SheetHeader(title: title, lead: subtitle) {
-            SheetHeaderAction(title: "Done", action: onDone)
+            SheetHeaderAction(title: String(localized: "Done", comment: "Sheet header action that closes the sheet"), action: onDone)
         }
     }
 }

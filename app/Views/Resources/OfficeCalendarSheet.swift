@@ -105,7 +105,9 @@ struct OfficeCalendarSheet: View {
     private func title(of entry: OfficeDay?) -> String {
         guard let entry else {
             if isLoading { return "…" }
-            return loadFailed ? "The calendar could not be reached" : "—"
+            return loadFailed
+                ? String(localized: "The calendar could not be reached", comment: "Hours of Prayer, calendar sheet: in place of a day's name when the month could not be loaded")
+                : "—"
         }
         if let celebration = entry.celebration?.title, !celebration.isEmpty {
             return celebration
@@ -113,7 +115,7 @@ struct OfficeCalendarSheet: View {
         if let text = entry.detail?.text, !text.isEmpty {
             return text
         }
-        return "Weekday"
+        return String(localized: "Weekday", comment: "Hours of Prayer, calendar sheet: a day with no feast and no season line, named under the month grid")
     }
 
     /// The spoken name of a cell: the date, then the day the calendar
@@ -155,7 +157,7 @@ struct OfficeCalendarSheet: View {
                 // Nothing here to save, and a retry is the only useful
                 // act on a month that never arrived.
                 QuietGoldButton(
-                    title: "Try again",
+                    title: String(localized: "Try again", comment: "Hours of Prayer, calendar sheet: quiet act that retries loading the month"),
                     leadingIcon: "ph-arrow-counter-clockwise",
                     leadingIconSize: 11,
                     size: 10,
@@ -195,18 +197,34 @@ struct OfficeCalendarSheet: View {
 
     private var offlineTitle: String {
         let name = LiturgicalCalendarFormat.monthName.string(from: month)
-        if loadFailed { return "\(name) could not be reached" }
-        if monthFullySaved { return "\(name) is saved for offline" }
-        if isDownloading { return "Saving \(name) for offline" }
-        if savedCount > 0 { return "Part of \(name) is saved for offline" }
-        return "\(name) is not yet saved for offline"
+        if loadFailed {
+            return String(localized: "\(name) could not be reached", comment: "Hours of Prayer, calendar sheet, offline row:  the month (its name) could not be loaded")
+        }
+        if monthFullySaved {
+            return String(localized: "\(name) is saved for offline", comment: "Hours of Prayer, calendar sheet, offline row:  every day of the month (the month's name) is saved on the device")
+        }
+        if isDownloading {
+            return String(localized: "Saving \(name) for offline", comment: "Hours of Prayer, calendar sheet, offline row:  the month (its name) is being saved now")
+        }
+        if savedCount > 0 {
+            return String(localized: "Part of \(name) is saved for offline", comment: "Hours of Prayer, calendar sheet, offline row:  some days of the month (the month's name) are saved on the device")
+        }
+        return String(localized: "\(name) is not yet saved for offline", comment: "Hours of Prayer, calendar sheet, offline row:  no day of the month (the month's name) is saved yet")
     }
 
     private var offlineDetail: String {
-        if loadFailed { return "Check your connection" }
+        if loadFailed {
+            return String(localized: "Check your connection", comment: "Hours of Prayer, calendar sheet, offline row:  line under the title when the month could not be loaded")
+        }
         return monthFullySaved
-            ? "\(monthDayCount) days · all eight prayers"
-            : "\(savedCount) of \(monthDayCount) days on this device · all eight prayers each"
+            ? String(
+                localized: "\(monthDayCount) days · all eight prayers",
+                comment: "Hours of Prayer, calendar sheet, offline row:  line once the whole month is saved: how many days, each with all eight hours of prayer"
+            )
+            : String(
+                localized: "\(savedCount) of \(monthDayCount) days on this device · all eight prayers each",
+                comment: "Hours of Prayer, calendar sheet, offline row:  line: how many of the month's days are saved, a day counting only with all eight hours of prayer"
+            )
     }
 
     /// A day counts as saved only when every one of its hours is here.

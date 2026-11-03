@@ -105,7 +105,7 @@ final class MissalViewModel {
                     propers = stored
                 }
             } else if requested == date {
-                errorMessage = "The Mass texts could not be reached. Check your connection and try again."
+                errorMessage = String(localized: "The Mass texts could not be reached. Check your connection and try again.", comment: "The Mass: message when the day's texts could not be loaded")
             }
         }
 

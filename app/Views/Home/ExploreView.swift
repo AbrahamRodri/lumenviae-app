@@ -180,8 +180,13 @@ struct ExploreView: View {
             guard !Task.isCancelled else { return }
             let found = results
             let words = found.isEmpty
-                ? "Nothing found"
-                : found.kinds.map { "\($0.title), \(found.count(of: $0))" }.joined(separator: "; ")
+                ? String(localized: "Nothing found", comment: "VoiceOver announcement, search: nothing matched the words typed")
+                : found.kinds.map {
+                    String(
+                        localized: "\($0.title), \(found.count(of: $0))",
+                        comment: "VoiceOver announcement, search: a kind of result and how many were found, like Prayers, 4"
+                    )
+                }.joined(separator: "; ")
             AccessibilityNotification.Announcement(words).post()
         }
     }
@@ -290,37 +295,43 @@ struct ExploreView: View {
         // Each opens its mysteries' page, where the Rosary is chosen in
         // its three forms — a meditation set, the Scriptural Rosary, or
         // the Rosary Said Aloud; typed search still finds the two forms
-        section("Rosary Mysteries") {
+        section(String(localized: "Rosary Mysteries", comment: "Explore page: heading of a section of the browse page")) {
             mysteryLedger(MysteryCategory.allCases)
         }
 
         // The Prayer Book's orders kept for an occasion, as a shelf of
         // paintings. The day's three hours stay off this page: which one
         // is now is Home's and the Chapel's to say.
-        section("Prayers", link: ("All prayers", { router.push(.prayerBook) })) {
+        section(
+            String(localized: "Prayers", comment: "Explore page: heading of a section of the browse page"),
+            link: (String(localized: "All prayers", comment: "Explore page: small link beside a section heading; opens the Prayers tab"), { router.push(.prayerBook) })) {
             occasionShelf
         }
 
         // The chant library's ways in, as painted tiles. No chant of the
         // day here: the season's song to Mary stands on the library's Songs
         // to Mary shelf.
-        section("Chant", link: ("Chant Library", { router.push(.chantLibrary) })) {
+        section(
+            String(localized: "Chant", comment: "Explore page: heading of a section of the browse page"),
+            link: (String(localized: "Chant Library", comment: "Explore page: small link beside a section heading; opens the Chant Library"), { router.push(.chantLibrary) })) {
             chantTiles
         }
 
         // The Church's two books, named for what they are rather than for
         // today
-        section("Mass & Hours") {
+        section(String(localized: "Mass & Hours", comment: "Explore page: heading of a section of the browse page")) {
             liturgyTiles
         }
 
-        section("Spiritual Reading", link: ("All books", { router.push(.spiritualReading) })) {
+        section(
+            String(localized: "Spiritual Reading", comment: "Explore page: heading of a section of the browse page"),
+            link: (String(localized: "All books", comment: "Explore page: small link beside a section heading; opens the Spiritual Reading shelf"), { router.push(.spiritualReading) })) {
             readingShelf
         }
 
         // Gone while every guide it lists is archived (`ArchivedPages`)
         if !studyEntries.isEmpty {
-            section("Learn More") {
+            section(String(localized: "Learn More", comment: "Explore page: heading of a section of the browse page")) {
                 libraryIndex
             }
         }
@@ -359,7 +370,9 @@ struct ExploreView: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityLabel(
-            "\(info.title), \(info.author)\(hasRibbon ? ". Reading under way." : "")"
+            hasRibbon
+                ? Text("\(info.title), \(info.author). Reading under way.", comment: "VoiceOver for a book on the home shelf that has been started: title, author")
+                : Text("\(info.title), \(info.author)", comment: "VoiceOver for a book on the home shelf: title, author")
         )
     }
 
@@ -436,7 +449,10 @@ struct ExploreView: View {
                         // than the page retrying on every keystroke.
                         if setsUnavailable {
                             QuietGoldButton(
-                                title: "Try again",
+                                title: String(
+                                    localized: "Try again",
+                                    comment: "Explore search: button asking again for the meditations after they could not be loaded"
+                                ),
                                 leadingIcon: "ph-arrow-counter-clockwise",
                                 leadingIconSize: 10,
                                 size: 10
@@ -486,42 +502,42 @@ struct ExploreView: View {
 
     private var allLibraryEntries: [LibraryEntry] {
         [
-            LibraryEntry(id: "missal", icon: "ch-altar", title: "Today's Mass",
+            LibraryEntry(id: "missal", icon: "ch-altar", title: String(localized: "Today's Mass", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "daily missal mass 1962 propers latin") { router.push(.missal) },
-            LibraryEntry(id: "office", icon: "ph-clock", title: "Hours of Prayer",
+            LibraryEntry(id: "office", icon: "ph-clock", title: String(localized: "Hours of Prayer", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "divine office breviary hours of prayer matins lauds prime terce sext none vespers compline") { router.push(.office) },
-            LibraryEntry(id: "trueDevotion", icon: "ph-crown", title: "True Devotion",
+            LibraryEntry(id: "trueDevotion", icon: "ph-crown", title: String(localized: "True Devotion", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "true devotion to mary montfort book") { router.push(.trueDevotionBook) },
-            LibraryEntry(id: "devotionSummary", icon: "ph-scroll", title: "The Devotion in Summary",
+            LibraryEntry(id: "devotionSummary", icon: "ph-scroll", title: String(localized: "The Devotion in Summary", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "true devotion summary marks false devotions montfort", route: .trueDevotion, inLearnMore: true) { router.push(.trueDevotion) },
-            LibraryEntry(id: "spiritualReading", icon: "ph-book-open", title: "Spiritual Reading",
+            LibraryEntry(id: "spiritualReading", icon: "ph-book-open", title: String(localized: "Spiritual Reading", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "spiritual reading books imitation of christ story of a soul confessions augustine therese kempis library") { router.push(.spiritualReading) },
             // The Rosary's two forms beside the meditation sets, found by
             // name and opening the day's mysteries' page, where they stand
             // under WAYS TO PRAY with the sets beneath
-            LibraryEntry(id: "scripturalRosary", icon: PrayerShortcut.scripturalRosary.icon, title: "The Scriptural Rosary",
+            LibraryEntry(id: "scripturalRosary", icon: PrayerShortcut.scripturalRosary.icon, title: String(localized: "The Scriptural Rosary", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "scriptural rosary verse every bead gospel douay rheims bible") { openTodaysMysteries() },
-            LibraryEntry(id: "rosaryAloud", icon: PrayerShortcut.rosaryAloud.icon, title: "The Audio Rosary",
+            LibraryEntry(id: "rosaryAloud", icon: PrayerShortcut.rosaryAloud.icon, title: String(localized: "The Audio Rosary", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "audio rosary holy rosary aloud said spoken listen voice hear prayers learn by ear no meditation") { openTodaysMysteries() },
-            LibraryEntry(id: "howToPray", icon: "lv-rosary", title: "How to Pray",
+            LibraryEntry(id: "howToPray", icon: "lv-rosary", title: String(localized: "How to Pray", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "how to pray the rosary guide montfort methods") { router.push(.howToPray) },
             // Not the Gospel glyph: that is the Scriptural Rosary's, and
             // the two doors stood side by side wearing the same one
-            LibraryEntry(id: "scripture", icon: "lv-breviary", title: "In Scripture",
+            LibraryEntry(id: "scripture", icon: "lv-breviary", title: String(localized: "In Scripture", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "mysteries in scripture bible verses", route: .scripture, inLearnMore: true) { router.push(.scripture) },
-            LibraryEntry(id: "marianLibrary", icon: "ch-lily", title: "Marian Library",
+            LibraryEntry(id: "marianLibrary", icon: "ch-lily", title: String(localized: "Marian Library", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "marian theology library dogmas apparitions saints", route: .marianLibrary, inLearnMore: true) { router.push(.marianLibrary) },
-            LibraryEntry(id: "carloAcutis", icon: "ch-monstrance", title: "St. Carlo Acutis",
+            LibraryEntry(id: "carloAcutis", icon: "ch-monstrance", title: String(localized: "St. Carlo Acutis", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "carlo acutis eucharist digital altar saint", route: .carloAcutis, inLearnMore: true) { router.push(.carloAcutis) },
-            LibraryEntry(id: "prayerBook", icon: "lv-prayer-book", title: "Prayers",
+            LibraryEntry(id: "prayerBook", icon: "lv-prayer-book", title: String(localized: "Prayers", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "prayer book prayers enchiridion morning night angelus grace confession examination conscience mass communion litany litanies marian our lady latin novena") { router.push(.prayerBook) },
-            LibraryEntry(id: "chantLibrary", icon: "ph-music-note", title: "The Chant Library",
+            LibraryEntry(id: "chantLibrary", icon: "ph-music-note", title: String(localized: "The Chant Library", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "chant chants gregorian sung song songs hymn hymns latin score scores sheet music antiphon sing") { router.push(.chantLibrary) },
-            LibraryEntry(id: "prayerRecord", icon: "ph-flame", title: "Prayer Record",
+            LibraryEntry(id: "prayerRecord", icon: "ph-flame", title: String(localized: "Prayer Record", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "sacred record progress streak history calendar") { router.push(.prayerRecord) },
             // The Journal gave its place in the bar to Prayers; found by
             // name, it opens as the Chapel's Journal tile opens it
-            LibraryEntry(id: "journal", icon: "ph-book-open", title: "Journal",
+            LibraryEntry(id: "journal", icon: "ph-book-open", title: String(localized: "Journal", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "journal reflections reflection notes entries write diary") { router.push(.journal) }
         ]
     }
@@ -681,7 +697,11 @@ struct ExploreView: View {
                             .contentShape(Rectangle())
                         }
                         .buttonStyle(SacredCardButtonStyle())
-                        .accessibilityLabel(slot.isRecent ? "\(door.title). Recent" : door.title)
+                        .accessibilityLabel(
+                            slot.isRecent
+                                ? Text("\(door.title). Recent", comment: "VoiceOver, Explore's Prayers shelf: a prayer or order prayed lately, marked Recent")
+                                : Text(door.title)
+                        )
                     }
                 }
             }
@@ -702,12 +722,14 @@ struct ExploreView: View {
             spacing: 10
         ) {
             paintedTile(
-                title: "All \(ChantCatalog.all.count) Chants", note: nil,
+                title: String(localized: "All \(ChantCatalog.all.count) Chants", comment: "Explore page, Chant section: tile opening every chant, with how many there are"),
+                note: nil,
                 asset: "glorious_pentecost", focal: UnitPoint(x: 0.5, y: 0.3)
             ) { router.push(.chantBrowse(.all)) }
 
             paintedTile(
-                title: "Songs to Mary", note: nil,
+                title: String(localized: "Songs to Mary", comment: "Explore page, Chant section: tile opening the hymns and antiphons to Our Lady"),
+                note: nil,
                 asset: "mary_sistine_madonna", focal: UnitPoint(x: 0.5, y: 0.25)
             ) { router.push(.chantBrowse(.songsToMary)) }
 
@@ -720,7 +742,8 @@ struct ExploreView: View {
                     ) { router.push(.chantBrowse(.massOfTheAngels)) }
                 case .sets:
                     paintedTile(
-                        title: "Sets of Chants", note: nil,
+                        title: String(localized: "Sets of Chants", comment: "Explore page, Chant section: tile opening the sets of chants sung one after another"),
+                        note: nil,
                         asset: "feast_our_lady_of_the_rosary", focal: UnitPoint(x: 0.5, y: 0.3)
                     ) { router.push(.chantSets) }
                 case .chant(let id):
@@ -731,7 +754,10 @@ struct ExploreView: View {
                             title: chant.englishTitle,
                             note: ExploreShelves.recentChantNote(chant),
                             asset: ChantCatalog.painting(for: chant), focal: UnitPoint(x: 0.5, y: 0.3),
-                            spoken: "\(chant.spokenName). Recent"
+                            spoken: String(
+                                localized: "\(chant.spokenName). Recent",
+                                comment: "VoiceOver, Explore's Chant section: a chant sung lately, marked Recent"
+                            )
                         ) { router.push(.chant(id: id)) }
                     }
                 }
@@ -743,12 +769,14 @@ struct ExploreView: View {
     private var liturgyTiles: some View {
         HStack(spacing: 10) {
             paintedTile(
-                title: "The Mass", note: "Daily Missal",
+                title: String(localized: "The Mass", comment: "Explore page, Mass & Hours section: tile opening the day's Mass"),
+                note: String(localized: "Daily Missal", comment: "Explore page: the Church's name for the Mass's book, under The Mass"),
                 asset: "luminous_eucharist", focal: UnitPoint(x: 0.5, y: 0.35)
             ) { router.push(.missal) }
 
             paintedTile(
-                title: "Hours of Prayer", note: "Divine Office",
+                title: String(localized: "Hours of Prayer", comment: "Explore page, Mass & Hours section: tile opening the Divine Office"),
+                note: String(localized: "Divine Office", comment: "Explore page: the Church's name for the Hours of Prayer, under that tile"),
                 asset: "hour_morning", focal: UnitPoint(x: 0.5, y: 0.35)
             ) { router.push(.office) }
         }
@@ -803,7 +831,11 @@ struct ExploreView: View {
                 .contentShape(RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel(spoken ?? note.map { "\(title). \($0)" } ?? title)
+        .accessibilityLabel(
+            spoken ?? note.map {
+                String(localized: "\(title). \($0)", comment: "VoiceOver, an Explore painted tile: its name, then the note under it")
+            } ?? title
+        )
     }
 
     // MARK: - The Study index
@@ -960,7 +992,9 @@ enum ExploreShelves {
     /// A recent chant's note: Recent, with its setting where its titles
     /// do not say it ("Recent · simple melody")
     static func recentChantNote(_ chant: Chant) -> String {
-        chant.settingMidLine.map { "Recent · \($0)" } ?? "Recent"
+        chant.settingMidLine.map {
+            String(localized: "Recent · \($0)", comment: "Explore page, Chant tile: note on a chant sung lately, with its setting, like Recent · simple melody")
+        } ?? String(localized: "Recent", comment: "Explore page, Chant tile: note on a chant sung lately")
     }
 
     enum ChantTile: Hashable {

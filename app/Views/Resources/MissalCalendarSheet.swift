@@ -164,15 +164,25 @@ struct MissalCalendarSheet: View {
 
     private var offlineTitle: String {
         let name = LiturgicalCalendarFormat.monthName.string(from: month)
-        if monthFullySaved { return "\(name) is saved for offline" }
-        if savedCount > 0 { return "Part of \(name) is saved for offline" }
-        return "\(name) is not yet saved for offline"
+        if monthFullySaved {
+            return String(localized: "\(name) is saved for offline", comment: "The Mass's calendar sheet, offline row:  every day of the month (the month's name) is saved on the device")
+        }
+        if savedCount > 0 {
+            return String(localized: "Part of \(name) is saved for offline", comment: "The Mass's calendar sheet, offline row:  some days of the month (the month's name) are saved on the device")
+        }
+        return String(localized: "\(name) is not yet saved for offline", comment: "The Mass's calendar sheet, offline row:  no day of the month (the month's name) is saved yet")
     }
 
     private var offlineDetail: String {
         monthFullySaved
-            ? "\(monthDayCount) days · every part of the Mass"
-            : "\(savedCount) of \(monthDayCount) days on this device"
+            ? String(
+                localized: "\(monthDayCount) days · every part of the Mass",
+                comment: "The Mass's calendar sheet, offline row:  line under the title once the whole month is saved: how many days, all of each Mass"
+            )
+            : String(
+                localized: "\(savedCount) of \(monthDayCount) days on this device",
+                comment: "The Mass's calendar sheet, offline row:  line under the title: how many of the month's days are saved"
+            )
     }
 
     private func refreshSavedCount() {
