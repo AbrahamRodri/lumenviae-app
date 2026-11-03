@@ -124,6 +124,9 @@ final class PrayerHistoryService {
         Self.prayerDays(of: allSessions().map(\.completedAt))
     }
 
+    /// How many different prayer days a Rosary has been finished on
+    func prayedDayCount() -> Int { prayerDays().count }
+
     /// Current consecutive days of prayer.
     func currentStreak() -> Int {
         Self.currentStreak(in: prayerDays(), today: PrayerDay.today())

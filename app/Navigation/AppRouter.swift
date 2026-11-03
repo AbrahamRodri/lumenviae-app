@@ -313,6 +313,15 @@ final class AppRouter {
             path.append(AppRoute.libraryBook(id: id))
             routes = [.libraryBook(id: id)]
         } else if let spec = ProcessInfo.processInfo.environment["LUMEN_VIAE_ROUTE"],
+                  spec.hasPrefix("completion:"),
+                  let category = MysteryCategory(rawValue: String(spec.dropFirst("completion:".count))) {
+            // The completion screen of a Rosary just finished (it records one
+            // session in the simulator's history), for the screenshot of what
+            // follows the Amen
+            completedPrayer = CompletedPrayer(category: category, devotionName: category.devotionTitle, durationSeconds: nil)
+            path.append(AppRoute.completion)
+            routes = [.completion]
+        } else if let spec = ProcessInfo.processInfo.environment["LUMEN_VIAE_ROUTE"],
                   let (route, launch) = AppRouter.launchRoute(spec) {
             pendingPrayer = launch
             if case .meditationSelection(let category) = route { selectedCategory = category }
@@ -332,7 +341,8 @@ final class AppRouter {
     /// `rosaryAloudPrayer:<category>[:<mystery>[:<bead>]]`,
     /// `prayer:<category>[:<mystery>[:<bead>]]` (the category's bundled
     /// meditation set), `prayerOrder:<id>`, `guidedRosary:<category>` and
-    /// `rosaryLesson:<n>`. Categories are `MysteryCategory` raw values.
+    /// `rosaryLesson:<n>`, and (read in `init`) `completion:<category>`, the
+    /// screen after a finished Rosary. Categories are `MysteryCategory` raw values.
     static func launchRoute(_ spec: String) -> (AppRoute, PrayerLaunch?)? {
         let parts = spec.split(separator: ":").map(String.init)
         guard let name = parts.first else { return nil }

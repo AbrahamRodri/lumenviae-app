@@ -567,7 +567,6 @@ extension GuidedRosary {
 }
 
 extension String {
-    /// "The Annunciation" → "the Annunciation", for use mid-sentence
     /// A name set mid-sentence: its opening article lowered, English's
     /// "The" and Spanish's "El", "La", "Los" and "Las" ("Quédate con la
     /// encarnación del Hijo de Dios"). A name that opens on a noun ("Jesús…",
