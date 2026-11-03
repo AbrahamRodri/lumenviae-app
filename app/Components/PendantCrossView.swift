@@ -617,12 +617,13 @@ struct PendantTitleBlock: View {
     /// "Then the First Glorious Mystery", while the opening is said
     var leadsInto: String? = nil
 
-    /// "The First Glorious Mystery" read mid-sentence
-    static func leadIn(to kicker: String) -> String {
-        let phrase = kicker.hasPrefix("The ") ? "the " + kicker.dropFirst(4) : kicker
+    /// "Then the First Glorious Mystery": the set's own sentence, or the
+    /// decade's place alone for a set whose mysteries are not known
+    static func leadIn(category: MysteryCategory?, ordinal: Int) -> String {
+        if let category { return category.leadInLabel(ordinal: ordinal) }
         return String(
-            localized: "Then \(phrase)",
-            comment: "Prayer screen, the opening prayers: the mystery they lead to, read mid-sentence, like Then the First Glorious Mystery"
+            localized: "Then the \(Constants.ordinalWord(ordinal)) Mystery",
+            comment: "Prayer screen, the opening prayers: the decade they lead to, for a set of unknown mysteries; the ordinal is a word like First"
         )
     }
 

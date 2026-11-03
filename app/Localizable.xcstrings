@@ -1600,6 +1600,9 @@
     "Gold on the violet of the Passion" : {
       "comment" : "Settings, App Icon: what the icon looks like"
     },
+    "Gospel" : {
+      "comment" : "A kind of meditation: the Gospel passage of the mystery"
+    },
     "GRACE TO ASK FOR" : {
 
     },
@@ -1750,6 +1753,12 @@
     },
     "Ink and gold on the page of an old book" : {
       "comment" : "Settings, App Icon: what the icon looks like"
+    },
+    "Inside the Scene" : {
+      "comment" : "A kind of meditation: the mystery's scene seen and heard from within"
+    },
+    "Intentions" : {
+      "comment" : "A kind of meditation: for a particular intention"
     },
     "It is taken out of every playlist it is in." : {
 
@@ -2688,6 +2697,9 @@
     "REFLECTION" : {
 
     },
+    "Reflections" : {
+      "comment" : "A kind of meditation: a saint's reflections on a mystery"
+    },
     "Reminder Sound" : {
       "comment" : "Settings, Reminder Sound sheet: its title\nSettings: a row's name"
     },
@@ -2783,6 +2795,9 @@
     },
     "Saint Michael Prayer" : {
       "comment" : "Settings, After the Rosary: name of a prayer said after the Rosary"
+    },
+    "Saints" : {
+      "comment" : "A kind of meditation: written by a saint"
     },
     "Save" : {
 
@@ -3600,11 +3615,26 @@
     "THEN" : {
 
     },
-    "Then %@" : {
-      "comment" : "Prayer screen, the opening prayers: the mystery they lead to, read mid-sentence, like Then the First Glorious Mystery"
-    },
     "then swipe" : {
       "comment" : "Strand margin while the beads are locked, second of two short lines: Listen first, / then swipe"
+    },
+    "Then the %@ Glorious Mystery" : {
+      "comment" : "Prayer screen, the opening prayers: the decade they lead to, as a whole line; the ordinal is a word like First"
+    },
+    "Then the %@ Joyful Mystery" : {
+      "comment" : "Prayer screen, the opening prayers: the decade they lead to, as a whole line; the ordinal is a word like First"
+    },
+    "Then the %@ Luminous Mystery" : {
+      "comment" : "Prayer screen, the opening prayers: the decade they lead to, as a whole line; the ordinal is a word like First"
+    },
+    "Then the %@ Mystery" : {
+      "comment" : "Prayer screen, the opening prayers: the decade they lead to, for a set of unknown mysteries; the ordinal is a word like First"
+    },
+    "Then the %@ Sorrow of Mary" : {
+      "comment" : "Prayer screen, the opening prayers: the decade they lead to, as a whole line; the ordinal is a word like First"
+    },
+    "Then the %@ Sorrowful Mystery" : {
+      "comment" : "Prayer screen, the opening prayers: the decade they lead to, as a whole line; the ordinal is a word like First"
     },
     "Then the Act of Contrition, and the first sorrow." : {
       "comment" : "Prayer screen, Seven Sorrows chaplet, first opening prayer: a line naming what follows"

@@ -84,6 +84,25 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
         }
     }
 
+    /// The line under the opening prayers naming the decade they lead
+    /// to: "Then the First Glorious Mystery". Whole, with its article, so
+    /// a translation can set both in its own order.
+    func leadInLabel(ordinal number: Int) -> String {
+        let ordinal = Constants.ordinalWord(number)
+        switch self {
+        case .joyful:
+            return String(localized: "Then the \(ordinal) Joyful Mystery", comment: "Prayer screen, the opening prayers: the decade they lead to, as a whole line; the ordinal is a word like First")
+        case .sorrowful:
+            return String(localized: "Then the \(ordinal) Sorrowful Mystery", comment: "Prayer screen, the opening prayers: the decade they lead to, as a whole line; the ordinal is a word like First")
+        case .glorious:
+            return String(localized: "Then the \(ordinal) Glorious Mystery", comment: "Prayer screen, the opening prayers: the decade they lead to, as a whole line; the ordinal is a word like First")
+        case .luminous:
+            return String(localized: "Then the \(ordinal) Luminous Mystery", comment: "Prayer screen, the opening prayers: the decade they lead to, as a whole line; the ordinal is a word like First")
+        case .sevenSorrows:
+            return String(localized: "Then the \(ordinal) Sorrow of Mary", comment: "Prayer screen, the opening prayers: the decade they lead to, as a whole line; the ordinal is a word like First")
+        }
+    }
+
     /// The same place as running text, without the article, for a
     /// sentence that supplies its own ("Continue at the Third Joyful
     /// Mystery"): "Third Joyful Mystery", "Third Sorrow of Mary".

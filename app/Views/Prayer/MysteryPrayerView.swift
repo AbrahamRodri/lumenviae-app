@@ -1425,7 +1425,10 @@ struct MysteryPrayerView: View {
             PendantTitleBlock(
                 pendant: pendant,
                 leadsInto: pendant.phase == .opening
-                    ? PendantTitleBlock.leadIn(to: mysteryKicker)
+                    ? PendantTitleBlock.leadIn(
+                        category: meditationSet.mysteryCategory,
+                        ordinal: viewModel.currentMysteryIndex + 1
+                    )
                     : nil
             )
         } else {

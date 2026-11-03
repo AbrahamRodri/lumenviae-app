@@ -721,7 +721,10 @@ struct ScripturalRosaryPrayerView: View {
                 PendantTitleBlock(
                     pendant: pendant,
                     leadsInto: pendant.phase == .opening
-                        ? PendantTitleBlock.leadIn(to: viewModel.mysteryKicker)
+                        ? PendantTitleBlock.leadIn(
+                            category: viewModel.category,
+                            ordinal: viewModel.currentMysteryIndex + 1
+                        )
                         : nil
                 )
                 .pendantPrayerElement(

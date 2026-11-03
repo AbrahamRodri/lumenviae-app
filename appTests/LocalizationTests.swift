@@ -28,4 +28,18 @@ struct LocalizationTests {
         #expect(NarrationClock.spoken(60) == "1 minute")
         #expect(NarrationClock.spoken(1) == "1 second")
     }
+
+    @Test func openingPrayersLeadIntoTheDecadeInOneSentence() {
+        #expect(PendantTitleBlock.leadIn(category: .glorious, ordinal: 1) == "Then the First Glorious Mystery")
+        #expect(PendantTitleBlock.leadIn(category: .sevenSorrows, ordinal: 1) == "Then the First Sorrow of Mary")
+        #expect(PendantTitleBlock.leadIn(category: nil, ordinal: 4) == "Then the Fourth Mystery")
+    }
+
+    @Test func meditationKindsKeepTheirEnglishWording() {
+        #expect(MeditationLabel.displayName("Considerations") == "Reflections")
+        #expect(MeditationLabel.displayName("Contemplative") == "Inside the Scene")
+        #expect(MeditationLabel.displayName("Scriptural") == "Gospel")
+        #expect(MeditationLabel.displayName("Saints") == "Saints")
+        #expect(MeditationLabel.displayName("Something New") == "Something New")
+    }
 }
