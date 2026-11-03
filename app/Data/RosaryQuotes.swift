@@ -28,6 +28,13 @@
 //  having been checked and found out of copyright (Oct 2026).
 //  Tools/ContentSourcing/MANIFEST.md records the sources.
 //
+//  The Spanish is the api's (priv/rosary_content/es/quotes.json, api
+//  main 25396eb), matched to these lines by their English. Seventeen of
+//  the api's twenty-one have it; the other four are lines this file took
+//  out for their copyright and are not brought back. A Spanish app
+//  draws its daily line from the seventeen alone, so no English line
+//  stands in a Spanish page.
+//
 
 import Foundation
 
@@ -37,6 +44,32 @@ struct RosaryQuote: Hashable {
 
     /// The work it comes from, where it can be cited with confidence.
     var source: String? = nil
+
+    /// The line in Spanish, where the api has it
+    var spanish: SpanishQuote? = nil
+
+    /// Part of the Spanish is the team's own (AI) translation: the page
+    /// says so beneath it. Never set on an English line.
+    var aiTranslated = false
+
+    /// The line as a Spanish app shows it: its Spanish in the English's
+    /// place, or the line itself
+    func shown(spanish isSpanish: Bool) -> RosaryQuote {
+        guard isSpanish, let spanish else { return self }
+        return RosaryQuote(
+            text: spanish.text, author: spanish.author, source: spanish.source,
+            aiTranslated: spanish.aiTranslated
+        )
+    }
+}
+
+/// A quotation's Spanish: its words, the person as Spanish names them
+/// ("San Pío X"), and the work in Spanish
+struct SpanishQuote: Hashable {
+    let text: String
+    let author: String
+    var source: String? = nil
+    var aiTranslated = false
 }
 
 enum RosaryQuotes {
@@ -47,76 +80,165 @@ enum RosaryQuotes {
 
         RosaryQuote(
             text: "The Rosary is the most beautiful and the most rich in graces of all prayers; it is the prayer that touches most the Heart of the Mother of God.",
-            author: "St. Pius X"
+            author: "St. Pius X",
+            spanish: SpanishQuote(
+                text: "El Rosario es la más bella y la más rica en gracias de todas las oraciones; es la oración que más toca el Corazón de la Madre de Dios.",
+                author: "San Pío X",
+                aiTranslated: true
+            )
         ),
         RosaryQuote(
             text: "Give me an army saying the Rosary and I will conquer the world.",
-            author: "Bl. Pius IX"
+            author: "Bl. Pius IX",
+            spanish: SpanishQuote(
+                text: "Denme un ejército que rece el Rosario y conquistaré el mundo.",
+                author: "Beato Pío IX",
+                aiTranslated: true
+            )
         ),
         RosaryQuote(
             text: "The Rosary is a powerful weapon to put the demons to flight.",
-            author: "St. Padre Pio"
+            author: "St. Padre Pio",
+            spanish: SpanishQuote(
+                text: "El Rosario es un arma poderosa para poner en fuga a los demonios.",
+                author: "San Pío de Pietrelcina",
+                aiTranslated: true
+            )
         ),
         RosaryQuote(
             text: "Never will anyone who says his Rosary every day be led astray.",
-            author: "Bl. Alan de la Roche"
+            author: "Bl. Alan de la Roche",
+            spanish: SpanishQuote(
+                text: "Nunca se extraviará quien rece su Rosario todos los días.",
+                author: "Beato Alano de la Rupe",
+                aiTranslated: true
+            )
         ),
         RosaryQuote(
             text: "The Rosary is the scourge of the devil.",
-            author: "Pope Adrian VI"
+            author: "Pope Adrian VI",
+            spanish: SpanishQuote(
+                text: "El Rosario es el azote del demonio.",
+                author: "Papa Adriano VI",
+                aiTranslated: true
+            )
         ),
         RosaryQuote(
             text: "Say the Rosary every day to obtain peace for the world.",
-            author: "Our Lady of Fatima"
+            author: "Our Lady of Fatima",
+            spanish: SpanishQuote(
+                text: "Recen el Rosario todos los días para alcanzar la paz para el mundo.",
+                author: "Nuestra Señora de Fátima",
+                aiTranslated: true
+            )
         ),
         RosaryQuote(
             text: "The holy Rosary is the storehouse of countless blessings.",
-            author: "Bl. Alan de la Roche"
+            author: "Bl. Alan de la Roche",
+            spanish: SpanishQuote(
+                text: "El santo Rosario es un tesoro de innumerables bendiciones.",
+                author: "Beato Alano de la Rupe",
+                aiTranslated: true
+            )
         ),
         RosaryQuote(
             text: "I am the Lady of the Rosary. Continue to pray the Rosary every day.",
             author: "Our Lady of Fatima",
-            source: "October 13, 1917"
+            source: "October 13, 1917",
+            spanish: SpanishQuote(
+                text: "Soy la Señora del Rosario. Continúen rezando el Rosario todos los días.",
+                author: "Nuestra Señora de Fátima",
+                source: "13 de octubre de 1917",
+                aiTranslated: true
+            )
         ),
         RosaryQuote(
             text: "When the Rosary is said well, it gives Jesus and Mary more glory and is more meritorious than any other prayer.",
             author: "St. Louis de Montfort",
-            source: "The Secret of the Rosary"
+            source: "The Secret of the Rosary",
+            spanish: SpanishQuote(
+                text: "Cuando el Rosario se reza bien, da más gloria a Jesús y a María y es más meritorio que cualquier otra oración.",
+                author: "San Luis María Grignion de Montfort",
+                source: "El secreto del Rosario",
+                aiTranslated: true
+            )
         ),
         RosaryQuote(
             text: "If you say the Rosary faithfully until death, I do assure you that you shall receive a never-fading crown of glory.",
             author: "St. Louis de Montfort",
-            source: "The Secret of the Rosary"
+            source: "The Secret of the Rosary",
+            spanish: SpanishQuote(
+                text: "Si rezas fielmente el Rosario hasta la muerte, te aseguro que recibirás una corona de gloria inmarcesible.",
+                author: "San Luis María Grignion de Montfort",
+                source: "El secreto del Rosario",
+                aiTranslated: true
+            )
         ),
         RosaryQuote(
             text: "Recite your Rosary with faith, with humility, with confidence, and with perseverance.",
             author: "St. Louis de Montfort",
-            source: "The Secret of the Rosary"
+            source: "The Secret of the Rosary",
+            spanish: SpanishQuote(
+                text: "Reza tu Rosario con fe, con humildad, con confianza y con perseverancia.",
+                author: "San Luis María Grignion de Montfort",
+                source: "El secreto del Rosario",
+                aiTranslated: true
+            )
         ),
         RosaryQuote(
             text: "Love the Madonna and pray the Rosary, for her Rosary is the weapon against the evils of the world today.",
-            author: "St. Padre Pio"
+            author: "St. Padre Pio",
+            spanish: SpanishQuote(
+                text: "Ama a la Virgen y reza el Rosario, porque su Rosario es el arma contra los males del mundo de hoy.",
+                author: "San Pío de Pietrelcina",
+                aiTranslated: true
+            )
         ),
         RosaryQuote(
             text: "The Rosary is the weapon for these times.",
-            author: "St. Padre Pio"
+            author: "St. Padre Pio",
+            spanish: SpanishQuote(
+                text: "El Rosario es el arma para estos tiempos.",
+                author: "San Pío de Pietrelcina"
+            )
         ),
         RosaryQuote(
             text: "The Rosary is the book of the blind, where souls see and there enact the greatest drama of love the world has ever known.",
             author: "Ven. Fulton J. Sheen",
-            source: "The World's First Love"
+            source: "The World's First Love",
+            spanish: SpanishQuote(
+                text: "El Rosario es el libro de los ciegos, en el que las almas ven y viven el mayor drama de amor que el mundo haya conocido jamás.",
+                author: "Venerable Fulton J. Sheen",
+                source: "El primer amor del mundo",
+                aiTranslated: true
+            )
         ),
         RosaryQuote(
             text: "The greatest method of praying is to pray the Rosary.",
-            author: "St. Francis de Sales"
+            author: "St. Francis de Sales",
+            spanish: SpanishQuote(
+                text: "El mejor método de oración es rezar el Rosario.",
+                author: "San Francisco de Sales",
+                aiTranslated: true
+            )
         ),
         RosaryQuote(
             text: "Among all the devotions approved by the Church, none has been so favored by so many miracles as the devotion of the Most Holy Rosary.",
-            author: "Bl. Pius IX"
+            author: "Bl. Pius IX",
+            spanish: SpanishQuote(
+                text: "Entre todas las devociones aprobadas por la Iglesia, ninguna ha sido favorecida con tantos milagros como la devoción del Santísimo Rosario.",
+                author: "Beato Pío IX",
+                aiTranslated: true
+            )
         ),
         RosaryQuote(
             text: "The Rosary is the most excellent form of prayer and the most efficacious means of attaining eternal life.",
-            author: "Pope Leo XIII"
+            author: "Pope Leo XIII",
+            spanish: SpanishQuote(
+                text: "El Rosario es la forma de oración más excelente y el medio más eficaz para alcanzar la vida eterna.",
+                author: "Papa León XIII",
+                aiTranslated: true
+            )
         ),
         RosaryQuote(
             text:
@@ -696,17 +818,28 @@ enum RosaryQuotes {
     /// Today's quote. Day-of-year rather than random so the home screen is
     /// steady through the day and everyone praying today shares the same line.
     static var today: RosaryQuote {
-        quote(offset: 0)
+        quote(spanish: SpanishContent.isActive)
     }
 
     /// The quote for the completion screen, drawn half the catalog away from
     /// the home screen's so a single session never shows the same line twice.
     static var afterPraying: RosaryQuote {
-        quote(offset: all.count / 2)
+        quote(spanish: SpanishContent.isActive, halfway: true)
     }
 
-    private static func quote(offset: Int) -> RosaryQuote {
-        let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0
-        return all[(dayOfYear + offset) % all.count]
+    /// The lines a page may draw from: in a Spanish app those with their
+    /// Spanish, shown in it (every line, in English, while none has any)
+    static func catalog(spanish: Bool) -> [RosaryQuote] {
+        guard spanish else { return all }
+        let inSpanish = all.filter { $0.spanish != nil }
+        return inSpanish.isEmpty ? all : inSpanish.map { $0.shown(spanish: true) }
+    }
+
+    /// The day's line (`ScheduleService.today`, which a debug launch can
+    /// move), or with `halfway` the line half the catalog on
+    static func quote(spanish: Bool, halfway: Bool = false, on date: Date = ScheduleService.today) -> RosaryQuote {
+        let lines = catalog(spanish: spanish)
+        let dayOfYear = Calendar.current.ordinality(of: .day, in: .year, for: date) ?? 0
+        return lines[(dayOfYear + (halfway ? lines.count / 2 : 0)) % lines.count]
     }
 }

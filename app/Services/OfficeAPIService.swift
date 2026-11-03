@@ -10,10 +10,11 @@
 //  be mistaken for the Rosary content failing.
 //
 //  The version is pinned to the 1960 rubrics — the 1962 books, matching
-//  the Daily Missal — and the translation to English. Both travel as
-//  explicit query parameters so a change of server default can never
-//  silently turn the page. A version or language setting would thread
-//  through here.
+//  the Daily Missal — and the translation follows the app's language:
+//  English, or Divinum Officium's Spanish (Torres Amat's psalms) in a
+//  Spanish app. Both travel as explicit query parameters so a change of
+//  server default can never silently turn the page. A version setting
+//  would thread through here.
 //
 
 import Foundation
@@ -28,8 +29,24 @@ final class OfficeAPIService {
     /// the fetches, the cache keys, and the reader all agree.
     static let version = "rubrics-1960"
 
-    /// The translation set beside the Latin
-    static let language = "english"
+    /// The translation set beside the Latin: the app's language, read at
+    /// each request (a change of language relaunches the app)
+    static var language: String { language(spanish: SpanishContent.isActive) }
+
+    static func language(spanish: Bool) -> String { spanish ? "espanol" : "english" }
+
+    /// What the disk cache keys a page by: the version, and the language
+    /// beside it when it is not English. English pages keep the names
+    /// they were saved under before Spanish came, so no saved hour is
+    /// lost and none is read in the other language.
+    static var edition: String { edition(spanish: SpanishContent.isActive) }
+
+    static func edition(spanish: Bool) -> String {
+        spanish ? "\(version)-\(language(spanish: true))" : version
+    }
+
+    /// Every edition the cache may hold, for pruning
+    static var editions: [String] { [edition(spanish: false), edition(spanish: true)] }
 
     private let baseURL = "https://lumenviae.fly.dev/api/office"
     private let session: URLSession

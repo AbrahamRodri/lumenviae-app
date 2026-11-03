@@ -729,7 +729,7 @@ struct OfficeHourView: View {
         do {
             let fetched = try await viewModel.loadHour(hour)
             office = fetched
-            readerSections = OfficeReaderSection.build(from: fetched.sections)
+            readerSections = OfficeReaderSection.build(from: fetched.sections, language: fetched.language)
         } catch {
             loadFailed = true
         }

@@ -1,0 +1,87 @@
+//
+//  SpanishOfficeAndQuotesTests.swift
+//  appTests
+//
+//  The Hours of Prayer and the saints' quotations in a Spanish app: the
+//  Office asked for in Divinum Officium's Spanish and kept apart on disk,
+//  its English headings named in Spanish, and the daily line drawn from
+//  the quotations that have their Spanish.
+//
+
+import Foundation
+import Testing
+
+@testable import app
+
+struct SpanishOfficeTests {
+
+    @Test func theOfficeIsAskedForInTheAppsLanguage() {
+        #expect(OfficeAPIService.language(spanish: false) == "english")
+        #expect(OfficeAPIService.language(spanish: true) == "espanol")
+    }
+
+    /// English pages keep the names they were saved under; Spanish ones
+    /// are kept beside them, never read for the other language
+    @Test func eachLanguageHasItsOwnCacheNames() {
+        #expect(OfficeAPIService.edition(spanish: false) == OfficeAPIService.version)
+        #expect(OfficeAPIService.edition(spanish: true) == "rubrics-1960-espanol")
+        #expect(Set(OfficeAPIService.editions).count == 2)
+        // No English name's prefix begins a Spanish one
+        #expect(!"hour_rubrics-1960-espanol_2026-11-04_laudes.json".hasPrefix("hour_rubrics-1960_"))
+    }
+
+    @Test func englishHeadingsInTheSpanishOfficeAreNamedInSpanish() {
+        let sections = [
+            OfficeSection(
+                latin: OfficeCell(title: "Martyrologium", note: nil, lines: ["…"]),
+                vernacular: OfficeCell(title: "Martyrology", note: nil, lines: ["…"])),
+            OfficeSection(
+                latin: OfficeCell(title: "Psalmi", note: nil, lines: ["…"]),
+                vernacular: OfficeCell(title: "Salmos", note: nil, lines: ["…"])),
+        ]
+        let spanish = OfficeReaderSection.build(from: sections, language: "espanol")
+        #expect(spanish.map(\.englishName) == ["Martirologio", "Salmos"])
+        // The English Office keeps its own word
+        #expect(OfficeReaderSection.build(from: sections).first?.englishName == "Martyrology")
+    }
+}
+
+struct SpanishQuotesTests {
+
+    @Test func aSpanishAppDrawsOnlySpanishLines() {
+        let spanish = RosaryQuotes.catalog(spanish: true)
+        #expect(spanish.count == 17)
+        let english = Set(RosaryQuotes.all.map(\.text))
+        #expect(spanish.allSatisfy { !english.contains($0.text) })
+        #expect(spanish.allSatisfy { $0.spanish == nil })
+    }
+
+    @Test func theSaintsAreNamedInSpanish() {
+        let pius = RosaryQuotes.all.first { $0.author == "St. Pius X" }?.shown(spanish: true)
+        #expect(pius?.author == "San Pío X")
+        #expect(pius?.aiTranslated == true)
+    }
+
+    /// Sixteen of the seventeen are the team's translation; the one
+    /// with a published Spanish (St. Padre Pio's) carries no line
+    @Test func theAILineFollowsTheApi() {
+        let lines = RosaryQuotes.catalog(spanish: true)
+        #expect(lines.filter(\.aiTranslated).count == 16)
+    }
+
+    @Test func englishIsUnchanged() {
+        #expect(RosaryQuotes.catalog(spanish: false) == RosaryQuotes.all)
+        #expect(RosaryQuotes.all.allSatisfy { !$0.aiTranslated })
+        let date = Date(timeIntervalSince1970: 1_793_000_000)
+        #expect(RosaryQuotes.all.contains(RosaryQuotes.quote(spanish: false, on: date)))
+        #expect(
+            RosaryQuotes.quote(spanish: true, on: date) != RosaryQuotes.quote(spanish: true, halfway: true, on: date))
+    }
+
+    @Test func theAILineHasItsSpanish() throws {
+        let path = try #require(Bundle.main.path(forResource: "es", ofType: "lproj"))
+        let spanish = try #require(Bundle(path: path))
+        let key = "Translation made with artificial intelligence."
+        #expect(spanish.localizedString(forKey: key, value: nil, table: nil) != key)
+    }
+}

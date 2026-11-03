@@ -19,14 +19,19 @@ struct QuoteSection: View {
     /// The work the line comes from, when it can be cited.
     let source: String?
 
+    /// Its Spanish is the team's own (AI) translation
+    let aiTranslated: Bool
+
     init(
         quote: String = RosaryQuotes.all[0].text,
         author: String = RosaryQuotes.all[0].author,
-        source: String? = nil
+        source: String? = nil,
+        aiTranslated: Bool = false
     ) {
         self.quote = quote
         self.author = author
         self.source = source
+        self.aiTranslated = aiTranslated
     }
 
     var body: some View {
@@ -55,6 +60,9 @@ struct QuoteSection: View {
                         .foregroundColor(AppColors.textSecondary)
                         .multilineTextAlignment(.center)
                 }
+
+                AIQuoteNote(shows: aiTranslated)
+                    .padding(.top, 4)
             }
             .padding(.top, 2)
 

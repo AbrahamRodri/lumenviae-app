@@ -8984,7 +8984,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada oración escrita completa, en inglés o en latín"
+            "value" : "Cada oración escrita completa, en español o en latín"
           }
         }
       }
@@ -16585,7 +16585,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reza en inglés, en latín o en ambos, con el inglés debajo de cada línea en latín."
+            "value" : "Reza en español, en latín o en ambos, con el español debajo de cada línea en latín."
           }
         }
       }

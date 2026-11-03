@@ -127,7 +127,8 @@ struct PrayerCompletionView: View {
                         CompletionQuoteCard(
                             quote: quote.text,
                             author: quote.author,
-                            source: quote.source
+                            source: quote.source,
+                            aiTranslated: quote.aiTranslated
                         )
                         .padding(.horizontal, 20)
                         .opacity(showQuote ? 1 : 0)
@@ -751,6 +752,7 @@ struct CompletionQuoteCard: View {
     let quote: String
     let author: String
     var source: String? = nil
+    var aiTranslated = false
 
     /// The opening mark grows with the quotation beneath it
     @ScaledMetric(relativeTo: .body) private var quoteMarkSize: CGFloat = 48
@@ -793,6 +795,9 @@ struct CompletionQuoteCard: View {
                     .multilineTextAlignment(.center)
                     .padding(.top, -6)
             }
+
+            AIQuoteNote(shows: aiTranslated)
+                .padding(.top, -8)
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 28)

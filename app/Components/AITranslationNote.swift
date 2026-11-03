@@ -33,9 +33,31 @@ struct AITranslationNote: View {
             flagged = SpanishContent.prayers[prayerID]?.aiTranslated == true
         }
         guard flagged else { return nil }
-        return String(
+        return line
+    }
+
+    /// The words of the line, which a saint's quotation translated with
+    /// AI wears too (`RosaryQuote.aiTranslated`)
+    static var line: String {
+        String(
             localized: "Translation made with artificial intelligence.",
             comment: "Shown only in Spanish, under a prayer whose Spanish was partly translated with AI (the Seven Sorrows closing prayer)"
         )
+    }
+}
+
+/// The line under a saint's quotation whose Spanish is the team's own
+/// translation: the same words and face as under a prayer
+struct AIQuoteNote: View {
+    let shows: Bool
+
+    var body: some View {
+        if shows {
+            Text(AITranslationNote.line)
+                .font(AppFonts.italicFont(11))
+                .foregroundColor(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 }
