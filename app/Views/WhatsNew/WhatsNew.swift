@@ -26,7 +26,8 @@ struct WhatsNewItem: Identifiable {
     let detail: String
     let route: AppRoute
 
-    var id: String { title }
+    /// Each item opens its own page, so the page names it
+    var id: AppRoute { route }
 }
 
 // MARK: - WhatsNewRelease

@@ -1696,6 +1696,9 @@
     "And what it said to you…" : {
 
     },
+    "Any day you choose" : {
+      "comment" : "When a set of mysteries outside the weekly schedule is prayed, under its title on the mysteries' page"
+    },
     "App Icon" : {
       "comment" : "Settings: a section heading"
     },
@@ -2823,6 +2826,9 @@
     "Frees storage; streaming still works online" : {
       "comment" : "Settings, Offline: the line under a row"
     },
+    "Fridays, and on Our Lady of Sorrows, September 15" : {
+      "comment" : "When the Seven Sorrows chaplet is prayed, under its title on the mysteries' page"
+    },
     "From" : {
       "comment" : "A Rosary's own page, ledger label of the row naming where the words come from\nA meditation set's page, ledger label of the row naming the author and the source"
     },
@@ -3288,6 +3294,18 @@
     "Its prayers stay in the book and in My Prayers." : {
 
     },
+    "Jesus risen, and Mary in glory" : {
+      "comment" : "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about"
+    },
+    "Jesus' birth and childhood" : {
+      "comment" : "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about"
+    },
+    "Jesus' public life" : {
+      "comment" : "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about"
+    },
+    "Jesus' suffering and death" : {
+      "comment" : "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about"
+    },
     "Join her. Today's mysteries are ready." : {
       "comment" : "Daily prayer reminder notification in October, the month of the Rosary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
     },
@@ -3637,6 +3655,9 @@
     },
     "Mary conceived without sin" : {
       "comment" : "Consecration feast chooser: one short line saying what the feast of Our Lady remembers"
+    },
+    "Mary in her grief" : {
+      "comment" : "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about"
     },
     "Mary is assumed into Heaven" : {
       "comment" : "Consecration feast chooser: one short line saying what the feast of Our Lady remembers"
