@@ -18,8 +18,8 @@ struct PrayButtonEditorSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             EditorHeader(
-                title: "Pray Button",
-                subtitle: "What a tap starts, and what a hold shows.",
+                title: String(localized: "Pray Button", comment: "Pray button editor sheet: its title"),
+                subtitle: String(localized: "What a tap starts, and what a hold shows.", comment: "Pray button editor sheet: the line under its title"),
                 onDone: { dismiss() }
             )
 
@@ -85,9 +85,16 @@ struct PrayButtonEditorSheet: View {
     private var holdSummary: String {
         let count = settings.prayTrayShortcuts.count
         switch count {
-        case 0:  return "Opens an empty menu"
-        case 1:  return "Opens a menu of 1 devotion"
-        default: return "Opens a menu of \(count) devotions"
+        case 0:
+            return String(
+                localized: "Opens an empty menu",
+                comment: "Pray button editor: what holding the button does when its menu holds no devotion"
+            )
+        default:
+            return String(
+                localized: "Opens a menu of \(count) devotions",
+                comment: "Pray button editor: what holding the button does, with the number of devotions in its menu"
+            )
         }
     }
 
@@ -121,9 +128,11 @@ struct PrayButtonEditorSheet: View {
                 .accessibilityAddTraits(settings.prayQuickAction == shortcut ? .isSelected : [])
             }
         } header: {
-            EditorSectionHeader("When you tap")
+            EditorSectionHeader(String(localized: "When you tap", comment: "Pray button editor: section heading over the devotion a single tap starts"))
         } footer: {
-            EditorSectionFooter("A tap on Pray starts this one, with no menu on the way.")
+            EditorSectionFooter(
+                String(localized: "A tap on Pray starts this one, with no menu on the way.", comment: "Pray button editor: note under the tap section")
+            )
         }
     }
 
@@ -141,7 +150,9 @@ struct PrayButtonEditorSheet: View {
                     title: shortcut.title,
                     detail: shortcut.subtitle
                 ) {
-                    EditorRemoveButton(label: "Remove \(shortcut.title) from the menu") {
+                    EditorRemoveButton(
+                        label: String(localized: "Remove \(shortcut.title) from the menu", comment: "VoiceOver, Pray button editor: button taking a devotion out of the hold menu")
+                    ) {
                         withAnimation(Motion.settle) {
                             settings.setPrayTray(enabled.filter { $0 != shortcut })
                         }
@@ -154,9 +165,14 @@ struct PrayButtonEditorSheet: View {
                 settings.setPrayTray(items)
             }
         } header: {
-            EditorSectionHeader("When you hold")
+            EditorSectionHeader(String(localized: "When you hold", comment: "Pray button editor: section heading over the menu a press and hold opens"))
         } footer: {
-            EditorSectionFooter("Press and hold the button to open this menu. Drag to set its order.")
+            EditorSectionFooter(
+                String(
+                    localized: "Press and hold the button to open this menu. Drag to set its order.",
+                    comment: "Pray button editor: note under the hold menu section"
+                )
+            )
         }
 
         if !available.isEmpty {
@@ -166,7 +182,7 @@ struct PrayButtonEditorSheet: View {
                         icon: shortcut.icon,
                         title: shortcut.title,
                         detail: shortcut.subtitle,
-                        accessibilityLabel: "Add \(shortcut.title) to the menu"
+                        accessibilityLabel: String(localized: "Add \(shortcut.title) to the menu", comment: "VoiceOver, Pray button editor: row adding a devotion to the hold menu")
                     ) {
                         withAnimation(Motion.settle) {
                             settings.setPrayTray(enabled + [shortcut])
@@ -174,7 +190,7 @@ struct PrayButtonEditorSheet: View {
                     }
                 }
             } header: {
-                EditorSectionHeader("Add to the menu")
+                EditorSectionHeader(String(localized: "Add to the menu", comment: "Pray button editor: section heading over devotions that can be added to the hold menu"))
             }
         }
     }

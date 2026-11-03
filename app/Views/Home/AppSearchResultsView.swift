@@ -159,7 +159,10 @@ struct AppSearchResultsView: View {
         let category = MysteryCategory(rawValue: summary.category)?.devotionTitle ?? summary.category
         // A set named for its author would read the same line twice
         if let author = summary.author, !author.isEmpty, author != summary.name {
-            return "\(author) · \(category)"
+            return String(
+                localized: "\(author) · \(category)",
+                comment: "Search result for a meditation set: its author, then its mysteries, like Fulton Sheen · Joyful Mysteries"
+            )
         }
         return category
     }
@@ -214,7 +217,13 @@ struct AppSearchBestCard: View {
             Button(action: open) { face }
                 .buttonStyle(SacredCardButtonStyle())
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel(["Best match: \(title)", kicker, line].compactMap { $0 }.joined(separator: ", "))
+                .accessibilityLabel(
+                    [
+                        String(localized: "Best match: \(title)", comment: "VoiceOver, search: the card above the results holding the closest match, then its name"),
+                        kicker,
+                        line
+                    ].compactMap { $0 }.joined(separator: ", ")
+                )
                 .accessibilityAddTraits(.isButton)
 
             if hasAct {
@@ -317,15 +326,15 @@ struct AppSearchBestCard: View {
 
     private var kicker: String {
         switch hit {
-        case .prayer(let prayer): return PrayerBook.homeChapter(of: prayer.id)?.title ?? "Prayer"
-        case .topic: return "Topic"
-        case .order: return "Prayers said together"
+        case .prayer(let prayer): return PrayerBook.homeChapter(of: prayer.id)?.title ?? String(localized: "Prayer", comment: "Search, the best match card: small capitals saying what kind of thing the match is")
+        case .topic: return String(localized: "Topic", comment: "Search, the best match card: small capitals saying what kind of thing the match is")
+        case .order: return String(localized: "Prayers said together", comment: "Search, the best match card: small capitals saying what kind of thing the match is")
         case .chant(let chant): return chant.form.singular
-        case .mysteries: return "Rosary Mysteries"
-        case .mystery(let mystery): return mystery.mysteryCategory?.devotionTitle ?? "Mystery"
+        case .mysteries: return String(localized: "Rosary Mysteries", comment: "Search, the best match card: small capitals saying what kind of thing the match is")
+        case .mystery(let mystery): return mystery.mysteryCategory?.devotionTitle ?? String(localized: "Mystery", comment: "Search, the best match card: small capitals saying what kind of thing the match is")
         case .reading(let shelf, _): return shelf.title
-        case .page: return "Page"
-        case .meditationSet: return "Meditation"
+        case .page: return String(localized: "Page", comment: "Search, the best match card: small capitals saying what kind of thing the match is")
+        case .meditationSet: return String(localized: "Meditation", comment: "Search, the best match card: small capitals saying what kind of thing the match is")
         }
     }
 
@@ -463,7 +472,7 @@ struct AppSearchChips: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .animation(Motion.crossfade, value: lit)
-        .accessibilityLabel("\(kind.title), \(count)")
+        .accessibilityLabel(Text("\(kind.title), \(count)", comment: "VoiceOver, search: a chip with a kind of result and how many were found, like Prayers, 4"))
         .accessibilityHint("Scrolls to them")
         .accessibilityAddTraits(lit ? .isSelected : [])
     }
@@ -566,9 +575,12 @@ extension AppSearch.Origin {
     /// What the empty field says: where the search starts
     var prompt: String {
         switch self {
-        case .everywhere: return "Search prayers, mysteries, books and chant"
-        case .prayers: return "Search, starting with prayers"
-        case .chant: return "Search, starting with chant"
+        case .everywhere:
+            return String(localized: "Search prayers, mysteries, books and chant", comment: "Search field's placeholder, opened from Home or Explore")
+        case .prayers:
+            return String(localized: "Search, starting with prayers", comment: "Search field's placeholder, opened from the Prayers tab: prayers are listed first")
+        case .chant:
+            return String(localized: "Search, starting with chant", comment: "Search field's placeholder, opened from the Chant tab: chants are listed first")
         }
     }
 }

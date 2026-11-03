@@ -26,7 +26,8 @@ struct WhatsNewItem: Identifiable {
     let detail: String
     let route: AppRoute
 
-    var id: String { title }
+    /// Each item opens its own page, so the page names it
+    var id: AppRoute { route }
 }
 
 // MARK: - WhatsNewRelease
@@ -43,42 +44,72 @@ struct WhatsNewRelease: Identifiable {
         WhatsNewRelease(version: "4.1", items: [
             WhatsNewItem(
                 icon: "ph-note-pencil",
-                title: "My Prayers",
-                detail: "Write your own prayers and gather them into playlists, each with a painting or a photo of your own",
+                title: String(
+                    localized: "My Prayers",
+                    comment: "What's New sheet: name of a new feature, My Prayers, the reader's own prayers and playlists"
+                ),
+                detail: String(
+                    localized: "Write your own prayers and gather them into playlists, each with a painting or a photo of your own",
+                    comment: "What's New sheet: one plain line under My Prayers, the reader's own prayers and playlists, saying what it is"
+                ),
                 route: .myPrayers
             )
         ]),
         WhatsNewRelease(version: "4.0", items: [
             WhatsNewItem(
                 icon: "lv-prayer-book",
-                title: "Prayers",
+                title: String(
+                    localized: "Prayers",
+                    comment: "What's New sheet: name of a new feature, Prayers, the Prayer Book tab"
+                ),
                 // The Journal gave Prayers its place in the bar. Every row
                 // here is a door, and the Journal is a tab, not a page, so
                 // where it opens now is said in this row's line
-                detail: "The Church's common prayers, in the tab bar where the Journal was; the Journal now opens from Settings and after each Rosary",
+                detail: String(
+                    localized: "The Church's common prayers, in the tab bar where the Journal was; the Journal now opens from Settings and after each Rosary",
+                    comment: "What's New sheet: one plain line under Prayers, the Prayer Book tab, saying what it is"
+                ),
                 // Turns to the Prayers tab (`AppRouter.push`)
                 route: .prayerBook
             ),
             WhatsNewItem(
                 icon: "ph-music-note",
-                title: "The Chant Library",
-                detail: "The Church's own songs in Gregorian chant, each with a recording and sheet music",
+                title: String(
+                    localized: "The Chant Library",
+                    comment: "What's New sheet: name of a new feature, the Chant Library"
+                ),
+                detail: String(
+                    localized: "The Church's own songs in Gregorian chant, each with a recording and sheet music",
+                    comment: "What's New sheet: one plain line under the Chant Library, saying what it is"
+                ),
                 route: .chantLibrary
             ),
             WhatsNewItem(
                 icon: PrayerShortcut.rosaryAloud.icon,
                 // The form's name as the Rosary's own screens say it
                 // (`ScripturalRosaryViewModel.displayName`)
-                title: "The Audio Rosary",
-                detail: "Listen to every prayer of the Rosary, in the voice you choose, at the speed you set",
+                title: String(
+                    localized: "The Audio Rosary",
+                    comment: "What's New sheet: name of a new feature, the Audio Rosary, every prayer said aloud"
+                ),
+                detail: String(
+                    localized: "Listen to every prayer of the Rosary, in the voice you choose, at the speed you set",
+                    comment: "What's New sheet: one plain line under the Audio Rosary, every prayer said aloud, saying what it is"
+                ),
                 // Today's mysteries: the notes are decided at launch and
                 // shown the same day
                 route: .rosaryAloud(ScheduleService.categoryForToday())
             ),
             WhatsNewItem(
                 icon: "lv-rosary",
-                title: "How to Pray the Rosary",
-                detail: "A short course for someone new to it, then a guided first Rosary, one prayer at a time",
+                title: String(
+                    localized: "How to Pray the Rosary",
+                    comment: "What's New sheet: name of a new feature, How to Pray the Rosary, the beginner's course"
+                ),
+                detail: String(
+                    localized: "A short course for someone new to it, then a guided first Rosary, one prayer at a time",
+                    comment: "What's New sheet: one plain line under How to Pray the Rosary, the beginner's course, saying what it is"
+                ),
                 route: .howToPray
             )
             // The Scriptural Rosary and the narration voices came in 3.0

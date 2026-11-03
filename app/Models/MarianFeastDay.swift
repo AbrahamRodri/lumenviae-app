@@ -78,74 +78,74 @@ extension MarianFeastDay {
         // Feb 11 - Our Lady of Lourdes (Start: Jan 9)
         MarianFeastDay(
             id: "lourdes",
-            name: "Our Lady of Lourdes",
+            name: String(localized: "Our Lady of Lourdes", comment: "Consecration feast chooser: name of a feast of Our Lady the 33-day preparation can end on"),
             month: 2,
             day: 11,
-            description: "Apparition of the Immaculate Virgin Mary at Lourdes"
+            description: String(localized: "Apparition of the Immaculate Virgin Mary at Lourdes", comment: "Consecration feast chooser: one short line saying what the feast of Our Lady remembers")
         ),
         // Mar 25 - The Annunciation (Start: Feb 20)
         MarianFeastDay(
             id: "annunciation",
-            name: "The Annunciation",
+            name: String(localized: "The Annunciation", comment: "Consecration feast chooser: name of a feast of Our Lady the 33-day preparation can end on"),
             month: 3,
             day: 25,
-            description: "The Angel Gabriel announces to Mary"
+            description: String(localized: "The Angel Gabriel announces to Mary", comment: "Consecration feast chooser: one short line saying what the feast of Our Lady remembers")
         ),
         // Jul 16 - Our Lady of Mt. Carmel (Start: Jun 13)
         MarianFeastDay(
             id: "mount_carmel",
-            name: "Our Lady of Mt. Carmel",
+            name: String(localized: "Our Lady of Mt. Carmel", comment: "Consecration feast chooser: name of a feast of Our Lady the 33-day preparation can end on"),
             month: 7,
             day: 16,
-            description: "Our Lady of Mount Carmel"
+            description: String(localized: "Our Lady of Mount Carmel", comment: "Consecration feast chooser: one short line saying what the feast of Our Lady remembers")
         ),
         // Aug 15 - The Assumption (Start: Jul 13)
         MarianFeastDay(
             id: "assumption",
-            name: "The Assumption",
+            name: String(localized: "The Assumption", comment: "Consecration feast chooser: name of a feast of Our Lady the 33-day preparation can end on"),
             month: 8,
             day: 15,
-            description: "Mary is assumed into Heaven"
+            description: String(localized: "Mary is assumed into Heaven", comment: "Consecration feast chooser: one short line saying what the feast of Our Lady remembers")
         ),
         // Sep 8 - Nativity of Mary (Start: Aug 6)
         MarianFeastDay(
             id: "nativity_mary",
-            name: "Nativity of the Blessed Virgin Mary",
+            name: String(localized: "Nativity of the Blessed Virgin Mary", comment: "Consecration feast chooser: name of a feast of Our Lady the 33-day preparation can end on"),
             month: 9,
             day: 8,
-            description: "The birth of the Blessed Virgin"
+            description: String(localized: "The birth of the Blessed Virgin", comment: "Consecration feast chooser: one short line saying what the feast of Our Lady remembers")
         ),
         // Sep 15 - Our Lady of Sorrows (Start: Aug 13)
         MarianFeastDay(
             id: "sorrows",
-            name: "Our Lady of Sorrows",
+            name: String(localized: "Our Lady of Sorrows", comment: "Consecration feast chooser: name of a feast of Our Lady the 33-day preparation can end on"),
             month: 9,
             day: 15,
-            description: "Our Lady of Sorrows"
+            description: String(localized: "Our Lady of Sorrows", comment: "Consecration feast chooser: one short line saying what the feast of Our Lady remembers")
         ),
         // Nov 21 - Presentation of Mary (Start: Oct 19)
         MarianFeastDay(
             id: "presentation_mary",
-            name: "Presentation of the Blessed Virgin Mary",
+            name: String(localized: "Presentation of the Blessed Virgin Mary", comment: "Consecration feast chooser: name of a feast of Our Lady the 33-day preparation can end on"),
             month: 11,
             day: 21,
-            description: "Mary presented in the Temple"
+            description: String(localized: "Mary presented in the Temple", comment: "Consecration feast chooser: one short line saying what the feast of Our Lady remembers")
         ),
         // Dec 8 - Immaculate Conception (Start: Nov 5)
         MarianFeastDay(
             id: "immaculate_conception",
-            name: "Immaculate Conception",
+            name: String(localized: "Immaculate Conception", comment: "Consecration feast chooser: name of a feast of Our Lady the 33-day preparation can end on"),
             month: 12,
             day: 8,
-            description: "Mary conceived without sin"
+            description: String(localized: "Mary conceived without sin", comment: "Consecration feast chooser: one short line saying what the feast of Our Lady remembers")
         ),
         // Dec 12 - Our Lady of Guadalupe (Start: Nov 9)
         MarianFeastDay(
             id: "guadalupe",
-            name: "Our Lady of Guadalupe",
+            name: String(localized: "Our Lady of Guadalupe", comment: "Consecration feast chooser: name of a feast of Our Lady the 33-day preparation can end on"),
             month: 12,
             day: 12,
-            description: "Our Lady of Guadalupe"
+            description: String(localized: "Our Lady of Guadalupe", comment: "Consecration feast chooser: one short line saying what the feast of Our Lady remembers")
         )
     ]
 

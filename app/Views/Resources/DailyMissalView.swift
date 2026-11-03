@@ -366,17 +366,17 @@ struct DailyMissalView: View {
 
     private var chromeRow: some View {
         HStack(spacing: 4) {
-            PrayerHeaderButton(icon: "ph-caret-left", size: 16, label: "Back") {
+            PrayerHeaderButton(icon: "ph-caret-left", size: 16, label: String(localized: "Back", comment: "VoiceOver: the round Back button in the header of a reader page")) {
                 dismiss()
             }
 
             Spacer(minLength: 0)
 
-            PrayerHeaderButton(icon: "ph-list", size: 17, label: "Order of Mass") {
+            PrayerHeaderButton(icon: "ph-list", size: 17, label: String(localized: "Order of Mass", comment: "VoiceOver: the Mass's header button that opens the index of its parts")) {
                 sheet = .index
             }
 
-            PrayerHeaderButton(icon: "ph-text-aa", size: 18, label: "Text options") {
+            PrayerHeaderButton(icon: "ph-text-aa", size: 18, label: String(localized: "Text options", comment: "VoiceOver: the Mass's header button (Aa) that opens its text options")) {
                 sheet = .reading
             }
         }
@@ -481,7 +481,7 @@ struct DailyMissalView: View {
             // Only then does the plate grow a line for it.
             if !viewModel.isToday {
                 QuietGoldButton(
-                    title: "Return to today",
+                    title: String(localized: "Return to today", comment: "The Mass: quiet act under the day's plate, back to today's Mass after stepping to another day"),
                     leadingIcon: "ph-arrow-counter-clockwise",
                     leadingIconSize: 10,
                     size: 10
@@ -509,7 +509,7 @@ struct DailyMissalView: View {
             .fixedSize(horizontal: false, vertical: true)
 
         if let commemorations = info.commemorations, !commemorations.isEmpty {
-            Text("Also remembered today: \(commemorations.map(\.title).joined(separator: " and "))")
+            Text("Also remembered today: \(commemorations.map(\.title).formatted(.list(type: .and)))")
                 .font(AppFonts.italicFont(13))
                 .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
@@ -555,7 +555,7 @@ struct DailyMissalView: View {
     /// an ellipsis.
     private var dayStepRow: some View {
         HStack(spacing: 0) {
-            dayStepButton(icon: "ph-caret-left", label: "Previous day", days: -1)
+            dayStepButton(icon: "ph-caret-left", label: String(localized: "Previous day", comment: "VoiceOver: the Mass's arrow that steps to the day before"), days: -1)
 
             Spacer(minLength: 8)
 
@@ -565,7 +565,7 @@ struct DailyMissalView: View {
 
             Spacer(minLength: 8)
 
-            dayStepButton(icon: "ph-caret-right", label: "Next day", days: 1)
+            dayStepButton(icon: "ph-caret-right", label: String(localized: "Next day", comment: "VoiceOver: the Mass's arrow that steps to the day after"), days: 1)
         }
         .frame(maxWidth: .infinity)
     }
@@ -817,7 +817,7 @@ struct DailyMissalView: View {
                 .foregroundColor(AppColors.gold.opacity(0.5))
 
             QuietGoldButton(
-                title: "The Order of Mass",
+                title: String(localized: "The Order of Mass", comment: "The Mass: quiet act at the foot of the day's Mass, opening the full Order of Mass page"),
                 leadingIcon: "ph-book-open",
                 trailingIcon: "ph-caret-right",
                 size: 10,
@@ -845,7 +845,7 @@ struct DailyMissalView: View {
                 .multilineTextAlignment(.center)
 
             QuietGoldButton(
-                title: "Try again",
+                title: String(localized: "Try again", comment: "The Mass: quiet act that retries loading the day after it failed"),
                 leadingIcon: "ph-arrow-counter-clockwise",
                 leadingIconSize: 11,
                 size: 10,
@@ -866,7 +866,7 @@ struct DailyMissalView: View {
                 .multilineTextAlignment(.center)
 
             QuietGoldButton(
-                title: "Try again",
+                title: String(localized: "Try again", comment: "The Mass: quiet act that retries loading the day after it failed"),
                 leadingIcon: "ph-arrow-counter-clockwise",
                 leadingIconSize: 11,
                 size: 10,

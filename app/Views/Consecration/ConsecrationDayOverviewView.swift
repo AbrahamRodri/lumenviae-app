@@ -210,8 +210,12 @@ struct ConsecrationDayOverviewView: View {
     /// A day already prayed doesn't need to be told it was; the journey
     /// below counts it. The act just stops asking to be begun.
     private var heroActionTitle: String {
-        if isDayComplete { return "Pray it again" }
-        return isToday ? "Begin today's prayer" : "Open day \(displayDayNumber)"
+        if isDayComplete {
+            return String(localized: "Pray it again", comment: "Consecration day overview: the act once the day's prayers are already prayed")
+        }
+        return isToday
+            ? String(localized: "Begin today's prayer", comment: "Consecration day overview: the gold act that opens today's prayers")
+            : String(localized: "Open day \(displayDayNumber)", comment: "Consecration day overview: the act opening another day of the 33 than today")
     }
 
     /// The stage under the day's theme — "Days 1–12 · Letting Go of the
@@ -221,7 +225,12 @@ struct ConsecrationDayOverviewView: View {
     private var heroSubtitle: String {
         guard let phase else { return "" }
         let focus = phase.subtitle
-        let stage = phase == .consecrationDay ? focus : "\(phase.displayName) · \(focus)"
+        let stage = phase == .consecrationDay
+            ? focus
+            : String(
+                localized: "\(phase.displayName) · \(focus)",
+                comment: "Consecration day overview: the period of the preparation and what it is about, like Week 1 · Knowing Yourself"
+            )
         guard let day else { return stage }
         return day.title.caseInsensitiveCompare(focus) == .orderedSame
             ? day.ordinalLabel
@@ -231,9 +240,9 @@ struct ConsecrationDayOverviewView: View {
     private var badgeText: String {
         guard let phase else { return "" }
         if phase == .consecrationDay {
-            return "CONSECRATION DAY"
+            return String(localized: "CONSECRATION DAY", comment: "Consecration day overview: badge in small capitals on day 34, when the act of consecration is made")
         }
-        return "DAY \(displayDayNumber) OF 33"
+        return String(localized: "DAY \(displayDayNumber) OF 33", comment: "Consecration day overview: badge in small capitals naming the day of the 33-day preparation")
     }
 
     // MARK: - The Feast
@@ -303,8 +312,15 @@ struct ConsecrationDayOverviewView: View {
     /// The ruled line over the date. A feast that has already gone by
     /// says so here rather than as a countdown running backwards.
     private var feastName: String {
-        if daysUntilConsecration < 0 { return "YOUR CONSECRATION DAY HAS PASSED" }
-        return (feast?.name ?? "Your consecration day").uppercased()
+        if daysUntilConsecration < 0 {
+            return String(
+                localized: "YOUR CONSECRATION DAY HAS PASSED",
+                comment: "Consecration day overview: small capitals over the feast's date once the feast has gone by"
+            )
+        }
+        return (feast?.name
+            ?? String(localized: "Your consecration day", comment: "Consecration day overview: line over the date of day 34 when it falls on no named feast; shown in capitals")
+        ).uppercased()
     }
 
     private var feastDate: String {
@@ -327,7 +343,7 @@ struct ConsecrationDayOverviewView: View {
             }
 
             QuietGoldButton(
-                title: "Read in full",
+                title: String(localized: "Read in full", comment: "Consecration day overview: quiet button under the reading card opening the full reading"),
                 leadingIcon: "ph-book-open",
                 trailingIcon: "ph-caret-right",
                 size: 10,
@@ -345,9 +361,13 @@ struct ConsecrationDayOverviewView: View {
     private var readingHeading: String {
         let plural = day?.hasMultipleReadings == true
         if isToday {
-            return plural ? "Today's readings" : "Today's reading"
+            return plural
+                ? String(localized: "Today's readings", comment: "Consecration day overview: heading of the reading card, today, more than one reading")
+                : String(localized: "Today's reading", comment: "Consecration day overview: heading of the reading card, today, one reading")
         }
-        return plural ? "The readings" : "The reading"
+        return plural
+            ? String(localized: "The readings", comment: "Consecration day overview: heading of the reading card on a day other than today, more than one reading")
+            : String(localized: "The reading", comment: "Consecration day overview: heading of the reading card on a day other than today, one reading")
     }
 
     // MARK: - Reading Carousel
@@ -494,8 +514,8 @@ struct ConsecrationDayOverviewView: View {
 
         return VStack(alignment: .leading, spacing: 14) {
             CardHeading(
-                "Today's prayers",
-                meta: rows.count == 1 ? "1 prayer" : "\(rows.count) prayers"
+                String(localized: "Today's prayers", comment: "Consecration day overview: heading of the card listing the day's prayers"),
+                meta: String(localized: "\(rows.count) prayers", comment: "Consecration day overview: count of the day's prayers beside the heading")
             )
 
             languageSelector
@@ -576,9 +596,18 @@ struct ConsecrationDayOverviewView: View {
     /// English / Latin / Both, bound to the app-wide prayer language.
     private var languageSelector: some View {
         HStack(spacing: 6) {
-            languageCapsule("English", language: .english)
-            languageCapsule("Latin", language: .latin)
-            languageCapsule("Both", language: .both)
+            languageCapsule(
+                String(localized: "English", comment: "Consecration day overview: prayer language choice, shown in capitals"),
+                language: .english
+            )
+            languageCapsule(
+                String(localized: "Latin", comment: "Consecration day overview: prayer language choice, shown in capitals"),
+                language: .latin
+            )
+            languageCapsule(
+                String(localized: "Both", comment: "Consecration day overview: prayer language choice, English and Latin together; shown in capitals"),
+                language: .both
+            )
         }
     }
 
@@ -636,7 +665,11 @@ struct ConsecrationDayOverviewView: View {
     private var reflectionCard: some View {
         if let prompt = day?.journalPrompt, !prompt.isEmpty {
             VStack(alignment: .leading, spacing: 12) {
-                CardHeading(isToday ? "Today's reflection" : "The reflection")
+                CardHeading(
+                    isToday
+                        ? String(localized: "Today's reflection", comment: "Consecration day overview: heading of the reflection card, today")
+                        : String(localized: "The reflection", comment: "Consecration day overview: heading of the reflection card on a day other than today")
+                )
 
                 Text(prompt)
                     .font(AppFonts.readingItalicFont(17))
@@ -645,7 +678,7 @@ struct ConsecrationDayOverviewView: View {
                     .fixedSize(horizontal: false, vertical: true)
 
                 QuietGoldButton(
-                    title: "Write in your journal",
+                    title: String(localized: "Write in your journal", comment: "Consecration day overview: quiet button opening the day's reflection editor"),
                     leadingIcon: "ph-note-pencil",
                     trailingIcon: "ph-caret-right",
                     size: 10,
@@ -675,7 +708,10 @@ struct ConsecrationDayOverviewView: View {
         let shown = shownPhase ?? phase ?? .preparatory
 
         return VStack(alignment: .leading, spacing: 6) {
-            CardHeading("Your journey", meta: "\(completedCount) of 33 prayed")
+            CardHeading(
+                String(localized: "Your journey", comment: "Consecration day overview: heading of the card showing the 33 days"),
+                meta: String(localized: "\(completedCount) of 33 prayed", comment: "Consecration day overview: how many of the 33 days are prayed, beside Your journey")
+            )
 
             JourneyRoad(
                 shown: shown,
@@ -732,7 +768,15 @@ struct ConsecrationDayOverviewView: View {
             stepperArrow("ph-caret-left", to: previous)
 
             VStack(spacing: 5) {
-                Text((isNow ? "\(shown.displayName) · Now" : shown.displayName).uppercased())
+                Text(
+                    (isNow
+                        ? String(
+                            localized: "\(shown.displayName) · Now",
+                            comment: "Consecration, Your journey card: the period shown is the one under way now, like Week 1 · Now; shown in capitals"
+                        )
+                        : shown.displayName
+                    ).uppercased()
+                )
                     .font(AppFonts.labelFont(9.5))
                     .tracking(2.2)
                     .foregroundColor(isNow ? AppColors.goldLight : AppColors.gold)
@@ -776,7 +820,11 @@ struct ConsecrationDayOverviewView: View {
         .opacity(target == nil ? 0 : 1)
         .disabled(target == nil)
         .accessibilityHidden(target == nil)
-        .accessibilityLabel(target.map { "Show \($0.displayName)" } ?? "")
+        .accessibilityLabel(
+            target.map {
+                String(localized: "Show \($0.displayName)", comment: "VoiceOver, consecration Your journey card: arrow showing another period of the preparation, like Show Week 2")
+            } ?? ""
+        )
     }
 
     /// "Days 13–19 · 3 of 7 prayed" — the period's span, and what has been
@@ -784,12 +832,30 @@ struct ConsecrationDayOverviewView: View {
     /// one has yet reached.
     private func periodSpan(_ phase: ConsecrationPhase) -> String {
         let range = phase.dayRange
-        let span = phase == .consecrationDay
-            ? "Consecration Day"
-            : range.count == 1 ? "Day \(range.lowerBound)" : "Days \(range.lowerBound)–\(range.upperBound)"
-        guard range.lowerBound <= viewModel.todaysDayNumber else { return "\(span) · still ahead" }
+        let span: String
+        if phase == .consecrationDay {
+            span = String(localized: "Consecration Day", comment: "Consecration, Your journey card: span of the last period, day 34")
+        } else if range.count == 1 {
+            span = String(localized: "Day \(range.lowerBound)", comment: "Consecration, Your journey card: span of a period one day long")
+        } else {
+            span = String(
+                localized: "Days \(range.lowerBound)–\(range.upperBound)",
+                comment: "Consecration, Your journey card: span of a period, like Days 13–19"
+            )
+        }
+        guard range.lowerBound <= viewModel.todaysDayNumber else {
+            return String(
+                localized: "\(span) · still ahead",
+                comment: "Consecration, Your journey card: a period not yet reached; the span comes first, like Days 20–26 · still ahead"
+            )
+        }
         let kept = range.filter { viewModel.isDayCompleted($0) }.count
-        return kept > 0 ? "\(span) · \(kept) of \(range.count) prayed" : span
+        return kept > 0
+            ? String(
+                localized: "\(span) · \(kept) of \(range.count) prayed",
+                comment: "Consecration, Your journey card: a period's span and how many of its days are prayed, like Days 13–19 · 3 of 7 prayed"
+            )
+            : span
     }
 
     /// Opens another day of the 33 *in place of* the day being read
@@ -834,7 +900,10 @@ struct ConsecrationDayOverviewView: View {
             path.append(.trueDevotionReader)
         } label: {
             VStack(alignment: .leading, spacing: 16) {
-                CardHeading("The book behind this consecration", meta: bookPlaceLabel)
+                CardHeading(
+                    String(localized: "The book behind this consecration", comment: "Consecration day overview: heading of the card opening Montfort's book True Devotion to Mary"),
+                    meta: bookPlaceLabel
+                )
 
                 HStack(alignment: .center, spacing: 20) {
                     BookCover(info: display, hasRibbon: started, isLettered: false)
@@ -873,7 +942,7 @@ struct ConsecrationDayOverviewView: View {
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(title), \(author). \(bookPlaceLabel ?? "")")
-        .accessibilityHint(started ? "Continues reading" : "Opens the book")
+        .accessibilityHint(started ? Text("Continues reading") : Text("Opens the book"))
     }
 
     /// Where the reader is in the book — the chapter they left, of how
@@ -883,16 +952,19 @@ struct ConsecrationDayOverviewView: View {
         let total = book.chapters.count
         if let last = readingProgress.first?.lastChapterID,
            let index = book.chapters.firstIndex(where: { $0.id == last }) {
-            return "Chapter \(index + 1) of \(total)"
+            return String(
+                localized: "Chapter \(index + 1) of \(total)",
+                comment: "Consecration day overview, the book card: the chapter of True Devotion the reader left off at"
+            )
         }
-        return "\(total) chapters"
+        return String(localized: "\(total) chapters", comment: "Consecration day overview, the book card: how many chapters True Devotion holds, before reading begins")
     }
 
     // MARK: - Restart
 
     private var restartButton: some View {
         QuietGoldButton(
-            title: "Restart consecration",
+            title: String(localized: "Restart consecration", comment: "Consecration day overview: quiet button at the foot that asks before starting the 33 days over"),
             size: 10,
             color: AppColors.textSecondary
         ) {
@@ -1066,7 +1138,7 @@ private struct JourneyRoad: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(phase.displayName)
-        .accessibilityValue("\(isNow ? "Now. " : "")\(kept) of \(days.count) prayed")
+        .accessibilityValue(isNow ? Text("Now. \(kept) of \(days.count) prayed") : Text("\(kept) of \(days.count) prayed"))
         .accessibilityAddTraits(isShown ? .isSelected : [])
     }
 }
@@ -1148,7 +1220,16 @@ private struct JourneyDays: View {
         // Days still ahead stay quiet rather than opening early
         .disabled(!reachable)
         .accessibilityLabel(
-            "\(number == 34 ? "Consecration Day" : "Day \(number)")\(isDone ? ", complete" : "")\(isToday ? ", today" : "")\(reachable ? "" : ", not yet")"
+            [
+                number == 34
+                    ? String(localized: "Consecration Day", comment: "VoiceOver, consecration Your journey card: the day 34 cell")
+                    : String(localized: "Day \(number)", comment: "VoiceOver, consecration Your journey card: one day's cell"),
+                isDone ? String(localized: "complete", comment: "VoiceOver, consecration Your journey card: after a day's name, the day is prayed") : nil,
+                isToday ? String(localized: "today", comment: "VoiceOver, consecration Your journey card: after a day's name, the day is today") : nil,
+                reachable ? nil : String(localized: "not yet", comment: "VoiceOver, consecration Your journey card: after a day's name, the day is still ahead and cannot open")
+            ]
+                .compactMap { $0 }
+                .joined(separator: ", ")
         )
     }
 

@@ -39,17 +39,17 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .todaysRosary:     return "Pray Today's Rosary"
-        case .chooseMeditation: return "Choose How to Pray Today"
-        case .sevenSorrows:     return "The Seven Sorrows of Mary"
-        case .scripturalRosary: return "The Scriptural Rosary"
-        case .rosaryAloud:      return "The Audio Rosary"
-        case .mass:             return "The Mass"
-        case .office:           return "Hours of Prayer"
-        case .consecration:     return "Consecration to Mary"
-        case .morningPrayers:   return "Morning Prayers"
+        case .todaysRosary:     return String(localized: "Pray Today's Rosary", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
+        case .chooseMeditation: return String(localized: "Choose How to Pray Today", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
+        case .sevenSorrows:     return String(localized: "The Seven Sorrows of Mary", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
+        case .scripturalRosary: return String(localized: "The Scriptural Rosary", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
+        case .rosaryAloud:      return String(localized: "The Audio Rosary", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
+        case .mass:             return String(localized: "The Mass", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
+        case .office:           return String(localized: "Hours of Prayer", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
+        case .consecration:     return String(localized: "Consecration to Mary", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
+        case .morningPrayers:   return String(localized: "Morning Prayers", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
         case .angelus:          return Self.angelusTitle
-        case .nightPrayers:     return "Night Prayers"
+        case .nightPrayers:     return String(localized: "Night Prayers", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
         }
     }
 
@@ -57,24 +57,25 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     /// Prayers page's own title for it (`PrayerOrder.title(on:)`), so the
     /// two never name the season's prayer in two ways
     static var angelusTitle: String {
-        PrayerBook.order(PrayerBook.angelusOrderID)?.title(on: Date()) ?? "The Angelus"
+        PrayerBook.order(PrayerBook.angelusOrderID)?.title(on: Date())
+            ?? String(localized: "The Angelus", comment: "Pray button tray and daily prayers: the Angelus's name, when the Prayers page's own title for it is missing")
     }
 
     /// The static line under the title. The Rosary's forms name the
     /// day's mysteries where the schedule is known (`trayDetail`).
     var subtitle: String {
         switch self {
-        case .todaysRosary:     return "The day's mysteries, straight to prayer"
-        case .chooseMeditation: return "Choose how to pray today's mysteries"
-        case .sevenSorrows:     return "Seven Hail Marys for each sorrow"
-        case .scripturalRosary: return "A Bible verse for every Hail Mary"
-        case .rosaryAloud:      return "Listen and pray along"
-        case .mass:             return "Today's traditional Latin Mass"
-        case .office:           return "The Church\u{2019}s prayer for each hour (Divine Office)"
-        case .consecration:     return "Giving yourself to Jesus through Mary"
-        case .morningPrayers:   return "Prayers to give the day to God"
-        case .angelus:          return "A prayer to Mary at 6 AM, noon and 6 PM"
-        case .nightPrayers:     return "Look back on the day, and a song to Mary"
+        case .todaysRosary:     return String(localized: "The day's mysteries, straight to prayer", comment: "Pray button tray and its editor: the line under a devotional act's name, saying what it is")
+        case .chooseMeditation: return String(localized: "Choose how to pray today's mysteries", comment: "Pray button tray and its editor: the line under a devotional act's name, saying what it is")
+        case .sevenSorrows:     return String(localized: "Seven Hail Marys for each sorrow", comment: "Pray button tray and its editor: the line under a devotional act's name, saying what it is")
+        case .scripturalRosary: return String(localized: "A Bible verse for every Hail Mary", comment: "Pray button tray and its editor: the line under a devotional act's name, saying what it is")
+        case .rosaryAloud:      return String(localized: "Listen and pray along", comment: "Pray button tray and its editor: the line under a devotional act's name, saying what it is")
+        case .mass:             return String(localized: "Today's traditional Latin Mass", comment: "Pray button tray and its editor: the line under a devotional act's name, saying what it is")
+        case .office:           return String(localized: "The Church\u{2019}s prayer for each hour (Divine Office)", comment: "Pray button tray and its editor: the line under a devotional act's name, saying what it is")
+        case .consecration:     return String(localized: "Giving yourself to Jesus through Mary", comment: "Pray button tray and its editor: the line under a devotional act's name, saying what it is")
+        case .morningPrayers:   return String(localized: "Prayers to give the day to God", comment: "Pray button tray and its editor: the line under a devotional act's name, saying what it is")
+        case .angelus:          return String(localized: "A prayer to Mary at 6 AM, noon and 6 PM", comment: "Pray button tray and its editor: the line under a devotional act's name, saying what it is")
+        case .nightPrayers:     return String(localized: "Look back on the day, and a song to Mary", comment: "Pray button tray and its editor: the line under a devotional act's name, saying what it is")
         }
     }
 
@@ -83,12 +84,26 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     /// what the voice will do — in the same words as the mysteries' page
     func trayDetail(today: MysteryCategory, praysAloud: Bool) -> String {
         switch self {
+        case .todaysRosary where praysAloud:
+            return String(
+                localized: "\(today.devotionTitle) · with the whole Rosary read to you",
+                comment: "Pray button tray, under Pray Today's Rosary when every prayer is said aloud: the day's mysteries (like Joyful Mysteries), then what the voice will do"
+            )
         case .todaysRosary:
-            return "\(today.devotionTitle) · \(praysAloud ? "with the whole Rosary read to you" : "with a meditation")"
+            return String(
+                localized: "\(today.devotionTitle) · with a meditation",
+                comment: "Pray button tray, under Pray Today's Rosary when only the meditation is read: the day's mysteries (like Joyful Mysteries), then how it is prayed"
+            )
         case .scripturalRosary:
-            return "\(today.devotionTitle) · a verse for every bead"
+            return String(
+                localized: "\(today.devotionTitle) · a verse for every bead",
+                comment: "Pray button tray, under The Scriptural Rosary: the day's mysteries (like Joyful Mysteries), then a Bible verse for every bead"
+            )
         case .rosaryAloud:
-            return "\(today.devotionTitle) · listen and pray along"
+            return String(
+                localized: "\(today.devotionTitle) · listen and pray along",
+                comment: "Pray button tray, under The Audio Rosary: the day's mysteries (like Joyful Mysteries), then listen and pray along"
+            )
         default:
             return subtitle
         }
@@ -132,17 +147,17 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     /// fits a ledger row.
     var actName: String {
         switch self {
-        case .todaysRosary:     return "The Rosary"
-        case .chooseMeditation: return "Choose How to Pray Today"
-        case .sevenSorrows:     return "The Seven Sorrows of Mary"
-        case .scripturalRosary: return "Scriptural Rosary"
-        case .rosaryAloud:      return "The Audio Rosary"
-        case .mass:             return "The Mass"
-        case .office:           return "Hours of Prayer"
-        case .consecration:     return "Consecration to Mary"
-        case .morningPrayers:   return "Morning Prayers"
+        case .todaysRosary:     return String(localized: "The Rosary", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")
+        case .chooseMeditation: return String(localized: "Choose How to Pray Today", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")
+        case .sevenSorrows:     return String(localized: "The Seven Sorrows of Mary", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")
+        case .scripturalRosary: return String(localized: "Scriptural Rosary", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")
+        case .rosaryAloud:      return String(localized: "The Audio Rosary", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")
+        case .mass:             return String(localized: "The Mass", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")
+        case .office:           return String(localized: "Hours of Prayer", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")
+        case .consecration:     return String(localized: "Consecration to Mary", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")
+        case .morningPrayers:   return String(localized: "Morning Prayers", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")
         case .angelus:          return Self.angelusTitle
-        case .nightPrayers:     return "Night Prayers"
+        case .nightPrayers:     return String(localized: "Night Prayers", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")
         }
     }
 

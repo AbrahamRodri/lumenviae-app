@@ -353,7 +353,7 @@ struct TodaysPrayerRow: Equatable {
     /// The hour it is in plain words over its Church name, and how long
     /// it is the hour: NOW · UNTIL NOON
     static func office(_ hour: CanonicalHour) -> TodaysPrayerRow {
-        let until = CanonicalHour.clockWord(hour.following.beginsAtClockHour)
+        let until = hour.lapses
         let painting = PrayerBookPainting.topic(id: "day")
 
         return TodaysPrayerRow(
@@ -361,11 +361,11 @@ struct TodaysPrayerRow: Equatable {
             focal: painting.focal,
             name: String(localized: "Hours of Prayer", comment: "Home, Today's Prayer: name of the row opening the Divine Office"),
             subtitle: "\(hour.plainName) (\(hour.label))",
-            fact: String(localized: "NOW · UNTIL \(until.uppercased())", comment: "Home, Today's Prayer: small capitals, the hour of the Office now and when it ends, like NOW · UNTIL NOON"),
+            fact: String(localized: "NOW · \(until)", comment: "Home, Today's Prayer: small capitals, the hour of the Office now, then when it ends (a phrase like until noon), like NOW · UNTIL NOON").uppercased(),
             mark: .litHour,
             spoken: String(
-                localized: "Hours of Prayer, \(hour.plainName), \(hour.label), the hour now, until \(until)",
-                comment: "VoiceOver for the Hours of Prayer row: the hour's plain name, its Church name, then when it ends"
+                localized: "Hours of Prayer, \(hour.plainName), \(hour.label), the hour now, \(until)",
+                comment: "VoiceOver for the Hours of Prayer row: the hour's plain name, its Church name, then when it ends (a phrase like until noon)"
             )
         )
     }

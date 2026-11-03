@@ -41,14 +41,14 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
     /// Morning Prayers and Night Prayers.
     var plainName: String {
         switch self {
-        case .matins: return "Night Vigil"
-        case .lauds: return "Dawn Prayer"
-        case .prime: return "Early Morning Prayer"
-        case .terce: return "Mid-Morning Prayer"
-        case .sext: return "Midday Prayer"
-        case .nones: return "Mid-Afternoon Prayer"
-        case .vespers: return "Evening Prayer"
-        case .compline: return "Bedtime Prayer"
+        case .matins: return String(localized: "Night Vigil", comment: "Hours of Prayer (the Divine Office): an hour of prayer's plain name, the app's title for it; never 'Morning Prayer' or 'Night Prayer', which are other prayers in the app")
+        case .lauds: return String(localized: "Dawn Prayer", comment: "Hours of Prayer (the Divine Office): an hour of prayer's plain name, the app's title for it; never 'Morning Prayer' or 'Night Prayer', which are other prayers in the app")
+        case .prime: return String(localized: "Early Morning Prayer", comment: "Hours of Prayer (the Divine Office): an hour of prayer's plain name, the app's title for it; never 'Morning Prayer' or 'Night Prayer', which are other prayers in the app")
+        case .terce: return String(localized: "Mid-Morning Prayer", comment: "Hours of Prayer (the Divine Office): an hour of prayer's plain name, the app's title for it; never 'Morning Prayer' or 'Night Prayer', which are other prayers in the app")
+        case .sext: return String(localized: "Midday Prayer", comment: "Hours of Prayer (the Divine Office): an hour of prayer's plain name, the app's title for it; never 'Morning Prayer' or 'Night Prayer', which are other prayers in the app")
+        case .nones: return String(localized: "Mid-Afternoon Prayer", comment: "Hours of Prayer (the Divine Office): an hour of prayer's plain name, the app's title for it; never 'Morning Prayer' or 'Night Prayer', which are other prayers in the app")
+        case .vespers: return String(localized: "Evening Prayer", comment: "Hours of Prayer (the Divine Office): an hour of prayer's plain name, the app's title for it; never 'Morning Prayer' or 'Night Prayer', which are other prayers in the app")
+        case .compline: return String(localized: "Bedtime Prayer", comment: "Hours of Prayer (the Divine Office): an hour of prayer's plain name, the app's title for it; never 'Morning Prayer' or 'Night Prayer', which are other prayers in the app")
         }
     }
 
@@ -56,14 +56,14 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
     /// `plainName` so a reader can match it in a printed breviary
     var label: String {
         switch self {
-        case .matins: return "Matins"
-        case .lauds: return "Lauds"
-        case .prime: return "Prime"
-        case .terce: return "Terce"
-        case .sext: return "Sext"
-        case .nones: return "Nones"
-        case .vespers: return "Vespers"
-        case .compline: return "Compline"
+        case .matins: return String(localized: "Matins", comment: "Hours of Prayer: the Church's traditional English name for an hour of the Divine Office, shown small under its plain name")
+        case .lauds: return String(localized: "Lauds", comment: "Hours of Prayer: the Church's traditional English name for an hour of the Divine Office, shown small under its plain name")
+        case .prime: return String(localized: "Prime", comment: "Hours of Prayer: the Church's traditional English name for an hour of the Divine Office, shown small under its plain name")
+        case .terce: return String(localized: "Terce", comment: "Hours of Prayer: the Church's traditional English name for an hour of the Divine Office, shown small under its plain name")
+        case .sext: return String(localized: "Sext", comment: "Hours of Prayer: the Church's traditional English name for an hour of the Divine Office, shown small under its plain name")
+        case .nones: return String(localized: "Nones", comment: "Hours of Prayer: the Church's traditional English name for an hour of the Divine Office, shown small under its plain name")
+        case .vespers: return String(localized: "Vespers", comment: "Hours of Prayer: the Church's traditional English name for an hour of the Divine Office, shown small under its plain name")
+        case .compline: return String(localized: "Compline", comment: "Hours of Prayer: the Church's traditional English name for an hour of the Divine Office, shown small under its plain name")
         }
     }
 
@@ -85,14 +85,14 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
     /// "Terce, the mid-morning hour".
     var dayPart: String {
         switch self {
-        case .matins: return "the hour of the night"
-        case .lauds: return "the hour of dawn"
-        case .prime: return "the early morning hour"
-        case .terce: return "the mid-morning hour"
-        case .sext: return "the midday hour"
-        case .nones: return "the mid-afternoon hour"
-        case .vespers: return "the evening hour"
-        case .compline: return "the hour before sleep"
+        case .matins: return String(localized: "the hour of the night", comment: "Hours of Prayer: an hour of the Divine Office named by the part of the day it belongs to")
+        case .lauds: return String(localized: "the hour of dawn", comment: "Hours of Prayer: an hour of the Divine Office named by the part of the day it belongs to")
+        case .prime: return String(localized: "the early morning hour", comment: "Hours of Prayer: an hour of the Divine Office named by the part of the day it belongs to")
+        case .terce: return String(localized: "the mid-morning hour", comment: "Hours of Prayer: an hour of the Divine Office named by the part of the day it belongs to")
+        case .sext: return String(localized: "the midday hour", comment: "Hours of Prayer: an hour of the Divine Office named by the part of the day it belongs to")
+        case .nones: return String(localized: "the mid-afternoon hour", comment: "Hours of Prayer: an hour of the Divine Office named by the part of the day it belongs to")
+        case .vespers: return String(localized: "the evening hour", comment: "Hours of Prayer: an hour of the Divine Office named by the part of the day it belongs to")
+        case .compline: return String(localized: "the hour before sleep", comment: "Hours of Prayer: an hour of the Divine Office named by the part of the day it belongs to")
         }
     }
 
@@ -135,24 +135,21 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
     }
 
     /// "until noon" — when this hour gives way to the next, as the
-    /// landing's NOW and Home's Hours of Prayer row say it
+    /// landing's NOW and Home's Hours of Prayer row say it. One whole
+    /// phrase per boundary of `beginsAtClockHour`, so a translation never
+    /// has to glue "until" to a clock word.
     var lapses: String {
-        "until \(Self.clockWord(following.beginsAtClockHour))"
-    }
-
-    /// The clock said the way a breviary would say it, in words: the
-    /// one way the app names the hour an hour of the Office begins at,
-    /// on the Office's landing and on Home's Hours of Prayer row.
-    static func clockWord(_ clockHour: Int) -> String {
-        switch clockHour {
-        case 0: return "midnight"
-        case 12: return "noon"
-        default:
-            let names = [
-                "twelve", "one", "two", "three", "four", "five",
-                "six", "seven", "eight", "nine", "ten", "eleven"
-            ]
-            return names[clockHour % 12]
+        switch following.beginsAtClockHour {
+        case 0: return String(localized: "until midnight", comment: "Hours of Prayer and Home's Today's Prayer: when the hour of prayer now gives way to the next, said in words on the clock (midnight)")
+        case 5: return String(localized: "until five", comment: "Hours of Prayer and Home's Today's Prayer: when the hour of prayer now gives way to the next, said in words on the clock (5 in the morning)")
+        case 7: return String(localized: "until seven", comment: "Hours of Prayer and Home's Today's Prayer: when the hour of prayer now gives way to the next, said in words on the clock (7 in the morning or 7 in the evening)")
+        case 9: return String(localized: "until nine", comment: "Hours of Prayer and Home's Today's Prayer: when the hour of prayer now gives way to the next, said in words on the clock (9 in the morning)")
+        case 12: return String(localized: "until noon", comment: "Hours of Prayer and Home's Today's Prayer: when the hour of prayer now gives way to the next, said in words on the clock (noon)")
+        case 14: return String(localized: "until two", comment: "Hours of Prayer and Home's Today's Prayer: when the hour of prayer now gives way to the next, said in words on the clock (2 in the afternoon)")
+        case 16: return String(localized: "until four", comment: "Hours of Prayer and Home's Today's Prayer: when the hour of prayer now gives way to the next, said in words on the clock (4 in the afternoon)")
+        case 19: return String(localized: "until seven", comment: "Hours of Prayer and Home's Today's Prayer: when the hour of prayer now gives way to the next, said in words on the clock (7 in the morning or 7 in the evening)")
+        case let clockHour:
+            return String(localized: "until \(clockHour):00", comment: "Hours of Prayer and Home's Today's Prayer: when the hour of prayer now gives way to the next, said in words on the clock, as a clock time; not reached with today's hours")
         }
     }
 

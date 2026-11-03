@@ -101,9 +101,9 @@ nonisolated enum DayRank {
         }
         guard let rank, (1...4).contains(rank) else { return nil }
         switch rank {
-        case 1: return "Great Feast"
-        case 2: return "Feast"
-        case 3: return "Lesser Feast"
+        case 1: return String(localized: "Great Feast", comment: "The day's rank in plain words, on the Mass and the Hours of Prayer and Home's Today's Prayer row: a first-class feast")
+        case 2: return String(localized: "Feast", comment: "The day's rank in plain words, on the Mass and the Hours of Prayer and Home's Today's Prayer row: a second-class feast")
+        case 3: return String(localized: "Lesser Feast", comment: "The day's rank in plain words, on the Mass and the Hours of Prayer and Home's Today's Prayer row: a third-class feast")
         default: return weekday(in: words)
         }
     }
@@ -125,15 +125,21 @@ nonisolated enum DayRank {
     }
 
     private static func weekday(in words: String) -> String {
-        if words.contains("advent") { return "Advent Weekday" }
-        if words.contains("holy week") || words.contains("ash wednesday") { return "Lenten Weekday" }
+        if words.contains("advent") {
+            return String(localized: "Advent Weekday", comment: "The day's rank in plain words, on the Mass and the Hours of Prayer and Home's Today's Prayer row: a weekday in Advent with no feast")
+        }
+        if words.contains("holy week") || words.contains("ash wednesday") { return lentenWeekday }
         // "Lent" as a word, so a Valentine or a silent night is not Lenten;
         // the Latin tempora say "Quadragesimæ" and "Passionis"
         if words.range(of: "\\blent\\b", options: .regularExpression) != nil
             || words.contains("quadrages") || words.contains("passion") {
-            return "Lenten Weekday"
+            return lentenWeekday
         }
-        return "Weekday"
+        return String(localized: "Weekday", comment: "The day's rank in plain words, on the Mass and the Hours of Prayer and Home's Today's Prayer row: an ordinary weekday with no feast")
+    }
+
+    private static var lentenWeekday: String {
+        String(localized: "Lenten Weekday", comment: "The day's rank in plain words, on the Mass and the Hours of Prayer and Home's Today's Prayer row: a weekday in Lent or Holy Week")
     }
 }
 

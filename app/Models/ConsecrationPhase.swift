@@ -25,15 +25,15 @@ enum ConsecrationPhase: String, Codable, CaseIterable, Hashable {
     var displayName: String {
         switch self {
         case .preparatory:
-            return "Days 1\u{2013}12"
+            return String(localized: "Days 1\u{2013}12", comment: "Consecration: name of the first period of the preparation, days 1 to 12, shown as a heading")
         case .knowledgeOfSelf:
-            return "Week 1"
+            return String(localized: "Week 1", comment: "Consecration: name of the second period of the preparation (days 13 to 19)")
         case .knowledgeOfMary:
-            return "Week 2"
+            return String(localized: "Week 2", comment: "Consecration: name of the third period of the preparation (days 20 to 26)")
         case .knowledgeOfJesus:
-            return "Week 3"
+            return String(localized: "Week 3", comment: "Consecration: name of the fourth period of the preparation (days 27 to 33)")
         case .consecrationDay:
-            return "Consecration Day"
+            return String(localized: "Consecration Day", comment: "Consecration: name of the last period, day 34, when the act of consecration is made")
         }
     }
 
@@ -41,15 +41,15 @@ enum ConsecrationPhase: String, Codable, CaseIterable, Hashable {
     var subtitle: String {
         switch self {
         case .preparatory:
-            return "Letting Go of the World"
+            return String(localized: "Letting Go of the World", comment: "Consecration: what the first period (days 1 to 12) is about, under its name")
         case .knowledgeOfSelf:
-            return "Knowing Yourself"
+            return String(localized: "Knowing Yourself", comment: "Consecration: what the first week (days 13 to 19) is about, knowledge of self")
         case .knowledgeOfMary:
-            return "Knowing Mary"
+            return String(localized: "Knowing Mary", comment: "Consecration: what the second week (days 20 to 26) is about, knowledge of Mary")
         case .knowledgeOfJesus:
-            return "Knowing Jesus"
+            return String(localized: "Knowing Jesus", comment: "Consecration: what the third week (days 27 to 33) is about, knowledge of Jesus")
         case .consecrationDay:
-            return "Total Consecration to Jesus through Mary"
+            return String(localized: "Total Consecration to Jesus through Mary", comment: "Consecration: what the day of consecration (day 34) is, under its name")
         }
     }
 

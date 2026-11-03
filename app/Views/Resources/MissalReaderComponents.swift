@@ -47,7 +47,7 @@ struct MissalReaderSectionView: View {
         HStack(spacing: 10) {
             fadingRule(leading: true)
 
-            Text(posture.rawValue.uppercased())
+            Text(posture.label.uppercased())
                 .font(AppFonts.labelFont(9))
                 .tracking(3)
                 .foregroundColor(AppColors.textSecondary)
@@ -56,7 +56,7 @@ struct MissalReaderSectionView: View {
             fadingRule(leading: false)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(posture.rawValue)
+        .accessibilityLabel(posture.label)
     }
 
     private func fadingRule(leading: Bool) -> some View {
@@ -294,50 +294,50 @@ struct MissalReadingSheet: View {
     var body: some View {
         @Bindable var settings = settings
 
-        return MissalSheetShell(kicker: "The Mass", title: "Text options") {
+        return MissalSheetShell(kicker: String(localized: "The Mass", comment: "Small kicker over a sheet opened from the Mass"), title: String(localized: "Text options", comment: "The Mass's text options sheet (the Aa button): title")) {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    MissalSheetChipGroup("Language") {
+                    MissalSheetChipGroup(String(localized: "Language", comment: "The Mass's text options sheet (the Aa button): heading over the language choice")) {
                         MissalSheetChip(
-                            title: "Latin",
+                            title: String(localized: "Latin", comment: "The Mass's text options sheet (the Aa button): language choice: the Mass in Latin only"),
                             isSelected: settings.prayerLanguage == .latin
                         ) { choose(.latin) }
 
                         MissalSheetChip(
-                            title: "English",
+                            title: String(localized: "English", comment: "The Mass's text options sheet (the Aa button): language choice: the Mass in English only"),
                             isSelected: settings.prayerLanguage == .english
                         ) { choose(.english) }
 
                         MissalSheetChip(
-                            title: "Both",
+                            title: String(localized: "Both", comment: "The Mass's text options sheet (the Aa button): language choice: Latin and English together"),
                             isSelected: settings.prayerLanguage.isBilingual
                         ) { chooseBoth() }
                     }
 
-                    MissalSheetChipGroup("Latin and English") {
+                    MissalSheetChipGroup(String(localized: "Latin and English", comment: "The Mass's text options sheet (the Aa button): heading over how the Latin and English are laid out")) {
                         MissalSheetChip(
-                            title: "Line by line",
+                            title: String(localized: "Line by line", comment: "The Mass layout choice: each Latin line with its English under it"),
                             isSelected: settings.missalLayout == .interlinear
                         ) {
                             settings.missalLayoutPreference = MissalLayout.interlinear.rawValue
                         }
 
                         MissalSheetChip(
-                            title: "Side by side",
+                            title: String(localized: "Side by side", comment: "The Mass layout choice: Latin and English in two columns"),
                             isSelected: settings.missalLayout == .sideBySide
                         ) { chooseSideBySide() }
                     }
 
-                    MissalSheetChipGroup("Contents") {
+                    MissalSheetChipGroup(String(localized: "Contents", comment: "The Mass's text options sheet (the Aa button): heading over which texts the page shows")) {
                         MissalSheetChip(
-                            title: "Today's texts only",
+                            title: String(localized: "Today's texts only", comment: "The Mass's text options sheet (the Aa button): contents choice: only the day's own texts (the propers)"),
                             isSelected: settings.missalScope == .propersOnly
                         ) {
                             settings.missalScopeRaw = MissalScope.propersOnly.rawValue
                         }
 
                         MissalSheetChip(
-                            title: "Whole Mass",
+                            title: String(localized: "Whole Mass", comment: "The Mass's text options sheet (the Aa button): contents choice: the whole Mass, every fixed part as well as the day's own"),
                             isSelected: settings.missalScope == .full
                         ) {
                             settings.missalScopeRaw = MissalScope.full.rawValue
@@ -352,14 +352,14 @@ struct MissalReadingSheet: View {
                         .padding(.top, 22)
 
                     toggleRow(
-                        title: "When to stand, sit and kneel",
-                        detail: "Stand, kneel and sit, marked in the text",
+                        title: String(localized: "When to stand, sit and kneel", comment: "The Mass's text options sheet (the Aa button): switch that marks the congregation's postures in the text"),
+                        detail: String(localized: "Stand, kneel and sit, marked in the text", comment: "The Mass's text options sheet (the Aa button): line under the postures switch"),
                         isOn: $settings.missalPostureCues
                     )
 
                     toggleRow(
-                        title: "Sung Mass",
-                        detail: "Adds the sprinkling with holy water and the incense; the prayers after Mass belong to the spoken Mass",
+                        title: String(localized: "Sung Mass", comment: "The Mass's text options sheet (the Aa button): switch for the sung (High) Mass"),
+                        detail: String(localized: "Adds the sprinkling with holy water and the incense; the prayers after Mass belong to the spoken Mass", comment: "The Mass's text options sheet (the Aa button): line under the Sung Mass switch"),
                         isOn: $settings.missalHighMass
                     )
                 }
@@ -418,7 +418,7 @@ struct MissalIndexSheet: View {
     let onJump: (String) -> Void
 
     var body: some View {
-        MissalSheetShell(kicker: "The Mass", title: "Order of Mass") {
+        MissalSheetShell(kicker: String(localized: "The Mass", comment: "Small kicker over a sheet opened from the Mass"), title: String(localized: "Order of Mass", comment: "The Mass's index sheet: title over the parts of the Mass, tap one to jump to it")) {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     ForEach(Array(sections.enumerated()), id: \.element.id) { index, section in
@@ -449,7 +449,7 @@ struct MissalIndexSheet: View {
     /// it explains stands where the marks above it do, and its words
     /// under the rows' names.
     private var legend: some View {
-        SheetNote("Marked parts are today's own; the rest are said at every Mass.")
+        SheetNote(String(localized: "Marked parts are today's own; the rest are said at every Mass.", comment: "The Mass's index sheet: legend for the diamond mark beside the day's own parts"))
             .padding(.leading, MissalIndexRow.nameInset)
             .overlay(alignment: .topLeading) {
                 MissalProperDiamond()
@@ -513,9 +513,9 @@ private struct MissalIndexRow: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             if isActive {
-                SheetRowAccessoryView(accessory: .label("Here"))
+                SheetRowAccessoryView(accessory: .label(String(localized: "Here", comment: "The Mass's index sheet: small capitals on the part being read now")))
             } else if let posture = section.posture {
-                Text(posture.rawValue.uppercased())
+                Text(posture.label.uppercased())
                     .font(AppFonts.labelFont(8))
                     .tracking(1.5)
                     .foregroundColor(AppColors.gold.opacity(0.42))

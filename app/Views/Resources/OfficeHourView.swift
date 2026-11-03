@@ -341,7 +341,7 @@ struct OfficeHourView: View {
 
     private var chromeRow: some View {
         HStack(spacing: 4) {
-            PrayerHeaderButton(icon: "ph-caret-left", size: 16, label: "Back") {
+            PrayerHeaderButton(icon: "ph-caret-left", size: 16, label: String(localized: "Back", comment: "VoiceOver: the round Back button in the header of a reader page")) {
                 dismiss()
             }
 
@@ -704,7 +704,7 @@ struct OfficeHourView: View {
                 .multilineTextAlignment(.center)
 
             QuietGoldButton(
-                title: "Try again",
+                title: String(localized: "Try again", comment: "Hours of Prayer, an hour's page: quiet act that retries loading the hour"),
                 leadingIcon: "ph-arrow-counter-clockwise",
                 leadingIconSize: 11,
                 size: 10,

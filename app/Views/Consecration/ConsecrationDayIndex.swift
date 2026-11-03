@@ -54,7 +54,9 @@ struct ConsecrationDayIndexSheet: View {
     }
 
     private var dayLabel: String {
-        phase == .consecrationDay ? "CONSECRATION DAY" : "DAY \(dayNumber) OF 33"
+        phase == .consecrationDay
+            ? String(localized: "CONSECRATION DAY", comment: "Consecration day index sheet: kicker in small capitals on day 34, when the act of consecration is made")
+            : String(localized: "DAY \(dayNumber) OF 33", comment: "Consecration day index sheet: kicker in small capitals naming the day of the 33-day preparation")
     }
 
     // MARK: - Body
@@ -79,15 +81,17 @@ struct ConsecrationDayIndexSheet: View {
                     }
 
                     row(
-                        title: "The reading",
+                        title: String(localized: "The reading", comment: "Consecration day index sheet: row opening the day's reading"),
                         detail: day?.title,
                         icon: "ph-book-open",
                         destination: .reading
                     )
 
                     row(
-                        title: "The reflection",
-                        detail: isComplete ? "Completed" : day?.journalPrompt,
+                        title: String(localized: "The reflection", comment: "Consecration day index sheet: row opening the day's written reflection"),
+                        detail: isComplete
+                            ? String(localized: "Completed", comment: "Consecration day index sheet: line under The reflection once the day is complete")
+                            : day?.journalPrompt,
                         icon: "ph-note-pencil",
                         destination: .reflection
                     )
@@ -120,13 +124,15 @@ struct ConsecrationDayIndexSheet: View {
                 title,
                 detail: detail,
                 icon: icon,
-                accessory: isCurrent ? .label("Here") : .caret,
+                accessory: isCurrent
+                    ? .label(String(localized: "Here", comment: "Consecration day index sheet: small capitals at the end of the row the reader is on now"))
+                    : .caret,
                 isLit: isCurrent
             )
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityLabel(title)
-        .accessibilityValue(isCurrent ? "Currently here" : "")
+        .accessibilityValue(isCurrent ? Text("Currently here") : Text(""))
     }
 }
 

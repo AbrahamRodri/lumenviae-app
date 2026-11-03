@@ -115,12 +115,14 @@ struct ConsecrationScheduledView: View {
 
     private var titleBlock: some View {
         VStack(spacing: 12) {
-            ConsecrationIntroKicker(text: "Consecration to Mary")
+            ConsecrationIntroKicker(
+                text: String(localized: "Consecration to Mary", comment: "Consecration, scheduled page: kicker over the title while the chosen preparation has not begun")
+            )
                 .shadow(color: .black.opacity(0.5), radius: 4, y: 1)
 
-            Text(daysUntilStart == 1
-                 ? "Your 33 days begin tomorrow"
-                 : "Your 33 days begin \(ConsecrationDateSelectionView.longDate(start, weekday: true))")
+            (daysUntilStart == 1
+                ? Text("Your 33 days begin tomorrow")
+                : Text("Your 33 days begin \(ConsecrationDateSelectionView.longDate(start, weekday: true))"))
                 .font(AppFonts.headlineFont(26))
                 .foregroundColor(AppColors.cream)
                 .multilineTextAlignment(.center)
@@ -142,7 +144,7 @@ struct ConsecrationScheduledView: View {
     private var datesCard: some View {
         VStack(alignment: .leading, spacing: 0) {
             dateRow(
-                label: "DAY 1",
+                label: String(localized: "DAY 1", comment: "Consecration, scheduled page: small capitals over the date the preparation begins"),
                 date: ConsecrationDateSelectionView.longDate(start, weekday: true),
                 note: ConsecrationDateSelectionView.countdown(daysUntilStart)
             )
@@ -151,7 +153,7 @@ struct ConsecrationScheduledView: View {
                 .padding(.vertical, 14)
 
             dateRow(
-                label: "CONSECRATION DAY",
+                label: String(localized: "CONSECRATION DAY", comment: "Consecration, scheduled page: small capitals over the date of the feast the preparation ends on"),
                 date: ConsecrationDateSelectionView.longDate(feastDate, weekday: true),
                 note: feast?.name
             )
@@ -189,7 +191,7 @@ struct ConsecrationScheduledView: View {
     private var doors: some View {
         VStack(spacing: 4) {
             QuietGoldButton(
-                title: "Read True Devotion to Mary",
+                title: String(localized: "Read True Devotion to Mary", comment: "Consecration, scheduled page: quiet button opening Montfort's book True Devotion to Mary"),
                 leadingIcon: "ph-book-open",
                 size: 11
             ) {
@@ -199,7 +201,7 @@ struct ConsecrationScheduledView: View {
             .accessibilityHint("The book this consecration comes from")
 
             QuietGoldButton(
-                title: "Choose another feast",
+                title: String(localized: "Choose another feast", comment: "Consecration, scheduled page: quiet button that lets go of the chosen feast to choose another"),
                 size: 10,
                 color: AppColors.textSecondary
             ) {

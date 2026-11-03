@@ -30,35 +30,224 @@ extension ReminderMessage {
 
     /// Peace & Stillness — rest, quiet, and the day set down for a while.
     static let peace: [ReminderMessage] = [
-        ReminderMessage(title: "Set the day down for a while", body: "A little quiet, and nothing else asked of you."),
-        ReminderMessage(title: "Nothing here is in a hurry", body: "The beads move at whatever pace you set."),
-        ReminderMessage(title: "A pause in the noise", body: "Ten Hail Marys are enough to change the air of a day."),
-        ReminderMessage(title: "Come and rest", body: "Sit with a mystery and let the day wait."),
-        ReminderMessage(title: "Somewhere quiet to go", body: "The mysteries are open whenever the day gets loud."),
-        ReminderMessage(title: "One bead at a time", body: "The app keeps count, so you can just pray."),
-        ReminderMessage(title: "Peace, at your own pace", body: "Ten Hail Marys or the whole Rosary; there is no wrong length.")
+        ReminderMessage(
+            title: String(
+                localized: "Set the day down for a while",
+                comment: "Daily prayer reminder notification for readers drawn by peace and stillness: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "A little quiet, and nothing else asked of you.",
+                comment: "Daily prayer reminder notification for readers drawn by peace and stillness: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Nothing here is in a hurry",
+                comment: "Daily prayer reminder notification for readers drawn by peace and stillness: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The beads move at whatever pace you set.",
+                comment: "Daily prayer reminder notification for readers drawn by peace and stillness: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "A pause in the noise",
+                comment: "Daily prayer reminder notification for readers drawn by peace and stillness: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Ten Hail Marys are enough to change the air of a day.",
+                comment: "Daily prayer reminder notification for readers drawn by peace and stillness: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Come and rest",
+                comment: "Daily prayer reminder notification for readers drawn by peace and stillness: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Sit with a mystery and let the day wait.",
+                comment: "Daily prayer reminder notification for readers drawn by peace and stillness: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Somewhere quiet to go",
+                comment: "Daily prayer reminder notification for readers drawn by peace and stillness: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The mysteries are open whenever the day gets loud.",
+                comment: "Daily prayer reminder notification for readers drawn by peace and stillness: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "One bead at a time",
+                comment: "Daily prayer reminder notification for readers drawn by peace and stillness: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The app keeps count, so you can just pray.",
+                comment: "Daily prayer reminder notification for readers drawn by peace and stillness: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Peace, at your own pace",
+                comment: "Daily prayer reminder notification for readers drawn by peace and stillness: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Ten Hail Marys or the whole Rosary; there is no wrong length.",
+                comment: "Daily prayer reminder notification for readers drawn by peace and stillness: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        )
     ]
 
     /// A Daily Habit — rhythm and returning, never a debt owed.
     static let habit: [ReminderMessage] = [
-        ReminderMessage(title: "Today's Rosary", body: "The same quiet hour, kept once more."),
-        ReminderMessage(title: "Your time to pray", body: "A few minutes now, and the day has its anchor."),
-        ReminderMessage(title: "The hour you set aside", body: "Whatever kind of day it has been, the beads are the same."),
-        ReminderMessage(title: "A small, steady thing", body: "The whole Rosary, or ten Hail Marys — the habit is in the returning."),
-        ReminderMessage(title: "Prayer keeps the day's shape", body: "Begin whenever it suits; the beads keep no clock."),
-        ReminderMessage(title: "Same time, same grace", body: "The Rosary asks little and gives much."),
-        ReminderMessage(title: "A day with a Rosary in it", body: "That is all today needs to be.")
+        ReminderMessage(
+            title: String(
+                localized: "Today's Rosary",
+                comment: "Daily prayer reminder notification for readers building a daily habit: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The same quiet hour, kept once more.",
+                comment: "Daily prayer reminder notification for readers building a daily habit: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Your time to pray",
+                comment: "Daily prayer reminder notification for readers building a daily habit: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "A few minutes now, and the day has its anchor.",
+                comment: "Daily prayer reminder notification for readers building a daily habit: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "The hour you set aside",
+                comment: "Daily prayer reminder notification for readers building a daily habit: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Whatever kind of day it has been, the beads are the same.",
+                comment: "Daily prayer reminder notification for readers building a daily habit: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "A small, steady thing",
+                comment: "Daily prayer reminder notification for readers building a daily habit: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The whole Rosary, or ten Hail Marys — the habit is in the returning.",
+                comment: "Daily prayer reminder notification for readers building a daily habit: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Prayer keeps the day's shape",
+                comment: "Daily prayer reminder notification for readers building a daily habit: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Begin whenever it suits; the beads keep no clock.",
+                comment: "Daily prayer reminder notification for readers building a daily habit: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Same time, same grace",
+                comment: "Daily prayer reminder notification for readers building a daily habit: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The Rosary asks little and gives much.",
+                comment: "Daily prayer reminder notification for readers building a daily habit: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "A day with a Rosary in it",
+                comment: "Daily prayer reminder notification for readers building a daily habit: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "That is all today needs to be.",
+                comment: "Daily prayer reminder notification for readers building a daily habit: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        )
     ]
 
     /// Closer to Mary — filial, Marian, always ending at her Son.
     static let devotion: [ReminderMessage] = [
-        ReminderMessage(title: "Mary is waiting", body: "She has all the time in the world for you."),
-        ReminderMessage(title: "A word with your Mother", body: "The Rosary is simply time spent with her."),
-        ReminderMessage(title: "She holds out her hand", body: "Take up the beads and walk the mysteries with her."),
-        ReminderMessage(title: "A few minutes for Mary", body: "Give her these few minutes and she will give them to her Son."),
-        ReminderMessage(title: "Through her, to him", body: "Every Hail Mary you pray she carries straight to Jesus."),
-        ReminderMessage(title: "The Mother of God knows your name", body: "Come and tell her what the day has held."),
-        ReminderMessage(title: "Hail Mary", body: "Fifty of them, and she is nearer than when you began.")
+        ReminderMessage(
+            title: String(
+                localized: "Mary is waiting",
+                comment: "Daily prayer reminder notification for readers wanting to grow closer to Mary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "She has all the time in the world for you.",
+                comment: "Daily prayer reminder notification for readers wanting to grow closer to Mary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "A word with your Mother",
+                comment: "Daily prayer reminder notification for readers wanting to grow closer to Mary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The Rosary is simply time spent with her.",
+                comment: "Daily prayer reminder notification for readers wanting to grow closer to Mary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "She holds out her hand",
+                comment: "Daily prayer reminder notification for readers wanting to grow closer to Mary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Take up the beads and walk the mysteries with her.",
+                comment: "Daily prayer reminder notification for readers wanting to grow closer to Mary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "A few minutes for Mary",
+                comment: "Daily prayer reminder notification for readers wanting to grow closer to Mary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Give her these few minutes and she will give them to her Son.",
+                comment: "Daily prayer reminder notification for readers wanting to grow closer to Mary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Through her, to him",
+                comment: "Daily prayer reminder notification for readers wanting to grow closer to Mary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Every Hail Mary you pray she carries straight to Jesus.",
+                comment: "Daily prayer reminder notification for readers wanting to grow closer to Mary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "The Mother of God knows your name",
+                comment: "Daily prayer reminder notification for readers wanting to grow closer to Mary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Come and tell her what the day has held.",
+                comment: "Daily prayer reminder notification for readers wanting to grow closer to Mary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Hail Mary",
+                comment: "Daily prayer reminder notification for readers wanting to grow closer to Mary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Fifty of them, and she is nearer than when you began.",
+                comment: "Daily prayer reminder notification for readers wanting to grow closer to Mary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        )
     ]
 
     /// Learning the Rosary — kept small, because this intention draws
@@ -66,85 +255,412 @@ extension ReminderMessage {
     /// stale the moment someone learns the Rosary; these do not: each is
     /// as true in the tenth year as in the first week.
     static let learning: [ReminderMessage] = [
-        ReminderMessage(title: "Today's mysteries are ready", body: "The scene, the scripture, and the prayers, all in one place."),
         ReminderMessage(
-            title: "There is always more in it", body: "Eight centuries of saints have not exhausted the mysteries."),
+            title: String(
+                localized: "Today's mysteries are ready",
+                comment: "Daily prayer reminder notification for readers learning the Rosary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The scene, the scripture, and the prayers, all in one place.",
+                comment: "Daily prayer reminder notification for readers learning the Rosary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
         ReminderMessage(
-            title: "Five scenes from the Gospel", body: "That is all a Rosary is: look at each one with Mary."),
+            title: String(
+                localized: "There is always more in it",
+                comment: "Daily prayer reminder notification for readers learning the Rosary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Eight centuries of saints have not exhausted the mysteries.",
+                comment: "Daily prayer reminder notification for readers learning the Rosary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
         ReminderMessage(
-            title: "One Hail Mary, then the next", body: "The whole Rosary is only ever one bead at a time."),
+            title: String(
+                localized: "Five scenes from the Gospel",
+                comment: "Daily prayer reminder notification for readers learning the Rosary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "That is all a Rosary is: look at each one with Mary.",
+                comment: "Daily prayer reminder notification for readers learning the Rosary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
         ReminderMessage(
-            title: "Where Mary was", body: "Nazareth, Bethlehem, Calvary: pray your way through her story."),
+            title: String(
+                localized: "One Hail Mary, then the next",
+                comment: "Daily prayer reminder notification for readers learning the Rosary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The whole Rosary is only ever one bead at a time.",
+                comment: "Daily prayer reminder notification for readers learning the Rosary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
         ReminderMessage(
-            title: "The mysteries need no expert", body: "A beginner's Rosary is a Rosary. Pray it as you can.")
+            title: String(
+                localized: "Where Mary was",
+                comment: "Daily prayer reminder notification for readers learning the Rosary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Nazareth, Bethlehem, Calvary: pray your way through her story.",
+                comment: "Daily prayer reminder notification for readers learning the Rosary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "The mysteries need no expert",
+                comment: "Daily prayer reminder notification for readers learning the Rosary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "A beginner's Rosary is a Rosary. Pray it as you can.",
+                comment: "Daily prayer reminder notification for readers learning the Rosary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        )
     ]
 
     /// Used when the intention question was skipped.
     static let standard: [ReminderMessage] = [
-        ReminderMessage(title: "A quiet moment awaits", body: "The Rosary is here whenever you are ready."),
-        ReminderMessage(title: "Today's mysteries are ready", body: "A few minutes of stillness amid the day."),
-        ReminderMessage(title: "The Rosary is close by", body: "Peace begins with a single Hail Mary."),
-        ReminderMessage(title: "The beads are where you left them", body: "Pick them up whenever the day allows."),
-        ReminderMessage(title: "Mary keeps a place for you", body: "Come sit with the mysteries a while."),
-        ReminderMessage(title: "An invitation to stillness", body: "Sit with one mystery and see where it goes."),
-        ReminderMessage(title: "Grace in the ordinary", body: "Ten Hail Marys can change the whole day.")
+        ReminderMessage(
+            title: String(
+                localized: "A quiet moment awaits",
+                comment: "Daily prayer reminder notification for readers who gave no reason: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The Rosary is here whenever you are ready.",
+                comment: "Daily prayer reminder notification for readers who gave no reason: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Today's mysteries are ready",
+                comment: "Daily prayer reminder notification for readers who gave no reason: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "A few minutes of stillness amid the day.",
+                comment: "Daily prayer reminder notification for readers who gave no reason: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "The Rosary is close by",
+                comment: "Daily prayer reminder notification for readers who gave no reason: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Peace begins with a single Hail Mary.",
+                comment: "Daily prayer reminder notification for readers who gave no reason: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "The beads are where you left them",
+                comment: "Daily prayer reminder notification for readers who gave no reason: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Pick them up whenever the day allows.",
+                comment: "Daily prayer reminder notification for readers who gave no reason: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Mary keeps a place for you",
+                comment: "Daily prayer reminder notification for readers who gave no reason: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Come sit with the mysteries a while.",
+                comment: "Daily prayer reminder notification for readers who gave no reason: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "An invitation to stillness",
+                comment: "Daily prayer reminder notification for readers who gave no reason: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Sit with one mystery and see where it goes.",
+                comment: "Daily prayer reminder notification for readers who gave no reason: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Grace in the ordinary",
+                comment: "Daily prayer reminder notification for readers who gave no reason: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Ten Hail Marys can change the whole day.",
+                comment: "Daily prayer reminder notification for readers who gave no reason: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        )
     ]
 
     // MARK: - The seasons
 
     /// Advent — the Joyful Mysteries' own weeks, waiting with Mary.
     static let advent: [ReminderMessage] = [
-        ReminderMessage(title: "Advent: she is waiting too", body: "Walk the last weeks before Bethlehem with Mary."),
-        ReminderMessage(title: "Make room in the inn", body: "A decade tonight clears a little space for Him."),
         ReminderMessage(
-            title: "The Joyful Mysteries fit the season", body: "Nazareth, the hill country, Bethlehem: they are near."),
+            title: String(
+                localized: "Advent: she is waiting too",
+                comment: "Daily prayer reminder notification in Advent: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Walk the last weeks before Bethlehem with Mary.",
+                comment: "Daily prayer reminder notification in Advent: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
         ReminderMessage(
-            title: "Come, Lord Jesus", body: "The whole of Advent is in that one prayer, and in the beads."),
-        ReminderMessage(title: "A light in the dark of the year", body: "Pray a decade by the Advent candle."),
+            title: String(
+                localized: "Make room in the inn",
+                comment: "Daily prayer reminder notification in Advent: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "A decade tonight clears a little space for Him.",
+                comment: "Daily prayer reminder notification in Advent: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "The Joyful Mysteries fit the season",
+                comment: "Daily prayer reminder notification in Advent: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Nazareth, the hill country, Bethlehem: they are near.",
+                comment: "Daily prayer reminder notification in Advent: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Come, Lord Jesus",
+                comment: "Daily prayer reminder notification in Advent: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The whole of Advent is in that one prayer, and in the beads.",
+                comment: "Daily prayer reminder notification in Advent: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "A light in the dark of the year",
+                comment: "Daily prayer reminder notification in Advent: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Pray a decade by the Advent candle.",
+                comment: "Daily prayer reminder notification in Advent: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
     ]
 
     /// Lent — the Sorrowful Mysteries, walked with her to Calvary.
     static let lent: [ReminderMessage] = [
         ReminderMessage(
-            title: "Forty days, one decade at a time",
-            body: "Lent is long enough to learn the Sorrowful Mysteries by heart."),
-        ReminderMessage(title: "Walk to Calvary with her", body: "Mary went the whole way. The beads go with you."),
-        ReminderMessage(title: "A quiet Lenten offering", body: "The Rosary asks for no fasting, only a little time."),
-        ReminderMessage(title: "The garden, the pillar, the cross", body: "Five scenes of His love, this evening."),
-        ReminderMessage(title: "Keep Lent with Mary", body: "She stood by the cross. Stand with her a while."),
+            title: String(
+                localized: "Forty days, one decade at a time",
+                comment: "Daily prayer reminder notification in Lent: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Lent is long enough to learn the Sorrowful Mysteries by heart.",
+                comment: "Daily prayer reminder notification in Lent: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Walk to Calvary with her",
+                comment: "Daily prayer reminder notification in Lent: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Mary went the whole way. The beads go with you.",
+                comment: "Daily prayer reminder notification in Lent: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "A quiet Lenten offering",
+                comment: "Daily prayer reminder notification in Lent: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The Rosary asks for no fasting, only a little time.",
+                comment: "Daily prayer reminder notification in Lent: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "The garden, the pillar, the cross",
+                comment: "Daily prayer reminder notification in Lent: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Five scenes of His love, this evening.",
+                comment: "Daily prayer reminder notification in Lent: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Keep Lent with Mary",
+                comment: "Daily prayer reminder notification in Lent: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "She stood by the cross. Stand with her a while.",
+                comment: "Daily prayer reminder notification in Lent: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
     ]
 
     /// Eastertide — from Easter to Pentecost, the Glorious Mysteries.
     static let eastertide: [ReminderMessage] = [
-        ReminderMessage(title: "He is risen", body: "The Glorious Mysteries are the season's own prayer."),
-        ReminderMessage(title: "Fifty days of joy", body: "Easter is not one day. Keep it with a decade."),
         ReminderMessage(
-            title: "Queen of Heaven, rejoice",
-            body: "The Church sings it to Mary till Pentecost. Say it with the beads."),
-        ReminderMessage(title: "The empty tomb is still open", body: "Begin a Rosary at the Resurrection tonight."),
-        ReminderMessage(title: "From Easter to Pentecost", body: "Pray with the Apostles, waiting for the Spirit."),
+            title: String(
+                localized: "He is risen",
+                comment: "Daily prayer reminder notification in the Easter season: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The Glorious Mysteries are the season's own prayer.",
+                comment: "Daily prayer reminder notification in the Easter season: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Fifty days of joy",
+                comment: "Daily prayer reminder notification in the Easter season: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Easter is not one day. Keep it with a decade.",
+                comment: "Daily prayer reminder notification in the Easter season: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Queen of Heaven, rejoice",
+                comment: "Daily prayer reminder notification in the Easter season: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The Church sings it to Mary till Pentecost. Say it with the beads.",
+                comment: "Daily prayer reminder notification in the Easter season: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "The empty tomb is still open",
+                comment: "Daily prayer reminder notification in the Easter season: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Begin a Rosary at the Resurrection tonight.",
+                comment: "Daily prayer reminder notification in the Easter season: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "From Easter to Pentecost",
+                comment: "Daily prayer reminder notification in the Easter season: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Pray with the Apostles, waiting for the Spirit.",
+                comment: "Daily prayer reminder notification in the Easter season: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
     ]
 
     /// May — Mary's month.
     static let may: [ReminderMessage] = [
-        ReminderMessage(title: "May is Mary's month", body: "A Rosary a day is the oldest way to keep it."),
-        ReminderMessage(title: "Bring her flowers", body: "Each Hail Mary is a rose. Fifty make a crown."),
-        ReminderMessage(title: "The month of Mary", body: "The saints kept May with the beads. So can you."),
-        ReminderMessage(title: "A May evening with Mary", body: "The mysteries, read slowly, as the light goes."),
         ReminderMessage(
-            title: "Her month, your Rosary", body: "Nothing pleases her more than her Son's story told again."),
+            title: String(
+                localized: "May is Mary's month",
+                comment: "Daily prayer reminder notification in May, the month of Mary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "A Rosary a day is the oldest way to keep it.",
+                comment: "Daily prayer reminder notification in May, the month of Mary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Bring her flowers",
+                comment: "Daily prayer reminder notification in May, the month of Mary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Each Hail Mary is a rose. Fifty make a crown.",
+                comment: "Daily prayer reminder notification in May, the month of Mary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "The month of Mary",
+                comment: "Daily prayer reminder notification in May, the month of Mary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The saints kept May with the beads. So can you.",
+                comment: "Daily prayer reminder notification in May, the month of Mary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "A May evening with Mary",
+                comment: "Daily prayer reminder notification in May, the month of Mary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The mysteries, read slowly, as the light goes.",
+                comment: "Daily prayer reminder notification in May, the month of Mary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Her month, your Rosary",
+                comment: "Daily prayer reminder notification in May, the month of Mary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Nothing pleases her more than her Son's story told again.",
+                comment: "Daily prayer reminder notification in May, the month of Mary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
     ]
 
     /// October — the month of the Rosary.
     static let october: [ReminderMessage] = [
         ReminderMessage(
-            title: "October, the month of the Rosary", body: "Our Lady of the Rosary is kept on the seventh."),
-        ReminderMessage(title: "The Rosary's own month", body: "The beads were made for days like this one."),
+            title: String(
+                localized: "October, the month of the Rosary",
+                comment: "Daily prayer reminder notification in October, the month of the Rosary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Our Lady of the Rosary is kept on the seventh.",
+                comment: "Daily prayer reminder notification in October, the month of the Rosary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
         ReminderMessage(
-            title: "Our Lady of the Rosary",
-            body: "Pope Leo asked for a Rosary a day in October. One decade is a start."),
-        ReminderMessage(title: "An October Rosary", body: "The mysteries, with the leaves turning outside."),
-        ReminderMessage(title: "The Church's month of beads", body: "Join her. Today's mysteries are ready."),
+            title: String(
+                localized: "The Rosary's own month",
+                comment: "Daily prayer reminder notification in October, the month of the Rosary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The beads were made for days like this one.",
+                comment: "Daily prayer reminder notification in October, the month of the Rosary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "Our Lady of the Rosary",
+                comment: "Daily prayer reminder notification in October, the month of the Rosary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Pope Leo asked for a Rosary a day in October. One decade is a start.",
+                comment: "Daily prayer reminder notification in October, the month of the Rosary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "An October Rosary",
+                comment: "Daily prayer reminder notification in October, the month of the Rosary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "The mysteries, with the leaves turning outside.",
+                comment: "Daily prayer reminder notification in October, the month of the Rosary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
+        ReminderMessage(
+            title: String(
+                localized: "The Church's month of beads",
+                comment: "Daily prayer reminder notification in October, the month of the Rosary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters"
+            ),
+            body: String(
+                localized: "Join her. Today's mysteries are ready.",
+                comment: "Daily prayer reminder notification in October, the month of the Rosary: its text under the title. Warm and inviting, never scolding; under about 75 characters"
+            )
+        ),
     ]
 
     /// The season a day falls in, where the season has a pool of its own.

@@ -35,6 +35,23 @@ struct LocalizationTests {
         #expect(PendantTitleBlock.leadIn(category: nil, ordinal: 4) == "Then the Fourth Mystery")
     }
 
+    @Test func consecrationAndLiturgyCountsAreSingularForOne() {
+        #expect(String(localized: "\(1) chapters") == "1 chapter")
+        #expect(String(localized: "in \(1) days") == "in 1 day")
+        #expect(String(localized: "Opens a menu of \(1) devotions") == "Opens a menu of 1 devotion")
+        #expect(String(localized: "\(1) of \(1) days on this device") == "1 of 1 day on this device")
+        #expect(String(localized: "\(3) of \(30) days on this device") == "3 of 30 days on this device")
+    }
+
+    @Test func setNamesKeepTheirEnglishWording() {
+        #expect(MysteryCategory.joyful.devotionTitle == "Joyful Mysteries")
+        #expect(MysteryCategory.sevenSorrows.devotionTitle == "Seven Sorrows of Mary")
+        #expect(MysteryCategory.luminous.displayName == "Luminous")
+        #expect(MysteryCategory.sevenSorrows.displayName == "Seven Sorrows")
+        #expect(MysteryCategory.joyful.subtitle == "Jesus' birth and childhood")
+        #expect(MysteryCategory.sevenSorrows.subtitle == "Mary in her grief")
+    }
+
     @Test func meditationKindsKeepTheirEnglishWording() {
         #expect(MeditationLabel.displayName("Considerations") == "Reflections")
         #expect(MeditationLabel.displayName("Contemplative") == "Inside the Scene")

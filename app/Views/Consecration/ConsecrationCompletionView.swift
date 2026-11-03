@@ -144,7 +144,10 @@ struct ConsecrationCompletionView: View {
     /// Leaving is not another one, so it goes quietly.
     private var returnButton: some View {
         QuietGoldButton(
-            title: "Return to the Consecration tab",
+            title: String(
+                localized: "Return to the Consecration tab",
+                comment: "Consecration completion screen: quiet button under the act of consecration that goes back to the tab's first page"
+            ),
             size: 11,
             color: AppColors.gold
         ) {

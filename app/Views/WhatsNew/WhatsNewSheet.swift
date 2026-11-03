@@ -40,9 +40,18 @@ struct WhatsNewSheet: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     SheetHeader(
-                        kicker: "Lumen Viae \(release.version)",
-                        title: "What's New",
-                        lead: "Added since you last updated. Tap one to open it."
+                        kicker: String(
+                            localized: "Lumen Viae \(release.version)",
+                            comment: "What's New sheet: small kicker over the title, the app's name and the version just installed, like Lumen Viae 4.1"
+                        ),
+                        title: String(
+                            localized: "What's New",
+                            comment: "What's New sheet: its title"
+                        ),
+                        lead: String(
+                            localized: "Added since you last updated. Tap one to open it.",
+                            comment: "What's New sheet: line under the title; each row below is a new feature that opens when tapped"
+                        )
                     )
 
                     SheetRule()
@@ -68,7 +77,10 @@ struct WhatsNewSheet: View {
             }
             .scrollBounceBehavior(.basedOnSize)
 
-            GoldCTAButton(title: "Continue", trailingIcon: "ph-check") {
+            GoldCTAButton(
+                title: String(localized: "Continue", comment: "What's New sheet: the gold button at its foot that closes it"),
+                trailingIcon: "ph-check"
+            ) {
                 dismiss()
             }
             .padding(.horizontal, SheetMetrics.gutter)

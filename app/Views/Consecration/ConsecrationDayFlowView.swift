@@ -113,7 +113,10 @@ struct ConsecrationDayFlowView: View {
 
     /// The Lock Screen's line under the chant's name: the devotion. Which
     /// of its days is the album line's, so it is named once
-    private let lockScreenSubtitle = "Consecration to Mary"
+    private let lockScreenSubtitle = String(
+        localized: "Consecration to Mary",
+        comment: "Lock Screen, a consecration day's chant: the line under the chant's name, naming the devotion"
+    )
 
 
     private let audio = AudioService.shared
@@ -166,14 +169,20 @@ struct ConsecrationDayFlowView: View {
     private var isLastStep: Bool { stepIndex >= steps.count - 1 }
 
     private var dayLabel: String {
-        phase == .consecrationDay ? "CONSECRATION DAY" : "DAY \(dayNumber)"
+        phase == .consecrationDay
+            ? String(localized: "CONSECRATION DAY", comment: "Consecration day page: small capitals in the header on day 34, when the act of consecration is made")
+            : String(localized: "DAY \(dayNumber)", comment: "Consecration day page: small capitals in the header naming the day of the preparation")
     }
 
     /// What the quiet forward control says. "Next" is right between
     /// prayers; leaving the prayers, it says what comes next to do.
     private var forwardTitle: String {
-        guard isLastPrayerStep else { return "Next" }
-        return readings.count > 1 ? "Go to the readings" : "Go to the reading"
+        guard isLastPrayerStep else {
+            return String(localized: "Next", comment: "Consecration day page: quiet button turning to the next prayer")
+        }
+        return readings.count > 1
+            ? String(localized: "Go to the readings", comment: "Consecration day page: quiet button on the last prayer, going on to the day's readings (more than one)")
+            : String(localized: "Go to the reading", comment: "Consecration day page: quiet button on the last prayer, going on to the day's one reading")
     }
 
     /// True on the final prayer, where forward leaves the prayers for
@@ -183,13 +192,22 @@ struct ConsecrationDayFlowView: View {
         return false
     }
 
-    private var accessibleStepName: String {
+    /// Where the reader is in the day, as VoiceOver hears it on the
+    /// header's index button: one sentence per case
+    private var accessibleStepValue: String {
         switch currentStep {
         case .reading(let index):
             return readings.count > 1
-                ? "reading \(index + 1) of \(readings.count)"
-                : "the reading"
-        case .prayer(let index): return "prayer \(index + 1) of \(prayers.count)"
+                ? String(
+                    localized: "On reading \(index + 1) of \(readings.count)",
+                    comment: "VoiceOver, consecration day page: the reader is on one of the day's several readings"
+                )
+                : String(localized: "On the reading", comment: "VoiceOver, consecration day page: the reader is on the day's one reading")
+        case .prayer(let index):
+            return String(
+                localized: "On prayer \(index + 1) of \(prayers.count)",
+                comment: "VoiceOver, consecration day page: the reader is on one of the day's prayers"
+            )
         }
     }
 
@@ -455,7 +473,9 @@ struct ConsecrationDayFlowView: View {
                 title: prayer.title,
                 subtitle: lockScreenSubtitle,
                 artworkAssetName: dayArtworkAsset,
-                album: phase == .consecrationDay ? "Consecration Day" : "Day \(dayNumber)",
+                album: phase == .consecrationDay
+                    ? String(localized: "Consecration Day", comment: "Lock Screen, a consecration day's chant: the album line on day 34")
+                    : String(localized: "Day \(dayNumber)", comment: "Lock Screen, a consecration day's chant: the album line naming the day of the preparation"),
                 queueIndex: stepIndex,
                 queueCount: steps.count,
                 claimNowPlaying: true
@@ -466,7 +486,10 @@ struct ConsecrationDayFlowView: View {
             guard ready || claim.holdsItem else {
                 // The prayer reads perfectly well without the chant — say
                 // so once, quietly, rather than leaving a dead transport.
-                audioError = "The chant couldn't be played. The prayer is here to pray."
+                audioError = String(
+                    localized: "The chant couldn't be played. The prayer is here to pray.",
+                    comment: "Consecration day page: quiet note when the prayer's sung recording fails to play; the words are still on the page"
+                )
                 return
             }
             if chantStartsWhenLoaded { claim.play() }
@@ -535,7 +558,7 @@ struct ConsecrationDayFlowView: View {
                 dayLabel: dayLabel,
                 stepCount: steps.count,
                 currentStep: stepIndex,
-                accessibleValue: "On \(accessibleStepName)"
+                accessibleValue: accessibleStepValue
             ) {
                 showDayIndex = true
             }
@@ -580,7 +603,7 @@ struct ConsecrationDayFlowView: View {
             .contentShape(Circle())
         }
         .buttonStyle(GoldCTAButtonStyle())
-        .accessibilityLabel(audioClaim?.isPlaying == true ? "Pause the chant" : "Play the chant")
+        .accessibilityLabel(audioClaim?.isPlaying == true ? Text("Pause the chant") : Text("Play the chant"))
     }
 
     // MARK: - Step Content
@@ -777,7 +800,7 @@ struct ConsecrationDayFlowView: View {
     private var navigationButtons: some View {
         HStack {
             QuietGoldButton(
-                title: "Back",
+                title: String(localized: "Back", comment: "Consecration day page: quiet button turning back to the previous step"),
                 leadingIcon: "ph-arrow-left",
                 leadingIconSize: 11
             ) {
@@ -794,7 +817,7 @@ struct ConsecrationDayFlowView: View {
 
             if isLastStep {
                 GoldCTAButton(
-                    title: "Amen",
+                    title: String(localized: "Amen", comment: "Consecration day page: the gold act on the last step that closes the day and opens the reflection"),
                     prominence: .inline,
                     trailingIcon: "ph-check",
                     fullWidth: false
@@ -811,7 +834,7 @@ struct ConsecrationDayFlowView: View {
                 ) {
                     goToStep(stepIndex + 1)
                 }
-                .accessibilityLabel(isLastPrayerStep ? "Go to the reading" : "Next")
+                .accessibilityLabel(isLastPrayerStep ? Text("Go to the reading") : Text("Next"))
             }
         }
         .padding(.horizontal, 20)
@@ -983,7 +1006,7 @@ private struct ChantTransportBar: View {
         }
         .buttonStyle(GoldCTAButtonStyle())
         .disabled(isLoading)
-        .accessibilityLabel(isLoading ? "Loading the chant" : (isPlaying ? "Pause the chant" : "Play the chant"))
+        .accessibilityLabel(isLoading ? Text("Loading the chant") : (isPlaying ? Text("Pause the chant") : Text("Play the chant")))
     }
 
     private static func time(_ seconds: Double) -> String {

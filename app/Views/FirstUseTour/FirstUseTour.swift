@@ -38,12 +38,38 @@ enum FirstUseTourStop: Int, CaseIterable {
     /// The place's name, as the mark's kicker
     var name: String {
         switch self {
-        case .today:   return "Today's Mysteries"
-        case .pray:    return "The Pray Button"
-        case .prayers: return "Prayers"
-        case .consecration: return "Consecration"
-        case .chant:   return ArchivedPages.chapel ? "Chant" : "Your Chapel"
-        case .explore: return "Explore"
+        case .today:
+            return String(
+                localized: "Today's Mysteries",
+                comment: "First-use tour: small capitals naming the featured card on home with the day's mysteries"
+            )
+        case .pray:
+            return String(
+                localized: "The Pray Button",
+                comment: "First-use tour: small capitals naming the raised Pray button over the tab bar"
+            )
+        case .prayers:
+            return String(
+                localized: "Prayers",
+                comment: "First-use tour: small capitals naming the Prayers tab"
+            )
+        case .consecration:
+            return String(
+                localized: "Consecration",
+                comment: "First-use tour: small capitals naming the Consecration tab, the 33-day Marian consecration"
+            )
+        case .chant:
+            return ArchivedPages.chapel
+                ? String(localized: "Chant", comment: "First-use tour: small capitals naming the Chant tab, the Chant Library")
+                : String(
+                    localized: "Your Chapel",
+                    comment: "First-use tour: small capitals naming the Chapel tab, the reader's own arrangeable page"
+                )
+        case .explore:
+            return String(
+                localized: "Explore",
+                comment: "First-use tour: small capitals naming the search glass on home that opens Explore"
+            )
         }
     }
 
@@ -51,20 +77,41 @@ enum FirstUseTourStop: Int, CaseIterable {
     var words: String {
         switch self {
         case .today:
-            return "Each day has its own mysteries: scenes from the lives of Jesus and Mary to reflect on as you pray. Start today's Rosary here."
+            return String(
+                localized: "Each day has its own mysteries: scenes from the lives of Jesus and Mary to reflect on as you pray. Start today's Rosary here.",
+                comment: "First-use tour: a coach mark's words beside the featured card of today's mysteries on home, saying what it is and what it does"
+            )
         case .pray:
-            return "Tap it to begin today's Rosary at once. Press and hold to choose another prayer."
+            return String(
+                localized: "Tap it to begin today's Rosary at once. Press and hold to choose another prayer.",
+                comment: "First-use tour: a coach mark's words beside the raised Pray button over the tab bar, saying what it is and what it does"
+            )
         case .prayers:
-            return "Catholic prayers for every need, opening on the ones for this time of day. Find any prayer by name, or by where you are: at Mass, at Confession, at home."
+            return String(
+                localized: "Catholic prayers for every need, opening on the ones for this time of day. Find any prayer by name, or by where you are: at Mass, at Confession, at home.",
+                comment: "First-use tour: a coach mark's words beside the Prayers tab, saying what it is and what it does"
+            )
         case .consecration:
-            return "A 33-day preparation to give yourself to Jesus through Mary. Choose the feast it ends on."
+            return String(
+                localized: "A 33-day preparation to give yourself to Jesus through Mary. Choose the feast it ends on.",
+                comment: "First-use tour: a coach mark's words beside the Consecration tab, saying what it is and what it does"
+            )
         case .chant:
             if ArchivedPages.chapel {
-                return "Gregorian chant, the Church's own songs, each with its recording and sheet music. Listen, or learn one by heart."
+                return String(
+                    localized: "Gregorian chant, the Church's own songs, each with its recording and sheet music. Listen, or learn one by heart.",
+                    comment: "First-use tour: a coach mark's words beside the Chant tab, saying what it is and what it does"
+                )
             }
-            return "Your own page: your daily prayers, the days you have prayed, and the prayers for this time of day. Arrange it as you like."
+            return String(
+                localized: "Your own page: your daily prayers, the days you have prayed, and the prayers for this time of day. Arrange it as you like.",
+                comment: "First-use tour: a coach mark's words beside the Chapel tab, saying what it is and what it does"
+            )
         case .explore:
-            return "Everything in the app in one place, from prayers and chant to books, with a search across it all."
+            return String(
+                localized: "Everything in the app in one place, from prayers and chant to books, with a search across it all.",
+                comment: "First-use tour: a coach mark's words beside the search glass that opens Explore, saying what it is and what it does"
+            )
         }
     }
 

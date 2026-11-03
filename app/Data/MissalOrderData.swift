@@ -31,6 +31,15 @@ enum MissalPosture: String {
     case stand = "Stand"
     case sit = "Sit"
     case kneel = "Kneel"
+
+    /// The posture as the reader's cue says it: STAND, SIT, KNEEL
+    var label: String {
+        switch self {
+        case .stand: return String(localized: "Stand", comment: "The Mass: posture cue beside a part of the Mass, what the congregation does (stand)")
+        case .sit: return String(localized: "Sit", comment: "The Mass: posture cue beside a part of the Mass, what the congregation does (sit)")
+        case .kneel: return String(localized: "Kneel", comment: "The Mass: posture cue beside a part of the Mass, what the congregation does (kneel)")
+        }
+    }
 }
 
 // MARK: - MissalReaderSection
@@ -87,22 +96,22 @@ enum MissalOrderData {
     /// stand beneath as the Latin secondary line, so a reader can still
     /// find the same part in a hand missal.
     private static let plainNames: [String: String] = [
-        "introitus":                    "Entrance Chant",
-        "oratio":                       "Opening Prayer",
-        "commemoratio oratio":          "Opening Prayer · Also Remembered",
-        "lectio":                       "First Reading",
-        "epistola":                     "First Reading",
-        "graduale":                     "Chant Between the Readings",
-        "tractus":                      "Chant Between the Readings",
-        "sequentia":                    "Feast Poem",
-        "evangelium":                   "Gospel",
-        "offertorium":                  "Offertory Chant",
-        "secreta":                      "Prayer over the Gifts",
-        "commemoratio secreta":         "Prayer over the Gifts · Also Remembered",
-        "prefatio":                     "Preface",
-        "communio":                     "Communion Chant",
-        "postcommunio":                 "Prayer after Communion",
-        "commemoratio postcommunio":    "Prayer after Communion · Also Remembered"
+        "introitus": String(localized: "Entrance Chant", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
+        "oratio": String(localized: "Opening Prayer", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
+        "commemoratio oratio": String(localized: "Opening Prayer · Also Remembered", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
+        "lectio": String(localized: "First Reading", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
+        "epistola": String(localized: "First Reading", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
+        "graduale": String(localized: "Chant Between the Readings", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
+        "tractus": String(localized: "Chant Between the Readings", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
+        "sequentia": String(localized: "Feast Poem", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
+        "evangelium": String(localized: "Gospel", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
+        "offertorium": String(localized: "Offertory Chant", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
+        "secreta": String(localized: "Prayer over the Gifts", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
+        "commemoratio secreta": String(localized: "Prayer over the Gifts · Also Remembered", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
+        "prefatio": String(localized: "Preface", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
+        "communio": String(localized: "Communion Chant", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
+        "postcommunio": String(localized: "Prayer after Communion", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
+        "commemoratio postcommunio": String(localized: "Prayer after Communion · Also Remembered", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it")
     ]
 
     /// A section's plain English name, or nil when the map does not
@@ -123,10 +132,10 @@ enum MissalOrderData {
             + afterOffertory + [canon] + afterCanon + closing
         var names = Dictionary(parts.map { ($0.ordoLabel, $0.englishName) },
                                uniquingKeysWith: { first, _ in first })
-        names["offertory"] = "Offertory Chant"
-        names["preface"] = "Preface"
-        names["sanctus"] = "Holy, Holy, Holy"
-        names["pater noster"] = "Our Father"
+        names["offertory"] = String(localized: "Offertory Chant", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it")
+        names["preface"] = String(localized: "Preface", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it")
+        names["sanctus"] = String(localized: "Holy, Holy, Holy", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it")
+        names["pater noster"] = String(localized: "Our Father", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it")
         return names
     }()
 
@@ -148,7 +157,7 @@ enum MissalOrderData {
     private static let asperges = OrdinaryPart(
         ordoLabel: "asperges",
         latinName: "Asperges",
-        englishName: "Sprinkling with Holy Water",
+        englishName: String(localized: "Sprinkling with Holy Water", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
         posture: .stand,
         highMassOnly: true
     )
@@ -158,7 +167,7 @@ enum MissalOrderData {
         OrdinaryPart(
             ordoLabel: "prayers at the foot of the altar",
             latinName: "At the Foot of the Altar",
-            englishName: "At the Foot of the Altar",
+            englishName: String(localized: "At the Foot of the Altar", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
             posture: .kneel
         )
     ]
@@ -167,14 +176,14 @@ enum MissalOrderData {
     private static let kyrie = OrdinaryPart(
         ordoLabel: "kyrie",
         latinName: "Kyrie",
-        englishName: "Lord, Have Mercy",
+        englishName: String(localized: "Lord, Have Mercy", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
         posture: .stand
     )
 
     private static let gloria = OrdinaryPart(
         ordoLabel: "gloria",
         latinName: "Gloria",
-        englishName: "Glory to God",
+        englishName: String(localized: "Glory to God", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
         posture: .stand
     )
 
@@ -182,7 +191,7 @@ enum MissalOrderData {
     private static let credo = OrdinaryPart(
         ordoLabel: "credo",
         latinName: "Credo",
-        englishName: "The Creed",
+        englishName: String(localized: "The Creed", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
         posture: .stand
     )
 
@@ -191,32 +200,32 @@ enum MissalOrderData {
         OrdinaryPart(
             ordoLabel: "offertory prayers",
             latinName: "Offertory Prayers",
-            englishName: "Offertory Prayers",
+            englishName: String(localized: "Offertory Prayers", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
             posture: .sit
         ),
         OrdinaryPart(
             ordoLabel: "incensing",
             latinName: "Incensing",
-            englishName: "Incensing",
+            englishName: String(localized: "Incensing", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
             posture: .sit,
             highMassOnly: true
         ),
         OrdinaryPart(
             ordoLabel: "lavabo",
             latinName: "Lavabo",
-            englishName: "Washing of the Hands",
+            englishName: String(localized: "Washing of the Hands", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
             posture: .sit
         ),
         OrdinaryPart(
             ordoLabel: "prayer to the most holy trinity",
             latinName: "Súscipe, Sancta Trínitas",
-            englishName: "Prayer to the Holy Trinity",
+            englishName: String(localized: "Prayer to the Holy Trinity", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
             posture: .sit
         ),
         OrdinaryPart(
             ordoLabel: "orate fratres",
             latinName: "Oráte, Fratres",
-            englishName: "Pray, Brethren",
+            englishName: String(localized: "Pray, Brethren", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
             posture: .sit
         )
     ]
@@ -226,7 +235,7 @@ enum MissalOrderData {
     private static let canon = OrdinaryPart(
         ordoLabel: "canon",
         latinName: "Canon Missæ",
-        englishName: "Eucharistic Prayer",
+        englishName: String(localized: "Eucharistic Prayer", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
         posture: .kneel
     )
 
@@ -234,37 +243,37 @@ enum MissalOrderData {
         OrdinaryPart(
             ordoLabel: "fraction – breaking of the sacred host",
             latinName: "Fractio",
-            englishName: "Breaking of the Host",
+            englishName: String(localized: "Breaking of the Host", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
             posture: .kneel
         ),
         OrdinaryPart(
             ordoLabel: "agnus dei",
             latinName: "Agnus Dei",
-            englishName: "Lamb of God",
+            englishName: String(localized: "Lamb of God", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
             posture: .kneel
         ),
         OrdinaryPart(
             ordoLabel: "prayers for holy communion",
             latinName: "Prayers for Holy Communion",
-            englishName: "Prayers for Holy Communion",
+            englishName: String(localized: "Prayers for Holy Communion", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
             posture: .kneel
         ),
         OrdinaryPart(
             ordoLabel: "communion of the priest",
             latinName: "Communion of the Priest",
-            englishName: "Communion of the Priest",
+            englishName: String(localized: "Communion of the Priest", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
             posture: .kneel
         ),
         OrdinaryPart(
             ordoLabel: "communion of the people",
             latinName: "Communion of the People",
-            englishName: "Communion of the People",
+            englishName: String(localized: "Communion of the People", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
             posture: .kneel
         ),
         OrdinaryPart(
             ordoLabel: "ablutions",
             latinName: "Ablutiones",
-            englishName: "Cleansing of the Vessels",
+            englishName: String(localized: "Cleansing of the Vessels", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
             posture: .sit
         )
     ]
@@ -274,19 +283,19 @@ enum MissalOrderData {
         OrdinaryPart(
             ordoLabel: "conclusion",
             latinName: "Ite, Missa Est",
-            englishName: "The Mass Is Ended",
+            englishName: String(localized: "The Mass Is Ended", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
             posture: .stand
         ),
         OrdinaryPart(
             ordoLabel: "the last gospel",
             latinName: "Ultimum Evangélium",
-            englishName: "Closing Gospel",
+            englishName: String(localized: "Closing Gospel", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
             posture: .stand
         ),
         OrdinaryPart(
             ordoLabel: "prayers ordered by the pope leo xiii",
             latinName: "Preces Leoninæ",
-            englishName: "Prayers after Mass",
+            englishName: String(localized: "Prayers after Mass", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
             posture: .kneel,
             highMassOnly: false
         )
@@ -554,7 +563,7 @@ enum MissalOrderData {
                 OrdinaryPart(
                     ordoLabel: "offertory",
                     latinName: "Offertorium",
-                    englishName: "Offertory Chant",
+                    englishName: String(localized: "Offertory Chant", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
                     posture: .sit
                 ),
                 body: body
@@ -572,7 +581,7 @@ enum MissalOrderData {
                 OrdinaryPart(
                     ordoLabel: "common preface",
                     latinName: "Præfatio Communis",
-                    englishName: "Common Preface",
+                    englishName: String(localized: "Common Preface", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
                     posture: .stand
                 ),
                 body: Array(body.dropFirst().dropLast())
@@ -592,7 +601,7 @@ enum MissalOrderData {
                 OrdinaryPart(
                     ordoLabel: "preface",
                     latinName: "Sursum Corda",
-                    englishName: "Lift Up Your Hearts",
+                    englishName: String(localized: "Lift Up Your Hearts", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
                     posture: .stand
                 ),
                 body: [dialogue]
@@ -607,7 +616,7 @@ enum MissalOrderData {
                 OrdinaryPart(
                     ordoLabel: "sanctus",
                     latinName: "Sanctus",
-                    englishName: "Holy, Holy, Holy",
+                    englishName: String(localized: "Holy, Holy, Holy", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
                     posture: .kneel
                 ),
                 body: [sanctus]
@@ -625,7 +634,7 @@ enum MissalOrderData {
                 OrdinaryPart(
                     ordoLabel: "pater noster",
                     latinName: "Pater Noster",
-                    englishName: "Our Father",
+                    englishName: String(localized: "Our Father", comment: "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it"),
                     posture: .kneel
                 ),
                 body: body

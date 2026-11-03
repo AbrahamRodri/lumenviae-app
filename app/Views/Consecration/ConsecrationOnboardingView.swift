@@ -444,7 +444,9 @@ private struct ThresholdStepView: View {
                 Spacer(minLength: 12)
 
                 VStack(spacing: 14) {
-                    ConsecrationIntroKicker(text: "33 DAYS WITH MARY")
+                    ConsecrationIntroKicker(
+                        text: String(localized: "33 DAYS WITH MARY", comment: "Consecration introduction, welcome page: kicker over the title")
+                    )
 
                     Text("Consecration to Mary")
                         .font(AppFonts.headlineFont(28))
@@ -468,7 +470,10 @@ private struct ThresholdStepView: View {
 
                 Spacer(minLength: 12)
 
-                OnboardingContinueButton(title: "Learn how it works", action: onContinue)
+                OnboardingContinueButton(
+                    title: String(localized: "Learn how it works", comment: "Consecration introduction, welcome page: button to the next page"),
+                    action: onContinue
+                )
                     .staggeredReveal(delay: 0.7)
             }
             .padding(.horizontal, 24)
@@ -552,7 +557,9 @@ private struct DevotionStepView: View {
                 Spacer(minLength: 72)
 
                 VStack(spacing: 14) {
-                    ConsecrationIntroKicker(text: "The devotion")
+                    ConsecrationIntroKicker(
+                        text: String(localized: "The devotion", comment: "Consecration introduction, page 2: kicker over the title, shown in capitals")
+                    )
                         .shadow(color: .black.opacity(0.5), radius: 4, y: 1)
 
                     Text("Everything you are, given to Jesus through Mary")
@@ -588,7 +595,10 @@ private struct DevotionStepView: View {
                 .padding(.horizontal, 32)
                 .padding(.top, 20)
 
-                OnboardingContinueButton(title: "Continue", action: onContinue)
+                OnboardingContinueButton(
+                    title: String(localized: "Continue", comment: "Consecration introduction: button to the next page"),
+                    action: onContinue
+                )
                     .padding(.horizontal, 20)
                     .padding(.top, 26)
                     .devotionalEntrance(delay: 0.32)
@@ -655,7 +665,9 @@ private struct RhythmStepView: View {
                 Spacer(minLength: 8)
 
                 VStack(spacing: 12) {
-                    ConsecrationIntroKicker(text: "Each day")
+                    ConsecrationIntroKicker(
+                        text: String(localized: "Each day", comment: "Consecration introduction, page 3: kicker over the title, shown in capitals")
+                    )
 
                     Text("The same three steps each day")
                         .font(AppFonts.headlineFont(26))
@@ -693,7 +705,10 @@ private struct RhythmStepView: View {
 
                 Spacer(minLength: 16)
 
-                OnboardingContinueButton(title: "Continue", action: onContinue)
+                OnboardingContinueButton(
+                    title: String(localized: "Continue", comment: "Consecration introduction: button to the next page"),
+                    action: onContinue
+                )
                     .padding(.horizontal, 20)
                     .devotionalEntrance(delay: 0.24)
             }
@@ -725,16 +740,32 @@ private struct RhythmStepView: View {
 
             ConsecrationIntroRule()
 
-            stepRow("I", title: "Pray", detail: prayers)
+            stepRow(
+                "I",
+                title: String(localized: "Pray", comment: "Consecration introduction, page 3: first of the day's three steps, the prayers"),
+                detail: prayers
+            )
 
             ConsecrationIntroRule()
 
-            stepRow("II", title: "Read", detail: readings)
+            stepRow(
+                "II",
+                title: String(localized: "Read", comment: "Consecration introduction, page 3: second of the day's three steps, the readings"),
+                detail: readings
+            )
 
             ConsecrationIntroRule()
 
             // The card's own padding closes beneath the last step
-            stepRow("III", title: "Reflect", detail: "One question to sit with, and a journal to answer it in.", isLast: true)
+            stepRow(
+                "III",
+                title: String(localized: "Reflect", comment: "Consecration introduction, page 3: third of the day's three steps, the written reflection"),
+                detail: String(
+                    localized: "One question to sit with, and a journal to answer it in.",
+                    comment: "Consecration introduction, page 3: what the day's third step, Reflect, holds"
+                ),
+                isLast: true
+            )
         }
         .sacredCard(padding: 20, elevated: true)
     }
@@ -783,7 +814,9 @@ private struct JourneyStepView: View {
                 Spacer(minLength: 12)
 
                 VStack(spacing: 14) {
-                    ConsecrationIntroKicker(text: "THE JOURNEY")
+                    ConsecrationIntroKicker(
+                        text: String(localized: "THE JOURNEY", comment: "Consecration introduction, page 4: kicker over the title The Path to Consecration")
+                    )
 
                     Text("The Path to Consecration")
                         .font(AppFonts.headlineFont(26))
@@ -805,7 +838,7 @@ private struct JourneyStepView: View {
                 Spacer(minLength: 12)
 
                 OnboardingContinueButton(
-                    title: "Choose my consecration day",
+                    title: String(localized: "Choose my consecration day", comment: "Consecration introduction, page 4: button to the feast chooser"),
                     action: onContinue
                 )
                 .staggeredReveal(delay: 1.15)
@@ -862,8 +895,12 @@ private struct JourneyStepView: View {
 
     private func dayRangeLabel(_ phase: ConsecrationPhase) -> String {
         let range = phase.dayRange
-        if phase == .consecrationDay { return "Consecration Day" }
-        return range.count == 1 ? "Day \(range.lowerBound)" : "\(range.lowerBound)\u{2013}\(range.upperBound)"
+        if phase == .consecrationDay {
+            return String(localized: "Consecration Day", comment: "Consecration introduction, page 4: the path's last station, day 34")
+        }
+        return range.count == 1
+            ? String(localized: "Day \(range.lowerBound)", comment: "Consecration introduction, page 4: a station of the path that is one day long")
+            : "\(range.lowerBound)\u{2013}\(range.upperBound)"
     }
 }
 
