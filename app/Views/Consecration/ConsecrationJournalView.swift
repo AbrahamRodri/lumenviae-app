@@ -88,9 +88,7 @@ struct ConsecrationJournalView: View {
     }
 
     private static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.setLocalizedDateFormatFromTemplate("MMMd")
-        return formatter
+        DateFormatter.designed(english: "MMM d", template: "MMMd")
     }()
 
     private var formattedDate: String {

@@ -888,22 +888,15 @@ struct DailyMissalView: View {
     }
 
     /// "TUE · 25 AUG" (the long form ran under the ☰ button): the
-    /// weekday, then the day and month in the language's own order
+    /// weekday, then the day and month, in the language's own order
+    /// outside English
     private static func pillDate(_ date: Date) -> String {
         "\(pillWeekday.string(from: date)) · \(pillDayMonth.string(from: date))"
     }
 
-    private static let pillWeekday: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.setLocalizedDateFormatFromTemplate("EEE")
-        return formatter
-    }()
+    private static let pillWeekday = DateFormatter.designed(english: "EEE", template: "EEE")
 
-    private static let pillDayMonth: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.setLocalizedDateFormatFromTemplate("dMMM")
-        return formatter
-    }()
+    private static let pillDayMonth = DateFormatter.designed(english: "d MMM", template: "dMMM")
 }
 
 // MARK: - Preview

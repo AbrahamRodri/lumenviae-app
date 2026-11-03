@@ -259,17 +259,9 @@ enum LiturgicalCalendarFormat {
         "\(weekday.string(from: date)) · \(dayAndMonth.string(from: date))"
     }
 
-    private static let weekday: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.setLocalizedDateFormatFromTemplate("EEEE")
-        return formatter
-    }()
+    private static let weekday = DateFormatter.designed(english: "EEEE", template: "EEEE")
 
-    private static let dayAndMonth: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.setLocalizedDateFormatFromTemplate("dMMMM")
-        return formatter
-    }()
+    private static let dayAndMonth = DateFormatter.designed(english: "d MMMM", template: "dMMMM")
 
     static let spokenDate: DateFormatter = {
         let formatter = DateFormatter()

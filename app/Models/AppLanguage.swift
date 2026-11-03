@@ -63,3 +63,21 @@ enum AppLanguage {
         UIApplication.shared.open(url)
     }
 }
+
+// MARK: - Dates
+
+extension DateFormatter {
+    /// A date drawn the way the design draws it in English ("MON 2 NOV"),
+    /// and in the language's own order and words in any other ("lun, 2 nov"):
+    /// English keeps its fixed pattern, every other language its locale's
+    /// template.
+    static func designed(english pattern: String, template: String) -> DateFormatter {
+        let formatter = DateFormatter()
+        if AppLanguage.code.hasPrefix("en") {
+            formatter.dateFormat = pattern
+        } else {
+            formatter.setLocalizedDateFormatFromTemplate(template)
+        }
+        return formatter
+    }
+}
