@@ -96,7 +96,11 @@ extension BilingualText {
 /// (`BilingualText.paragraph(in:)`).
 enum RosaryPrayerText {
 
-    static let gloryBe = BilingualText(
+    /// Spanish in English's place when the app speaks Spanish
+    static let gloryBe = SpanishContent.vernacular(englishGloryBe, id: "glory_be")
+    static let fatimaPrayer = SpanishContent.vernacular(englishFatimaPrayer, id: "fatima_prayer")
+
+    static let englishGloryBe = BilingualText(
         english: """
 Glory be to the Father, and to the Son, and to the Holy Spirit.
 As it was in the beginning, is now, and ever shall be,
@@ -110,7 +114,7 @@ et in saecula saeculorum. Amen.
     )
 
     /// Said after the Glory Be of every decade, as Our Lady asked at Fatima
-    static let fatimaPrayer = BilingualText(
+    static let englishFatimaPrayer = BilingualText(
         english: """
 O my Jesus, forgive us our sins,
 save us from the fires of hell,

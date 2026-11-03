@@ -651,8 +651,11 @@ struct VersalCut {
     /// leaves the first letter its own case
     var wordsAfterLead: String { typedLetter + rest }
 
+    /// Marks a paragraph may open on before its first letter: the
+    /// quotation marks, and Spanish's opening question and exclamation
+    /// marks ("¿Qué…", "¡Oh…"), which the versal stands after
     private static let openingQuotes: Set<Character> = [
-        "\u{201C}", "\u{2018}", "\"", "'", "«", "‹"
+        "\u{201C}", "\u{2018}", "\"", "'", "«", "‹", "¿", "¡"
     ]
 
     /// Marks that open a quotation and nothing else

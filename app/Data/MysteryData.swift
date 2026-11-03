@@ -275,8 +275,14 @@ enum MysteryData {
 
     /// The traditional fruit (grace) of each mystery, keyed by
     /// "<category>_<order>". For the Seven Sorrows, the grace associated
-    /// with each sorrow in the devotion.
-    static let traditionalFruits: [String: String] = [
+    /// with each sorrow in the devotion. In Spanish when the app speaks
+    /// Spanish (`SpanishContent`).
+    static let traditionalFruits: [String: String] = englishFruits.reduce(into: [:]) { fruits, entry in
+        fruits[entry.key] = SpanishContent.fruit(entry.value, key: entry.key)
+    }
+
+    /// The same, in English
+    static let englishFruits: [String: String] = [
         // Joyful
         "joyful_1": "Humility",
         "joyful_2": "Love of Neighbor",
