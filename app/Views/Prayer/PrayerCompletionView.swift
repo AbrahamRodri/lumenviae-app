@@ -10,6 +10,8 @@
 //    writing a reflection, the journal's main door, or declined
 //
 
+import OSLog
+import StoreKit
 import SwiftUI
 import SwiftData
 
@@ -25,7 +27,14 @@ struct PrayerCompletionView: View {
     /// Whether the session has been recorded (to prevent duplicates)
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    /// The system's rating sheet, asked for once the screen has stood a
+    /// moment, and only as `ReviewPrompt` allows
+    @Environment(\.requestReview) private var requestReview
+
     @State private var hasRecordedSession = false
+
+    /// Different prayer days a Rosary has been finished on, this one counted
+    @State private var daysPrayed = 0
 
     /// Controls the post-prayer journal editor sheet
     @State private var showingJournalEditor = false
@@ -212,6 +221,14 @@ struct PrayerCompletionView: View {
                 showStreakChip = true
             }
         }
+        // The rating ask (W4): after the Amen, the seal and the acts, never
+        // over the journal's sheet or a voice still speaking, and only as
+        // ReviewPrompt allows. Leaving the screen first cancels it.
+        .task {
+            try? await Task.sleep(for: ReviewPrompt.delay)
+            guard !Task.isCancelled, !showingJournalEditor else { return }
+            askForReviewIfDue()
+        }
         .sheet(isPresented: $showingJournalEditor, onDismiss: noteReflection) {
             JournalEntryEditorView(
                 category: completed.category,
@@ -244,6 +261,20 @@ struct PrayerCompletionView: View {
         }
     }
 
+    private func askForReviewIfDue() {
+        let prompt = ReviewPrompt()
+        let version = ReviewPrompt.currentVersion
+        var due = prompt.shouldAsk(daysPrayed: daysPrayed, version: version, audioPlaying: AudioService.shared.isInUse)
+        #if DEBUG
+        // For the screenshot a simulator's short history cannot reach
+        if ProcessInfo.processInfo.environment["LUMEN_VIAE_ASK_REVIEW"] == "1" { due = true }
+        #endif
+        guard due else { return }
+        prompt.noteAsked(version: version)
+        ReviewPrompt.log.notice("Asked for a rating after a finished Rosary (version \(version, privacy: .public))")
+        requestReview()
+    }
+
     /// Records the completed prayer session to SwiftData.
     private func recordPrayerSession() {
         guard !hasRecordedSession else { return }
@@ -261,6 +292,7 @@ struct PrayerCompletionView: View {
         hasRecordedSession = true
 
         // Compute progress feedback now that this session counts
+        daysPrayed = service.prayedDayCount()
         streakDays = service.currentStreak()
         totalRosaries = service.totalRosaries()
 
