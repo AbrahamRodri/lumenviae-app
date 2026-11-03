@@ -336,40 +336,6 @@
         }
       }
     },
-    "%@ · %@ on Lumen Viae" : {
-      "comment" : "Text shared from the Audio Rosary: the mystery's name, then the form's name; Lumen Viae is the app's name",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ · %2$@ on Lumen Viae"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@ en Lumen Viae"
-          }
-        }
-      }
-    },
-    "%@ · %@, the Scriptural Rosary on Lumen Viae" : {
-      "comment" : "Text shared from the Scriptural Rosary: the verse on screen with its reference, then the mystery's name; Lumen Viae is the app's name",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ · %2$@, the Scriptural Rosary on Lumen Viae"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@, el Rosario bíblico en Lumen Viae"
-          }
-        }
-      }
-    },
     "%@ · %lld OF %lld" : {
       "localizations" : {
         "en" : {
@@ -789,23 +755,6 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@ — %2$@"
-          }
-        }
-      }
-    },
-    "%@ — a meditation from %@ on Lumen Viae" : {
-      "comment" : "Text shared from the prayer screen: the meditation's title, then its set's name; Lumen Viae is the app's name",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ — a meditation from %2$@ on Lumen Viae"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ — una meditación de %2$@ en Lumen Viae"
           }
         }
       }
@@ -11940,12 +11889,12 @@
         }
       }
     },
-    "Language, Save, Learn by heart, Hear it sung" : {
+    "Language, Save, Share, Learn by heart, Hear it sung" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Idioma, Guardar, Aprender de memoria, Escúchalo cantado"
+            "value" : "Idioma, Guardar, Compartir, Aprender de memoria, Escúchalo cantado"
           }
         }
       }
@@ -16810,6 +16759,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Se rezan seguidas"
+          }
+        }
+      }
+    },
+    "Prayed with Lumen Viae, a Rosary and prayer companion:" : {
+      "comment" : "Shared text from a meditation or a prayer: the line before the App Store link; Lumen Viae is the app's name",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezado con Lumen Viae, una app para el Rosario y la oración:"
           }
         }
       }

@@ -570,9 +570,12 @@ struct MysteryPrayerView: View {
             meditationId: meditation?.id ?? 0,
             audioURL: viewModel.currentRemoteAudioURL,
             voice: viewModel.currentNarrationVoice,
-            shareText: String(
-                localized: "\(title) — a meditation from \(meditationSet.name) on Lumen Viae",
-                comment: "Text shared from the prayer screen: the meditation's title, then its set's name; Lumen Viae is the app's name"
+            shareText: ShareText.meditation(
+                title: title,
+                content: meditation?.content ?? "",
+                author: meditation?.author ?? meditationSet.author,
+                source: meditation?.source ?? meditationSet.source,
+                setName: meditationSet.name
             ),
             feedbackContext: FeedbackContext(
                 meditationTitle: title,
