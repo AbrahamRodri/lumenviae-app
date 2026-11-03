@@ -2604,7 +2604,9 @@ struct ChapelLibraryTile: View {
     private var full: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 18) {
-                if Self.isSectioned {
+                if Self.openGuides.isEmpty {
+                    section(String(localized: "Books", comment: "Chapel, Library tile: section heading over the book doors (shown in capitals)"), Self.openBooks)
+                } else if Self.isSectioned {
                     section(String(localized: "Books", comment: "Chapel, Library tile: section heading over the book doors (shown in capitals)"), Self.openBooks)
                     section(String(localized: "Guides", comment: "Chapel, Library tile: section heading over the guide doors (shown in capitals)"), Self.openGuides)
                 } else {

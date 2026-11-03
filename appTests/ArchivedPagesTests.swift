@@ -5,7 +5,8 @@
 //  An archived page has no door anywhere: the page itself, the passages
 //  of In Scripture, the readings on its shelves, and the doors other
 //  readings hang on it all stand down, while the pages around them —
-//  the True Devotion book, How to Pray and its readings — stay open.
+//  the True Devotion book, Your First Rosary, and How to Pray's
+//  readings (the beginners' questions, Montfort's methods) — stay open.
 //
 
 import Foundation
@@ -17,16 +18,23 @@ import Testing
 @MainActor
 struct ArchivedPagesTests {
 
-    @Test func theFourPagesAreArchived() {
+    @Test func theFivePagesAreArchived() {
         #expect(ArchivedPages.hides(.trueDevotion))
         #expect(ArchivedPages.hides(.scripture))
         #expect(ArchivedPages.hides(.marianLibrary))
         #expect(ArchivedPages.hides(.carloAcutis))
+        #expect(ArchivedPages.hides(.howToPray))
     }
 
-    @Test func theBookAndTheGuidesStayOpen() {
+    @Test func howToPraysLessonsGoWithIt() {
+        for lesson in 0..<3 {
+            #expect(ArchivedPages.hides(.rosaryLesson(lesson)))
+        }
+    }
+
+    @Test func theBookAndTheFirstRosaryStayOpen() {
         #expect(!ArchivedPages.hides(.trueDevotionBook))
-        #expect(!ArchivedPages.hides(.howToPray))
+        #expect(!ArchivedPages.hides(.guidedRosary(.joyful)))
         #expect(!ArchivedPages.hides(.spiritualReading))
         #expect(!ArchivedPages.hides(nil))
     }
@@ -56,6 +64,9 @@ struct ArchivedPagesTests {
         router.push(.libraryReading(id: "lourdes"))
         #expect(router.path.isEmpty)
         router.push(.howToPray)
+        router.push(.rosaryLesson(0))
+        #expect(router.path.isEmpty)
+        router.push(.spiritualReading)
         #expect(router.path.count == 1)
     }
 }

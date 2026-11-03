@@ -118,8 +118,12 @@ struct WhatsNewRelease: Identifiable {
         ])
     ]
 
+    /// A version's notes, without a row whose page is archived
+    /// (`ArchivedPages`); a version left with none shows nothing
     static func release(for version: String) -> WhatsNewRelease? {
-        all.first { $0.version == version }
+        guard let release = all.first(where: { $0.version == version }) else { return nil }
+        let items = release.items.filter { !ArchivedPages.hides($0.route) }
+        return items.isEmpty ? nil : WhatsNewRelease(version: release.version, items: items)
     }
 }
 

@@ -97,9 +97,18 @@ struct WhatsNewNotesTests {
 
     @Test func theFourOhNotesNameWhatItAdded() throws {
         let release = try #require(WhatsNewRelease.release(for: "4.0"))
+        // How to Pray the Rosary was the fourth, and stands down while
+        // its page is archived
         #expect(release.items.map(\.title) == [
-            "Prayers", "The Chant Library", "The Audio Rosary", "How to Pray the Rosary"
+            "Prayers", "The Chant Library", "The Audio Rosary"
         ])
+    }
+
+    @Test func noRowOpensAnArchivedPage() {
+        for release in WhatsNewRelease.all {
+            let shown = WhatsNewRelease.release(for: release.version)?.items ?? []
+            #expect(shown.allSatisfy { !ArchivedPages.hides($0.route) }, "\(release.version)")
+        }
     }
 
     @Test func everyRowIsADoorWithItsWords() {
