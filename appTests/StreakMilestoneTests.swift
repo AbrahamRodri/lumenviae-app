@@ -53,10 +53,12 @@ struct StreakMilestoneTests {
 
     @Test func everyTitleLeadsWithItsNumber() {
         for milestone in StreakMilestone.all {
-            #expect(milestone.title.hasPrefix("\(milestone.days) days"))
+            // The count is written as the reader's language writes numbers: 1,000 in English
+            #expect(milestone.title.hasPrefix("\(milestone.days.formatted()) days"))
         }
         #expect(StreakMilestone.milestone(reachedAt: 9)?.title == "9 days · a novena")
         #expect(StreakMilestone.milestone(reachedAt: 33)?.title == "33 days")
+        #expect(StreakMilestone.milestone(reachedAt: 1000)?.name == "1,000 days")
     }
 
     @Test func everyBadgeGlyphIsInTheCatalog() {
