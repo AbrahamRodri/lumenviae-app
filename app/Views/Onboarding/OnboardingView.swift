@@ -758,14 +758,17 @@ struct OnboardingView: View {
                 )
             ]
         case .learning:
-            return [
-                Offer(
-                    icon: "lv-rosary",
-                    text: String(
-                        localized: "How to Pray the Rosary in three short lessons, then a guided first Rosary",
-                        comment: "Onboarding, What the app holds slide: one line naming something the app offers"
-                    )
-                ),
+            // The lessons' line stands only while How to Pray is not
+            // archived (`ArchivedPages`); today's mysteries close the
+            // list in its place
+            let lessons = Offer(
+                icon: "lv-rosary",
+                text: String(
+                    localized: "How to Pray the Rosary in three short lessons, then a guided first Rosary",
+                    comment: "Onboarding, What the app holds slide: one line naming something the app offers"
+                )
+            )
+            let rest = [
                 Offer(
                     icon: "lv-prayer-book",
                     text: String(
@@ -781,6 +784,7 @@ struct OnboardingView: View {
                     )
                 )
             ]
+            return ArchivedPages.hides(.howToPray) ? rest + [generalOffers[0]] : [lessons] + rest
         }
     }
 
@@ -1231,7 +1235,9 @@ struct OnboardingView: View {
     /// home screen and leave them to find the Rosary; now it opens today's
     /// mysteries, or, for someone learning, the guide to praying them.
     private var firstStep: (title: String, glyph: GoldCTAButton.Glyph, step: OnboardingFirstStep) {
-        selectedIntentions.contains(.learning)
+        // While How to Pray is archived (`ArchivedPages`) a learner
+        // begins with today's Rosary, which counts the beads for them
+        selectedIntentions.contains(.learning) && !ArchivedPages.hides(.howToPray)
             ? (
                 String(
                     localized: "Learn How to Pray It",

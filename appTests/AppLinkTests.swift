@@ -20,7 +20,7 @@ struct AppLinkTests {
     private func routerAwayFromHome() -> AppRouter {
         let router = AppRouter()
         router.switchTo(.prayers)
-        router.push(.howToPray)
+        router.push(.spiritualReading)
         return router
     }
 
@@ -61,7 +61,7 @@ struct AppLinkTests {
     func aLinkLeavesAPrayerAlone(_ route: AppRoute) throws {
         let router = AppRouter()
         router.switchTo(.prayers)
-        router.push(.howToPray)
+        router.push(.spiritualReading)
         router.push(route)
         router.open(try #require(URL(string: "lumenviae://home")))
         #expect(router.selectedTab == .prayers)

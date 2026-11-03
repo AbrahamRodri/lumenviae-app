@@ -520,7 +520,7 @@ struct ExploreView: View {
             LibraryEntry(id: "rosaryAloud", icon: PrayerShortcut.rosaryAloud.icon, title: String(localized: "The Audio Rosary", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "audio rosary holy rosary aloud said spoken listen voice hear prayers learn by ear no meditation") { openTodaysMysteries() },
             LibraryEntry(id: "howToPray", icon: "lv-rosary", title: String(localized: "How to Pray", comment: "Explore page and search: the name of a door to a page of the app"),
-                         matchText: "how to pray the rosary guide montfort methods") { router.push(.howToPray) },
+                         matchText: "how to pray the rosary guide montfort methods", route: .howToPray) { router.push(.howToPray) },
             // Not the Gospel glyph: that is the Scriptural Rosary's, and
             // the two doors stood side by side wearing the same one
             LibraryEntry(id: "scripture", icon: "lv-breviary", title: String(localized: "In Scripture", comment: "Explore page and search: the name of a door to a page of the app"),
@@ -847,7 +847,7 @@ struct ExploreView: View {
     /// thing to discover, so it stays off the browse page — typed
     /// search still finds its door, and the Chapel's Prayer Streak tile
     /// and Settings → Devotion keep the real ones.
-    /// How to Pray is found by search and from Home and the Chapel; the
+    /// How to Pray is found by search alone, and not while archived; the
     /// Rosary's other two forms stand on every mysteries' page.
     private var studyEntries: [LibraryEntry] {
         libraryEntries.filter(\.inLearnMore)

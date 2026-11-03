@@ -28,15 +28,19 @@ enum ArchivedPages {
         .scripture,  // In Scripture
         .marianLibrary,  // The Marian Library
         .carloAcutis,  // St. Carlo Acutis
+        .howToPray,  // How to Pray, with its three lessons (Nov 2026)
     ]
 
     /// Whether a route leads into an archived page: the page itself, a
-    /// passage of In Scripture, or a reading on one of its shelves
+    /// passage of In Scripture, a lesson of How to Pray, or a reading on
+    /// one of its shelves
     static func hides(_ route: AppRoute?) -> Bool {
         guard let route else { return false }
         switch route {
         case .mysteryInScripture:
             return routes.contains(.scripture)
+        case .rosaryLesson:
+            return routes.contains(.howToPray)
         case .libraryReading(let id):
             guard let shelf = LibraryReadings.locate(id: id)?.section else { return false }
             return hides(shelf: shelf)
