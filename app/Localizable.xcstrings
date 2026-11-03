@@ -62,12 +62,45 @@
         }
       }
     },
+    "%@ — a meditation from %@ on Lumen Viae" : {
+      "comment" : "Text shared from the prayer screen: the meditation's title, then its set's name; Lumen Viae is the app's name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ — a meditation from %2$@ on Lumen Viae"
+          }
+        }
+      }
+    },
     "%@ · %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "%@ · %@ on Lumen Viae" : {
+      "comment" : "Text shared from the Audio Rosary: the mystery's name, then the form's name; Lumen Viae is the app's name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@ on Lumen Viae"
+          }
+        }
+      }
+    },
+    "%@ · %@, the Scriptural Rosary on Lumen Viae" : {
+      "comment" : "Text shared from the Scriptural Rosary: the verse on screen with its reference, then the mystery's name; Lumen Viae is the app's name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@, the Scriptural Rosary on Lumen Viae"
           }
         }
       }
@@ -82,11 +115,50 @@
         }
       }
     },
+    "%@ · %lld of 10" : {
+      "comment" : "Guided Rosary: where on the rosary the fingers are: the mystery's name, then which of the decade's ten Hail Marys, like The Annunciation · 3 of 10",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$lld of 10"
+          }
+        }
+      }
+    },
     "%@ · PRAYED" : {
 
     },
+    "%@ · the large bead" : {
+      "comment" : "Guided Rosary: where on the rosary the fingers are: the mystery's name, then the large bead its Our Father is said on"
+    },
+    "%@ · today" : {
+      "comment" : "A Rosary's own page: the Mysteries row's value when today's mysteries are chosen, like Joyful · today"
+    },
     "%@ · waiting for you" : {
 
+    },
+    "%@ %@" : {
+      "comment" : "VoiceOver: a narration position or length, minutes then seconds, like 3 minutes 20 seconds",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ %@ Mystery" : {
+      "comment" : "Where an unfinished Rosary of an unknown set stopped, after an article; the ordinal is a word like Third, then the set's name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ Mystery"
+          }
+        }
+      }
     },
     "%@ app icon" : {
 
@@ -97,8 +169,23 @@
     "%@ could not be reached. Check your connection and try again." : {
 
     },
+    "%@ follows on the next swipe." : {
+      "comment" : "Scriptural Rosary, cue once a decade is prayed: the next mystery's title, like The Second Joyful Mystery"
+    },
+    "%@ follows on the next tap." : {
+      "comment" : "Meditation reader, bead row cue once a decade is prayed: the next mystery's title, like The Second Joyful Mystery"
+    },
+    "%@ Glorious Mystery" : {
+      "comment" : "Where an unfinished Rosary stopped, set inside a sentence after an article (Continue at the …); the ordinal is a word like Third"
+    },
     "%@ in" : {
 
+    },
+    "%@ Joyful Mystery" : {
+      "comment" : "Where an unfinished Rosary stopped, set inside a sentence after an article (Continue at the …); the ordinal is a word like Third"
+    },
+    "%@ Luminous Mystery" : {
+      "comment" : "Where an unfinished Rosary stopped, set inside a sentence after an article (Continue at the …); the ordinal is a word like Third"
     },
     "%@ of %@" : {
       "localizations" : {
@@ -110,8 +197,17 @@
         }
       }
     },
+    "%@ Sorrow of Mary" : {
+      "comment" : "Where an unfinished chaplet stopped, set inside a sentence after an article (Continue at the …); the ordinal is a word like Third"
+    },
+    "%@ Sorrowful Mystery" : {
+      "comment" : "Where an unfinished Rosary stopped, set inside a sentence after an article (Continue at the …); the ordinal is a word like Third"
+    },
     "%@ theme" : {
 
+    },
+    "%@ times" : {
+      "comment" : "VoiceOver: the narration speed as a multiple, like 1.25 times"
     },
     "%@, %@" : {
       "comment" : "VoiceOver for a book on the home shelf: title, author",
@@ -266,6 +362,9 @@
         }
       }
     },
+    "%@, today's" : {
+
+    },
     "%@: %@" : {
       "localizations" : {
         "en" : {
@@ -286,6 +385,17 @@
         }
       }
     },
+    "%@: %@." : {
+      "comment" : "Guided Rosary, VoiceOver announcement as a mystery is announced: where on the rosary, then the mystery's name",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$@."
+          }
+        }
+      }
+    },
     "%@: the %@%@" : {
       "localizations" : {
         "en" : {
@@ -297,6 +407,7 @@
       }
     },
     "%@. %@" : {
+      "comment" : "Guided Rosary, VoiceOver announcement as a step arrives: where on the rosary, then what to do",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -392,6 +503,9 @@
     "%lld Masses today · choose one" : {
 
     },
+    "%lld minutes" : {
+      "comment" : "VoiceOver: part of a narration position or length, a number of minutes"
+    },
     "%lld minutes of silence" : {
 
     },
@@ -399,6 +513,7 @@
 
     },
     "%lld of %lld" : {
+      "comment" : "Prayer screen, the closing prayers: which prayer of the close this is, like 1 of 3\nPrayer screen, the opening prayers on the cross: which prayer of the opening this is, like 2 of 7\nStrand margin, second of two short lines naming a Hail Mary bead: which Hail Mary of the decade, like 4 of 10",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -418,6 +533,28 @@
         }
       }
     },
+    "%lld of %lld set of meditations" : {
+      "comment" : "Mysteries' page, while a kind is chosen: how many sets show of all of them, when there is one set",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld set of meditations"
+          }
+        }
+      }
+    },
+    "%lld of %lld sets of meditations" : {
+      "comment" : "Mysteries' page, while a kind is chosen: how many sets show of all of them, like 2 of 6 sets of meditations",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld sets of meditations"
+          }
+        }
+      }
+    },
     "%lld of %lld, %@" : {
       "localizations" : {
         "en" : {
@@ -430,6 +567,15 @@
     },
     "%lld ROSARIES PRAYED" : {
 
+    },
+    "%lld seconds" : {
+      "comment" : "VoiceOver: part of a narration position or length, a number of seconds"
+    },
+    "%lld set of meditations" : {
+      "comment" : "Mysteries' page: the number of meditation sets, when there is one"
+    },
+    "%lld sets of meditations" : {
+      "comment" : "Mysteries' page: the number of meditation sets, like 6 sets of meditations"
     },
     "%lld. %@, %@" : {
       "localizations" : {
@@ -456,6 +602,9 @@
     "❝" : {
 
     },
+    "0 seconds" : {
+      "comment" : "VoiceOver: a narration position or length of nothing yet"
+    },
     "1 chapter" : {
 
     },
@@ -471,6 +620,9 @@
     "1 earlier chapter" : {
 
     },
+    "1 minute" : {
+      "comment" : "VoiceOver: part of a narration position or length, one minute"
+    },
     "1 minute of silence" : {
 
     },
@@ -479,6 +631,9 @@
     },
     "1 ROSARY PRAYED" : {
 
+    },
+    "1 second" : {
+      "comment" : "VoiceOver: part of a narration position or length, one second"
     },
     "1×" : {
 
@@ -498,17 +653,32 @@
     "A 33-day preparation to give yourself to Jesus through Mary." : {
 
     },
+    "A Bible verse for every Hail Mary" : {
+      "comment" : "Mysteries' page, Ways to pray: the line under The Scriptural Rosary"
+    },
     "A COMPANION TO THE BOOK" : {
 
     },
     "A dark chapel lit by warm gold" : {
       "comment" : "Settings, Appearance: the line under a color theme"
     },
+    "A decade" : {
+      "comment" : "How to Pray, the beads lesson: name of a part of the rosary, chosen to light it on a drawing"
+    },
     "A favourite" : {
 
     },
     "A GUIDED ROSARY" : {
 
+    },
+    "A Hail Mary for charity" : {
+      "comment" : "Prayer screen: caption for the third of the three opening Hail Marys, said for charity"
+    },
+    "A Hail Mary for faith" : {
+      "comment" : "Prayer screen: caption for the first of the three opening Hail Marys, said for faith"
+    },
+    "A Hail Mary for hope" : {
+      "comment" : "Prayer screen: caption for the second of the three opening Hail Marys, said for hope"
     },
     "A litany is a prayer of short petitions, each answered by the same response." : {
 
@@ -537,14 +707,20 @@
     "A single strike of a small bronze bell" : {
       "comment" : "Settings, Reminder Sound: what the sound is like"
     },
+    "A verse for every bead" : {
+      "comment" : "The Scriptural Rosary's own page: small capitals over its name, saying what it is"
+    },
     "A verse is shown for each Hail Mary. You read and pray in silence." : {
       "comment" : "The line under a Rosary choice, saying what the chosen option does"
+    },
+    "A voice leads every prayer, with no readings between." : {
+      "comment" : "The Audio Rosary's own page: the italic line under its name"
     },
     "A voice reads each prayer to you." : {
       "comment" : "Settings, Prayers Tab Audio: the line under the chosen option"
     },
     "About" : {
-      "comment" : "About: a row's name, a heading, or the line under it"
+      "comment" : "A Rosary's own page, the ledger below the choices: label of the row describing the form\nA meditation set's page, the ledger: label of the row describing the set\nAbout: a row's name, a heading, or the line under it"
     },
     "About %@" : {
 
@@ -557,6 +733,9 @@
     },
     "Add" : {
 
+    },
+    "Add a reflection" : {
+      "comment" : "Prayer screen, More menu: row that opens the journal editor"
     },
     "Add chants in the order you will sing them, and pauses between them for silence or a note in red." : {
 
@@ -609,6 +788,9 @@
     "After the Hail Marys, swipe left" : {
 
     },
+    "After the Rosary" : {
+      "comment" : "Voice & speed sheet: section label over the prayers that may be said after the Rosary"
+    },
     "AFTER THE ROSARY" : {
 
     },
@@ -640,13 +822,13 @@
       "comment" : "Settings, Reminder Sound: the name of a notification sound"
     },
     "Amen" : {
-
+      "comment" : "Drawn strand: the label beside the last bead, where the Rosary ends\nGold button on the Rosary's last bead that finishes the Rosary\nGuided Rosary, last step: the gold button that finishes the Rosary\nPrayer screen, last closing prayer: the gold button that finishes the Rosary"
     },
     "Amen — close the day and reflect" : {
 
     },
     "Amen — finish the Rosary" : {
-
+      "comment" : "Prayer screen: VoiceOver name of the check on the last mystery that finishes the Rosary"
     },
     "Amen." : {
 
@@ -656,6 +838,9 @@
     },
     "An Our Father, Hail Mary and Glory Be after the Rosary, for what the Pope asks the Church to pray for." : {
       "comment" : "Settings, After the Rosary: the line under a prayer said after the Rosary"
+    },
+    "An Our Father, the prayer Jesus taught." : {
+      "comment" : "How to Pray, the beads lesson: what is prayed on this part of the rosary"
     },
     "and %lld more" : {
 
@@ -697,7 +882,10 @@
 
     },
     "Back" : {
-
+      "comment" : "A Rosary's own page: VoiceOver name of the back button\nGuided Rosary: the quiet button back to the step before\nPrayer screen, the opening and closing prayers: the quiet button back to the prayer before"
+    },
+    "Back 10 seconds" : {
+      "comment" : "Prayer screen: VoiceOver name of the button that skips the narration back ten seconds"
     },
     "Back a step" : {
 
@@ -726,8 +914,14 @@
     "BEFORE YOU BEGIN" : {
 
     },
+    "Begin" : {
+      "comment" : "Guided Rosary welcome: the gold button that begins the first Rosary"
+    },
     "BEGIN" : {
       "comment" : "Home, Today's Prayer: small capitals under the consecration row before it is started"
+    },
+    "Begin again" : {
+      "comment" : "Guided Rosary welcome, with a place kept: the quiet button that starts again from the Sign of the Cross"
     },
     "Begins %@" : {
 
@@ -812,6 +1006,12 @@
     "Choose a day" : {
 
     },
+    "Choose a meditation: a short reading for each of Mary's seven sorrows, to listen to or read in silence." : {
+      "comment" : "Seven Sorrows page: the line under MEDITATIONS saying what a meditation is"
+    },
+    "Choose a meditation: a short reading for each of the five mysteries, to listen to or read in silence." : {
+      "comment" : "Mysteries' page: the line under MEDITATIONS saying what a meditation is"
+    },
     "Choose a painting or a photo" : {
 
     },
@@ -833,6 +1033,15 @@
     "Choose none and your reminders use a general set of words." : {
       "comment" : "Settings, What Brings You to the Rosary sheet: the note at its foot"
     },
+    "Choose the mysteries" : {
+      "comment" : "A Rosary's own page: VoiceOver hint on the Mysteries row"
+    },
+    "Choose the Mysteries" : {
+      "comment" : "Choose the Mysteries sheet from a Rosary's own page: its title"
+    },
+    "Choose the voice and its speed" : {
+      "comment" : "A Rosary's own page: VoiceOver hint on the Voice & speed row"
+    },
     "Choose your feast" : {
 
     },
@@ -841,6 +1050,12 @@
     },
     "Classic Catholic books to read, or to listen to" : {
 
+    },
+    "Clear" : {
+      "comment" : "Mysteries' page, kinds of meditation tray: the button that clears the chosen kinds"
+    },
+    "Clear filters" : {
+      "comment" : "Mysteries' page: button under the line saying no set matches the chosen kinds"
     },
     "Clear search" : {
 
@@ -852,16 +1067,25 @@
 
     },
     "Close" : {
-
+      "comment" : "A meditation set's page: button that folds away the first meditation's preview"
     },
     "CLOSE" : {
 
+    },
+    "Close the reader" : {
+      "comment" : "Meditation reader: VoiceOver name of the close button, back to the player"
     },
     "Close the search" : {
 
     },
     "Closes this part's chapters" : {
 
+    },
+    "Closing" : {
+      "comment" : "Strand margin, first of two short lines: Closing / Prayers, the prayers after the last decade"
+    },
+    "Closing prayers · %@" : {
+      "comment" : "Prayer screen, said aloud: the closing prayers, then the prayer being said, like Closing prayers · Hail, Holy Queen"
     },
     "Consecrated" : {
 
@@ -899,6 +1123,9 @@
     "CONTENTS · %lld CHAPTERS" : {
 
     },
+    "Continue" : {
+      "comment" : "Guided Rosary welcome, with a place kept: the gold button that takes it up"
+    },
     "CONTINUE READING" : {
 
     },
@@ -922,6 +1149,9 @@
     },
     "Couldn't load — check your connection" : {
       "comment" : "Home: an unfinished Rosary could not be loaded to continue it"
+    },
+    "Couldn't load the meditations. Check your connection and try again." : {
+      "comment" : "Mysteries' page: shown when the meditation sets could not be loaded"
     },
     "Couldn't load the meditations. Check your connection. Prayers, chants, mysteries and books can still be searched." : {
 
@@ -1035,7 +1265,7 @@
 
     },
     "Done" : {
-      "comment" : "Send Feedback: closes the sheet after sending, or after the note was copied"
+      "comment" : "Send Feedback: closes the sheet after sending, or after the note was copied\nSheet header button that closes the sheet"
     },
     "DONE" : {
 
@@ -1106,6 +1336,9 @@
     "Each mystery has its fruit — the grace, by long tradition, to ask for while its decade is prayed. The cards name it under Ask for." : {
 
     },
+    "Each mystery, a scene from the lives of Jesus and Mary, is told verse by verse. The Our Father bead names the mystery and a grace to ask for, each of the Hail Marys has its own verse, and the Glory Be closes it." : {
+      "comment" : "The Scriptural Rosary's own page, ledger: what the form is"
+    },
     "Each Rosary you pray is counted here, by its mysteries." : {
 
     },
@@ -1129,6 +1362,12 @@
     },
     "EN" : {
 
+    },
+    "End as you began, with the Sign of the Cross." : {
+      "comment" : "Guided Rosary, last step: what to do before the final Sign of the Cross"
+    },
+    "End prayer" : {
+      "comment" : "Prayer screen, More menu: row that leaves the Rosary\nPrayer screen: VoiceOver name of the close button that leaves the Rosary"
     },
     "English" : {
       "comment" : "Settings, Prayer Language: a choice of the language prayers are shown in"
@@ -1160,14 +1399,26 @@
     "Everything you are, given to Jesus through Mary" : {
 
     },
+    "Expand player" : {
+      "comment" : "Meditation reader, More menu: row that goes back to the full player"
+    },
     "Explore" : {
 
     },
     "Family Morning Prayer" : {
 
     },
+    "Fatima Prayer" : {
+      "comment" : "Strand margin, second of two short lines naming the bead that closes a decade: Glory Be & / Fatima Prayer"
+    },
     "Fetching the text from Project Gutenberg.\nThis happens once." : {
 
+    },
+    "Fifth" : {
+      "comment" : "Ordinal word for a decade's place, set before Mystery or Sorrow in titles like The Fifth Joyful Mystery"
+    },
+    "Filter by kind" : {
+      "comment" : "Mysteries' page: VoiceOver name of the funnel button that opens the kinds of meditation"
     },
     "Find a line" : {
 
@@ -1177,6 +1428,12 @@
     },
     "Finding Peace" : {
       "comment" : "What brings you to the Rosary: one reason, as a short title"
+    },
+    "First" : {
+      "comment" : "Ordinal word for a decade's place, set before Mystery or Sorrow in titles like The First Joyful Mystery"
+    },
+    "Follow the narration" : {
+      "comment" : "Meditation reader, text options sheet: switch that scrolls the page with the voice"
     },
     "For an intention of your own. It burns for a day, and stays on your device." : {
 
@@ -1191,7 +1448,10 @@
 
     },
     "For the Pope's intentions" : {
-      "comment" : "Settings, After the Rosary: name of a prayer said after the Rosary"
+      "comment" : "Prayer screen: caption while the Our Father, Hail Mary and Glory Be for the Pope's intentions are said after the Rosary\nSettings, After the Rosary: name of a prayer said after the Rosary"
+    },
+    "Forward 10 seconds" : {
+      "comment" : "Prayer screen: VoiceOver name of the button that skips the narration forward ten seconds"
     },
     "Forward fifteen seconds" : {
 
@@ -1199,8 +1459,14 @@
     "Forward ten seconds" : {
 
     },
+    "Fourth" : {
+      "comment" : "Ordinal word for a decade's place, set before Mystery or Sorrow in titles like The Fourth Joyful Mystery"
+    },
     "Frees storage; streaming still works online" : {
       "comment" : "Settings, Offline: the line under a row"
+    },
+    "From" : {
+      "comment" : "A Rosary's own page, ledger label of the row naming where the words come from\nA meditation set's page, ledger label of the row naming the author and the source"
     },
     "From %@\n%@ · written about 1712" : {
       "localizations" : {
@@ -1218,14 +1484,35 @@
     "FULL" : {
 
     },
+    "Gallery" : {
+      "comment" : "Mysteries' page: VoiceOver name of the button that shows the sets as a gallery of tiles"
+    },
     "Gets the latest meditations; saved audio stays" : {
       "comment" : "Settings, Offline: the line under a row"
+    },
+    "Getting the prayers ready · %lld%%" : {
+      "comment" : "Prayer screen: while the recorded prayers are fetched, with how far it has gone as a percentage"
+    },
+    "Getting the prayers ready…" : {
+      "comment" : "Prayer screen: while the recorded prayers are fetched before the Rosary is said aloud"
+    },
+    "Give feedback" : {
+      "comment" : "Prayer screen, More menu: row that opens the feedback form"
     },
     "Give yourself entirely to Mary — body and soul, goods and merits, without reserve and for ever — so as to belong entirely to Jesus through her." : {
 
     },
     "Give yourself to Jesus through Mary" : {
       "comment" : "Home, Today's Prayer: line under the consecration before it begins"
+    },
+    "Glory Be" : {
+      "comment" : "Prayer screen: name of the bead that closes a sorrow of the chaplet, the Glory Be alone"
+    },
+    "Glory Be &" : {
+      "comment" : "Strand margin, first of two short lines naming the bead that closes a decade: Glory Be & / Fatima Prayer"
+    },
+    "Glory Be & Fatima Prayer" : {
+      "comment" : "Prayer screen: name of the bead that closes a decade, said with the Glory Be and the Fatima Prayer"
     },
     "Go to the reading" : {
 
@@ -1254,8 +1541,28 @@
     "GRACE TO ASK FOR" : {
 
     },
+    "Grace to ask for · %@" : {
+      "comment" : "Scriptural Rosary, under the Our Father: the grace to ask for in this mystery, like Grace to ask for · Humility"
+    },
     "Growing Closer to Mary" : {
       "comment" : "What brings you to the Rosary: one reason, as a short title"
+    },
+    "Hail Mary" : {
+      "comment" : "Strand margin, first of two short lines naming a Hail Mary bead: Hail Mary / 4 of 10"
+    },
+    "Hail Mary · %lld of %lld" : {
+      "comment" : "Prayer screen: name of a Hail Mary bead and which of the decade's Hail Marys it is, like Hail Mary · 4 of 10",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hail Mary · %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Hail, Holy Queen" : {
+      "comment" : "Prayer screen: caption while the Hail, Holy Queen is said after the last decade"
     },
     "HALF" : {
 
@@ -1314,6 +1621,9 @@
     "HOLD" : {
 
     },
+    "Hold a rosary if you have one; if not, your ten fingers will count the beads. Pray aloud or silently, as you like.\n\nThe drawing above is a rosary. The bead you are on will light up as you go, so you can always find your place." : {
+      "comment" : "Guided Rosary welcome: two paragraphs, separated by a blank line, on what to hold and the drawing of a rosary"
+    },
     "Holds your turn" : {
 
     },
@@ -1366,6 +1676,9 @@
     },
     "Image, %@" : {
 
+    },
+    "In honor of her tears · %lld of 3" : {
+      "comment" : "Prayer screen, end of the Seven Sorrows chaplet: caption for one of three Hail Marys said in honor of Mary's tears"
     },
     "IN ONE SENTENCE" : {
 
@@ -1466,6 +1779,9 @@
     "Leave" : {
 
     },
+    "Leave your first Rosary" : {
+      "comment" : "Guided Rosary: VoiceOver name of the close button"
+    },
     "Leave your first Rosary?" : {
 
     },
@@ -1507,8 +1823,20 @@
         }
       }
     },
+    "List" : {
+      "comment" : "Mysteries' page: VoiceOver name of the button that shows the sets as a list"
+    },
     "LISTEN" : {
 
+    },
+    "Listen and pray along" : {
+      "comment" : "Mysteries' page, Ways to pray: the line under The Audio Rosary\nThe Audio Rosary's own page: small capitals over its name, saying what it is"
+    },
+    "Listen first," : {
+      "comment" : "Strand margin while the beads are locked, first of two short lines: Listen first, / then swipe"
+    },
+    "Listen to the meditation, then tap for the first Hail Mary" : {
+      "comment" : "Meditation reader, bead row cue on the Our Father bead of a meditation with narration"
     },
     "Loading %@" : {
 
@@ -1564,8 +1892,14 @@
     "Marian Blue" : {
       "comment" : "Settings, App Icon: the name of an icon\nSettings, Appearance: the name of a color theme"
     },
+    "Meditation" : {
+      "comment" : "Strand margin, said aloud: the bead is named for the meditation being read"
+    },
     "Meditation Only" : {
       "comment" : "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen"
+    },
+    "Meditations" : {
+      "comment" : "Mysteries' page: heading over the shelf of meditation sets"
     },
     "Meditations and audio will stream when you're online. You can download everything again at any time." : {
 
@@ -1601,7 +1935,7 @@
 
     },
     "More" : {
-
+      "comment" : "Mysteries' page: heading over the meditation sets that carry no kind, closing the list\nPrayer screen: VoiceOver name of the button that opens the menu of more actions"
     },
     "More for %@" : {
 
@@ -1615,8 +1949,20 @@
     "Move down" : {
 
     },
+    "Move on to the medal, and close the last decade." : {
+      "comment" : "Guided Rosary: what to do when the fifth and last decade closes"
+    },
+    "Move on to the next large bead. Before its Our Father, close the decade: the Glory Be, and the prayer Our Lady asked for at Fatima. You have prayed one decade." : {
+      "comment" : "Guided Rosary: what to do when the first decade closes"
+    },
     "Move up" : {
 
+    },
+    "Move up to the next large bead. Before anything else is said on it, give glory to the Holy Trinity." : {
+      "comment" : "Guided Rosary: what to do before the Glory Be on the second large bead"
+    },
+    "Move your fingers up to the first large bead, and pray the prayer Jesus taught His disciples." : {
+      "comment" : "Guided Rosary: what to do before the first Our Father"
     },
     "Move, resize or hide sections" : {
 
@@ -1626,6 +1972,9 @@
     },
     "My Prayers" : {
 
+    },
+    "Mysteries" : {
+      "comment" : "A Rosary's own page: name of the row that opens the choice of mysteries"
     },
     "Mystery, topic, or leave blank" : {
 
@@ -1658,7 +2007,7 @@
       "comment" : "What brings you to the Rosary: the line under a reason"
     },
     "Next" : {
-
+      "comment" : "Guided Rosary: the gold button on to the next step"
     },
     "NEXT" : {
 
@@ -1676,10 +2025,10 @@
 
     },
     "Next mystery" : {
-
+      "comment" : "Prayer screen, counted on one's own rosary: VoiceOver name of the arrow on to the next mystery"
     },
     "Next prayer" : {
-
+      "comment" : "Prayer screen, said aloud: VoiceOver name of the button that goes on a prayer\nPrayer screen, the opening and closing prayers: the button on to the next prayer"
     },
     "Next prayer, %@" : {
 
@@ -1751,6 +2100,9 @@
     "None chosen yet." : {
 
     },
+    "Normal speed" : {
+      "comment" : "VoiceOver: the narration speed at 1x"
+    },
     "Not begun" : {
 
     },
@@ -1761,6 +2113,9 @@
 
     },
     "NOT NOW" : {
+
+    },
+    "Not ready" : {
 
     },
     "Not set" : {
@@ -1802,6 +2157,9 @@
     "NOW · UNTIL %@" : {
       "comment" : "Home, Today's Prayer: small capitals, the hour of the Office now and when it ends, like NOW · UNTIL NOON"
     },
+    "Now the heart of the Rosary. Each decade is spent with one scene from the life of Jesus and Mary. Say its name, aloud or silently, and picture it." : {
+      "comment" : "Guided Rosary: what to do when the first mystery is announced"
+    },
     "Now, %@" : {
 
     },
@@ -1812,7 +2170,7 @@
       "comment" : "Settings: the line under a row\nVoiceOver: a switch is off"
     },
     "Offline" : {
-      "comment" : "Settings: a section heading"
+      "comment" : "A meditation set's page, ledger label of the row that saves the set for praying without a connection\nSettings: a section heading"
     },
     "OK" : {
 
@@ -1823,11 +2181,26 @@
     "On %@" : {
 
     },
+    "On each of the next three small beads, a Hail Mary. This first one asks God for an increase of faith." : {
+      "comment" : "Guided Rosary: what to do on the first of the three small beads, a Hail Mary for faith"
+    },
+    "On each, the Glory Be and the Fatima Prayer close one decade; then the next mystery is announced, and its Our Father said on the same bead." : {
+      "comment" : "How to Pray, the beads lesson: what is prayed on this part of the rosary"
+    },
     "On My Rosary" : {
       "comment" : "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen"
     },
     "On the home screen, tap the sliders at the top left, then Prayer Experience → Text Size. Drag the slider toward the larger \"A\" to increase the meditation text size." : {
       "comment" : "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words"
+    },
+    "On the large bead, the Our Father." : {
+      "comment" : "Guided Rosary: what to do on each later decade's Our Father"
+    },
+    "On the large bead, the Our Father. Keep the scene before you as you pray." : {
+      "comment" : "Guided Rosary: what to do on the first decade's Our Father"
+    },
+    "On the next large bead, before its Our Father, close the decade." : {
+      "comment" : "Guided Rosary: what to do when the second, third or fourth decade closes"
     },
     "On the Screen" : {
       "comment" : "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen"
@@ -1837,6 +2210,9 @@
     },
     "One short note, when you finish a Rosary prayed with meditations: which meditations they were, and whether you listened to the Whole Rosary. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary, the Audio Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us." : {
       "comment" : "Privacy Policy: a section's text; keep it as plain and exact as the English"
+    },
+    "One verse of Scripture for every Hail Mary." : {
+      "comment" : "The Scriptural Rosary's own page: the italic line under its name"
     },
     "One warm tone with a soft shimmer" : {
       "comment" : "Settings, Reminder Sound: what the sound is like"
@@ -1856,8 +2232,14 @@
     "Opened" : {
 
     },
+    "Opening" : {
+      "comment" : "Strand margin, first of two short lines: Opening / Prayers, the prayers on the cross and first beads"
+    },
     "Opening and Closing Prayers" : {
       "comment" : "Settings, The Rosary: whether a Rosary prayed in silence shows the prayers on the cross and first beads"
+    },
+    "Opening prayers · %@" : {
+      "comment" : "Prayer screen, said aloud: the opening prayers, then the prayer being said, like Opening prayers · The Apostles' Creed"
     },
     "Opens %@" : {
 
@@ -1912,6 +2294,18 @@
     },
     "OTHER FEASTS" : {
 
+    },
+    "Our Father" : {
+      "comment" : "Prayer screen: name of the bead under the hand, the Our Father"
+    },
+    "Our Father · %lld Hail Marys · Glory Be" : {
+      "comment" : "Scriptural Rosary counted on one's own rosary: what the hand counts on one decade, with a number of Hail Marys"
+    },
+    "Our Father · Seven Hail Marys · Glory Be" : {
+      "comment" : "Scriptural Rosary counted on one's own rosary, Seven Sorrows chaplet: what the hand counts on one sorrow"
+    },
+    "Our Father · Ten Hail Marys · Glory Be" : {
+      "comment" : "Scriptural Rosary counted on one's own rosary: what the hand counts on one decade"
     },
     "Our heart is restless until it rests in thee. — St. Augustine" : {
 
@@ -1978,7 +2372,7 @@
 
     },
     "Pinned" : {
-
+      "comment" : "Mysteries' page: heading over the meditation sets the reader pinned to the top"
     },
     "PLACE IT HERE" : {
 
@@ -1995,11 +2389,20 @@
     "Play the reading" : {
 
     },
+    "Playback" : {
+      "comment" : "Playback settings sheet on the prayer screen: its title"
+    },
+    "Playback settings" : {
+      "comment" : "Prayer screen: VoiceOver name of the button that opens the voice, speed and Rosary choices"
+    },
+    "Played after the closing prayer, with the Whole Rosary." : {
+      "comment" : "Voice & speed sheet: note under the prayers after the Rosary, which are said only when every prayer is said aloud"
+    },
     "Played after the closing prayer, with the Whole Rosary. Audio is at the top of this section." : {
       "comment" : "Settings: the line under a row"
     },
     "Played after the closing prayer." : {
-      "comment" : "Settings: the line under a row"
+      "comment" : "Settings: the line under a row\nVoice & speed sheet, Audio Rosary: note under the prayers after the Rosary"
     },
     "Played lately" : {
 
@@ -2036,7 +2439,7 @@
       }
     },
     "Pray" : {
-
+      "comment" : "A Rosary's own page: the gold button that begins the Rosary"
     },
     "PRAY" : {
 
@@ -2089,8 +2492,11 @@
     "PRAYER RECORD" : {
       "comment" : "Tab bar label for streaks and prayer history, in capitals"
     },
+    "Prayer to Saint Michael" : {
+      "comment" : "Prayer screen: caption while the Prayer to Saint Michael is said after the Rosary"
+    },
     "Prayers" : {
-
+      "comment" : "Strand margin, second of two short lines: Opening / Prayers or Closing / Prayers"
     },
     "PRAYERS" : {
       "comment" : "Tab bar label for the prayer book, in capitals"
@@ -2122,6 +2528,9 @@
     "Preparing prayer" : {
 
     },
+    "Preparing the meditations" : {
+      "comment" : "A meditation set's page: shown on the Pray button while the set is still loading after Pray was tapped"
+    },
     "Preparing your prayer experience..." : {
 
     },
@@ -2141,10 +2550,10 @@
 
     },
     "Previous mystery" : {
-
+      "comment" : "Prayer screen, counted on one's own rosary: VoiceOver name of the arrow back to the previous mystery"
     },
     "Previous prayer" : {
-
+      "comment" : "Prayer screen, said aloud: VoiceOver name of the button that goes back a prayer"
     },
     "Previous reading" : {
 
@@ -2174,8 +2583,17 @@
     "Read in Silence" : {
       "comment" : "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen"
     },
+    "Read the first meditation" : {
+      "comment" : "A meditation set's page: button that unfolds the first meditation's text"
+    },
     "Read the licence" : {
 
+    },
+    "Read the meditation" : {
+      "comment" : "Prayer screen: VoiceOver name of the button that opens the meditation as text"
+    },
+    "Read the meditation, then tap for the first Hail Mary" : {
+      "comment" : "Meditation reader, bead row cue on the Our Father bead of a meditation with no narration"
     },
     "Reading %lld of %lld, %@" : {
       "localizations" : {
@@ -2217,6 +2635,9 @@
     "Reminders" : {
       "comment" : "Privacy Policy: a heading, or the date the policy was last changed\nSettings, What Brings You to the Rosary sheet: the small label over its title"
     },
+    "Remove" : {
+      "comment" : "A meditation set's page: button that deletes the saved offline copy"
+    },
     "REMOVE" : {
 
     },
@@ -2231,6 +2652,9 @@
     },
     "Remove from the device" : {
 
+    },
+    "Remove offline copy" : {
+      "comment" : "Prayer screen, More menu: row that deletes the saved narration"
     },
     "Remove offline downloads?" : {
 
@@ -2310,6 +2734,9 @@
     "Save as your own set" : {
 
     },
+    "Save for offline" : {
+      "comment" : "A meditation set's page: button that downloads the set, its narration and painting\nPrayer screen, More menu: row that saves the narration for praying without a connection"
+    },
     "Save for Offline" : {
       "comment" : "Settings, Offline: a row's name"
     },
@@ -2334,6 +2761,9 @@
     "Saving your photo…" : {
 
     },
+    "Saving…" : {
+      "comment" : "Prayer screen, More menu: the download row while the narration is being saved"
+    },
     "Say anything you'd like us to hear…" : {
       "comment" : "Send Feedback: the placeholder in the empty message field; it changes with the topic"
     },
@@ -2343,11 +2773,28 @@
     "say it, then reveal" : {
 
     },
+    "Say the name of the next mystery, and picture the scene." : {
+      "comment" : "Guided Rosary: what to do when each later mystery is announced"
+    },
     "Scenes from the lives of Jesus and Mary" : {
 
     },
     "Scenes from the lives of Jesus and Mary. Choose which to pray." : {
 
+    },
+    "Scriptural Rosary" : {
+      "comment" : "Scriptural Rosary's prayer screen: the header's name, set in capitals"
+    },
+    "Scripture · %lld of %lld" : {
+      "comment" : "Prayer screen: caption while the verse before a Hail Mary is read, like Scripture · 4 of 10",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Scripture · %1$lld of %2$lld"
+          }
+        }
+      }
     },
     "Scrolls to them" : {
 
@@ -2379,6 +2826,9 @@
     "Searching the meditations…" : {
 
     },
+    "Second" : {
+      "comment" : "Ordinal word for a decade's place, set before Mystery or Sorrow in titles like The Second Joyful Mystery"
+    },
     "SEE ALL" : {
 
     },
@@ -2406,8 +2856,11 @@
     "Settings" : {
 
     },
+    "Seventh" : {
+      "comment" : "Ordinal word for a sorrow's place in the Seven Sorrows chaplet, as in The Seventh Sorrow of Mary"
+    },
     "Share" : {
-
+      "comment" : "Prayer screen, More menu: row that shares the meditation"
     },
     "SHARE" : {
 
@@ -2475,6 +2928,12 @@
     "Singing" : {
 
     },
+    "Sixth" : {
+      "comment" : "Ordinal word for a sorrow's place in the Seven Sorrows chaplet, as in The Sixth Sorrow of Mary"
+    },
+    "Size" : {
+      "comment" : "Meditation reader, text options sheet: the text size slider's name"
+    },
     "Skip" : {
       "comment" : "Opening and Closing Prayers option: leave them out"
     },
@@ -2483,6 +2942,12 @@
     },
     "Sleep timer" : {
 
+    },
+    "Small bead · %lld of 3" : {
+      "comment" : "Guided Rosary: where on the rosary the fingers are, one of the three small beads, like Small bead · 2 of 3"
+    },
+    "Small bead %lld of 3" : {
+      "comment" : "VoiceOver: the part of the rosary's pendant the voice is on, one of the three small beads, like Small bead 2 of 3"
     },
     "Some of it didn't download. What finished is saved." : {
 
@@ -2504,6 +2969,9 @@
     },
     "Sources & Credits" : {
       "comment" : "About: a row's name, a heading, or the line under it"
+    },
+    "Speed" : {
+      "comment" : "Playback settings sheet: section label over the narration speed slider\nVoice & speed sheet: section label over the narration speed slider"
     },
     "SPEED AND SLEEP TIMER" : {
 
@@ -2544,6 +3012,9 @@
     },
     "Starts again from the Sign of the Cross, and clears your saved place" : {
 
+    },
+    "Stay with %@." : {
+      "comment" : "Guided Rosary, a Hail Mary of a decade; the end is the mystery's name in running text, like the Annunciation"
     },
     "Step %lld of %lld" : {
       "localizations" : {
@@ -2595,6 +3066,9 @@
         }
       }
     },
+    "Still holding the crucifix, say what the Church believes. Everything the Rosary is about is in this prayer." : {
+      "comment" : "Guided Rosary: what to do before the Apostles' Creed"
+    },
     "Stillness in a busy life" : {
       "comment" : "What brings you to the Rosary: the line under a reason"
     },
@@ -2606,6 +3080,9 @@
     },
     "Sung so far" : {
 
+    },
+    "Swipe down for the first Hail Mary, and up for the bead before." : {
+      "comment" : "Scriptural Rosary, cue on the first bead: how the beads are moved"
     },
     "Swipe down for the next bead" : {
 
@@ -2628,6 +3105,9 @@
     "Switches to Latin" : {
 
     },
+    "Take the crucifix in your hand. Touch your forehead, your breast, your left shoulder and your right as you say:" : {
+      "comment" : "Guided Rosary, first step: what to do, said before the Sign of the Cross, which follows the colon"
+    },
     "Take turns" : {
 
     },
@@ -2647,7 +3127,7 @@
 
     },
     "Tap for the next bead" : {
-
+      "comment" : "Meditation reader, bead row cue on a Hail Mary bead"
     },
     "Tap the bead to hide the words." : {
 
@@ -2658,11 +3138,23 @@
     "Tap to add a title" : {
 
     },
+    "Ten Hail Marys on %@." : {
+      "comment" : "Guided Rosary, first Hail Mary of a later decade; the end is the mystery's name in running text, like the Annunciation"
+    },
     "Ten Hail Marys, counted on your own rosary" : {
 
     },
+    "Ten Hail Marys, one on each small bead. The words are the same each time; let them carry you while your mind stays with %@." : {
+      "comment" : "Guided Rosary, first Hail Mary of the first decade: what to do; the end is the mystery's name in running text, like the Annunciation"
+    },
+    "Ten small beads: ten Hail Marys while you think about one mystery. There are five decades, one for each mystery." : {
+      "comment" : "How to Pray, the beads lesson: what is prayed on this part of the rosary"
+    },
+    "Text" : {
+      "comment" : "Meditation reader, text options sheet: its title"
+    },
     "Text options" : {
-
+      "comment" : "Meditation reader: VoiceOver name of the button that opens text size and reading options\nScriptural Rosary's prayer screen: VoiceOver name of the button that opens text size"
     },
     "Text size" : {
 
@@ -2682,8 +3174,14 @@
     "That photo could not be read. Try another." : {
 
     },
+    "The\nmeditations" : {
+      "comment" : "A meditation set's page, ledger label in two short lines (a line break between) over the list of the set's meditations"
+    },
+    "The\npainting" : {
+      "comment" : "A meditation set's page, ledger label in two short lines (a line break between) over the painting's credit"
+    },
     "The %@" : {
-
+      "comment" : "A meditation set's page: small capitals over the set's name, the mysteries it belongs to, like The Joyful Mysteries"
     },
     "THE %@ %@" : {
       "localizations" : {
@@ -2695,17 +3193,47 @@
         }
       }
     },
+    "The %@ Glorious Mystery" : {
+      "comment" : "Title of one decade of the Rosary by its place; the ordinal is a word like First, Second … Fifth"
+    },
+    "The %@ Joyful Mystery" : {
+      "comment" : "Title of one decade of the Rosary by its place; the ordinal is a word like First, Second … Fifth"
+    },
+    "The %@ Luminous Mystery" : {
+      "comment" : "Title of one decade of the Rosary by its place; the ordinal is a word like First, Second … Fifth"
+    },
+    "The %@ Mystery" : {
+      "comment" : "Prayer screen: a decade by its place when its set is not known; the ordinal is a word like Fourth"
+    },
+    "The %@ Sorrow of Mary" : {
+      "comment" : "Title of one sorrow of the Seven Sorrows chaplet by its place; the ordinal is a word like First … Seventh"
+    },
+    "The %@ Sorrowful Mystery" : {
+      "comment" : "Title of one decade of the Rosary by its place; the ordinal is a word like First, Second … Fifth"
+    },
     "The 33 days end on a feast of Mary: your Consecration Day." : {
 
+    },
+    "The Act of Contrition" : {
+      "comment" : "Prayer screen: caption while the Act of Contrition opens the Seven Sorrows chaplet"
     },
     "The Angelus Bell" : {
       "comment" : "Settings: a row's name"
     },
+    "The Apostles' Creed" : {
+      "comment" : "Prayer screen: caption while the Apostles' Creed is said on the cross"
+    },
     "The app is suitable for all ages. It asks no one for a name, an email or an account, and nothing it sends can tell us who you are." : {
       "comment" : "Privacy Policy: a section's text; keep it as plain and exact as the English"
     },
+    "The Audio Rosary" : {
+      "comment" : "Name of the form of the Rosary in which every prayer is said aloud and the listener prays along"
+    },
     "The beads are on the screen. Swipe for each Hail Mary." : {
       "comment" : "The line under a Rosary choice, saying what the chosen option does"
+    },
+    "The beads move with the voice — for praying with the phone put away, or for learning the prayers by ear. Each mystery, a scene from the lives of Jesus and Mary, is announced, and each prayer is shown on the screen as it is said. Pause the voice to pray quietly for a while." : {
+      "comment" : "The Audio Rosary's own page, ledger: what the form is"
     },
     "The beads unlock when the meditation ends" : {
 
@@ -2716,8 +3244,29 @@
     "The book this consecration comes from" : {
 
     },
+    "The chain" : {
+      "comment" : "VoiceOver: the part of the rosary's pendant the voice is on, the chain"
+    },
     "The chime was made for Lumen Viae; the bell is a public domain recording." : {
       "comment" : "Settings, Reminder Sound sheet: the note at its foot"
+    },
+    "The Closing Prayer" : {
+      "comment" : "Prayer screen: caption while the closing prayer after the Rosary or the chaplet is said"
+    },
+    "The closing prayer asks that what the mysteries hold may become ours." : {
+      "comment" : "Guided Rosary: what to do before the closing prayer"
+    },
+    "The closing prayers" : {
+      "comment" : "Guided Rosary welcome: the part of the Rosary a kept place is in, after the last decade\nPrayer screen: VoiceOver name of the arrow on the last mystery, which goes on to the closing prayers"
+    },
+    "The Closing Prayers" : {
+      "comment" : "Prayer screen: heading over the prayers said after the last decade"
+    },
+    "The closing prayers follow on the next swipe." : {
+      "comment" : "Scriptural Rosary, cue under the last decade's Glory Be: a swipe goes on to the closing prayers"
+    },
+    "The closing prayers follow on the next tap." : {
+      "comment" : "Meditation reader, bead row cue after the last decade: a tap goes on to the closing prayers"
     },
     "THE COURSE" : {
 
@@ -2726,10 +3275,13 @@
 
     },
     "The cross and first beads" : {
-
+      "comment" : "VoiceOver for the drawn rosary pendant: the cross and the beads above it"
     },
     "The cross and first beads. %@" : {
-
+      "comment" : "VoiceOver for the drawn rosary pendant: what it is, then the part the voice is on, like The large bead"
+    },
+    "The crucifix" : {
+      "comment" : "Guided Rosary: where on the rosary the fingers are, shown in small capitals over the step\nHow to Pray, the beads lesson: name of a part of the rosary, chosen to light it on a drawing\nVoiceOver: the part of the rosary's pendant the voice is on, the crucifix"
     },
     "the day of consecration" : {
       "comment" : "VoiceOver: the day the act of consecration is made"
@@ -2749,20 +3301,50 @@
     "The days you have prayed will be cleared so you can begin again. Journal reflections you have written stay in your Journal." : {
 
     },
+    "The decade closes" : {
+      "comment" : "Guided Rosary: where on the rosary the fingers are, the Glory Be and Fatima Prayer closing a decade, in small capitals"
+    },
     "The Devotion in Summary" : {
 
     },
     "The End" : {
 
     },
+    "The Fatima Prayer" : {
+      "comment" : "Prayer screen: caption while the Fatima Prayer is said"
+    },
+    "The first\nmystery" : {
+      "comment" : "A Rosary's own page, ledger label in two short lines (a line break between) over the first mystery and its first verse"
+    },
+    "The first\nsorrow" : {
+      "comment" : "A Rosary's own page, ledger label in two short lines (a line break between) over the chaplet's first sorrow and its first verse"
+    },
     "The first day's prayers open then. Nothing is asked of you before it." : {
 
+    },
+    "The first large bead" : {
+      "comment" : "Guided Rosary: where on the rosary the fingers are, shown in small capitals over the step\nHow to Pray, the beads lesson: name of a part of the rosary, chosen to light it on a drawing"
     },
     "The first meditation  ·  %@" : {
 
     },
+    "The first mystery" : {
+      "comment" : "Prayer screen, last opening prayer: the button on to the first mystery"
+    },
+    "The First Mystery" : {
+      "comment" : "A meditation set's page: the first decade's title when the set's mysteries are not known"
+    },
     "The first saint of the millennial generation · feast, %@" : {
 
+    },
+    "The first sorrow" : {
+      "comment" : "Prayer screen, last opening prayer of the Seven Sorrows chaplet: the button on to the first sorrow"
+    },
+    "The Glory Be" : {
+      "comment" : "Prayer screen: caption while the Glory Be is said"
+    },
+    "The Glory Be first, on reaching it. Then the first mystery is announced, and its Our Father said on this bead." : {
+      "comment" : "How to Pray, the beads lesson: what is prayed on this part of the rosary"
     },
     "The Hail Mary" : {
 
@@ -2770,14 +3352,32 @@
     "The Holy Bible" : {
 
     },
+    "The large bead" : {
+      "comment" : "VoiceOver: the part of the rosary's pendant the voice is on, the large bead above the cross"
+    },
+    "The large beads between" : {
+      "comment" : "How to Pray, the beads lesson: name of a part of the rosary, chosen to light it on a drawing"
+    },
+    "The last of the ten." : {
+      "comment" : "Guided Rosary: the tenth Hail Mary of a decade"
+    },
     "The Marian Library" : {
 
     },
     "THE MASS IS ENDED" : {
 
     },
+    "The medal" : {
+      "comment" : "Guided Rosary: where on the rosary the fingers are, the medal where the loop joins, shown in small capitals\nHow to Pray, the beads lesson: name of a part of the rosary, chosen to light it on a drawing\nVoiceOver: the part of the rosary's pendant the voice is on, the centrepiece medal where the decades join"
+    },
+    "The meditation" : {
+      "comment" : "Prayer screen: caption while the mystery's meditation is read aloud"
+    },
     "The meditations" : {
       "comment" : "Send Feedback: a topic to choose, about the meditation texts"
+    },
+    "The Memorare" : {
+      "comment" : "Prayer screen: caption while the Memorare is said after the Rosary"
     },
     "The modern schedule is St. John Paul II's, from his letter on the Rosary, Rosarium Virginis Mariae (2002). Both keep Sunday by the season: Joyful in Advent, Sorrowful in Lent, Glorious the rest of the year." : {
       "comment" : "Settings, Daily Mysteries sheet: a note at its foot; Rosarium Virginis Mariae is the Latin title of the letter"
@@ -2791,14 +3391,44 @@
     "THE MYSTERIES YOU WILL PRAY" : {
 
     },
+    "The mystery" : {
+      "comment" : "Prayer screen: caption while a mystery of the Rosary is announced"
+    },
+    "The Mystery" : {
+      "comment" : "Strand margin, said aloud: the bead is named for the mystery being announced"
+    },
+    "The next bead. If your mind wanders, simply come back to the scene." : {
+      "comment" : "Guided Rosary, second Hail Mary of the first decade: what to do"
+    },
     "The next chant waits until you tap" : {
 
+    },
+    "The next large bead" : {
+      "comment" : "Guided Rosary: where on the rosary the fingers are, shown in small capitals over the step\nHow to Pray, the beads lesson: name of a part of the rosary, chosen to light it on a drawing"
+    },
+    "The next small bead: a Hail Mary for an increase of charity." : {
+      "comment" : "Guided Rosary: what to do on the third of the three small beads"
+    },
+    "The next small bead: a Hail Mary for an increase of hope." : {
+      "comment" : "Guided Rosary: what to do on the second of the three small beads"
     },
     "The note, read in red between chants" : {
 
     },
+    "The opening prayers" : {
+      "comment" : "Guided Rosary welcome: the part of the Rosary a kept place is in, on the cross and first beads"
+    },
+    "The Opening Prayers" : {
+      "comment" : "Prayer screen: heading over the prayers said on the cross and first beads"
+    },
     "The Order of Mass" : {
 
+    },
+    "The Our Father" : {
+      "comment" : "Prayer screen: caption while the Our Father is said"
+    },
+    "The page keeps pace with the voice" : {
+      "comment" : "Meditation reader, text options sheet: the line under Follow the narration"
     },
     "The Paintings" : {
       "comment" : "About, Sources & Credits: the line under the heading, or a section label"
@@ -2834,7 +3464,7 @@
 
     },
     "The Rosary" : {
-      "comment" : "Settings: a section heading"
+      "comment" : "A meditation set's page: small capitals over the set's name when its mysteries are not known\nSettings: a section heading"
     },
     "The Rosary begins at the first mystery and ends at the last Glory Be." : {
       "comment" : "Settings, Opening and Closing Prayers: the line under the chosen option"
@@ -2851,6 +3481,12 @@
     "The same three steps each day" : {
 
     },
+    "The scenes from the lives of Jesus and Mary that you will pray on." : {
+      "comment" : "Choose the Mysteries sheet: the line under the title saying what the mysteries are"
+    },
+    "The Scriptural Rosary" : {
+      "comment" : "Name of the form of the Rosary with a Bible verse for every Hail Mary, as headers and the Lock Screen show it"
+    },
     "The set's name" : {
 
     },
@@ -2863,8 +3499,20 @@
     "The sheet music comes with a connection" : {
 
     },
+    "The Sign of the Cross" : {
+      "comment" : "Prayer screen: caption while the Sign of the Cross is said, opening and closing the Rosary"
+    },
     "The singer sings a line, then waits while you sing it back" : {
 
+    },
+    "The sorrow" : {
+      "comment" : "Prayer screen: caption while a sorrow of the chaplet is announced"
+    },
+    "The Sorrow" : {
+      "comment" : "Strand margin, said aloud: the bead is named for the sorrow being announced"
+    },
+    "The three small beads" : {
+      "comment" : "How to Pray, the beads lesson: name of a part of the rosary, chosen to light it on a drawing"
     },
     "The traditional Latin Mass (1962 Missal) · texts from Missale Meum" : {
 
@@ -2874,6 +3522,9 @@
     },
     "The way St. Louis de Montfort taught in his book %@" : {
 
+    },
+    "The Whole Rosary isn't recorded in this voice yet. Choose another voice." : {
+      "comment" : "Prayer screen notice when the Rosary cannot be said aloud: no recordings in the chosen narration voice"
     },
     "THE WORD BEHIND THE BEADS" : {
 
@@ -2887,11 +3538,26 @@
     "THEN" : {
 
     },
+    "Then %@" : {
+      "comment" : "Prayer screen, the opening prayers: the mystery they lead to, read mid-sentence, like Then the First Glorious Mystery"
+    },
+    "then swipe" : {
+      "comment" : "Strand margin while the beads are locked, second of two short lines: Listen first, / then swipe"
+    },
+    "Then the Act of Contrition, and the first sorrow." : {
+      "comment" : "Prayer screen, Seven Sorrows chaplet, first opening prayer: a line naming what follows"
+    },
+    "Then the Apostles' Creed, an Our Father, three Hail Marys and a Glory Be." : {
+      "comment" : "Prayer screen, the Rosary's first opening prayer (the Sign of the Cross): a line naming what follows"
+    },
     "These meditations aren't available yet." : {
 
     },
     "These prayers could not be found." : {
 
+    },
+    "Third" : {
+      "comment" : "Ordinal word for a decade's place, set before Mystery or Sorrow in titles like The Third Joyful Mystery"
     },
     "This chant could not be found." : {
 
@@ -2917,6 +3583,9 @@
     "This set no longer matches the occasion's order. Deleting it removes the set; its chants stay in the library." : {
 
     },
+    "Three Hail Marys, asking for an increase of faith, hope and charity." : {
+      "comment" : "How to Pray, the beads lesson: what is prayed on this part of the rosary"
+    },
     "Title (optional)" : {
 
     },
@@ -2932,8 +3601,14 @@
     "To make the Rosary part of each day" : {
       "comment" : "What brings you to the Rosary: the line under a reason"
     },
+    "Today" : {
+      "comment" : "Choose the Mysteries sheet: small tracked label beside today's mysteries"
+    },
     "TODAY" : {
 
+    },
+    "Today · %@" : {
+      "comment" : "Choose the Mysteries sheet: the line under today's mysteries when they are chosen; the rest says what they are about"
     },
     "Today's Mass" : {
       "comment" : "Home, Today's Prayer: name of the row opening the day's Mass\nThe day's Mass, named before its feast is known"
@@ -2968,6 +3643,9 @@
     "Try a shorter word, or search by a mystery's name." : {
 
     },
+    "Try again" : {
+      "comment" : "A meditation set's page: button that tries the download or the load again\nMysteries' page: button that loads the meditation sets again\nPrayer screen notice: button that tries again to download the recordings for the Whole Rosary"
+    },
     "Try Again" : {
       "comment" : "Settings, Offline: a row's name"
     },
@@ -2998,8 +3676,17 @@
     "VIEW ALL" : {
 
     },
+    "Voice" : {
+      "comment" : "Playback settings sheet: section label over the narration voices\nVoice & speed sheet: section label over the narration voices"
+    },
     "VOICE" : {
 
+    },
+    "Voice & speed" : {
+      "comment" : "A Rosary's own page: name of the row that opens the narration voice and speed\nVoice & speed sheet from a Rosary's own page: its title"
+    },
+    "Ways to pray" : {
+      "comment" : "Mysteries' page: heading over the Rosary's other two forms, the Scriptural Rosary and the Audio Rosary"
     },
     "We couldn't reach the meditations. Try again in a few seconds. To pray without a connection, open Settings and choose Save for Offline." : {
 
@@ -3040,6 +3727,12 @@
     "When the beads are familiar" : {
 
     },
+    "Where the loop begins, and where the Rosary is closed with the Hail, Holy Queen." : {
+      "comment" : "How to Pray, the beads lesson: what is prayed on this part of the rosary"
+    },
+    "Where the Rosary begins and ends. Hold it for the Sign of the Cross and the Apostles' Creed." : {
+      "comment" : "How to Pray, the beads lesson: what is prayed on this part of the rosary"
+    },
     "Where you are reading. Goes to this part." : {
 
     },
@@ -3056,8 +3749,14 @@
     "Which mysteries each day brings. The two schedules differ only on Thursday and Saturday." : {
       "comment" : "Settings, Daily Mysteries sheet: the line under its title"
     },
+    "While listening" : {
+      "comment" : "Meditation reader, text options sheet: section label over the choices that apply while the narration plays"
+    },
     "Whole Rosary" : {
       "comment" : "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen"
+    },
+    "Whole Rosary · pause anytime" : {
+      "comment" : "The Audio Rosary's own page: the Audio row's value, a fact rather than a choice: every prayer is said aloud and can be paused"
     },
     "Whosoever followeth Me shall not walk in darkness." : {
 
@@ -3067,6 +3766,9 @@
     },
     "With a Voice" : {
       "comment" : "Prayers Tab Audio option: a voice reads the prayers"
+    },
+    "With the Whole Rosary, the voice moves the beads on the screen." : {
+      "comment" : "A Rosary's own page and Settings: why the Counting choice is dimmed while the Whole Rosary is chosen"
     },
     "With the Whole Rosary, the voice says them." : {
       "comment" : "Settings, Opening and Closing Prayers: why the choice is dimmed while the Whole Rosary is chosen"
@@ -3101,6 +3803,9 @@
     "YOU" : {
 
     },
+    "You are back at the medal. Hold it, and greet Our Lady as Queen and Mother." : {
+      "comment" : "Guided Rosary: what to do before the Hail, Holy Queen"
+    },
     "You can change the time or turn it off in Settings." : {
 
     },
@@ -3109,6 +3814,9 @@
     },
     "You completed this consecration. Many renew it each year." : {
 
+    },
+    "You do not need to know anything by heart. Every step will tell you where you are and what to do, and every word is written out." : {
+      "comment" : "Guided Rosary welcome: the opening paragraph"
     },
     "You have made your consecration to Jesus through Mary." : {
 
@@ -3133,6 +3841,9 @@
     },
     "You hear the meditation. You say the prayers." : {
       "comment" : "The line under a Rosary choice, saying what the chosen option does"
+    },
+    "You're offline. The Whole Rosary needs the internet the first time." : {
+      "comment" : "Prayer screen notice when the Rosary cannot be said aloud: no connection and the recordings were never downloaded"
     },
     "Your 33 days begin %@" : {
 
@@ -3184,6 +3895,9 @@
     },
     "Your reflections, kept on this device" : {
       "comment" : "Settings: the line under a row"
+    },
+    "Your Rosary today" : {
+      "comment" : "Voice & speed sheet from a Rosary's own page: small capitals over its title"
     },
     "YOUR ROSARY TODAY" : {
 
