@@ -21,8 +21,19 @@ enum PrayerLanguage: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 
     /// What the choice is called on screen, in onboarding and Settings
-    /// alike. The raw value is what is stored, so it never changes.
+    /// alike. The raw value is what is stored, so it never changes. In a
+    /// Spanish app the prayers' first language is Spanish (`SpanishContent`),
+    /// so `.english` is named for it; a text with no Spanish yet (the Missal,
+    /// the Office) shows its English there, as the api's Spanish does.
     var displayName: String {
+        if SpanishContent.isActive {
+            switch self {
+            case .english:           return String(localized: "Spanish", comment: "Settings, Prayer Language, in a Spanish app: the prayers in Spanish")
+            case .latin:             return String(localized: "Latin", comment: "Settings, Prayer Language: a choice of the language prayers are shown in")
+            case .both:              return String(localized: "Latin with Spanish", comment: "Settings, Prayer Language, in a Spanish app: Latin with Spanish beneath each line")
+            case .latinUnderEnglish: return String(localized: "Spanish with Latin", comment: "Settings, Prayer Language, in a Spanish app: Spanish with Latin beneath each line")
+            }
+        }
         switch self {
         case .english:           return String(localized: "English", comment: "Settings, Prayer Language: a choice of the language prayers are shown in")
         case .latin:             return String(localized: "Latin", comment: "Settings, Prayer Language: a choice of the language prayers are shown in")

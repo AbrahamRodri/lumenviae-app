@@ -12,8 +12,12 @@ import Foundation
 enum RosaryPrayers {
 
     /// In the order they are said: the Rosary's eight, then the
-    /// chaplet's two and the two optional closing prayers
-    static let all: [BilingualConsecrationPrayer] = [
+    /// chaplet's two and the two optional closing prayers, in Spanish in
+    /// English's place when the app speaks Spanish (`SpanishContent`)
+    static let all: [BilingualConsecrationPrayer] = english.map { SpanishContent.vernacular($0) }
+
+    /// The same, in English and Latin
+    static let english: [BilingualConsecrationPrayer] = [
         BilingualConsecrationPrayer(
             id: "sign_of_cross",
             englishTitle: "The Sign of the Cross",
@@ -106,15 +110,15 @@ nunc et in hora mortis nostrae. Amen.
             id: "glory_be",
             englishTitle: "The Glory Be",
             latinTitle: "Gloria Patri",
-            englishContent: RosaryPrayerText.gloryBe.english,
-            latinContent: RosaryPrayerText.gloryBe.latin
+            englishContent: RosaryPrayerText.englishGloryBe.english,
+            latinContent: RosaryPrayerText.englishGloryBe.latin
         ),
         BilingualConsecrationPrayer(
             id: "fatima_prayer",
             englishTitle: "The Fatima Prayer",
             latinTitle: "Oratio Fatimae",
-            englishContent: RosaryPrayerText.fatimaPrayer.english,
-            latinContent: RosaryPrayerText.fatimaPrayer.latin
+            englishContent: RosaryPrayerText.englishFatimaPrayer.english,
+            latinContent: RosaryPrayerText.englishFatimaPrayer.latin
         ),
         BilingualConsecrationPrayer(
             id: "hail_holy_queen",

@@ -373,13 +373,46 @@ enum PrayerBook {
     /// ships a copy.
     static let prayers: [String: BookPrayer] = Dictionary(
         LibraryContent.prayerBook.prayers.map { prayer in
-            (prayer.id, BookPrayer(
+            (prayer.id, inSpanish(BookPrayer(
                 id: prayer.id, title: prayer.title, latinTitle: prayer.latinTitle,
                 origin: prayer.origin, note: prayer.note, english: prayer.english, latin: prayer.latin
-            ))
+            )))
         },
         uniquingKeysWith: { first, _ in first }
     )
+
+    // MARK: In Spanish
+
+    /// The prayer as a Spanish app sets it: the server's Spanish for the
+    /// book (`LibraryContent.prayerBookSpanish`), else the Rosary's own
+    /// bundled Spanish for a prayer the Rosary says, in English's place
+    /// beside the same Latin. A prayer with neither keeps its English, whole.
+    static func inSpanish(
+        _ prayer: BookPrayer,
+        translations: [String: PrayerBookTranslations.Translation] = LibraryContent.prayerBookSpanish,
+        spanish: Bool = SpanishContent.isActive
+    ) -> BookPrayer {
+        guard spanish else { return prayer }
+        let spanishWords: (title: String, text: String)?
+        if let translation = translations[prayer.id] {
+            spanishWords = (translation.title, translation.text)
+        } else if let rosary = SpanishContent.prayers[prayer.id] {
+            spanishWords = (rosary.title, rosary.lines)
+        } else {
+            spanishWords = nil
+        }
+        guard let spanishWords else { return prayer }
+        return BookPrayer(
+            id: prayer.id, title: spanishWords.title, latinTitle: prayer.latinTitle,
+            origin: prayer.origin, note: prayer.note, english: spanishWords.text, latin: prayer.latin
+        )
+    }
+
+    /// Whether the prayer is shown in Spanish this launch: its English list
+    /// name and English second title then stand down, so no line mixes the two
+    static func isInSpanish(_ id: String) -> Bool {
+        SpanishContent.isActive && (LibraryContent.prayerBookSpanish[id] != nil || SpanishContent.prayers[id] != nil)
+    }
 
     static func prayer(_ id: String) -> BookPrayer? { prayers[id] }
 
@@ -753,14 +786,18 @@ enum PrayerBook {
     /// The English set beneath a prayer that is known by its Latin name,
     /// where its Latin would only say the name again
     static let englishNames: [String: String] = Dictionary(
-        LibraryContent.prayerBook.prayers.compactMap { prayer in prayer.englishName.map { (prayer.id, $0) } },
+        LibraryContent.prayerBook.prayers.compactMap { prayer in
+            isInSpanish(prayer.id) ? nil : prayer.englishName.map { (prayer.id, $0) }
+        },
         uniquingKeysWith: { first, _ in first }
     )
 
     /// The names a list gives a prayer where its title is longer than
     /// the name people use
     static let listTitles: [String: String] = Dictionary(
-        LibraryContent.prayerBook.prayers.compactMap { prayer in prayer.listTitle.map { (prayer.id, $0) } },
+        LibraryContent.prayerBook.prayers.compactMap { prayer in
+            isInSpanish(prayer.id) ? nil : prayer.listTitle.map { (prayer.id, $0) }
+        },
         uniquingKeysWith: { first, _ in first }
     )
 

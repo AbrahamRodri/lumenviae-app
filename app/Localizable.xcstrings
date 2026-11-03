@@ -8742,7 +8742,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ocho oraciones forman todo el Rosario, y quizá ya conozcas a medias la mayoría. Lee cada una completa. Luego prueba “Dila conmigo”: la oración aparece línea por línea, para que digas cada línea antes de verla.\n\nComienza con el Avemaría. Se reza cincuenta y tres veces en un Rosario, y en una semana será tuya."
+            "value" : "Ocho oraciones forman todo el Rosario, y quizá ya conozcas a medias la mayoría. Lee cada una completa. Luego prueba “Dila conmigo”: la oración aparece línea por línea, para que digas cada línea antes de verla.\n\nComienza con el Ave María. Se reza cincuenta y tres veces en un Rosario, y en una semana será tuya."
           }
         }
       }
@@ -9003,6 +9003,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Todas las oraciones en inglés"
+          }
+        }
+      }
+    },
+    "Every prayer in Spanish" : {
+      "comment" : "Onboarding, Choose a Language slide, in a Spanish app: the line under the Spanish choice",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todas las oraciones en español"
           }
         }
       }
@@ -12001,6 +12012,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Latín con el inglés debajo de cada línea"
+          }
+        }
+      }
+    },
+    "Latin with Spanish" : {
+      "comment" : "Settings, Prayer Language, in a Spanish app: Latin with Spanish beneath each line",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Latín con español"
+          }
+        }
+      }
+    },
+    "Latin with Spanish beneath each line" : {
+      "comment" : "Onboarding, Choose a Language slide, in a Spanish app: the line under a prayer-language choice",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Latín con el español debajo de cada línea"
           }
         }
       }
@@ -16092,7 +16125,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La paz empieza con un solo avemaría."
+            "value" : "La paz empieza con una sola avemaría."
           }
         }
       }
@@ -20194,6 +20227,39 @@
         }
       }
     },
+    "Spanish" : {
+      "comment" : "Settings, Prayer Language, in a Spanish app: the prayers in Spanish",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Español"
+          }
+        }
+      }
+    },
+    "Spanish with Latin" : {
+      "comment" : "Settings, Prayer Language, in a Spanish app: Spanish with Latin beneath each line",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Español con latín"
+          }
+        }
+      }
+    },
+    "Spanish with Latin beneath each line" : {
+      "comment" : "Onboarding, Choose a Language slide, in a Spanish app: the line under a prayer-language choice",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Español con el latín debajo de cada línea"
+          }
+        }
+      }
+    },
     "Speed" : {
       "comment" : "Chant practice settings: the singer's pace\nPlayback settings sheet: section label over the narration speed slider\nThe reading's speed and sleep timer sheet: section heading over the speeds\nVoice & speed sheet: section label over the narration speed slider",
       "localizations" : {
@@ -21864,7 +21930,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El Avemaría"
+            "value" : "El Ave María"
           }
         }
       }
@@ -24756,6 +24822,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Traducción"
+          }
+        }
+      }
+    },
+    "Translation made with artificial intelligence." : {
+      "comment" : "Shown only in Spanish, under a prayer whose Spanish was partly translated with AI (the Seven Sorrows closing prayer)",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traducción hecha con inteligencia artificial."
           }
         }
       }

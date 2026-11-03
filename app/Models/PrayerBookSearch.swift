@@ -169,12 +169,19 @@ extension PrayerBook {
         return kept.isEmpty ? words : kept
     }
 
-    private static let searchStopWords: Set<String> = ["a", "an", "and", "of", "the", "to", "o", "for", "in", "on", "at"]
+    private static let searchStopWords: Set<String> =
+        Set(["a", "an", "and", "of", "the", "to", "o", "for", "in", "on", "at"]).union(spanishStopWords)
 
-    private static let topicStopWords: Set<String> = [
+    private static let topicStopWords: Set<String> = Set([
         "a", "an", "and", "at", "for", "in", "of", "on", "the", "to", "with",
         "pray", "prayer", "prayers"
-    ]
+    ]).union(spanishStopWords.isEmpty ? Set<String>() : spanishStopWords.union(["oracion", "oraciones"]))
+
+    /// Spanish's small words, in a Spanish app only (its prayers carry
+    /// Spanish titles: "Oración de Fátima", "Gloria al Padre"); in English
+    /// "de" names a prayer ("De profundis") and must still count
+    private static let spanishStopWords: Set<String> =
+        SpanishContent.isActive ? ["de", "del", "el", "la", "las", "los", "y", "e", "al", "por", "con"] : []
 
     /// A name as the topic search reads it: folded, split into words,
     /// the small words dropped

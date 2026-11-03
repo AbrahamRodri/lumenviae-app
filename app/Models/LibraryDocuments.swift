@@ -493,3 +493,54 @@ nonisolated enum LibraryDocumentCoding {
         return encoder
     }
 }
+
+// MARK: - The Prayer Book in Spanish
+
+/// The Spanish the server lays over the Prayer Book's English
+/// (`GET /api/v2/prayer-book?lang=es`, `fields[prayer_book]=version,
+/// updated_at,translations`): every prayer the book prints that has a
+/// Spanish text, by id. A prayer not listed has no Spanish yet and keeps
+/// its English. A server that has no Spanish answers with none, and the
+/// book stays English.
+nonisolated struct PrayerBookTranslations: Codable, Sendable, Equatable {
+    var version: String?
+    var updatedAt: String?
+    var translations: [Translation]
+
+    nonisolated struct Translation: Codable, Sendable, Equatable {
+        let id: String
+        let title: String
+        /// In the same PrayerText grammar as the book's `english`
+        let text: String
+        /// Part of its Spanish is the team's own translation
+        var aiTranslated: Bool?
+
+        enum CodingKeys: String, CodingKey {
+            case id, title, text
+            case aiTranslated = "ai_translated"
+        }
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case version, translations
+        case updatedAt = "updated_at"
+    }
+
+    init(version: String? = nil, updatedAt: String? = nil, translations: [Translation] = []) {
+        self.version = version
+        self.updatedAt = updatedAt
+        self.translations = translations
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        version = try container.decodeIfPresent(String.self, forKey: .version)
+        updatedAt = try container.decodeIfPresent(String.self, forKey: .updatedAt)
+        translations = try container.decodeIfPresent([Translation].self, forKey: .translations) ?? []
+    }
+
+    /// The translations by prayer id
+    var byID: [String: Translation] {
+        Dictionary(translations.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+    }
+}

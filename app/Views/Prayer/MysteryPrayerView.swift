@@ -1220,6 +1220,8 @@ struct MysteryPrayerView: View {
                 .padding(.top, 6)
                     .contentTransition(.opacity)
 
+                AITranslationNote(prayerID: pendant.prayerID)
+
                 if isFirst {
                     Text(SilentPendant.openingSummary(isChaplet: chaplet))
                         .font(AppFonts.italicFont(15))
@@ -1459,10 +1461,11 @@ struct MysteryPrayerView: View {
             if showsMysteryName,
                let mystery = viewModel.currentMystery,
                mystery.name.caseInsensitiveCompare(meditation.displayTitle) != .orderedSame {
+                // Wraps rather than cut: a Spanish name runs to 66 letters
                 Text(mystery.name)
                     .font(AppFonts.bodyFont(15))
                     .foregroundColor(AppColors.textSecondary)
-                    .lineLimit(1)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 3)
                     .contentTransition(.opacity)
                     .transition(.opacity)

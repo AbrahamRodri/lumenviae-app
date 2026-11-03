@@ -566,9 +566,16 @@ extension GuidedRosary {
     static let firstKeptStep = 2
 }
 
-private extension String {
+extension String {
     /// "The Annunciation" → "the Annunciation", for use mid-sentence
+    /// A name set mid-sentence: its opening article lowered, English's
+    /// "The" and Spanish's "El", "La", "Los" and "Las" ("Quédate con la
+    /// encarnación del Hijo de Dios"). A name that opens on a noun ("Jesús…",
+    /// "Nuestra Señora…") keeps its capital.
     var lowercasedArticle: String {
-        hasPrefix("The ") ? "the " + dropFirst(4) : self
+        for article in ["The ", "El ", "La ", "Los ", "Las "] where hasPrefix(article) {
+            return article.lowercased() + dropFirst(article.count)
+        }
+        return self
     }
 }

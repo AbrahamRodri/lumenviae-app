@@ -768,6 +768,8 @@ struct ScripturalRosaryPrayerView: View {
                     label: pendantAccessibilityText(pendant),
                     step: stepPrayer(forward:)
                 )
+
+                AITranslationNote(prayerID: pendant.prayerID)
             }
 
             if pendant.phase == .closing, showsPendantAmen {
@@ -842,15 +844,25 @@ struct ScripturalRosaryPrayerView: View {
                 .contentTransition(.numericText(countsDown: travel == .back))
                 .animation(Motion.words, value: viewModel.beadPosition)
 
-            Text(viewModel.currentMystery?.name ?? "")
-                .font(AppFonts.headlineFont(20))
-                .foregroundColor(AppColors.cream)
-                .lineLimit(2, reservesSpace: true)
-                .minimumScaleFactor(0.85)
-                .multilineTextAlignment(.leading)
-                .shadow(color: .black.opacity(0.5), radius: 6, y: 1)
-                .contentTransition(.opacity)
-                .animation(Motion.decadeTurn, value: viewModel.currentMysteryIndex)
+            // Two lines' room kept; a third only for the longest Spanish
+            // names (up to 66 letters), never cut
+            ZStack(alignment: .topLeading) {
+                Text(verbatim: " ")
+                    .font(AppFonts.headlineFont(20))
+                    .lineLimit(2, reservesSpace: true)
+                    .hidden()
+                    .accessibilityHidden(true)
+
+                Text(viewModel.currentMystery?.name ?? "")
+                    .font(AppFonts.headlineFont(20))
+                    .foregroundColor(AppColors.cream)
+                    .lineLimit(3)
+                    .minimumScaleFactor(0.85)
+                    .multilineTextAlignment(.leading)
+                    .shadow(color: .black.opacity(0.5), radius: 6, y: 1)
+                    .contentTransition(.opacity)
+                    .animation(Motion.decadeTurn, value: viewModel.currentMysteryIndex)
+            }
         }
     }
 

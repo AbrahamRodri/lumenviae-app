@@ -387,6 +387,8 @@ struct PrayAlongView: View {
         /// The choice's name in the menu; the raw value is only its tag
         var label: String {
             switch self {
+            case .english where SpanishContent.isActive:
+                return String(localized: "Spanish", comment: "Settings, Prayer Language, in a Spanish app: the prayers in Spanish")
             case .english:
                 return String(localized: "English", comment: "Pray-along More menu, Language: show the prayer in English")
             case .latin:
@@ -569,6 +571,8 @@ struct PrayAlongView: View {
                                 .animation(Motion.crossfade, value: litStanza)
                                 .id(i)
                             }
+
+                            AITranslationNote(prayerID: prayer.id)
                         }
                         .padding(.horizontal, 24)
                         .padding(.top, 20)

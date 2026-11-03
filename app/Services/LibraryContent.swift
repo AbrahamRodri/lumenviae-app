@@ -31,6 +31,13 @@ nonisolated protocol LibraryDocument: Codable, Sendable {
     var problem: String? { get }
 }
 
+extension PrayerBookTranslations: LibraryDocument {
+    nonisolated var problem: String? {
+        let ids = translations.map(\.id)
+        return Set(ids).count == ids.count ? nil : "a Spanish prayer twice"
+    }
+}
+
 extension PrayerBookDocument: LibraryDocument {
     /// The topics the app names by id (`PrayerBook.layouts`, the Prayers
     /// page's Mary shelf, the Saved page's First Prayers): a book that
@@ -180,6 +187,9 @@ nonisolated enum LibraryContent {
 
     static let prayerBookStore = LibraryDocumentStore<PrayerBookDocument>(name: "prayer_book")
     static let chantLibraryStore = LibraryDocumentStore<ChantLibraryDocument>(name: "chant_library")
+    /// The Prayer Book's Spanish, kept apart from the English with a version
+    /// of its own; the app ships none (the Rosary's own Spanish is bundled)
+    static let prayerBookSpanishStore = LibraryDocumentStore<PrayerBookTranslations>(name: "prayer_book.es")
 
     /// Whether the app was launched to host the unit tests, which read
     /// the shipped copies alone: never what a simulator kept from the
@@ -194,6 +204,13 @@ nonisolated enum LibraryContent {
             return PrayerBookDocument(prayers: [], chapters: [])
         }
         return document
+    }()
+
+    /// The book's Spanish as this launch reads it, by prayer id: empty in
+    /// English, in the tests, and until the server has sent some
+    static let prayerBookSpanish: [String: PrayerBookTranslations.Translation] = {
+        guard SpanishContent.isActive, !hostsTests else { return [:] }
+        return prayerBookSpanishStore.current()?.byID ?? [:]
     }()
 
     static let chantLibrary: ChantLibraryDocument = {
@@ -237,6 +254,8 @@ final class LibraryContentSync {
     private let defaults: UserDefaults
     private let prayerBookStore: LibraryDocumentStore<PrayerBookDocument>
     private let chantLibraryStore: LibraryDocumentStore<ChantLibraryDocument>
+    private let prayerBookSpanishStore: LibraryDocumentStore<PrayerBookTranslations>
+    private let spanish: Bool
     private var running: Task<Void, Never>?
 
     /// Told of a newer chant library kept, so its files can be fetched
@@ -251,7 +270,9 @@ final class LibraryContentSync {
         baseURL: String = APIService.baseURL,
         defaults: UserDefaults = .standard,
         prayerBookStore: LibraryDocumentStore<PrayerBookDocument> = LibraryContent.prayerBookStore,
-        chantLibraryStore: LibraryDocumentStore<ChantLibraryDocument> = LibraryContent.chantLibraryStore
+        chantLibraryStore: LibraryDocumentStore<ChantLibraryDocument> = LibraryContent.chantLibraryStore,
+        prayerBookSpanishStore: LibraryDocumentStore<PrayerBookTranslations> = LibraryContent.prayerBookSpanishStore,
+        spanish: Bool = SpanishContent.isActive
     ) {
         if let session {
             self.session = session
@@ -265,6 +286,8 @@ final class LibraryContentSync {
         self.defaults = defaults
         self.prayerBookStore = prayerBookStore
         self.chantLibraryStore = chantLibraryStore
+        self.prayerBookSpanishStore = prayerBookSpanishStore
+        self.spanish = spanish
     }
 
     /// At launch (`force`), or on coming back once a day has passed
@@ -303,20 +326,32 @@ final class LibraryContentSync {
         } catch {
             allAnswered = false
         }
+        // The book's Spanish, in a Spanish app. A server without it (before
+        // the api serves `lang=es`) fails or sends none, and the book stays
+        // English; that never holds back the day's check of the other two.
+        if spanish {
+            _ = try? await refresh(
+                prayerBookSpanishStore, path: "prayer-book", type: "prayer_book",
+                fields: "version,updated_at,translations", lang: "es")
+        }
         if allAnswered { defaults.set(now, forKey: Self.checkedKey) }
     }
 
     /// The newer document kept, or nil when the phone's copy is current
     @discardableResult
     func refresh<Document: LibraryDocument>(
-        _ store: LibraryDocumentStore<Document>, path: String, type: String, fields: String
+        _ store: LibraryDocumentStore<Document>, path: String, type: String, fields: String, lang: String? = nil
     ) async throws -> Document? {
-        let bare = try await attributes(of: "\(baseURL)/v2/\(path)", as: Version.self)
+        let language = lang.map { [URLQueryItem(name: "lang", value: $0)] } ?? []
+        var bareComponents = URLComponents(string: "\(baseURL)/v2/\(path)")
+        if !language.isEmpty { bareComponents?.queryItems = language }
+        guard let bareURL = bareComponents?.url?.absoluteString else { throw URLError(.badURL) }
+        let bare = try await attributes(of: bareURL, as: Version.self)
         let onPhone = await Self.stamp(on: store)
         guard let version = bare.version, version != onPhone.version else { return nil }
         // A version this phone already fetched and refused (it did not
         // hold together) is not fetched again until the server changes it
-        let refusedKey = Self.refusedKey(path)
+        let refusedKey = Self.refusedKey(lang.map { "\(path).\($0)" } ?? path)
         guard defaults.string(forKey: refusedKey) != version else { return nil }
         // A server copy no newer than the phone's (an app update shipped a
         // later one) is not fetched: it would never be read
@@ -327,7 +362,7 @@ final class LibraryContentSync {
         }
 
         var components = URLComponents(string: "\(baseURL)/v2/\(path)")
-        components?.queryItems = [URLQueryItem(name: "fields[\(type)]", value: fields)]
+        components?.queryItems = language + [URLQueryItem(name: "fields[\(type)]", value: fields)]
         guard let url = components?.url else { throw URLError(.badURL) }
         let data = try await body(of: url)
         do {

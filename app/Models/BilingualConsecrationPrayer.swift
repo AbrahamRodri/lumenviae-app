@@ -27,6 +27,10 @@ struct BilingualConsecrationPrayer: Identifiable {
     /// Bilingual prayer content
     let content: BilingualText
 
+    /// Part of its Spanish is the team's own (AI) translation, not a
+    /// published text: a Spanish screen says so under it
+    var aiTranslated = false
+
     // MARK: - Initializer
 
     init(

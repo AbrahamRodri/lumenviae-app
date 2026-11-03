@@ -947,6 +947,18 @@ struct OnboardingView: View {
     // MARK: - 7. Language
 
     private func detail(for language: PrayerLanguage) -> String {
+        if SpanishContent.isActive {
+            switch language {
+            case .english:
+                return String(localized: "Every prayer in Spanish", comment: "Onboarding, Choose a Language slide, in a Spanish app: the line under the Spanish choice")
+            case .latin:
+                break
+            case .both:
+                return String(localized: "Latin with Spanish beneath each line", comment: "Onboarding, Choose a Language slide, in a Spanish app: the line under a prayer-language choice")
+            case .latinUnderEnglish:
+                return String(localized: "Spanish with Latin beneath each line", comment: "Onboarding, Choose a Language slide, in a Spanish app: the line under a prayer-language choice")
+            }
+        }
         switch language {
         case .english:
             return String(
@@ -2421,7 +2433,10 @@ private struct LanguagePreviewCard: View {
     let language: PrayerLanguage
 
     private static let latin = "Ave Maria, gratia plena, Dominus tecum."
-    private static let english = "Hail Mary, full of grace, the Lord is with thee."
+    /// The Hail Mary's first line in the prayers' first language: Spanish
+    /// in a Spanish app (`SpanishContent`), else English
+    private static let english = SpanishContent.prayers["hail_mary"].flatMap { SpanishContent.isActive ? $0.text.first : nil }
+        ?? "Hail Mary, full of grace, the Lord is with thee."
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {

@@ -139,6 +139,11 @@ struct SpanishCatalogTests {
         #expect(mismatched.isEmpty, "Spanish with other placeholders: \(mismatched.sorted().prefix(20))")
     }
 
+    /// Avemaría is feminine (DPD): "una sola avemaría", "la primera
+    /// avemaría", never "un solo avemaría", "el primer avemaría"
+    static let masculineAvemaria =
+        #"(?i)\b(un|el|del|al|este|ese|otro|primer|último|solo|único)\s+((solo|primer|último|otro|único)\s+)?avemar"#
+
     /// The settled wording (Mexican usage, ustedes not vosotros), held:
     /// these slipped past five translators and a proofreader once
     @Test func spanishKeepsTheSettledWording() {
@@ -149,7 +154,7 @@ struct SpanishCatalogTests {
             let text = (try? JSONSerialization.data(withJSONObject: spanish))
                 .flatMap { String(data: $0, encoding: .utf8) } ?? ""
             if text.contains("vosotros") || text.contains("Ajustes") || text.contains("añad")
-                || text.contains("Añad") || text.contains("un avemaría") || text.contains("Un avemaría") {
+                || text.contains("Añad") || text.range(of: Self.masculineAvemaria, options: .regularExpression) != nil {
                 broken.append(key)
             }
         }

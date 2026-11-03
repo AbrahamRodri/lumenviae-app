@@ -14,8 +14,15 @@ struct Mystery: nonisolated Codable, Identifiable, Hashable {
 
     let id: Int
 
-    /// Mystery name (e.g., "The Annunciation")
-    let name: String
+    /// The name as stored and sent (English, the server's or the app's own)
+    let storedName: String
+
+    /// Mystery name (e.g., "The Annunciation"), in Spanish when the app
+    /// speaks Spanish (`SpanishContent`). Stored and encoded in English, so a
+    /// cached copy reads right in either language.
+    var name: String {
+        SpanishContent.mysteryName(storedName, key: "\(category)_\(order)")
+    }
 
     /// Category string from API (e.g., "joyful", "sorrowful")
     let category: String
@@ -33,8 +40,18 @@ struct Mystery: nonisolated Codable, Identifiable, Hashable {
     /// than the app's schedule, and the days follow the user's own
     /// schedule besides (`daysPrayed`).
     enum CodingKeys: String, CodingKey {
-        case id, name, category, order, description
+        case id, category, order, description
+        case storedName = "name"
         case scriptureReference = "scripture_reference"
+    }
+
+    init(id: Int, name: String, category: String, order: Int, description: String?, scriptureReference: String?) {
+        self.id = id
+        self.storedName = name
+        self.category = category
+        self.order = order
+        self.description = description
+        self.scriptureReference = scriptureReference
     }
 
     // MARK: - Computed Properties
