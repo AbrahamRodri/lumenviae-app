@@ -20,6 +20,7 @@ struct appApp: App {
 
     /// Whether the app has finished loading (splash screen complete)
     @State private var isLaunched = false
+    @State private var showsTranslationNotice = false
 
     /// True after the user completes onboarding once
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
@@ -81,6 +82,17 @@ struct appApp: App {
                     }
                 }
             }
+            // The first time the app opens in Spanish, a short notice that
+            // its words were translated with AI (Settings keeps the same
+            // line under the language row). Never in English. A new reader
+            // meets it over the introduction; anyone past it, on the home
+            // page, ahead of What's New (ContentView.presentFirstLook)
+            .onChange(of: isLaunched) { _, launched in
+                if launched, !hasSeenOnboarding, AppLanguage.owesTranslationNotice() {
+                    showsTranslationNotice = true
+                }
+            }
+            .translationNotice(isPresented: $showsTranslationNotice)
             // The phone's Larger Text is followed up to the app's cap and
             // no further. Sheets and covers don't inherit this; each one
             // carries the same modifier on its content.

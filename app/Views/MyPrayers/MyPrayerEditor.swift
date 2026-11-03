@@ -97,9 +97,12 @@ struct MyPrayerEditor: View {
                         }
 
                         VStack(alignment: .leading, spacing: 6) {
+                            // A key of its own: the chant's "Words" are a
+                            // song's lyrics, a prayer's are its text
                             fieldLabel(String(
-                                localized: "Words",
-                                comment: "Prayer editor: the label over the field for the prayer's words"
+                                localized: "prayerEditor.words",
+                                defaultValue: "Words",
+                                comment: "Prayer editor: the label over the field for the prayer's words (its text, not song lyrics)"
                             ))
                             ZStack(alignment: .topLeading) {
                                 if text.isEmpty {

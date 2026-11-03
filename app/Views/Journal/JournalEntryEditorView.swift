@@ -198,11 +198,11 @@ struct JournalEntryEditorView: View {
             return String(localized: "During prayer", comment: "Journal editor: kicker over the title when a reflection is written in the middle of praying")
         }
         let date = existingEntry?.createdAt ?? Date()
-        let weekday = date.formatted(.dateTime.weekday(.wide))
-        let day = date.formatted(.dateTime.day())
-        let month = date.formatted(.dateTime.month(.wide))
-        return "\(weekday), \(day) \(month)"
+        // "Thursday, 27 August", in the language's own order outside English
+        return Self.kickerDate.string(from: date)
     }
+
+    private static let kickerDate = DateFormatter.designed(english: "EEEE, d MMMM", template: "EEEEdMMMM")
 
     private var hasNoText: Bool {
         text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty

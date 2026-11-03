@@ -221,7 +221,7 @@ struct LiturgicalMonthGrid<DayMark: View, Offline: View>: View {
         let date = focused ?? calendar.startOfDay(for: .now)
 
         return VStack(spacing: 3) {
-            Text(LiturgicalCalendarFormat.feastDate.string(from: date).uppercased())
+            Text(LiturgicalCalendarFormat.feastDate(date).uppercased())
                 .font(AppFonts.labelFont(9))
                 .tracking(2)
                 .foregroundColor(AppColors.gold.opacity(0.7))
@@ -253,12 +253,15 @@ enum LiturgicalCalendarFormat {
         return formatter
     }()
 
-    /// "TUESDAY · 25 AUGUST"
-    static let feastDate: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE '·' d MMMM"
-        return formatter
-    }()
+    /// "TUESDAY · 25 AUGUST": the weekday, then the day and month in the
+    /// language's own order
+    static func feastDate(_ date: Date) -> String {
+        "\(weekday.string(from: date)) · \(dayAndMonth.string(from: date))"
+    }
+
+    private static let weekday = DateFormatter.designed(english: "EEEE", template: "EEEE")
+
+    private static let dayAndMonth = DateFormatter.designed(english: "d MMMM", template: "dMMMM")
 
     static let spokenDate: DateFormatter = {
         let formatter = DateFormatter()

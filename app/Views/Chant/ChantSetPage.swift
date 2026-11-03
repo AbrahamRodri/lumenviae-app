@@ -154,7 +154,7 @@ struct ChantSetPage: View {
             Button("Cancel", role: .cancel) { renaming = nil }
         }
         .confirmationDialog(
-            deleting.map { Text("Delete \($0.name)?") } ?? Text("Delete this set?"),
+            deleting.map { Text("Delete \($0.shownName)?") } ?? Text("Delete this set?"),
             isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
             titleVisibility: .visible
         ) {
@@ -386,7 +386,7 @@ struct ChantSetPage: View {
         .accessibilityAddTraits(kept ? [.isSelected] : [])
         // The same question Saved asks before a set is deleted
         .confirmationDialog(
-            unkeeping.map { Text("Delete \($0.name)?") } ?? Text("Delete this set?"),
+            unkeeping.map { Text("Delete \($0.shownName)?") } ?? Text("Delete this set?"),
             isPresented: Binding(get: { unkeeping != nil }, set: { if !$0 { unkeeping = nil } }),
             titleVisibility: .visible
         ) {

@@ -146,7 +146,13 @@ struct ScheduleService {
         let days = weekdays + sundays
             .filter { sundayCategory(in: $0.0) == category }
             .map { $0.1 }
-        return days.isEmpty ? nil : days.joined(separator: ", ")
+        // The language's own list: commas in English ("Monday, Thursday"),
+        // its own joining word where it has one
+        guard !days.isEmpty else { return nil }
+        let line = days.formatted(.list(type: .and, width: .narrow))
+        // A language that writes its days in lower case still opens the
+        // line on a capital
+        return line.prefix(1).uppercased(with: .current) + line.dropFirst()
     }
 
     /// Sunday first, as `Calendar` numbers them, in the reader's language

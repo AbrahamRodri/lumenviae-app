@@ -741,9 +741,7 @@ struct OfficeHourView: View {
 
     /// "Thursday, 27 August"
     private static let plateDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE, d MMMM"
-        return formatter
+        DateFormatter.designed(english: "EEEE, d MMMM", template: "EEEEdMMMM")
     }()
 }
 

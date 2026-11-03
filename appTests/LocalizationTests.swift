@@ -86,3 +86,117 @@ struct LocalizationTests {
         #expect(ChantLibraryData.displayWording(of: "Thursday holy hour") == "Thursday holy hour")
     }
 }
+
+/// Spanish (1e): every key in the catalog carries a Spanish translation,
+/// and the built app reads it.
+struct SpanishCatalogTests {
+
+    /// The catalog's source, read beside this file (the simulator shares
+    /// the Mac's disk)
+    private static var catalog: [String: Any] {
+        let url = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("app/Localizable.xcstrings")
+        guard let data = try? Data(contentsOf: url),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let strings = json["strings"] as? [String: Any] else { return [:] }
+        return strings
+    }
+
+    private static func specifiers(_ text: String) -> [String] {
+        let regex = /%(?:\d+\$)?(?:@|lld|ld|d|lf|f|\.\d+f|%)/
+        return text.matches(of: regex)
+            .map { String($0.output).replacing(/\d+\$/, with: "") }
+            .sorted()
+    }
+
+    @Test func everyKeyHasSpanish() {
+        let strings = Self.catalog
+        #expect(strings.count > 2000)
+        var missing: [String] = []
+        var mismatched: [String] = []
+        for (key, value) in strings {
+            guard key.contains(where: \.isLetter),
+                  let entry = value as? [String: Any],
+                  (entry["shouldTranslate"] as? Bool) != false else { continue }
+            let localizations = entry["localizations"] as? [String: Any]
+            guard let spanish = localizations?["es"] as? [String: Any] else {
+                missing.append(key)
+                continue
+            }
+            // A plain string keeps the English's placeholders; a plural's
+            // forms are checked by building them (below)
+            if let unit = spanish["stringUnit"] as? [String: Any],
+               spanish["substitutions"] == nil,
+               let text = unit["value"] as? String {
+                let english = ((localizations?["en"] as? [String: Any])?["stringUnit"] as? [String: Any])?["value"] as? String ?? key
+                if text.isEmpty || Self.specifiers(text) != Self.specifiers(english) {
+                    mismatched.append(key)
+                }
+            }
+        }
+        #expect(missing.isEmpty, "Keys with no Spanish: \(missing.sorted().prefix(20))")
+        #expect(mismatched.isEmpty, "Spanish with other placeholders: \(mismatched.sorted().prefix(20))")
+    }
+
+    /// The settled wording (Mexican usage, ustedes not vosotros), held:
+    /// these slipped past five translators and a proofreader once
+    @Test func spanishKeepsTheSettledWording() {
+        var broken: [String] = []
+        for (key, value) in Self.catalog {
+            guard let entry = value as? [String: Any],
+                  let spanish = (entry["localizations"] as? [String: Any])?["es"] else { continue }
+            let text = (try? JSONSerialization.data(withJSONObject: spanish))
+                .flatMap { String(data: $0, encoding: .utf8) } ?? ""
+            if text.contains("vosotros") || text.contains("Ajustes") || text.contains("añad")
+                || text.contains("Añad") || text.contains("un avemaría") || text.contains("Un avemaría") {
+                broken.append(key)
+            }
+        }
+        #expect(broken.isEmpty, "Spanish against the settled wording: \(broken.sorted().prefix(20))")
+    }
+
+    @Test func theBuiltAppReadsSpanish() throws {
+        let path = try #require(Bundle.main.path(forResource: "es", ofType: "lproj"))
+        let spanish = try #require(Bundle(path: path))
+        #expect(spanish.localizedString(forKey: "App Language", value: nil, table: nil) == "Idioma de la app")
+        #expect(
+            spanish.localizedString(forKey: "The words of this app were translated into Spanish with artificial intelligence. The prayers use the Church's traditional texts.", value: nil, table: nil)
+                == "Las palabras de esta app se tradujeron al español con inteligencia artificial. Las oraciones usan los textos tradicionales de la Iglesia."
+        )
+    }
+
+    @Test func spanishPluralsAgreeWithTheirCount() throws {
+        let path = try #require(Bundle.main.path(forResource: "es", ofType: "lproj"))
+        let spanish = try #require(Bundle(path: path))
+        let locale = Locale(identifier: "es_MX")
+        let format = spanish.localizedString(forKey: "%lld days in a row", value: nil, table: nil)
+        #expect(String(format: format, locale: locale, 1) == "1 día seguido")
+        #expect(String(format: format, locale: locale, 12) == "12 días seguidos")
+    }
+}
+
+/// The one-time AI notice (Spanish only): owed until its OK is pressed,
+/// never to an English reader
+struct TranslationNoticeTests {
+
+    private func freshDefaults() -> UserDefaults {
+        let name = "TranslationNoticeTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: name)!
+        defaults.removePersistentDomain(forName: name)
+        return defaults
+    }
+
+    @Test func owedInSpanishUntilDismissed() {
+        let defaults = freshDefaults()
+        #expect(AppLanguage.owesTranslationNotice(defaults: defaults, inSpanish: true))
+        // Raised but not dismissed (a sheet came up first): still owed
+        #expect(AppLanguage.owesTranslationNotice(defaults: defaults, inSpanish: true))
+        AppLanguage.markTranslationNoticeShown(defaults: defaults)
+        #expect(!AppLanguage.owesTranslationNotice(defaults: defaults, inSpanish: true))
+    }
+
+    @Test func neverOwedInEnglish() {
+        #expect(!AppLanguage.owesTranslationNotice(defaults: freshDefaults(), inSpanish: false))
+    }
+}

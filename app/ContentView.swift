@@ -43,6 +43,8 @@ struct ContentView: View {
     /// A version's notes, owed to someone who knew the version before;
     /// and the door chosen in them, taken once the sheet has left
     @State private var whatsNewRelease: WhatsNewRelease?
+    /// The one-time AI translation notice, the first of the first looks
+    @State private var showsTranslationNotice = false
     @State private var pendingWhatsNewRoute: AppRoute?
 
     /// A new reader's first look at the home page (`FirstUseTour`).
@@ -281,6 +283,11 @@ struct ContentView: View {
         .onChange(of: router.selectedTab) { _, tab in
             if tab == .home { Task { await presentFirstLook(after: .milliseconds(400)) } }
         }
+        // Once dismissed, the next first look owed (What's New, the tour)
+        // follows
+        .translationNotice(isPresented: $showsTranslationNotice) {
+            Task { await presentFirstLook(after: .milliseconds(500)) }
+        }
         .sheet(item: $whatsNewRelease, onDismiss: {
             guard let route = pendingWhatsNewRoute else { return }
             pendingWhatsNewRoute = nil
@@ -303,8 +310,12 @@ struct ContentView: View {
         // server the tour began first and the prayer opened under it
         guard router.path.isEmpty, router.selectedTab == .home, !router.chapelArranging,
               !showPrayTray, !showPrayEditor, whatsNewRelease == nil,
-              !isStartingPrayer, !firstUseTour.isRunning else { return }
-        if let release = WhatsNewStore.shared.due {
+              !isStartingPrayer, !firstUseTour.isRunning, !showsTranslationNotice else { return }
+        // In Spanish, the AI notice comes first: an alert raised beside
+        // What's New's sheet is the one SwiftUI drops
+        if AppLanguage.owesTranslationNotice() {
+            showsTranslationNotice = true
+        } else if let release = WhatsNewStore.shared.due {
             WhatsNewStore.shared.markSeen()
             whatsNewRelease = release
         } else if firstUseTour.isDue {

@@ -1019,16 +1019,16 @@ struct OnboardingView: View {
     /// Label, the hour as the button says it, the row's detail, and the
     /// hour (24h). Noon is an hour of the Angelus; morning and evening are
     /// not tied to it, so they do not claim it.
-    private static let reminderOptions: [(label: String, spoken: String, detail: String, hour: Int)] = [
+    private static let reminderOptions: [(label: String, button: String, detail: String, hour: Int)] = [
         (
             String(localized: "Morning", comment: "Onboarding, A Daily Reminder slide: a choice card's name, a reminder at 6 AM"),
-            String(localized: "6 AM", comment: "Onboarding, A Daily Reminder slide: the morning hour as the gold button says it, in Remind Me at 6 AM"),
+            String(localized: "Remind Me at 6 AM", comment: "Onboarding, A Daily Reminder slide: the gold button that sets a reminder at 6 in the morning"),
             String(localized: "6 AM, to begin the day with prayer", comment: "Onboarding, A Daily Reminder slide: the line under the Morning choice"),
             6
         ),
         (
             String(localized: "Noon", comment: "Onboarding, A Daily Reminder slide: a choice card's name, a reminder at 12 PM"),
-            String(localized: "Noon", comment: "Onboarding, A Daily Reminder slide: the noon hour as the gold button says it, in Remind Me at Noon"),
+            String(localized: "Remind Me at Noon", comment: "Onboarding, A Daily Reminder slide: the gold button that sets a reminder at noon; a whole sentence of its own, since noon takes its own article in some languages"),
             String(
                 localized: "12 PM, when church bells ring for the noon prayer",
                 comment: "Onboarding, A Daily Reminder slide: the line under the Noon choice; the noon prayer is the Angelus"
@@ -1037,7 +1037,7 @@ struct OnboardingView: View {
         ),
         (
             String(localized: "Evening", comment: "Onboarding, A Daily Reminder slide: a choice card's name, a reminder at 8 PM"),
-            String(localized: "8 PM", comment: "Onboarding, A Daily Reminder slide: the evening hour as the gold button says it, in Remind Me at 8 PM"),
+            String(localized: "Remind Me at 8 PM", comment: "Onboarding, A Daily Reminder slide: the gold button that sets a reminder at 8 in the evening"),
             String(localized: "8 PM, to end the day with prayer", comment: "Onboarding, A Daily Reminder slide: the line under the Evening choice"),
             20
         )
@@ -1059,10 +1059,14 @@ struct OnboardingView: View {
 
     private var reminderSlide: some View {
         let denied = UserSettings.shared.notificationAuthorizationDenied
-        let spoken = selectedReminderHour
-            .flatMap { hour in Self.reminderOptions.first { $0.hour == hour }?.spoken }
-            ?? keptReminderTime
-            ?? ""
+        // Each offered hour has its whole sentence; a time kept from
+        // before (one not offered here) is set into the general one
+        let remindTitle = selectedReminderHour
+            .flatMap { hour in Self.reminderOptions.first { $0.hour == hour }?.button }
+            ?? String(
+                localized: "Remind Me at \(keptReminderTime ?? "")",
+                comment: "Onboarding, A Daily Reminder slide: the gold button that sets the reminder at a time kept from before, like 7:30 PM"
+            )
 
         return OnboardingSlideLayout(
             title: String(localized: "A Daily Reminder", comment: "Onboarding: title of the slide choosing a time for the daily prayer reminder"),
@@ -1128,7 +1132,7 @@ struct OnboardingView: View {
                 GoldCTAButton(
                     title: denied
                         ? String(localized: "Continue", comment: "Onboarding, A Daily Reminder slide: the gold button when notifications are turned off, which only goes on")
-                        : String(localized: "Remind Me at \(spoken)", comment: "Onboarding, A Daily Reminder slide: the gold button that sets the reminder; the hour is like 8 PM or Noon"),
+                        : remindTitle,
                     action: reminderAct
                 )
 

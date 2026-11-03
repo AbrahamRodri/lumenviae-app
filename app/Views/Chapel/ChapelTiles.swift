@@ -1075,8 +1075,7 @@ struct ChapelFlameTile: View {
             ))
         }
         if let next = StreakMilestone.next(after: streak) {
-            // Said, the milestone's dot is a comma
-            let title = next.title.replacingOccurrences(of: " · ", with: ", ")
+            let title = next.spokenTitle
             sentences.append(String(
                 localized: "Next, \(title), \(next.days - streak) days away.",
                 comment: "VoiceOver, Chapel Prayer Streak tile: the next milestone (like 9 days, a novena), then how many days off it is"
@@ -1128,7 +1127,7 @@ struct ChapelFlameTile: View {
                 VStack(alignment: .leading, spacing: 6) {
                     if streak > 0 {
                         chapelFigure(
-                            "\(streak)",
+                            streak.formatted(),
                             size: 42,
                             caption: streak == 1
                                 ? String(localized: "day so far", comment: "Chapel, Prayer Streak tile: italic words beside the figure 1 (1 day so far); the figure is drawn apart in a larger face")
@@ -1213,7 +1212,7 @@ struct ChapelFlameTile: View {
 
             if streak > 0 {
                 chapelFigure(
-                    "\(streak)",
+                    streak.formatted(),
                     size: 30,
                     caption: streak == 1
                         ? String(localized: "day", comment: "Chapel, Prayer Streak tile at half width: the word beside the figure 1 (1 day); the figure is drawn apart in a larger face")

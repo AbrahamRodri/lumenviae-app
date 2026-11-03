@@ -114,9 +114,7 @@ struct TodaysPrayerSection: View {
     }
 
     private static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEE d MMM"
-        return formatter
+        DateFormatter.designed(english: "EEE d MMM", template: "EEEdMMM")
     }()
 
     // MARK: - The hour's prayers
