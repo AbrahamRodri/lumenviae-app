@@ -28,12 +28,15 @@ enum NarrationClock {
         let whole = Int(seconds)
         let mins = whole / 60
         let secs = whole % 60
-        let minutes = mins == 1
-            ? String(localized: "1 minute", comment: "VoiceOver: part of a narration position or length, one minute")
-            : String(localized: "\(mins) minutes", comment: "VoiceOver: part of a narration position or length, a number of minutes")
-        let sec = secs == 1
-            ? String(localized: "1 second", comment: "VoiceOver: part of a narration position or length, one second")
-            : String(localized: "\(secs) seconds", comment: "VoiceOver: part of a narration position or length, a number of seconds")
+        // "1 minute" and "1 second" come from the catalog's plural variations
+        let minutes = String(
+            localized: "\(mins) minutes",
+            comment: "VoiceOver: part of a narration position or length, a number of minutes"
+        )
+        let sec = String(
+            localized: "\(secs) seconds",
+            comment: "VoiceOver: part of a narration position or length, a number of seconds"
+        )
         if mins == 0 { return sec }
         if secs == 0 { return minutes }
         return String(

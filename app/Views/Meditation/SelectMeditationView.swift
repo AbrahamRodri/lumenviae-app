@@ -309,23 +309,17 @@ struct SelectMeditationView: View {
     /// "6 meditations" once named six sets as six readings
     private var countLabel: String {
         let total = viewModel.totalSetCount
-        let visible = viewModel.visibleSetCount
-        switch (viewModel.isNarrowed, total == 1) {
-        case (true, true):
+        // "1 set of meditations" comes from the catalog's plural variations
+        if viewModel.isNarrowed {
             return String(
-                localized: "\(visible) of \(total) set of meditations",
-                comment: "Mysteries' page, while a kind is chosen: how many sets show of all of them, when there is one set"
-            )
-        case (true, false):
-            return String(
-                localized: "\(visible) of \(total) sets of meditations",
+                localized: "\(viewModel.visibleSetCount) of \(total) sets of meditations",
                 comment: "Mysteries' page, while a kind is chosen: how many sets show of all of them, like 2 of 6 sets of meditations"
             )
-        case (false, true):
-            return String(localized: "\(total) set of meditations", comment: "Mysteries' page: the number of meditation sets, when there is one")
-        case (false, false):
-            return String(localized: "\(total) sets of meditations", comment: "Mysteries' page: the number of meditation sets, like 6 sets of meditations")
         }
+        return String(
+            localized: "\(total) sets of meditations",
+            comment: "Mysteries' page: the number of meditation sets, like 6 sets of meditations"
+        )
     }
 
     /// Kinds of meditation, disclosed.
