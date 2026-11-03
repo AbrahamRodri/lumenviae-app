@@ -400,7 +400,6 @@ struct ScripturalRosaryPrayerView: View {
     private var trackActions: PrayerTrackActions {
         let mysteryName = viewModel.currentMystery?.name ?? viewModel.mysteryKicker
         let reading = viewModel.reading
-        let shareLine = reading.reference.map { "\(reading.text) — \($0)" } ?? reading.text
         return PrayerTrackActions(
             meditationId: 0,
             audioURL: nil,
@@ -408,15 +407,10 @@ struct ScripturalRosaryPrayerView: View {
             // the honest answer to "which voice", and nothing reads it
             // while `audioURL` is nil - the tray offers no download.
             voice: NarrationVoiceCatalog.shared.chosenSlug,
+            // The words on screen, for a friend, with the app's link
             shareText: viewModel.isPlain
-                ? String(
-                    localized: "\(mysteryName) · \(viewModel.displayName) on Lumen Viae",
-                    comment: "Text shared from the Audio Rosary: the mystery's name, then the form's name; Lumen Viae is the app's name"
-                )
-                : String(
-                    localized: "\(shareLine) · \(mysteryName), the Scriptural Rosary on Lumen Viae",
-                    comment: "Text shared from the Scriptural Rosary: the verse on screen with its reference, then the mystery's name; Lumen Viae is the app's name"
-                ),
+                ? ShareText.compose(title: viewModel.displayName, body: mysteryName, byline: nil)
+                : ShareText.compose(title: mysteryName, body: reading.text, byline: reading.reference),
             feedbackContext: FeedbackContext(
                 meditationTitle: mysteryName,
                 setName: viewModel.displayName

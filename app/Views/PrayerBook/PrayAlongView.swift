@@ -309,7 +309,7 @@ struct PrayAlongView: View {
     }
 
     /// What the page does less often, for the prayer on it: its
-    /// language, Save, Learn by heart and Hear it sung. The prayer's own
+    /// language, Save, Share, Learn by heart and Hear it sung. The prayer's own
     /// page once carried them, and a prayer opened alone now opens here.
     private var moreMenu: some View {
         Menu {
@@ -345,6 +345,15 @@ struct PrayAlongView: View {
                     Label(kept ? "Remove from Saved" : "Save", image: kept ? "ph-bookmark-simple-fill" : "ph-bookmark-simple")
                 }
 
+                // The words as the page sets them, for a friend, with the
+                // app's link; the reader picks where they go
+                ShareLink(item: ShareText.prayer(prayer, language: displayLanguage)) {
+                    Label(
+                        String(localized: "Share", comment: "Pray-along screen, More menu: shares the prayer's words with the app's link"),
+                        image: "ph-export"
+                    )
+                }
+
                 Button {
                     learning = prayer
                 } label: {
@@ -368,7 +377,7 @@ struct PrayAlongView: View {
                 .contentShape(Rectangle())
         }
         .accessibilityLabel("More")
-        .accessibilityHint("Language, Save, Learn by heart, Hear it sung")
+        .accessibilityHint("Language, Save, Share, Learn by heart, Hear it sung")
         .sheet(item: $learning) { prayer in
             LearnByHeartSheet(prayer: prayer)
                 .environment(settings)

@@ -340,7 +340,7 @@ final class AppRouter {
     /// `rosaryAloud:<category>`, `scripturalRosaryPrayer:<category>[:<mystery>[:<bead>]]`,
     /// `rosaryAloudPrayer:<category>[:<mystery>[:<bead>]]`,
     /// `prayer:<category>[:<mystery>[:<bead>]]` (the category's bundled
-    /// meditation set), `prayerOrder:<id>`, `guidedRosary:<category>` and
+    /// meditation set), `prayerOrder:<id>`, `devotionPrayer:<id>` (a prayer on the pray-along screen), `guidedRosary:<category>` and
     /// `rosaryLesson:<n>`, and (read in `init`) `completion:<category>`, the
     /// screen after a finished Rosary. Categories are `MysteryCategory` raw values.
     static func launchRoute(_ spec: String) -> (AppRoute, PrayerLaunch?)? {
@@ -371,6 +371,7 @@ final class AppRouter {
             return (.prayerSession(meditationSetId: set.id),
                     PrayerLaunch(meditationSet: set, startIndex: mystery, startBead: bead))
         case ("prayerOrder", _) where parts.count > 1: return (.prayerOrder(id: parts[1]), nil)
+        case ("devotionPrayer", _) where parts.count > 1: return (.devotionPrayer(id: parts[1]), nil)
         case ("myPrayers", _): return (.myPrayers, nil)
         case ("rosaryLesson", _): return (.rosaryLesson(parts.count > 1 ? Int(parts[1]) ?? 0 : 0), nil)
         default: return nil
