@@ -1553,8 +1553,11 @@ extension ScripturalRosaryPrayerView {
                 + geometry.safeAreaInsets.top
                 + geometry.safeAreaInsets.bottom
             let rail = rail
+            // The words' first line at one height on every step; the head
+            // stands in its room above them
             let columnTop = max(
-                OneRosaryRailView.windowTop(fullHeight: fullHeight) - geometry.safeAreaInsets.top,
+                OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight)
+                    - OneRosaryColumn<EmptyView>.headHeight - geometry.safeAreaInsets.top,
                 12 + 44 + 14
             )
 
@@ -1580,7 +1583,8 @@ extension ScripturalRosaryPrayerView {
                 dragOffset: strandDrag,
                 turnPulse: turnPulse,
                 tappable: tappableBeads(rail),
-                complete: oneRosaryComplete
+                complete: oneRosaryComplete,
+                closing: oneRosaryOnClose
             ) { index in
                 if case .strand(let bead) = rail.target(at: index) { goToBead(bead) }
             }
@@ -1593,6 +1597,7 @@ extension ScripturalRosaryPrayerView {
                     // the rail's alone
                     PrayerPaintingStage(
                         painting: painting,
+                        seatedFraction: OneRosaryColumn<EmptyView>.paintingFraction,
                         paintingID: viewModel.currentMysteryIndex,
                         chromeHidden: chromeHidden,
                         width: geometry.size.width,
@@ -1626,6 +1631,12 @@ extension ScripturalRosaryPrayerView {
     }
 
     /// The last step, the whole Rosary prayed
+    /// The hand on the closing prayers, back at the medal or the cross
+    fileprivate var oneRosaryOnClose: Bool {
+        if case .closing = viewModel.currentPendantStep { return true }
+        return viewModel.spokenPendant?.phase == .closing
+    }
+
     fileprivate var oneRosaryComplete: Bool {
         viewModel.isPrayingAloud && viewModel.spokenFailure == nil
             ? viewModel.isSpokenFinished
@@ -1639,9 +1650,8 @@ extension ScripturalRosaryPrayerView {
             OneRosaryColumn(
                 kicker: oneRosaryKicker,
                 title: pendant.heading,
-                bead: OneRosaryColumn<EmptyView>.pendantLabel(prayer: pendant.title, count: viewModel.silentPendantCount),
+                bead: OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount),
                 help: oneRosaryHelp,
-                balancesWords: true,
                 wordsKey: Self.pendantKey(pendant) + (viewModel.silentPendantCount ?? "")
             ) {
                 VStack(alignment: .leading, spacing: 8) {

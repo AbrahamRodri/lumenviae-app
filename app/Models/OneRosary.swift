@@ -148,6 +148,11 @@ enum RosaryHelps {
         let place: String
         /// What to do there, in plain words
         let instruction: String
+        /// Whether the line says what to do before the words are said
+        /// ("...as you say:"), and so stands above them; a comment on the
+        /// words while they are said ("Keep the scene before you.")
+        /// stands after them
+        var leadsWords: Bool = false
     }
 
     /// The line for the hand's place on a player.
@@ -184,7 +189,12 @@ enum RosaryHelps {
         let instruction = pendantStep == nil
             ? (sceneFreeInstruction(mystery: mystery, bead: bead) ?? step.instruction)
             : step.instruction
-        return Line(place: step.place, instruction: instruction)
+        // On the pendant, on a mystery's Our Father, its first Hail Mary
+        // and its close the guide says what to do next; on the Hail
+        // Marys between, it keeps the mind on the scene while they are
+        // said
+        let leads = pendantStep != nil || bead <= 1 || bead > 10
+        return Line(place: step.place, instruction: instruction, leadsWords: leads)
     }
 
     /// The Hail Marys' words in the guide name the scene ("Stay with the
@@ -205,8 +215,8 @@ enum RosaryHelps {
                 comment: "One Rosary beta, Helps on the first Hail Mary of a later mystery: what to do")
         case (_, 2...9):
             return String(
-                localized: "Keep the scene before you.",
-                comment: "One Rosary beta, Helps on a Hail Mary in the middle of a mystery: what to do, without naming the mystery, which the screen names above")
+                localized: "Small bead \(bead) of 10. Keep the scene before you.",
+                comment: "One Rosary beta, Helps on a Hail Mary in the middle of a mystery: which bead you are on and what to do, without naming the mystery, which the screen names above")
         default:
             return nil
         }
@@ -255,19 +265,22 @@ extension RosaryStrand {
 
 // MARK: - OneRosaryRail
 
-/// The whole Rosary as one rail, with the One Rosary beta on: the
-/// pendant's cross and beads, the five decades (seven sorrows) and the
-/// pendant again at the close, drawn as one string at the strand's own
-/// place on every step. The opening prayers climb it from the cross,
-/// the decades run up it, and the closing prayers come back to the medal
-/// and the cross, so there is one layout from the first Sign of the
-/// Cross to the last.
+/// The whole Rosary as one rail, with the One Rosary beta on: drawn as a
+/// rosary unrolled into one string, read one way only, from the cross at
+/// its foot to the medal at its head. The opening prayers climb the
+/// pendant from the cross; the centrepiece (the medal) stands between the
+/// pendant and the first decade's Hail Marys, so the pendant reads as the
+/// pendant; the decades run up the string; and at the close the hand comes
+/// back to the medal at the string's head, then to the cross it set out
+/// from. The rail never turns over: the cross is always at the foot,
+/// prayed beads below the hand, beads to come above.
 ///
 /// A position is a place on the rosary, not a prayer: the Sign of the
 /// Cross and the Creed are both said on the cross, the Hail, Holy Queen
 /// and the closing prayer on the medal, and a decade's Glory Be on the
 /// next Our Father's bead, as the strand already draws it. Index 0 is
-/// the first bead prayed; the rail is read bottom-up, like the strand.
+/// the cross; the rail is read bottom-up, like the strand. The medal
+/// between the pendant and the decades is passed, never stood on.
 struct OneRosaryRail: Equatable {
 
     enum Kind: Hashable {
@@ -275,6 +288,9 @@ struct OneRosaryRail: Equatable {
         case largeBead
         case smallBead
         case medal
+        /// The centrepiece between the pendant and the first decade's
+        /// Hail Marys: drawn, passed over, never a place to stand
+        case centrepiece
         case ourFather(decade: Int)
         case hailMary
         /// The last bead of a Rosary with no closing prayers shown
@@ -299,6 +315,9 @@ struct OneRosaryRail: Equatable {
     /// Rail positions before the strand's first bead
     let strandStart: Int
 
+    /// Each bead of the strand's position on the rail
+    private let strandRail: [Int]
+
     private let opening: [Group]
     private let closing: [Group]
 
@@ -311,6 +330,7 @@ struct OneRosaryRail: Equatable {
         guard showsPendant else {
             kinds = (0..<strand.count).map { Self.kind(of: strand.bead(at: $0)) }
             strandStart = 0
+            strandRail = Array(0..<strand.count)
             opening = []
             closing = []
             return
@@ -328,6 +348,7 @@ struct OneRosaryRail: Equatable {
             return result
         }
 
+        let isChaplet = strand.hailMarys != 10
         var kinds: [Kind] = []
         var opening = groups(pendant.opening)
         // The opening's Glory Be is said where the hand comes to the first
@@ -340,22 +361,37 @@ struct OneRosaryRail: Equatable {
             opening[index].railIndex = kinds.count
             kinds.append(Self.kind(of: opening[index].place))
         }
-        strandStart = kinds.count
+        // The chaplet's pendant is its cross alone, and its medal comes
+        // straight after it
+        if isChaplet { kinds.append(.centrepiece) }
+        let strandStart = kinds.count
         if mergesIntoStart { opening[opening.count - 1].railIndex = strandStart }
 
         var closing = groups(pendant.closing)
         let mergesIntoEnd = closing.first?.place == .medal
+        var strandRail: [Int] = []
         for index in 0..<strand.count {
             let bead = strand.bead(at: index)
+            strandRail.append(kinds.count)
             if case .amen = bead, !closing.isEmpty {
                 kinds.append(mergesIntoEnd ? .medal : .largeBead)
             } else {
                 kinds.append(Self.kind(of: bead))
             }
+            // The Rosary's first Our Father is said on the pendant's
+            // second large bead, below the medal: the medal stands
+            // between it and the first Hail Mary
+            if index == 0, !isChaplet { kinds.append(.centrepiece) }
         }
+        let returnsToCross = opening.first?.place == .cross
         for index in closing.indices {
             if index == 0, mergesIntoEnd {
                 closing[index].railIndex = kinds.count - 1
+            } else if closing[index].place == .cross, returnsToCross {
+                // The close comes back to the cross the Rosary set out
+                // from: the one cross, at the foot, never a second one
+                // at the head
+                closing[index].railIndex = 0
             } else {
                 closing[index].railIndex = kinds.count
                 kinds.append(Self.kind(of: closing[index].place))
@@ -363,6 +399,8 @@ struct OneRosaryRail: Equatable {
         }
 
         self.kinds = kinds
+        self.strandStart = strandStart
+        self.strandRail = strandRail
         self.opening = opening
         self.closing = closing
     }
@@ -371,7 +409,7 @@ struct OneRosaryRail: Equatable {
 
     /// The position of a bead of the strand
     func index(strandIndex: Int) -> Int {
-        strandStart + min(max(strandIndex, 0), strand.count - 1)
+        strandRail[min(max(strandIndex, 0), strand.count - 1)]
     }
 
     /// The position of an opening or closing prayer
@@ -396,13 +434,14 @@ struct OneRosaryRail: Equatable {
     }
 
     /// Where a tap on a position takes the hand: a bead of the strand,
-    /// or the first prayer said on a place of the pendant
+    /// or the first prayer said on a place of the pendant. The medal
+    /// between the pendant and the decades takes the hand nowhere.
     func target(at index: Int) -> Target? {
         guard index >= 0, index < count else { return nil }
         // The medal the last Glory Be is said on is the strand's own last
         // bead: a tap there is that bead
-        if index >= strandStart, index < strandStart + strand.count {
-            return .strand(index - strandStart)
+        if let bead = strandRail.firstIndex(of: index) {
+            return .strand(bead)
         }
         if let first = opening.first(where: { $0.railIndex == index })?.steps.first {
             return .pendant(.opening(first))
@@ -421,6 +460,22 @@ struct OneRosaryRail: Equatable {
         case .end: return String(localized: "Amen", comment: "Drawn strand: the label beside the last bead, where the Rosary ends")
         default: return nil
         }
+    }
+
+    /// What a press on a bead of the strand goes to, in the rail's
+    /// margin while the finger is down: "Hail Mary" over "6 of 10", "Our
+    /// Father" over the mystery's number
+    func pressLines(strandIndex: Int) -> [String] {
+        let position = strand.position(at: strandIndex)
+        if position.bead == 0 {
+            return [
+                strand.labelLines(bead: 0).first ?? "",
+                String(
+                    localized: "Mystery \(position.mystery + 1)",
+                    comment: "One Rosary beta, a bead of the rail pressed: the second short line under Our Father, naming which mystery the bead opens, like Mystery 2"),
+            ]
+        }
+        return strand.labelLines(bead: position.bead)
     }
 
     private static func kind(of place: PendantPlace?) -> Kind {

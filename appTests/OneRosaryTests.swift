@@ -89,7 +89,7 @@ struct OneRosaryTests {
     @Test func helpsFollowsTheGuideOnThePendant() {
         let steps = GuidedRosary.steps(for: .joyful)
         let first = RosaryHelps.line(for: .joyful, pendantStep: .opening(0), mystery: 0, bead: 0)
-        #expect(first == RosaryHelps.Line(place: steps[0].place, instruction: steps[0].instruction))
+        #expect(first == RosaryHelps.Line(place: steps[0].place, instruction: steps[0].instruction, leadsWords: true))
 
         let creed = RosaryHelps.line(for: .joyful, pendantStep: .opening(1), mystery: 0, bead: 0)
         #expect(creed?.instruction == steps[1].instruction)
@@ -181,7 +181,7 @@ struct OneRosaryTests {
 
     // MARK: - Round 2: One Rail
 
-    @Test func theRailClimbsThePendantRunsTheDecadesAndComesBackDown() {
+    @Test func theRailClimbsThePendantRunsTheDecadesAndComesBackToTheCross() {
         let strand = RosaryStrand(decades: 5, hailMarys: 10)
         let pendant = SilentPendant(category: .joyful)
         let rail = OneRosaryRail(strand: strand, pendant: pendant, showsPendant: true)
@@ -197,16 +197,69 @@ struct OneRosaryTests {
         #expect(rail.index(of: .opening(pendant.opening.count - 1)) == 5)
         #expect(rail.index(strandIndex: 0) == 5)
         #expect(rail.kinds[5] == .ourFather(decade: 0))
+        // The medal between the pendant and the first Hail Mary
+        #expect(rail.kinds[6] == .centrepiece)
+        #expect(rail.index(strandIndex: 1) == 7)
+        #expect(rail.kinds[7] == .hailMary)
 
         // The last Glory Be, the Hail, Holy Queen and the closing prayer
-        // on the medal; the last Sign of the Cross on the cross
+        // on the medal at the string's head; the last Sign of the Cross
+        // back on the one cross, at the foot
         let end = rail.index(strandIndex: strand.count - 1)
+        #expect(end == rail.count - 1)
         #expect(rail.kinds[end] == .medal)
         #expect(rail.index(of: .closing(0)) == end)
         #expect(rail.index(of: .closing(1)) == end)
-        #expect(rail.index(of: .closing(2)) == end + 1)
-        #expect(rail.kinds.last == .cross)
+        #expect(rail.index(of: .closing(2)) == 0)
+        #expect(rail.kinds.filter { $0 == .cross }.count == 1)
         #expect(rail.count == 5 + strand.count + 1)
+    }
+
+    @Test func theRailNeverTurnsOver() {
+        // Every step, opening to close, in order: the hand only climbs,
+        // but for the last Sign of the Cross, which comes back to the
+        // cross at the foot rather than to a second one at the head
+        let strand = RosaryStrand(decades: 5, hailMarys: 10)
+        let pendant = SilentPendant(category: .joyful)
+        let rail = OneRosaryRail(strand: strand, pendant: pendant, showsPendant: true)
+        var places = pendant.opening.indices.map { rail.index(of: .opening($0)) }
+        places += (0..<strand.count).map { rail.index(strandIndex: $0) }
+        places += pendant.closing.indices.dropLast().map { rail.index(of: .closing($0)) }
+        #expect(places == places.sorted())
+        #expect(rail.index(of: .closing(pendant.closing.count - 1)) == 0)
+        #expect(rail.kinds.first == .cross)
+    }
+
+    @Test func onTheCloseEveryPlaceButTheHandsIsPrayed() {
+        #expect(OneRosaryRailView.state(at: 30, active: 0, complete: false, closing: true) == .prayed)
+        #expect(OneRosaryRailView.state(at: 0, active: 0, complete: false, closing: true) == .active)
+        #expect(OneRosaryRailView.state(at: 30, active: 0, complete: false, closing: false) == .ahead)
+        #expect(OneRosaryRailView.state(at: 0, active: 0, complete: true, closing: true) == .prayed)
+    }
+
+    @Test func aPressNamesTheStepItGoesTo() {
+        let strand = RosaryStrand(decades: 5, hailMarys: 10)
+        let rail = OneRosaryRail(strand: strand, pendant: SilentPendant(category: .joyful), showsPendant: true)
+        #expect(rail.pressLines(strandIndex: strand.index(mystery: 0, bead: 6)) == ["Hail Mary", "6 of 10"])
+        #expect(rail.pressLines(strandIndex: strand.index(mystery: 1, bead: 0)) == ["Our Father", "Mystery 2"])
+    }
+
+    @Test func theCloseSaysWhereTheHandHasComeBack() {
+        let pendant = SilentPendant(category: .joyful)
+        for prayer in pendant.closing {
+            let label = OneRosaryColumn<EmptyView>.pendantLabel(prayer, count: "1 of 3")
+            #expect(label.hasSuffix("back on the medal") || label.hasSuffix("back on the cross"), "\(label)")
+        }
+        let creed = pendant.opening[1]
+        #expect(OneRosaryColumn<EmptyView>.pendantLabel(creed, count: "2 of 7") == "\(creed.title) · 2 of 7")
+    }
+
+    @Test func helpsSayWhatToDoBeforeTheWordsAndCommentAfterThem() {
+        #expect(RosaryHelps.line(for: .joyful, pendantStep: .opening(0), mystery: 0, bead: 0)?.leadsWords == true)
+        #expect(RosaryHelps.line(for: .joyful, pendantStep: nil, mystery: 1, bead: 0)?.leadsWords == true)
+        let middle = RosaryHelps.line(for: .joyful, pendantStep: nil, mystery: 1, bead: 4)
+        #expect(middle?.leadsWords == false)
+        #expect(middle?.instruction.contains("4 of 10") == true)
     }
 
     @Test func theRailIsTheStrandWithoutThePendant() {
@@ -224,8 +277,10 @@ struct OneRosaryTests {
         let rail = OneRosaryRail(strand: strand, pendant: SilentPendant(category: .joyful), showsPendant: true)
         #expect(rail.target(at: 0) == .pendant(.opening(0)))
         #expect(rail.target(at: 2) == .pendant(.opening(3)))
-        #expect(rail.target(at: rail.strandStart + 7) == .strand(7))
-        #expect(rail.target(at: rail.count - 1) == .pendant(.closing(2)))
+        #expect(rail.target(at: rail.index(strandIndex: 7)) == .strand(7))
+        #expect(rail.target(at: rail.count - 1) == .strand(strand.count - 1))
+        // The medal between the pendant and the decades takes the hand nowhere
+        #expect(rail.target(at: rail.strandStart + 1) == nil)
         #expect(rail.target(at: rail.count) == nil)
     }
 
@@ -233,10 +288,13 @@ struct OneRosaryTests {
         let strand = RosaryStrand(decades: 7, hailMarys: 7, saysFatimaPrayer: false)
         let rail = OneRosaryRail(strand: strand, pendant: SilentPendant(category: .sevenSorrows), showsPendant: true)
         // The Sign of the Cross and the Act of Contrition on the cross
-        #expect(rail.strandStart == 1)
-        #expect(rail.kinds.first == .cross)
-        // Three Hail Marys for her tears, the closing prayer, the cross
-        #expect(Array(rail.kinds.suffix(5)) == [.smallBead, .smallBead, .smallBead, .medal, .cross])
+        // and the chaplet's medal straight after it
+        #expect(rail.strandStart == 2)
+        #expect(Array(rail.kinds.prefix(2)) == [.cross, .centrepiece])
+        // Three Hail Marys for her tears, the closing prayer; the last
+        // Sign of the Cross back on the one cross
+        #expect(Array(rail.kinds.suffix(4)) == [.smallBead, .smallBead, .smallBead, .medal])
+        #expect(rail.kinds.filter { $0 == .cross }.count == 1)
     }
 
     // MARK: - Round 2: The Overview Lights Its Beads
@@ -273,9 +331,10 @@ struct OneRosaryTests {
     @Test func theRailHangsBelowTheStrandsPlace() {
         let height: CGFloat = 956
         #expect(OneRosaryRailView.windowTop(fullHeight: height) > RosaryStrandView.windowTop(fullHeight: height))
-        // The window still ends above the foot's Back and Next
+        // The window's last drawn row still ends above the foot's Back
+        // and Next (its outermost row is faded clear)
         #expect(OneRosaryRailView.windowTop(fullHeight: height) + OneRosaryRailView.windowHeight(fullHeight: height)
-            < height * 0.8)
+            - OneRosaryRailView.rowHeight < height * 0.8)
     }
 
     @Test func eachMysteryIsOneSpanOfTheLoop() {

@@ -358,8 +358,11 @@ struct AccountView: View {
                                 Divider()
                                     .background(AppColors.gold.opacity(0.2))
 
+                                // One Rosary beta: the speaker is the narration
+                                // voice's alone, so the reminder's sound wears
+                                // the reminder's own bell
                                 ActionRow(
-                                    icon: "ph-speaker-high",
+                                    icon: userSettings.oneRosaryBeta ? "ph-bell" : "ph-speaker-high",
                                     title: String(localized: "Reminder Sound", comment: "Settings: a row\'s name"),
                                     subtitle: userSettings.reminderSound.displayName
                                 ) {
@@ -1217,10 +1220,10 @@ struct NarrationVoiceRow: View {
     var body: some View {
         VStack(spacing: 12) {
             HStack(spacing: 16) {
-                // With the One Rosary beta, the faders the player's VOICE
-                // button wears, which opens this same choice; the speaker
-                // is the Rosary's Audio alone
-                AppIcon(UserSettings.shared.oneRosaryBeta ? "ph-faders" : "ph-speaker-high", size: 18)
+                // The speaker, as the player's VOICE button wears it, which
+                // opens this same choice (with the One Rosary beta, the
+                // speaker means the voice alone)
+                AppIcon("ph-speaker-high", size: 18)
                     .foregroundColor(AppColors.textSecondary)
                     .frame(width: 24)
 

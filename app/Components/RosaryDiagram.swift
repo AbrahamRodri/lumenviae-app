@@ -53,6 +53,7 @@ struct RosaryDiagram: View {
     /// the part chosen is the one thing that shines
     var matchesPendant: Bool = false
 
+
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// Height over width
@@ -61,7 +62,7 @@ struct RosaryDiagram: View {
     var body: some View {
         GeometryReader { geometry in
             let width = geometry.size.width
-            let layout = Layout(width: width)
+            let layout = Layout(width: width, numbersOutside: matchesPendant && numbersDecades)
             let currentPosition = current.map { RosaryMap.position(of: $0) }
 
             let chainColor = AppColors.gold.opacity(matchesPendant ? 0.6 : 0.28)
@@ -121,7 +122,7 @@ struct RosaryDiagram: View {
             let slots = Double(RosaryMap.loop.count + 1)
             let start = 90 + Double(first + 1) * 360 / slots - 3
             let end = 90 + Double(last + 1) * 360 / slots + 3
-            let radius = layout.radius * 1.17
+            let radius = layout.radius * (layout.numbersOutside ? 1.13 : 1.17)
             let middle = (start + end) / 2 * Double.pi / 180
 
             ZStack {
@@ -174,13 +175,15 @@ struct RosaryDiagram: View {
             let middleIndex = Double((indices.min() ?? 0) + (indices.max() ?? 0)) / 2
             let angle = (90 + (middleIndex + 1) * 360 / slots) * Double.pi / 180
             let lit = litDecade == decade
-            // Beyond the lit arc for the chosen decade, close in for the rest
-            let radius = layout.radius * (lit ? 1.36 : 1.22)
+            // Beyond the lit arc for the chosen decade, close in for the
+            // rest; with the beta's look, every numeral the same distance
+            // outside the ring, clear of the arc and the pendant
+            let radius = layout.radius * (matchesPendant ? 1.5 : (lit ? 1.36 : 1.22))
 
             Text(verbatim: "\(decade + 1)")
                 .font(
                     matchesPendant
-                        ? AppFonts.headlineFont(lit ? 17 : 14)
+                        ? AppFonts.headlineFont(lit ? 16 : 14)
                         : AppFonts.labelFont(max(10, layout.width * (lit ? 0.1 : 0.085)))
                 )
                 // With a decade lit, the other numerals step back, so the
@@ -194,6 +197,23 @@ struct RosaryDiagram: View {
                     y: layout.center.y + radius * CGFloat(Foundation.sin(angle))
                 )
         }
+    }
+
+    /// Where a decade's numeral stands in a drawing `width` wide, with
+    /// the beta's look (`matchesPendant`, `numbersDecades`), so a host can
+    /// lay a tap target over it
+    static func numeralPoint(decade: Int, width: CGFloat) -> CGPoint {
+        let layout = Layout(width: width, numbersOutside: true)
+        let slots = Double(RosaryMap.loop.count + 1)
+        let indices = (0..<10).compactMap {
+            RosaryMap.loop.firstIndex(of: .loopSmall(decade: decade, bead: $0))
+        }
+        let middleIndex = Double((indices.min() ?? 0) + (indices.max() ?? 0)) / 2
+        let angle = (90 + (middleIndex + 1) * 360 / slots) * Double.pi / 180
+        let radius = layout.radius * 1.5
+        return CGPoint(
+            x: layout.center.x + radius * CGFloat(Foundation.cos(angle)),
+            y: layout.center.y + radius * CGFloat(Foundation.sin(angle)))
     }
 
     // MARK: - State
@@ -299,8 +319,12 @@ struct RosaryDiagram: View {
     private struct Layout {
         let width: CGFloat
 
-        var center: CGPoint { CGPoint(x: width * 0.5, y: width * 0.4) }
-        var radius: CGFloat { width * 0.36 }
+        /// The ring drawn smaller, so numerals spaced outside it stay
+        /// inside the drawing
+        var numbersOutside: Bool = false
+
+        var center: CGPoint { CGPoint(x: width * 0.5, y: width * (numbersOutside ? 0.47 : 0.4)) }
+        var radius: CGFloat { width * (numbersOutside ? 0.3 : 0.36) }
 
         /// Spacing down the pendant
         var step: CGFloat { width * 0.062 }

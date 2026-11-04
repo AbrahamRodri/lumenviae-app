@@ -78,12 +78,7 @@ struct MeditationSetDetailView: View {
                 category: viewModel.category
             )
         } choices: {
-            RosaryChoicesSection(
-                form: .meditation,
-                category: viewModel.category,
-                meditationTitles: viewModel.entryTitles,
-                contextLine: viewModel.contextLine
-            )
+            RosaryChoicesSection(form: .meditation, category: viewModel.category)
         } ledger: {
             sections
                 .animation(Motion.crossfade, value: viewModel.isLoading)
@@ -126,9 +121,9 @@ struct MeditationSetDetailView: View {
                 }
             }
 
-            // One Rosary beta: the overview above names each mystery with
-            // its meditation, so the list is not given twice
-            if !viewModel.entryTitles.isEmpty, !UserSettings.shared.oneRosaryBeta {
+            // One Rosary beta: the overview above names the mysteries on
+            // one line each, so the set's own titles for them stand here
+            if !viewModel.entryTitles.isEmpty {
                 SetSection(label: String(
                     localized: "The\nmeditations",
                     comment: "A meditation set's page, ledger label in two short lines (a line break between) over the list of the set's meditations"

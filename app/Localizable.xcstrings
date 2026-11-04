@@ -11677,17 +11677,6 @@
         }
       }
     },
-    "Keep the scene before you." : {
-      "comment" : "One Rosary beta, Helps on a Hail Mary in the middle of a mystery: what to do, without naming the mystery, which the screen names above",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ten la escena ante tus ojos."
-          }
-        }
-      }
-    },
     "Kept as yours. Practise it here any time." : {
       "localizations" : {
         "es" : {
@@ -13585,6 +13574,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Misterio"
+          }
+        }
+      }
+    },
+    "Mystery %lld" : {
+      "comment" : "One Rosary beta, a bead of the rail pressed: the second short line under Our Father, naming which mystery the bead opens, like Mystery 2",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Misterio %lld"
           }
         }
       }
@@ -20167,6 +20167,17 @@
         }
       }
     },
+    "Small bead %lld of 10. Keep the scene before you." : {
+      "comment" : "One Rosary beta, Helps on a Hail Mary in the middle of a mystery: which bead you are on and what to do, without naming the mystery, which the screen names above",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuenta pequeña %lld de 10. Ten la escena ante tus ojos."
+          }
+        }
+      }
+    },
     "Small bead %lld of 3" : {
       "comment" : "VoiceOver: the part of the rosary's pendant the voice is on, one of the three small beads, like Small bead 2 of 3",
       "localizations" : {
@@ -21210,17 +21221,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Toca una cuenta del rosario de al lado para ir a ella."
-          }
-        }
-      }
-    },
-    "Tap a part to see it on the beads. PRAY always begins at the start." : {
-      "comment" : "One Rosary beta, a Rosary's own page: the line under the order of the Rosary, saying a row only shows its beads and does not change where the Rosary begins",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca una parte para verla en las cuentas. REZAR siempre empieza por el principio."
           }
         }
       }
@@ -27315,6 +27315,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "y del Hijo, y del Espíritu Santo. Amén."
+          }
+        }
+      }
+    },
+    "back on the cross" : {
+      "comment" : "One Rosary beta, the player on the last Sign of the Cross: the end of the step line, saying the hand has come back to the cross the Rosary began on",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "de nuevo en la cruz"
+          }
+        }
+      }
+    },
+    "back on the medal" : {
+      "comment" : "One Rosary beta, the player on a closing prayer: the end of the step line, saying the hand has come back to the rosary's medal, like Hail, Holy Queen · back on the medal",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "de nuevo en la medalla"
           }
         }
       }

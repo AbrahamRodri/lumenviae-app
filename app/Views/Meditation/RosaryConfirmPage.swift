@@ -426,7 +426,7 @@ struct RosaryChoicesSection: View {
             RosaryInfoRowView(
                 title: row.title,
                 value: RosaryInfoRow.holyAudioValue,
-                icon: "ph-speaker-high"
+                icon: RosaryChoice.audio.icon
             )
         case .mysteries:
             RosaryInfoRowView(
