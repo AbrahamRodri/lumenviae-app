@@ -297,8 +297,14 @@ func missalLines(of text: String, latin: Bool = true) -> [String] {
 /// the people's. Only at the head of a line, where the marks
 /// stand, and only on a line that ends as a sentence does: a saint named
 /// "S. Joánnis Baptístæ" at the head of a line is left as it is.
+/// The word an antiphon opens on, in the app's language ("Antífona:")
+let antiphonMark = String(
+    localized: "Antiphon:",
+    comment: "The Mass and the Hours of Prayer: the word opening an antiphon's line, where the source prints \"Ant.\""
+)
+
 func missalSpeakerMarked(_ line: String, latin: Bool) -> String {
-    if line.hasPrefix("Ant. ") { return "Antiphon: " + line.dropFirst(5) }
+    if line.hasPrefix("Ant. ") { return antiphonMark + " " + line.dropFirst(5) }
     guard latin, let last = line.last, ".!?:,".contains(last) else { return line }
     if line.hasPrefix("S. ") { return "P. " + line.dropFirst(3) }
     if line.hasPrefix("M. ") { return "S. " + line.dropFirst(3) }

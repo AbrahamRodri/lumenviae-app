@@ -68,9 +68,39 @@ final class OfficeViewModel {
         missalDay?.info.colors?.first.flatMap { MissalVestment(rawValue: $0) }
     }
 
-    /// The day's feast, in English where it can be had.
+    /// The day's feast, in English where it can be had. A Spanish app
+    /// never shows the Missal's title, which is English only: a saint's
+    /// day or a feast is named as the breviary names it, a weekday
+    /// "Feria", a Sunday "Domingo", so the Latin day-title of a week
+    /// ("Feria Quinta infra Hebd XXIII post Octavam Pentecostes") never
+    /// stands in the chrome
     var feastTitle: String? {
+        Self.feastTitle(missal: missalDay?.info.title, breviary: day?.celebration?.title,
+                        rank: day?.celebration?.rank, spanish: SpanishContent.isActive)
+    }
+
+    /// The title the rank line reads its words from: the Missal's English
+    /// where it has come (it says Advent, Lent, Holy Week), else the
+    /// breviary's Latin. Never the shown title, which in Spanish may be
+    /// "Feria" alone
+    var rankTitle: String? {
         missalDay?.info.title ?? day?.celebration?.title
+    }
+
+    /// A first-class day keeps its own name in Spanish too, even a Sunday
+    /// or a weekday ("Dominica Resurrectionis", "Feria IV Cinerum")
+    static func feastTitle(missal: String?, breviary: String?, rank: String? = nil, spanish: Bool) -> String? {
+        guard spanish else { return missal ?? breviary }
+        guard let breviary else { return nil }
+        if OfficeRank(rank) == .first { return breviary }
+        let day = missal ?? breviary
+        if DayRank.isWeekday(day) {
+            return String(localized: "Feria", comment: "Hours of Prayer in a Spanish app: a weekday's name over its rank, in place of the breviary's long Latin day-title")
+        }
+        if DayRank.isSunday(day) {
+            return String(localized: "Sunday", comment: "The day of the week, Sunday").capitalized
+        }
+        return breviary
     }
 
     /// Hours fetched this session, keyed by "day/hour"

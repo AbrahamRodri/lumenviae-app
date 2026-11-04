@@ -55,10 +55,16 @@ struct OfficeReaderSection: Identifiable {
     /// The hour cut into addressable sections. The index rides in the
     /// id, so two sections the engine names alike still address
     /// separately — a hour with three lessons has three "Lectio"s.
-    static func build(from sections: [OfficeSection]) -> [OfficeReaderSection] {
+    /// `language` is the hour's own (`OfficeHour.language`): in
+    /// Divinum Officium's Spanish a few headings still come in English,
+    /// and are named in Spanish here.
+    static func build(from sections: [OfficeSection], language: String = "english") -> [OfficeReaderSection] {
         sections.enumerated().map { index, section in
             let latin = trimmed(section.latin?.title)
-            let english = trimmed(section.vernacular?.title)
+            var english = trimmed(section.vernacular?.title)
+            if language == OfficeAPIService.language(spanish: true) {
+                english = spanishHeadings[english] ?? english
+            }
             return OfficeReaderSection(
                 id: "office-\(index)-\(slug(latin.isEmpty ? english : latin))",
                 index: index,
@@ -68,6 +74,16 @@ struct OfficeReaderSection: Identifiable {
             )
         }
     }
+
+    /// The headings Divinum Officium's Spanish leaves in English (a
+    /// week of hours checked, Nov 2026), in the Spanish its other
+    /// headings use. The day's line of the Martyrology ("November 4th
+    /// 2026, the 24th day of the Moon,") is text, not a heading, and stays.
+    static let spanishHeadings: [String: String] = [
+        "Martyrology": "Martirologio",
+        "The Capitular Office": "Oficio capitular",
+        "Verse (taking the place of the Chapter)": "Verso (en lugar del capítulo)",
+    ]
 
     private static func trimmed(_ string: String?) -> String {
         string?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""

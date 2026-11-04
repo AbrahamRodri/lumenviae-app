@@ -5,8 +5,9 @@
 //  Disk cache for the Divine Office, so a chapel with no signal still
 //  gets the right hour. An office, once assembled for a date, never
 //  changes — a cached hour is never stale, only pruned once it is well
-//  past. Every file name carries the rubrical version, so a future
-//  version setting can never read another version's page.
+//  past. Every file name carries the edition (`OfficeAPIService.edition`:
+//  the rubrical version, and the language when it is not English), so
+//  one language or version can never read another's page.
 //
 //  Lives in Application Support/Office, excluded from iCloud backup
 //  like the missal's cache: everything here is re-downloadable.
@@ -36,12 +37,12 @@ final class OfficeCacheService {
         try? url.setResourceValues(values)
     }
 
-    private var version: String { OfficeAPIService.version }
+    private var edition: String { OfficeAPIService.edition }
 
     // MARK: - Hours
 
     private func hourURL(for day: String, hour: CanonicalHour) -> URL {
-        directory.appendingPathComponent("hour_\(version)_\(day)_\(hour.rawValue).json")
+        directory.appendingPathComponent("hour_\(edition)_\(day)_\(hour.rawValue).json")
     }
 
     func saveHour(_ office: OfficeHour, for day: String, hour: CanonicalHour) {
@@ -61,7 +62,7 @@ final class OfficeCacheService {
     // MARK: - Days
 
     private func dayURL(for day: String) -> URL {
-        directory.appendingPathComponent("day_\(version)_\(day).json")
+        directory.appendingPathComponent("day_\(edition)_\(day).json")
     }
 
     func saveDay(_ office: OfficeDay, for day: String) {
@@ -82,7 +83,7 @@ final class OfficeCacheService {
 
     private func calendarURL(year: Int, month: Int) -> URL {
         directory.appendingPathComponent(
-            "calendar_\(version)_\(year)-\(String(format: "%02d", month)).json"
+            "calendar_\(edition)_\(year)-\(String(format: "%02d", month)).json"
         )
     }
 
@@ -104,15 +105,12 @@ final class OfficeCacheService {
     /// calendars are small and few; they stay.
     func prune(before day: String) {
         let files = (try? FileManager.default.contentsOfDirectory(atPath: directory.path)) ?? []
+        let prefixes = OfficeAPIService.editions.flatMap { ["hour_\($0)_", "day_\($0)_"] }
         for file in files {
-            let cachedDay: String?
-            if file.hasPrefix("hour_\(version)_") {
-                cachedDay = String(file.dropFirst("hour_\(version)_".count).prefix(10))
-            } else if file.hasPrefix("day_\(version)_") {
-                cachedDay = String(file.dropFirst("day_\(version)_".count).prefix(10))
-            } else {
-                cachedDay = nil
-            }
+            // "hour_rubrics-1960_" never begins a Spanish name, whose
+            // version is followed by "-espanol", so one prefix fits a file
+            let cachedDay = prefixes.first { file.hasPrefix($0) }
+                .map { String(file.dropFirst($0.count).prefix(10)) }
             if let cachedDay, cachedDay < day {
                 try? FileManager.default.removeItem(at: directory.appendingPathComponent(file))
             }

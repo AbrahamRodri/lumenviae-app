@@ -2044,6 +2044,24 @@ private struct OfferRow: View {
     }
 }
 
+/// The Joyful Mysteries the two demos walk, named as the app names them:
+/// in Spanish in a Spanish app (`SpanishContent.mysteryName`)
+private enum OnboardingJoyfulMysteries {
+    static let english = [
+        "The Annunciation",
+        "The Visitation",
+        "The Nativity",
+        "The Presentation",
+        "The Finding in the Temple"
+    ]
+
+    static var names: [String] {
+        english.enumerated().map { index, name in
+            SpanishContent.mysteryName(name, key: "joyful_\(index + 1)")
+        }
+    }
+}
+
 /// Slide three: the strand the prayer screen hangs, working.
 ///
 /// The same `RosaryStrandView` and the same arithmetic as both players, so
@@ -2059,13 +2077,7 @@ private struct BeadStrandDemo: View {
     /// held to it in both ways of praying, so choosing never moves the page.
     static let height = RosaryStrandView.rowHeight * 6
 
-    private static let mysteries = [
-        "The Annunciation",
-        "The Visitation",
-        "The Nativity",
-        "The Presentation",
-        "The Finding in the Temple"
-    ]
+    private static var mysteries: [String] { OnboardingJoyfulMysteries.names }
 
     @State private var mystery = 0
     @State private var bead = 0
@@ -2213,13 +2225,7 @@ private struct BeadStrandDemo: View {
 /// flank the player's transport, and nothing counts the Hail Marys.
 private struct MysteryStepDemo: View {
 
-    private static let mysteries = [
-        "The Annunciation",
-        "The Visitation",
-        "The Nativity",
-        "The Presentation",
-        "The Finding in the Temple"
-    ]
+    private static var mysteries: [String] { OnboardingJoyfulMysteries.names }
 
     @State private var mystery = 0
 
