@@ -797,6 +797,7 @@ private struct VoiceAndSpeedSheet: View {
                 ))
                 NarrationVoiceChoice()
                     .padding(.horizontal, SheetMetrics.gutter)
+                SheetNote(UserSettings.narrationVoiceCaption)
 
                 SheetSectionLabel(String(
                     localized: "Speed",
