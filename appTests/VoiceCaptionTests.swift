@@ -23,6 +23,6 @@ struct VoiceCaptionTests {
         let key = "For spoken prayers and meditations. Chants have one singer."
         #expect(
             spanish.localizedString(forKey: key, value: nil, table: nil)
-                == "Para las oraciones habladas y las meditaciones. Los cantos tienen un solo cantor.")
+                == "Para las oraciones en voz alta y las meditaciones. Los cantos tienen un solo cantor.")
     }
 }
