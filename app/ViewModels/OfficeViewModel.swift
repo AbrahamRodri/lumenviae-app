@@ -69,15 +69,35 @@ final class OfficeViewModel {
     }
 
     /// The day's feast, in English where it can be had. A Spanish app
-    /// names it as the breviary does, and never by the Missal's
-    /// title, which is English only: the Latin stands beside Spanish
+    /// never shows the Missal's title, which is English only: a saint's
+    /// day or a feast is named as the breviary names it, a weekday
+    /// "Feria", a Sunday "Domingo", so the Latin day-title of a week
+    /// ("Feria Quinta infra Hebd XXIII post Octavam Pentecostes") never
+    /// stands in the chrome
     var feastTitle: String? {
         Self.feastTitle(missal: missalDay?.info.title, breviary: day?.celebration?.title,
                         spanish: SpanishContent.isActive)
     }
 
+    /// The title the rank line reads its words from: the Missal's English
+    /// where it has come (it says Advent, Lent, Holy Week), else the
+    /// breviary's Latin. Never the shown title, which in Spanish may be
+    /// "Feria" alone
+    var rankTitle: String? {
+        missalDay?.info.title ?? day?.celebration?.title
+    }
+
     static func feastTitle(missal: String?, breviary: String?, spanish: Bool) -> String? {
-        spanish ? breviary : (missal ?? breviary)
+        guard spanish else { return missal ?? breviary }
+        guard let breviary else { return nil }
+        let day = missal ?? breviary
+        if DayRank.isWeekday(day) {
+            return String(localized: "Feria", comment: "Hours of Prayer in a Spanish app: a weekday's name over its rank, in place of the breviary's long Latin day-title")
+        }
+        if DayRank.isSunday(day) {
+            return String(localized: "Sunday", comment: "The day of the week, Sunday").capitalized
+        }
+        return breviary
     }
 
     /// Hours fetched this session, keyed by "day/hour"

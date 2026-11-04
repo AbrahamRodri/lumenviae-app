@@ -156,7 +156,13 @@ struct OfficeHourView: View {
     /// text is English throughout. Falls back to the engine's own
     /// wording rather than leaving the plate half-empty.
     private var feastTitle: String? {
-        viewModel.feastTitle ?? celebration?.title
+        OfficeViewModel.feastTitle(missal: viewModel.missalDay?.info.title, breviary: celebration?.title,
+                                   spanish: SpanishContent.isActive)
+    }
+
+    /// What the rank line reads its words from (see `OfficeViewModel.rankTitle`)
+    private var rankTitle: String? {
+        viewModel.missalDay?.info.title ?? celebration?.title
     }
 
     /// The design system's --ease-out — cubic-bezier(0, 0, 0.58, 1).
@@ -451,7 +457,7 @@ struct OfficeHourView: View {
     /// printed as it arrived. A feria reads "WEEKDAY".
     private var dayLine: String {
         let date = Self.plateDateFormatter.string(from: viewModel.date)
-        guard let rank = OfficeRank(celebration?.rank).plainLabel(title: feastTitle) else {
+        guard let rank = OfficeRank(celebration?.rank).plainLabel(title: rankTitle) else {
             return date.uppercased()
         }
         return "\(date)  ·  \(rank)".uppercased()

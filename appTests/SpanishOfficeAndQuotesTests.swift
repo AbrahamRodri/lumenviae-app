@@ -55,6 +55,30 @@ struct SpanishOfficeTests {
         #expect(OfficeViewModel.feastTitle(missal: nil, breviary: breviary, spanish: false) == breviary)
         #expect(OfficeViewModel.feastTitle(missal: missal, breviary: nil, spanish: true) == nil)
     }
+
+    /// A weekday or a Sunday never shows the breviary's long Latin
+    /// day-title in a Spanish app
+    @Test func aSpanishWeekdayIsFeriaAndASundayDomingo() {
+        let feria = "Feria Quinta infra Hebd XXIII post Octavam Pentecostes I. Novembris"
+        let sunday = "Dominica V Post Epiphaniam III. Novembris"
+        #expect(OfficeViewModel.feastTitle(missal: nil, breviary: feria, spanish: true) == "Feria")
+        #expect(OfficeViewModel.feastTitle(missal: "Thursday of the 23rd Week after Pentecost", breviary: feria, spanish: true) == "Feria")
+        #expect(OfficeViewModel.feastTitle(missal: nil, breviary: sunday, spanish: true)?.lowercased() == "sunday")
+        #expect(OfficeViewModel.feastTitle(missal: "5th Sunday after Epiphany", breviary: sunday, spanish: true)?.lowercased() == "sunday")
+        // English keeps the Missal's own title
+        #expect(OfficeViewModel.feastTitle(missal: "5th Sunday after Epiphany", breviary: sunday, spanish: false) == "5th Sunday after Epiphany")
+    }
+
+    /// Holy Thursday and Good Friday are "Feria …" in the breviary, but
+    /// first-class days, never weekdays
+    @Test func theTriduumIsNoWeekdayInLatin() {
+        let holyThursday = "Feria Quinta in Cena Domini"
+        #expect(!DayRank.isWeekday(holyThursday))
+        #expect(!DayRank.isWeekday("Feria Sexta in Parasceve"))
+        #expect(DayRank.isWeekday("Feria Quinta infra Hebd XXIII post Octavam Pentecostes I. Novembris"))
+        #expect(DayRank.plainLabel(rank: 1, title: holyThursday) == DayRank.plainLabel(rank: 1, title: "Easter Sunday"))
+        #expect(OfficeViewModel.feastTitle(missal: nil, breviary: holyThursday, spanish: true) == holyThursday)
+    }
 }
 
 struct SpanishQuotesTests {

@@ -9260,6 +9260,17 @@
         }
       }
     },
+    "Feria" : {
+      "comment" : "Hours of Prayer in a Spanish app: a weekday's name over its rank, in place of the breviary's long Latin day-title",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feria"
+          }
+        }
+      }
+    },
     "Fetching the recordings" : {
       "comment" : "Pray-along screen, praying with a voice: a note at the foot while the prayers' recordings download",
       "localizations" : {
