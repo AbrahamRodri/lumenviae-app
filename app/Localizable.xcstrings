@@ -5093,6 +5093,17 @@
         }
       }
     },
+    "Antiphon:" : {
+      "comment" : "The Mass and the Hours of Prayer: the word opening an antiphon's line, where the source prints \"Ant.\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antífona:"
+          }
+        }
+      }
+    },
     "Any day you choose" : {
       "comment" : "How to Pray, lesson 3: when the Luminous Mysteries are prayed, outside the weekly schedule\nWhen a set of mysteries outside the weekly schedule is prayed, under its title on the mysteries' page",
       "localizations" : {

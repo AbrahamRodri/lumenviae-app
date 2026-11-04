@@ -79,6 +79,23 @@ struct SpanishOfficeTests {
         #expect(DayRank.plainLabel(rank: 1, title: holyThursday) == DayRank.plainLabel(rank: 1, title: "Easter Sunday"))
         #expect(OfficeViewModel.feastTitle(missal: nil, breviary: holyThursday, spanish: true) == holyThursday)
     }
+
+    /// A first-class Sunday or weekday keeps its name in Spanish: Easter
+    /// is never just "Domingo", nor Ash Wednesday "Feria"
+    @Test func aGreatDayKeepsItsNameInSpanish() {
+        let easter = "Dominica Resurrectionis"
+        #expect(OfficeViewModel.feastTitle(missal: "Easter Sunday", breviary: easter, rank: "I. classis", spanish: true) == easter)
+        #expect(OfficeViewModel.feastTitle(missal: nil, breviary: "Feria IV Cinerum", rank: "I. classis", spanish: true) == "Feria IV Cinerum")
+        #expect(OfficeViewModel.feastTitle(missal: nil, breviary: "Dominica V Post Epiphaniam", rank: "II. classis", spanish: true)?.lowercased() == "sunday")
+    }
+
+    /// An antiphon opens on the app's own word, never English in Spanish
+    @Test func theAntiphonMarkHasItsSpanish() throws {
+        #expect(missalSpeakerMarked("Ant. Veníte, adorémus.", latin: true) == antiphonMark + " Veníte, adorémus.")
+        let path = try #require(Bundle.main.path(forResource: "es", ofType: "lproj"))
+        let spanish = try #require(Bundle(path: path))
+        #expect(spanish.localizedString(forKey: "Antiphon:", value: nil, table: nil) == "Antífona:")
+    }
 }
 
 struct SpanishQuotesTests {

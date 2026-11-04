@@ -157,7 +157,7 @@ struct OfficeHourView: View {
     /// wording rather than leaving the plate half-empty.
     private var feastTitle: String? {
         OfficeViewModel.feastTitle(missal: viewModel.missalDay?.info.title, breviary: celebration?.title,
-                                   spanish: SpanishContent.isActive)
+                                   rank: celebration?.rank, spanish: SpanishContent.isActive)
     }
 
     /// What the rank line reads its words from (see `OfficeViewModel.rankTitle`)

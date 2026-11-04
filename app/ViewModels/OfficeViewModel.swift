@@ -76,7 +76,7 @@ final class OfficeViewModel {
     /// stands in the chrome
     var feastTitle: String? {
         Self.feastTitle(missal: missalDay?.info.title, breviary: day?.celebration?.title,
-                        spanish: SpanishContent.isActive)
+                        rank: day?.celebration?.rank, spanish: SpanishContent.isActive)
     }
 
     /// The title the rank line reads its words from: the Missal's English
@@ -87,9 +87,12 @@ final class OfficeViewModel {
         missalDay?.info.title ?? day?.celebration?.title
     }
 
-    static func feastTitle(missal: String?, breviary: String?, spanish: Bool) -> String? {
+    /// A first-class day keeps its own name in Spanish too, even a Sunday
+    /// or a weekday ("Dominica Resurrectionis", "Feria IV Cinerum")
+    static func feastTitle(missal: String?, breviary: String?, rank: String? = nil, spanish: Bool) -> String? {
         guard spanish else { return missal ?? breviary }
         guard let breviary else { return nil }
+        if OfficeRank(rank) == .first { return breviary }
         let day = missal ?? breviary
         if DayRank.isWeekday(day) {
             return String(localized: "Feria", comment: "Hours of Prayer in a Spanish app: a weekday's name over its rank, in place of the breviary's long Latin day-title")
