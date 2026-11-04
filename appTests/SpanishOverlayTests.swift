@@ -106,6 +106,48 @@ struct MeditationSpanishTests {
     }
 }
 
+struct BundledMeditationSpanishTests {
+
+    @Test func everyBundledMeditationHasItsSpanishAndNoOther() {
+        let bundledIDs = Set(BundledMeditationSets.all.flatMap { $0.englishMeditations ?? [] }.map(\.id))
+        let spanishIDs = MeditationTranslation.bundled.map(\.id)
+        #expect(bundledIDs.count == 27)
+        #expect(Set(spanishIDs) == bundledIDs)
+        #expect(spanishIDs.count == Set(spanishIDs).count)
+        #expect(MeditationTranslation.bundled.allSatisfy { !$0.content.isEmpty && $0.title == nil })
+    }
+
+    @Test func onlyTheLuminousSetIsMarked() {
+        let marked = Set(MeditationTranslation.bundled.filter { $0.aiTranslated == true }.map(\.id))
+        let luminous = Set((LuminousMeditationData.set.englishMeditations ?? []).map(\.id))
+        #expect(marked == luminous)
+    }
+
+    @Test func eachSetCarriesItsOwnSpanish() {
+        for set in BundledMeditationSets.all {
+            let own = Set((set.englishMeditations ?? []).map(\.id))
+            #expect(Set((set.translations ?? []).map(\.id)) == own)
+        }
+    }
+
+    @Test func aBundledSetReadsInSpanish() throws {
+        let set = try #require(BundledMeditationSets.byID[SorrowfulEmmerichMeditationData.setID])
+        let laid = try #require(MeditationTranslation.overlay(set.englishMeditations, with: set.translations, spanish: true))
+        #expect(laid.allSatisfy(\.isSpanish))
+        // The reviewed correction of the 1865 print
+        #expect(laid[0].content.contains("sobrenaturalmente"))
+        #expect(laid[0].source?.contains("1865") == true)
+        // English keeps its own words
+        #expect(set.englishMeditations?[0].content == SorrowfulEmmerichMeditationData.set.englishMeditations?[0].content)
+    }
+
+    @Test func aMeditationWithNoSourceGetsNone() throws {
+        let set = try #require(BundledMeditationSets.byID[LuminousMeditationData.setID])
+        let laid = try #require(MeditationTranslation.overlay(set.englishMeditations, with: set.translations, spanish: true))
+        #expect(laid.allSatisfy { $0.source == nil && $0.aiTranslated })
+    }
+}
+
 struct ConsecrationSpanishTests {
 
     private let document = """

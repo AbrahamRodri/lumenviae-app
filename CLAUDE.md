@@ -3928,9 +3928,12 @@ transition entirely.
   under it (`MeditationLanguageNote`). The Consecration's Spanish
   (`GET /api/v2/consecration?lang=es`) is kept as the Prayer Book's is
   (`LibraryContent.consecrationSpanishStore`) and laid over the bundled
-  days and prayers by key at launch (`ConsecrationSpanish`). Bundled
-  sets, Sheen's sets, anything not translated, and every recording stay
-  English.
+  days and prayers by key at launch (`ConsecrationSpanish`). The five
+  bundled sets carry their reviewed Spanish in the app
+  (`Resources/Spanish/es_bundled_meditations.json`, copied byte for
+  byte from reports/rig-es/bundled-meditations-es.json;
+  `MeditationTranslation.bundled`). Sheen's sets, anything not
+  translated, and every recording stay English.
 
 **From other sources** (each through its own client, so their outages
 never look like ours): the Missal from Missale Meum, the Office from our
