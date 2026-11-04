@@ -248,7 +248,7 @@ struct RosaryStrandView: View {
 
 /// A small padlock, drawn rather than imaged — the icon set has no lock —
 /// at the weight of the strand's own lines.
-private struct StrandLockGlyph: View {
+struct StrandLockGlyph: View {
     var body: some View {
         VStack(spacing: -1) {
             LockShackle()
@@ -286,7 +286,7 @@ private struct LockShackle: Shape {
 /// One ring, leaving the bead under the hand as the decade turns:
 /// bright for an instant, then wider and gone. Under Reduce Motion it
 /// only brightens and fades, without growing.
-private struct DecadeTurnRipple: View {
+struct DecadeTurnRipple: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let trigger: Int

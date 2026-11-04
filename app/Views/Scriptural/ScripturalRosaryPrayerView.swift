@@ -68,6 +68,7 @@ struct ScripturalRosaryPrayerView: View {
     @Environment(AppRouter.self) private var router
     @Environment(UserSettings.self) private var userSettings
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var viewModel: ScripturalRosaryViewModel
 
     /// The one sheet this screen presents at a time.
@@ -122,162 +123,11 @@ struct ScripturalRosaryPrayerView: View {
     }
 
     var body: some View {
-        GeometryReader { geometry in
-            let fullHeight = geometry.size.height
-                + geometry.safeAreaInsets.top
-                + geometry.safeAreaInsets.bottom
-
-            VStack(spacing: 0) {
-                // The reading, hung level with the top of the strand's
-                // window: the head of the column never moves, and a
-                // bead's words change beneath it with nothing further
-                // down to shove
-                // While the opening or closing prayers are said aloud the
-                // column names them, and the pendant hangs below it
-                Group {
-                    if unitedPendant != nil {
-                        // One Rosary beta: the prayer's words stand with
-                        // Back and Next under the pendant, at the foot
-                        Color.clear.frame(height: 0)
-                    } else if let pendant = viewModel.spokenPendant {
-                        pendantColumn(pendant)
-                            .transition(.opacity)
-                    } else if countsOnScreen {
-                        readingColumn
-                            .transition(.opacity)
-                    } else {
-                        decadeColumn
-                            .transition(.opacity)
-                    }
-                }
-                .padding(.top, readingTop(fullHeight: fullHeight, topInset: geometry.safeAreaInsets.top))
-                .animation(Motion.decadeTurn, value: viewModel.spokenPendant == nil)
-                .animation(Motion.crossfade, value: countsOnScreen)
-                // The column is given the glass above the foot and no
-                // more, so words too long for it — a prayer at a large
-                // text size — can never push the foot off the screen
-                .frame(maxHeight: unitedPendant != nil ? 0 : .infinity, alignment: .top)
-
-                // One Rosary beta: the prayer stands at the foot, under
-                // the pendant
-                if unitedPendant != nil { Spacer(minLength: 0) }
-
-                VStack(spacing: 0) {
-                    // One Rosary beta: the opening and closing prayers in
-                    // the layout the meditation's player shares
-                    if let pendant = unitedPendant {
-                        PendantPrayerPanel(
-                            pendant: pendant,
-                            count: viewModel.silentPendantCount ?? "",
-                            lines: viewModel.spokenPendantLines ?? [],
-                            isFirst: viewModel.isFirstBeadOfRosary,
-                            isLast: viewModel.isLastBeadOfRosary,
-                            isLastOpening: viewModel.currentPendantStep == viewModel.silentPendant.lastOpening,
-                            help: helpLine,
-                            // A size less than the meditation player gives, since the foot
-                            // beneath is taller, so the pendant above hangs as large
-                            wordsMaxHeight: fullHeight * 0.28,
-                            onBack: prayBack,
-                            onNext: prayForward,
-                            onAmen: finishRosary
-                        )
-                        .padding(.horizontal, 22)
-                        .padding(.bottom, 16)
-                        .transition(.opacity)
-                    } else if let help = helpLine {
-                        RosaryHelpLine(line: help)
-                            .padding(.horizontal, 22)
-                            .padding(.bottom, 16)
-                            .transition(.opacity)
-                    }
-                    foot
-                }
-                    .animation(Motion.crossfade, value: unitedPendant == nil)
-                    .onGeometryChange(for: CGFloat.self) { proxy in
-                        proxy.frame(in: .global).minY
-                    } action: { top in
-                        footTop = top
-                    }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            // Laid over the column rather than stacked above it, so the
-            // column's place is read from the glass alone and never waits
-            // on the header being measured
-            .overlay(alignment: .top) {
-                header
-                    .padding(.top, 12)
-            }
-            .overlay {
-                // The Rosary's one strand, hung at the right edge where the
-                // meditation's player hangs it too. Inside the chrome layer
-                // so it goes with the chrome when the painting is tapped.
-                // Not while the opening prayers are said aloud: they are
-                // prayed on the pendant, and the strand comes in with the
-                // first mystery. Nor in the Rosary Aloud's closing, where
-                // the pendant hangs in the strand's own place
-                if countsOnScreen,
-                   viewModel.spokenPendant?.phase != .opening,
-                   !(viewModel.setsPendantWords && viewModel.spokenPendant != nil) {
-                Color.clear
-                    .rosaryStrand(
-                        viewModel.strand,
-                        activeIndex: viewModel.strandIndex,
-                        fullHeight: fullHeight,
-                        topInset: geometry.safeAreaInsets.top,
-                        dragOffset: strandDrag,
-                        turnPulse: turnPulse,
-                        onBeadTap: userSettings.oneRosaryBeta ? { goToBead($0) } : nil
-                    )
-                    .allowsHitTesting(userSettings.oneRosaryBeta)
-                }
-            }
-            .opacity(chromeHidden ? 0 : 1)
-            .allowsHitTesting(!chromeHidden)
-            .background {
-                // The pendant in place of the painting while the opening
-                // and closing prayers are said aloud: they are not the
-                // mystery's, and its painting arrives with its decade
-                ZStack {
-                    if let pendant = viewModel.spokenPendant {
-                        // In the Rosary Aloud, whose column sets the
-                        // prayer's words, the pendant hangs beside them
-                        // where the strand hangs through the decades, at
-                        // the strand's scale and level with the words'
-                        // head; laid under them, even dimmed, the cross
-                        // ran through the Creed's lines
-                        PendantStage(
-                            pendant: pendant,
-                            width: geometry.size.width,
-                            fullHeight: fullHeight,
-                            heightFraction: unitedPendant != nil
-                                ? Self.unitedPendantHeightFraction(fullHeight: fullHeight, footTop: footTop)
-                                : (viewModel.setsPendantWords ? 0.435 : 0.4),
-                            topFraction: unitedPendant != nil
-                                ? 0.165
-                                : (viewModel.setsPendantWords
-                                    ? RosaryStrandView.windowTop(fullHeight: fullHeight) / max(fullHeight, 1)
-                                    : 0.355),
-                            bottomLimit: footTop.map { $0 - Self.pendantFootClearance },
-                            trailingColumn: unitedPendant == nil && viewModel.setsPendantWords ? Self.readingTrailingInset : nil,
-                            chromeHidden: chromeHidden,
-                            onTap: toggleChrome
-                        )
-                        .transition(.opacity)
-                    } else {
-                        PrayerPaintingStage(
-                            painting: painting,
-                            style: .veiled,
-                            paintingID: viewModel.currentMysteryIndex,
-                            chromeHidden: chromeHidden,
-                            width: geometry.size.width,
-                            fullHeight: fullHeight
-                        ) {
-                            toggleChrome()
-                        }
-                        .transition(.opacity)
-                    }
-                }
-                .animation(Motion.decadeTurn, value: viewModel.spokenPendant == nil)
+        Group {
+            if userSettings.oneRosaryBeta {
+                oneRosaryLayer
+            } else {
+                classicLayer
             }
         }
         // A background rather than a bottom layer in the stack: a sibling
@@ -400,6 +250,13 @@ struct ScripturalRosaryPrayerView: View {
                     .presentationBackground(AppColors.background)
                     .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
+            case .playback:
+                PlaybackSettingsSheet(form: RosaryForm(viewModel.form))
+                    .presentationDetents(PlaybackSettingsSheet.detents(for: dynamicTypeSize))
+                    .presentationDragIndicator(.visible)
+                    .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+
             case .feedback:
                 FeedbackView(
                     context: trackActions.feedbackContext,
@@ -420,6 +277,126 @@ struct ScripturalRosaryPrayerView: View {
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+            }
+        }
+    }
+
+    /// The player as it has always been: with the One Rosary beta off,
+    /// the whole of it
+    private var classicLayer: some View {
+        GeometryReader { geometry in
+            let fullHeight = geometry.size.height
+                + geometry.safeAreaInsets.top
+                + geometry.safeAreaInsets.bottom
+
+            VStack(spacing: 0) {
+                // The reading, hung level with the top of the strand's
+                // window: the head of the column never moves, and a
+                // bead's words change beneath it with nothing further
+                // down to shove
+                // While the opening or closing prayers are said aloud the
+                // column names them, and the pendant hangs below it
+                Group {
+                    if let pendant = viewModel.spokenPendant {
+                        pendantColumn(pendant)
+                            .transition(.opacity)
+                    } else if countsOnScreen {
+                        readingColumn
+                            .transition(.opacity)
+                    } else {
+                        decadeColumn
+                            .transition(.opacity)
+                    }
+                }
+                .padding(.top, readingTop(fullHeight: fullHeight, topInset: geometry.safeAreaInsets.top))
+                .animation(Motion.decadeTurn, value: viewModel.spokenPendant == nil)
+                .animation(Motion.crossfade, value: countsOnScreen)
+                // The column is given the glass above the foot and no
+                // more, so words too long for it — a prayer at a large
+                // text size — can never push the foot off the screen
+                .frame(maxHeight: .infinity, alignment: .top)
+
+                foot
+                    .onGeometryChange(for: CGFloat.self) { proxy in
+                        proxy.frame(in: .global).minY
+                    } action: { top in
+                        footTop = top
+                    }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // Laid over the column rather than stacked above it, so the
+            // column's place is read from the glass alone and never waits
+            // on the header being measured
+            .overlay(alignment: .top) {
+                header
+                    .padding(.top, 12)
+            }
+            .overlay {
+                // The Rosary's one strand, hung at the right edge where the
+                // meditation's player hangs it too. Inside the chrome layer
+                // so it goes with the chrome when the painting is tapped.
+                // Not while the opening prayers are said aloud: they are
+                // prayed on the pendant, and the strand comes in with the
+                // first mystery. Nor in the Rosary Aloud's closing, where
+                // the pendant hangs in the strand's own place
+                if countsOnScreen,
+                   viewModel.spokenPendant?.phase != .opening,
+                   !(viewModel.setsPendantWords && viewModel.spokenPendant != nil) {
+                Color.clear
+                    .rosaryStrand(
+                        viewModel.strand,
+                        activeIndex: viewModel.strandIndex,
+                        fullHeight: fullHeight,
+                        topInset: geometry.safeAreaInsets.top,
+                        dragOffset: strandDrag,
+                        turnPulse: turnPulse
+                    )
+                    .allowsHitTesting(false)
+                }
+            }
+            .opacity(chromeHidden ? 0 : 1)
+            .allowsHitTesting(!chromeHidden)
+            .background {
+                // The pendant in place of the painting while the opening
+                // and closing prayers are said aloud: they are not the
+                // mystery's, and its painting arrives with its decade
+                ZStack {
+                    if let pendant = viewModel.spokenPendant {
+                        // In the Rosary Aloud, whose column sets the
+                        // prayer's words, the pendant hangs beside them
+                        // where the strand hangs through the decades, at
+                        // the strand's scale and level with the words'
+                        // head; laid under them, even dimmed, the cross
+                        // ran through the Creed's lines
+                        PendantStage(
+                            pendant: pendant,
+                            width: geometry.size.width,
+                            fullHeight: fullHeight,
+                            heightFraction: viewModel.setsPendantWords ? 0.435 : 0.4,
+                            topFraction: viewModel.setsPendantWords
+                                ? RosaryStrandView.windowTop(fullHeight: fullHeight) / max(fullHeight, 1)
+                                : 0.355,
+                            bottomLimit: footTop.map { $0 - Self.pendantFootClearance },
+                            trailingColumn: viewModel.setsPendantWords ? Self.readingTrailingInset : nil,
+                            chromeHidden: chromeHidden,
+                            onTap: toggleChrome
+                        )
+                        .transition(.opacity)
+                    } else {
+                        PrayerPaintingStage(
+                            painting: painting,
+                            style: .veiled,
+                            paintingID: viewModel.currentMysteryIndex,
+                            chromeHidden: chromeHidden,
+                            width: geometry.size.width,
+                            fullHeight: fullHeight
+                        ) {
+                            toggleChrome()
+                        }
+                        .transition(.opacity)
+                    }
+                }
+                .animation(Motion.decadeTurn, value: viewModel.spokenPendant == nil)
             }
         }
     }
@@ -529,49 +506,6 @@ struct ScripturalRosaryPrayerView: View {
             onBeads: userSettings.prayOnBeads,
             oneRosary: userSettings.oneRosaryBeta
         )
-    }
-
-    // MARK: - One Rosary (beta)
-
-    /// The opening or closing prayer prayed in silence, set in the layout
-    /// both players share while the beta is on; nil otherwise, and while
-    /// the voice says them
-    private var unitedPendant: SpokenPendant? {
-        guard userSettings.oneRosaryBeta, viewModel.currentPendantStep != nil else { return nil }
-        return viewModel.spokenPendant
-    }
-
-    /// The pendant's height in the shared layout, fitted above the words
-    /// as the meditation's player fits it (`pendantHeightFraction`)
-    private static func unitedPendantHeightFraction(fullHeight: CGFloat, footTop: CGFloat?) -> CGFloat {
-        guard let footTop, fullHeight > 0 else { return 0.46 }
-        let room = footTop - fullHeight * 0.165 - 16
-        return min(0.46, max(room, 0) / fullHeight)
-    }
-
-    /// With Helps on, the line for the hand's place
-    private var helpLine: RosaryHelps.Line? {
-        // Not while the voice says the opening or closing prayers: the
-        // decades' line would stand under the wrong prayer
-        guard userSettings.oneRosaryBeta, userSettings.rosaryHelps,
-              viewModel.spokenPendant == nil || viewModel.currentPendantStep != nil else { return nil }
-        return RosaryHelps.line(
-            for: viewModel.category,
-            pendantStep: viewModel.currentPendantStep,
-            mystery: viewModel.currentMysteryIndex,
-            bead: viewModel.currentBeadIndex
-        )
-    }
-
-    /// A tap on a bead of the strand: the hand taken there, unless the
-    /// recordings are still being fetched
-    private func goToBead(_ index: Int) {
-        guard !beadsHeld, !movesByPrayer else { return }
-        travel = index > viewModel.strandIndex ? .forward : .back
-        withAnimation(Motion.beadSlide) {
-            viewModel.goToBead(at: index)
-            strandDrag = 0
-        }
     }
 
     /// Left for the next mystery, right for the one before, while the
@@ -1568,6 +1502,287 @@ struct ScripturalRosaryPrayerView: View {
     }
 }
 
+// MARK: - One Rosary (beta)
+
+/// With the One Rosary beta on, the Scriptural and Audio Rosaries pray on
+/// the meditation's player (`MysteryPrayerView`'s beta layer): the same
+/// rail at the same place, the same column with the verse as its words,
+/// Back and Next at the foot, and the same row of the voice's sheet, the
+/// text's and the ⋯ beneath. Off, nothing here is drawn.
+extension ScripturalRosaryPrayerView {
+
+    fileprivate var rail: OneRosaryRail {
+        OneRosaryRail(
+            strand: viewModel.strand,
+            pendant: viewModel.silentPendant,
+            showsPendant: userSettings.showsOpeningPrayers || viewModel.isPrayingAloud
+        )
+    }
+
+    fileprivate func railIndex(_ rail: OneRosaryRail) -> Int {
+        if let step = viewModel.currentPendantStep { return rail.index(of: step) }
+        if let pendant = viewModel.spokenPendant { return rail.index(of: pendant) }
+        return rail.index(strandIndex: viewModel.strandIndex)
+    }
+
+    fileprivate func tappableBeads(_ rail: OneRosaryRail) -> Set<Int> {
+        guard viewModel.spokenPendant == nil, !beadsHeld else { return [] }
+        let strand = viewModel.strand
+        let active = viewModel.strandIndex
+        let near = max(active - 4, 0)...min(active + 4, strand.count - 1)
+        return Set(
+            near.filter { strand.canTap($0, from: active, onGloryBe: viewModel.isDecadePrayed) }
+                .map { rail.index(strandIndex: $0) })
+    }
+
+    fileprivate var oneRosaryHelp: RosaryHelps.Line? {
+        guard userSettings.rosaryHelps,
+            viewModel.spokenPendant == nil || viewModel.currentPendantStep != nil
+        else { return nil }
+        return RosaryHelps.line(
+            for: viewModel.category,
+            pendantStep: viewModel.currentPendantStep,
+            mystery: viewModel.currentMysteryIndex,
+            bead: viewModel.currentBeadIndex
+        )
+    }
+
+    fileprivate var oneRosaryLayer: some View {
+        GeometryReader { geometry in
+            let fullHeight = geometry.size.height
+                + geometry.safeAreaInsets.top
+                + geometry.safeAreaInsets.bottom
+            let rail = rail
+
+            VStack(spacing: 0) {
+                oneRosaryColumn
+                    .padding(.leading, 28)
+                    .padding(.trailing, Self.readingTrailingInset)
+                    .padding(.top, readingTop(fullHeight: fullHeight, topInset: geometry.safeAreaInsets.top))
+                    .frame(maxHeight: .infinity, alignment: .top)
+
+                oneRosaryFoot
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay(alignment: .top) {
+                oneRosaryHeader
+                    .padding(.top, 12)
+            }
+            .oneRosaryRail(
+                rail,
+                activeIndex: railIndex(rail),
+                fullHeight: fullHeight,
+                topInset: geometry.safeAreaInsets.top,
+                dragOffset: strandDrag,
+                turnPulse: turnPulse,
+                tappable: tappableBeads(rail)
+            ) { index in
+                if case .strand(let bead) = rail.target(at: index) { goToBead(bead) }
+            }
+            .opacity(chromeHidden ? 0 : 1)
+            .allowsHitTesting(!chromeHidden)
+            .background {
+                ZStack {
+                    if viewModel.spokenPendant != nil {
+                        AppColors.appGradient
+                            .ignoresSafeArea()
+                            .contentShape(Rectangle())
+                            .onTapGesture { toggleChrome() }
+                            .transition(.opacity)
+                    } else {
+                        PrayerPaintingStage(
+                            painting: painting,
+                            paintingID: viewModel.currentMysteryIndex,
+                            chromeHidden: chromeHidden,
+                            width: geometry.size.width,
+                            fullHeight: fullHeight
+                        ) {
+                            toggleChrome()
+                        }
+                        .transition(.opacity)
+
+                        OneRosaryColumnScrim()
+                            .opacity(chromeHidden ? 0 : 1)
+                    }
+                }
+                .animation(Motion.decadeTurn, value: viewModel.spokenPendant == nil)
+            }
+        }
+    }
+
+    /// The way out, and the Rosary's name: as the meditation's player
+    fileprivate var oneRosaryHeader: some View {
+        ZStack {
+            Text(
+                (viewModel.isPlain
+                    ? viewModel.displayName
+                    : String(localized: "Scriptural Rosary", comment: "Scriptural Rosary's prayer screen: the header's name, set in capitals"))
+                    .uppercased()
+            )
+            .font(AppFonts.labelFont(9))
+            .tracking(2.5)
+            .foregroundColor(AppColors.goldLight)
+            .shadow(color: .black.opacity(0.6), radius: 6, y: 1)
+            .lineLimit(1)
+            .padding(.horizontal, 60)
+
+            HStack {
+                PrayerHeaderButton(
+                    icon: "ph-x",
+                    size: 18,
+                    label: String(localized: "End prayer", comment: "Prayer screen: VoiceOver name of the close button that leaves the Rosary")
+                ) {
+                    router.popToRoot()
+                }
+                Spacer()
+            }
+        }
+        .padding(.horizontal, 16)
+    }
+
+    @ViewBuilder
+    fileprivate var oneRosaryColumn: some View {
+        if let pendant = viewModel.spokenPendant {
+            let lines = SilentPendant.lines(of: pendant.prayerID, in: userSettings.prayerLanguage)
+            OneRosaryColumn(
+                kicker: pendant.heading,
+                title: pendant.title,
+                bead: viewModel.silentPendantCount,
+                help: oneRosaryHelp,
+                wordsKey: Self.pendantKey(pendant) + (viewModel.silentPendantCount ?? "")
+            ) {
+                VStack(alignment: .leading, spacing: 8) {
+                    OneRosaryColumn<EmptyView>.prayerWords(lines, size: userSettings.meditationFontSize - 2)
+                    AITranslationNote(prayerID: pendant.prayerID)
+                }
+            }
+            .accessibilityElement(children: .combine)
+        } else {
+            let reading = viewModel.reading
+            OneRosaryColumn(
+                kicker: viewModel.mysteryKicker,
+                title: viewModel.currentMystery?.name ?? "",
+                bead: viewModel.beadLabel,
+                help: oneRosaryHelp,
+                wordsKey: "\(viewModel.beadPosition.mystery).\(viewModel.beadPosition.bead)"
+            ) {
+                VStack(alignment: .leading, spacing: 10) {
+                    OneRosaryColumn<EmptyView>.prayerWords(
+                        reading.text.components(separatedBy: "\n")
+                            + (reading.closingPrayer.map { ["", $0] } ?? [])
+                    , size: userSettings.meditationFontSize - 2)
+                    if let reference = reading.reference {
+                        Text(reference.uppercased())
+                            .font(AppFonts.labelFont(9.5))
+                            .tracking(1.5)
+                            .foregroundColor(AppColors.gold.opacity(0.85))
+                            .lineLimit(1)
+                    }
+                    if let footnote = reading.footnote {
+                        Text(footnote.uppercased())
+                            .font(AppFonts.labelFont(9))
+                            .tracking(1.5)
+                            .foregroundColor(AppColors.cream.opacity(0.55))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityAction(named: "Next bead", prayForward)
+            .accessibilityAction(named: "Previous bead", prayBack)
+        }
+    }
+
+    fileprivate var oneRosaryFoot: some View {
+        let aloud = viewModel.isPrayingAloud
+        return VStack(spacing: 0) {
+            if aloud {
+                if let failure = viewModel.spokenFailure {
+                    SpokenRosaryNotice(failure: failure) {
+                        Task { await viewModel.restartSpoken() }
+                    }
+                    .transition(.opacity)
+                } else {
+                    if let status = viewModel.spokenStatus {
+                        Text(status.uppercased())
+                            .font(AppFonts.labelFont(9.5))
+                            .tracking(2)
+                            .foregroundColor(AppColors.textSecondary)
+                            .padding(.bottom, 8)
+                    }
+                    NarrationPlayButton(isPlaying: viewModel.isSpeaking, diameter: 56) {
+                        viewModel.toggleSpeaking()
+                    }
+                    .opacity(viewModel.spokenStatus == nil && !viewModel.isSpokenFinished ? 1 : 0.35)
+                    .disabled(viewModel.spokenStatus != nil || viewModel.isSpokenFinished)
+                }
+            }
+
+            OneRosaryFooter(
+                canGoBack: !beadsHeld
+                    && (!viewModel.isFirstBeadOfRosary || viewModel.canStepBackIntoOpening
+                        || (aloud && viewModel.spokenPendant != nil)),
+                canGoOn: !beadsHeld && !viewModel.isSpokenFinished,
+                isLast: aloud && viewModel.spokenFailure == nil
+                    ? viewModel.isSpokenFinished
+                    : viewModel.isLastBeadOfRosary,
+                amenBeckons: viewModel.isSpokenFinished,
+                onBack: prayBack,
+                onNext: prayForward,
+                onAmen: finishRosary
+            )
+            .padding(.horizontal, 22)
+            .padding(.top, 16)
+
+            HStack(spacing: 40) {
+                ReaderChromeButton(
+                    icon: "ph-faders",
+                    size: 21,
+                    tint: Self.utilityTint,
+                    label: String(
+                        localized: "Playback settings",
+                        comment: "Prayer screen: VoiceOver name of the button that opens the voice, speed and Rosary choices"
+                    )
+                ) {
+                    activeSheet = .playback
+                }
+
+                ReaderChromeButton(
+                    icon: "ph-text-aa",
+                    size: 21,
+                    tint: Self.utilityTint,
+                    label: String(localized: "Text options", comment: "Scriptural Rosary's prayer screen: VoiceOver name of the button that opens text size")
+                ) {
+                    activeSheet = .text
+                }
+
+                ReaderChromeButton(
+                    icon: "ph-dots-three",
+                    size: 23,
+                    tint: Self.utilityTint,
+                    label: String(localized: "More", comment: "Prayer screen: VoiceOver name of the button that opens the menu of more actions")
+                ) {
+                    activeSheet = .tray
+                }
+            }
+            .padding(.top, 14)
+            .padding(.bottom, 16)
+        }
+        .animation(Motion.crossfade, value: aloud)
+    }
+
+    /// A tap on a bead of the rail: the hand taken there, unless the
+    /// recordings are still being fetched
+    fileprivate func goToBead(_ index: Int) {
+        guard !beadsHeld, !movesByPrayer else { return }
+        travel = index > viewModel.strandIndex ? .forward : .back
+        withAnimation(Motion.beadSlide) {
+            viewModel.goToBead(at: index)
+            strandDrag = 0
+        }
+    }
+}
+
 // MARK: - The Prayer on the Pendant, for VoiceOver
 
 private extension View {
@@ -1593,6 +1808,9 @@ private extension View {
 private enum ScripturalSheet: String, Identifiable {
     case journal
     case text
+    /// One Rosary beta: the voice, the speed and the Rosary's choices,
+    /// as the meditation's player opens them
+    case playback
     case tray
     case feedback
 

@@ -11677,6 +11677,17 @@
         }
       }
     },
+    "Keep the scene before you." : {
+      "comment" : "One Rosary beta, Helps on a Hail Mary in the middle of a mystery: what to do, without naming the mystery, which the screen names above",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten la escena ante tus ojos."
+          }
+        }
+      }
+    },
     "Kept as yours. Practise it here any time." : {
       "localizations" : {
         "es" : {
@@ -14427,6 +14438,17 @@
         }
       }
     },
+    "None chosen · said with the Whole Rosary" : {
+      "comment" : "One Rosary beta, Settings: the line under After the Rosary when no prayer is chosen",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguna elegida · se rezan con el Rosario completo"
+          }
+        }
+      }
+    },
     "Nones" : {
       "comment" : "Hours of Prayer: the Church's traditional English name for an hour of the Divine Office, shown small under its plain name",
       "localizations" : {
@@ -16421,6 +16443,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Configuración de reproducción"
+          }
+        }
+      }
+    },
+    "Played after the closing prayer, when the Whole Rosary is chosen." : {
+      "comment" : "One Rosary beta, Settings, the After the Rosary sheet: the line under the prayers while the Whole Rosary is not chosen",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se dicen después de la oración final, cuando eliges el Rosario completo."
           }
         }
       }
@@ -19738,6 +19771,17 @@
         }
       }
     },
+    "Shows it on the rosary" : {
+      "comment" : "One Rosary beta, the Rosary's overview: VoiceOver hint on a part of the Rosary, which lights its beads in the drawing",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La muestra en el rosario"
+          }
+        }
+      }
+    },
     "Shows its prayers" : {
       "localizations" : {
         "es" : {
@@ -21137,6 +21181,17 @@
         }
       }
     },
+    "Tap a bead on the strand to go to it." : {
+      "comment" : "One Rosary beta: a one-time hint that the beads on the strand can be tapped",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca una cuenta del rosario para ir a ella."
+          }
+        }
+      }
+    },
     "Tap a sound to hear it and make it yours." : {
       "comment" : "Settings, Reminder Sound sheet: the line under its title",
       "localizations" : {
@@ -21282,6 +21337,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Diez avemarías, contadas en tu propio rosario"
+          }
+        }
+      }
+    },
+    "Ten Hail Marys, one on each small bead." : {
+      "comment" : "One Rosary beta, Helps on the first Hail Mary of a later mystery: what to do",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diez avemarías, una en cada cuenta pequeña."
+          }
+        }
+      }
+    },
+    "Ten Hail Marys, one on each small bead. Let the words carry you while your mind stays with the scene." : {
+      "comment" : "One Rosary beta, Helps on the first Hail Mary of the first mystery: what to do, without naming the mystery, which the screen names above",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diez avemarías, una en cada cuenta pequeña. Deja que las palabras te lleven mientras tu mente se queda en la escena."
           }
         }
       }
@@ -23197,6 +23274,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La meditación"
+          }
+        }
+      }
+    },
+    "The meditation is read first. The beads open when it ends." : {
+      "comment" : "One Rosary beta, the player on a mystery's Our Father before its meditation has been heard: why the beads wait",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero se lee la meditación. Las cuentas se abren cuando termina."
           }
         }
       }

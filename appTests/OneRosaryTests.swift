@@ -162,4 +162,100 @@ struct OneRosaryTests {
         // Never past it
         #expect(!vm.goToBead(at: vm.strand.index(mystery: 1, bead: 5)))
     }
+
+    // MARK: - Round 2: Helps Never Repeat the Mystery
+
+    @Test func helpsNeverNameTheMysteryTheScreenNames() {
+        for category in [MysteryCategory.joyful, .sorrowful, .glorious, .luminous] {
+            let mysteries = MysteryData.mysteries(for: category)
+            for mystery in 0..<5 {
+                let name = mysteries[mystery].name.lowercasedArticle
+                for bead in 1...10 {
+                    let line = RosaryHelps.line(for: category, pendantStep: nil, mystery: mystery, bead: bead)
+                    #expect(line?.instruction.localizedCaseInsensitiveContains(name) == false)
+                }
+            }
+        }
+    }
+
+    // MARK: - Round 2: One Rail
+
+    @Test func theRailClimbsThePendantRunsTheDecadesAndComesBackDown() {
+        let strand = RosaryStrand(decades: 5, hailMarys: 10)
+        let pendant = SilentPendant(category: .joyful)
+        let rail = OneRosaryRail(strand: strand, pendant: pendant, showsPendant: true)
+
+        // The cross (the Sign of the Cross and the Creed), the large bead,
+        // three small beads, the medal for the Glory Be
+        #expect(Array(rail.kinds.prefix(6)) == [.cross, .largeBead, .smallBead, .smallBead, .smallBead, .medal])
+        #expect(rail.strandStart == 6)
+        #expect(rail.index(of: .opening(0)) == 0)
+        #expect(rail.index(of: .opening(1)) == 0)
+        #expect(rail.index(of: .opening(2)) == 1)
+        #expect(rail.index(strandIndex: 0) == 6)
+        #expect(rail.kinds[6] == .ourFather(decade: 0))
+
+        // The last Glory Be, the Hail, Holy Queen and the closing prayer
+        // on the medal; the last Sign of the Cross on the cross
+        let end = rail.index(strandIndex: strand.count - 1)
+        #expect(rail.kinds[end] == .medal)
+        #expect(rail.index(of: .closing(0)) == end)
+        #expect(rail.index(of: .closing(1)) == end)
+        #expect(rail.index(of: .closing(2)) == end + 1)
+        #expect(rail.kinds.last == .cross)
+        #expect(rail.count == 6 + strand.count + 1)
+    }
+
+    @Test func theRailIsTheStrandWithoutThePendant() {
+        let strand = RosaryStrand(decades: 5, hailMarys: 10)
+        let rail = OneRosaryRail(strand: strand, pendant: SilentPendant(category: .joyful), showsPendant: false)
+        #expect(rail.count == strand.count)
+        #expect(rail.strandStart == 0)
+        #expect(rail.kinds.last == .end)
+        #expect(rail.label(at: rail.count - 1) == "Amen")
+        #expect(rail.label(at: rail.index(strandIndex: strand.index(mystery: 2, bead: 0))) == "3")
+    }
+
+    @Test func aTapOnTheRailIsABeadOrThePendant() {
+        let strand = RosaryStrand(decades: 5, hailMarys: 10)
+        let rail = OneRosaryRail(strand: strand, pendant: SilentPendant(category: .joyful), showsPendant: true)
+        #expect(rail.target(at: 0) == .pendant(.opening(0)))
+        #expect(rail.target(at: 2) == .pendant(.opening(3)))
+        #expect(rail.target(at: rail.strandStart + 7) == .strand(7))
+        #expect(rail.target(at: rail.count - 1) == .pendant(.closing(2)))
+        #expect(rail.target(at: rail.count) == nil)
+    }
+
+    @Test func theChapletsRailClosesOnItsOwnBeads() {
+        let strand = RosaryStrand(decades: 7, hailMarys: 7, saysFatimaPrayer: false)
+        let rail = OneRosaryRail(strand: strand, pendant: SilentPendant(category: .sevenSorrows), showsPendant: true)
+        // The Sign of the Cross and the Act of Contrition on the cross
+        #expect(rail.strandStart == 1)
+        #expect(rail.kinds.first == .cross)
+        // Three Hail Marys for her tears, the closing prayer, the cross
+        #expect(Array(rail.kinds.suffix(5)) == [.smallBead, .smallBead, .smallBead, .medal, .cross])
+    }
+
+    // MARK: - Round 2: The Overview Lights Its Beads
+
+    @Test func eachPartOfTheOverviewLightsItsBeads() {
+        let overview = RosaryOverview(category: .joyful, includesPendant: true)
+        #expect(overview.parts.first?.beads.contains(.crucifix) == true)
+        #expect(overview.parts[1].beads.count == 11)
+        #expect(overview.parts[1].beads.contains(RosaryMap.ourFatherBead(decade: 0)))
+        #expect(overview.parts.last?.beads == [.medal, .crucifix])
+        // No two mysteries share a bead
+        let mysteries = overview.mysteries.map(\.beads)
+        for (i, a) in mysteries.enumerated() {
+            for b in mysteries[(i + 1)...] { #expect(a.isDisjoint(with: b)) }
+        }
+    }
+
+    @Test func aSetsOwnTitlesStandUnderTheMysteries() {
+        let names = MysteryData.mysteries(for: .joyful).map(\.name)
+        let titles = [names[0], "The Word Made Flesh", "", names[3], "Lost and Found"]
+        let overview = RosaryOverview(category: .joyful, includesPendant: false, meditationTitles: titles)
+        #expect(overview.mysteries.map(\.detail) == [nil, "The Word Made Flesh", nil, nil, "Lost and Found"])
+    }
 }
+

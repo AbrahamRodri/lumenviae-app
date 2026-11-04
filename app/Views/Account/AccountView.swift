@@ -15,6 +15,16 @@ struct AccountView: View {
     @State private var showSoundPicker = false
     @State private var showIntentionPicker = false
     @State private var showRuleEditor = false
+    @State private var showAfterTheRosary = false
+
+    /// One Rosary beta: the prayers chosen after the Rosary, by name, or
+    /// that none is
+    private var afterTheRosarySummary: String {
+        let chosen = RosaryClosingExtra.allCases.filter { userSettings.isChosen($0) }
+        return chosen.isEmpty
+            ? String(localized: "None chosen · said with the Whole Rosary", comment: "One Rosary beta, Settings: the line under After the Rosary when no prayer is chosen")
+            : chosen.map(\.title).joined(separator: " · ")
+    }
 
     var body: some View {
         ZStack {
@@ -157,42 +167,54 @@ struct AccountView: View {
                             // as prayers added to every Rosary. The Seven
                             // Sorrows chaplet closes in its own way and
                             // never says them
-                            Text("AFTER THE ROSARY")
-                                .font(AppFonts.labelFont(9))
-                                .tracking(2)
-                                .foregroundColor(AppColors.textSecondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal, 16)
-                                .padding(.top, 16)
-                                .padding(.bottom, 2)
-                                .accessibilityAddTraits(.isHeader)
+                            // One Rosary beta: the three prayers after the
+                            // Rosary behind one row, which opens them
+                            if userSettings.oneRosaryBeta {
+                                ActionRow(
+                                    icon: "lv-lozenge",
+                                    title: String(localized: "After the Rosary", comment: "One Rosary beta, Settings, The Rosary: the row that opens the prayers said after the Rosary"),
+                                    subtitle: afterTheRosarySummary
+                                ) {
+                                    showAfterTheRosary = true
+                                }
+                            } else {
+                                Text("AFTER THE ROSARY")
+                                    .font(AppFonts.labelFont(9))
+                                    .tracking(2)
+                                    .foregroundColor(AppColors.textSecondary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.horizontal, 16)
+                                    .padding(.top, 16)
+                                    .padding(.bottom, 2)
+                                    .accessibilityAddTraits(.isHeader)
 
-                            ForEach(RosaryClosingExtra.allCases, id: \.self) { extra in
-                                ToggleRow(
-                                    icon: extra.icon,
-                                    title: extra.title,
-                                    subtitle: extra.detail,
-                                    isOn: Binding(
-                                        get: { userSettings.isChosen(extra) },
-                                        set: { userSettings.setChosen(extra, $0) }
+                                ForEach(RosaryClosingExtra.allCases, id: \.self) { extra in
+                                    ToggleRow(
+                                        icon: extra.icon,
+                                        title: extra.title,
+                                        subtitle: extra.detail,
+                                        isOn: Binding(
+                                            get: { userSettings.isChosen(extra) },
+                                            set: { userSettings.setChosen(extra, $0) }
+                                        )
                                     )
-                                )
 
-                                Divider()
-                                    .background(AppColors.gold.opacity(0.2))
+                                    Divider()
+                                        .background(AppColors.gold.opacity(0.2))
+                                }
+
+                                // The set page's note, and while the Whole
+                                // Rosary is not chosen, where to choose it
+                                Text(userSettings.prayAloud
+                                     ? String(localized: "Played after the closing prayer.", comment: "Settings: the line under a row")
+                                     : String(localized: "Played after the closing prayer, with the Whole Rosary. Audio is at the top of this section.", comment: "Settings: the line under a row"))
+                                    .font(AppFonts.italicFont(13))
+                                    .foregroundColor(AppColors.textSecondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 14)
                             }
-
-                            // The set page's note, and while the Whole
-                            // Rosary is not chosen, where to choose it
-                            Text(userSettings.prayAloud
-                                 ? String(localized: "Played after the closing prayer.", comment: "Settings: the line under a row")
-                                 : String(localized: "Played after the closing prayer, with the Whole Rosary. Audio is at the top of this section.", comment: "Settings: the line under a row"))
-                                .font(AppFonts.italicFont(13))
-                                .foregroundColor(AppColors.textSecondary)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 14)
                         }
                     }
                     .padding(.top, 30)
@@ -401,6 +423,12 @@ struct AccountView: View {
         }
         .sheet(isPresented: $showSoundPicker) {
             ReminderSoundSheet()
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+        }
+        .sheet(isPresented: $showAfterTheRosary) {
+            AfterTheRosarySheet()
+                .presentationDetents([.medium, .large])
+                .presentationBackground(AppColors.background)
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .sheet(isPresented: $showRuleEditor) {
@@ -1514,4 +1542,50 @@ private struct InfoBlock: View {
     AccountView()
         .environment(UserSettings.shared)
         .environment(AppRouter())
+}
+
+// MARK: - AfterTheRosarySheet
+
+/// One Rosary beta: the prayers said after the Rosary's closing prayer,
+/// each off until chosen, in a sheet of their own so the Rosary's section
+/// of Settings stays short
+struct AfterTheRosarySheet: View {
+    @Environment(UserSettings.self) private var userSettings
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                SheetHeader(title: String(localized: "After the Rosary", comment: "One Rosary beta, Settings: the title of the sheet of prayers said after the Rosary")) {
+                    SheetHeaderAction(title: String(localized: "Done", comment: "Sheet header button that closes the sheet")) { dismiss() }
+                }
+
+                ForEach(RosaryClosingExtra.allCases, id: \.self) { extra in
+                    ToggleRow(
+                        icon: extra.icon,
+                        title: extra.title,
+                        subtitle: extra.detail,
+                        isOn: Binding(
+                            get: { userSettings.isChosen(extra) },
+                            set: { userSettings.setChosen(extra, $0) }
+                        )
+                    )
+
+                    Divider()
+                        .background(AppColors.gold.opacity(0.2))
+                }
+
+                Text(userSettings.prayAloud
+                     ? String(localized: "Played after the closing prayer.", comment: "Settings: the line under a row")
+                     : String(localized: "Played after the closing prayer, when the Whole Rosary is chosen.", comment: "One Rosary beta, Settings, the After the Rosary sheet: the line under the prayers while the Whole Rosary is not chosen"))
+                    .font(AppFonts.italicFont(13))
+                    .foregroundColor(AppColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+            }
+            .padding(.bottom, 20)
+        }
+        .sheetGround()
+    }
 }

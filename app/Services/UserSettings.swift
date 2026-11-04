@@ -248,6 +248,12 @@ final class UserSettings {
         didSet { UserDefaults.standard.set(rosaryHelps, forKey: "userSettings.rosaryHelps") }
     }
 
+    /// With the One Rosary beta on: whether the one-time hint that a bead
+    /// of the rail takes a tap has been shown
+    var hasSeenBeadTapHint: Bool = false {
+        didSet { UserDefaults.standard.set(hasSeenBeadTapHint, forKey: "userSettings.hasSeenBeadTapHint") }
+    }
+
     // MARK: - After the Rosary
 
     /// Prayers some add after the Rosary's closing prayer, each off until
@@ -715,6 +721,7 @@ final class UserSettings {
         }
         oneRosaryBeta = Self.storedOneRosaryBeta(in: d)
         rosaryHelps = d.bool(forKey: "userSettings.rosaryHelps")
+        hasSeenBeadTapHint = d.bool(forKey: "userSettings.hasSeenBeadTapHint")
         prayForHolyFather = d.bool(forKey: "userSettings.prayForHolyFather")
         prayMemorare = d.bool(forKey: "userSettings.prayMemorare")
         praySaintMichael = d.bool(forKey: "userSettings.praySaintMichael")

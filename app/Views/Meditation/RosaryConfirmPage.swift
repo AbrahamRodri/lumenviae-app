@@ -321,6 +321,12 @@ struct RosaryChoicesSection: View {
     /// offers no prayers after the Rosary
     var category: MysteryCategory? = nil
 
+    /// One Rosary beta: a meditation set's titles for its meditations,
+    /// which the overview sets under the mysteries' names, and where the
+    /// set falls in the week, under the overview
+    var meditationTitles: [String] = []
+    var contextLine: String? = nil
+
     @Environment(UserSettings.self) private var settings
     @State private var sheet: RosaryChoicesSheet?
 
@@ -335,7 +341,9 @@ struct RosaryChoicesSection: View {
             if settings.oneRosaryBeta {
                 RosaryOverviewSection(
                     category: chosenCategory ?? today,
-                    includesPendant: settings.showsOpeningPrayers || form.praysAloud(setting: settings.prayAloud)
+                    includesPendant: settings.showsOpeningPrayers || form.praysAloud(setting: settings.prayAloud),
+                    meditationTitles: meditationTitles,
+                    contextLine: contextLine
                 )
                 .padding(.bottom, 10)
             }
