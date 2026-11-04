@@ -44,6 +44,17 @@ struct SpanishOfficeTests {
         // The English Office keeps its own word
         #expect(OfficeReaderSection.build(from: sections).first?.englishName == "Martyrology")
     }
+
+    /// The Missal names the feast in English only, so a Spanish app
+    /// takes the breviary's own (Latin) title, and none until it comes
+    @Test func theSpanishOfficeNeverNamesTheFeastInEnglish() {
+        let missal = "St. Charles Borromeo"
+        let breviary = "S. Caroli Episcopi et Confessoris"
+        #expect(OfficeViewModel.feastTitle(missal: missal, breviary: breviary, spanish: true) == breviary)
+        #expect(OfficeViewModel.feastTitle(missal: missal, breviary: breviary, spanish: false) == missal)
+        #expect(OfficeViewModel.feastTitle(missal: nil, breviary: breviary, spanish: false) == breviary)
+        #expect(OfficeViewModel.feastTitle(missal: missal, breviary: nil, spanish: true) == nil)
+    }
 }
 
 struct SpanishQuotesTests {

@@ -68,9 +68,16 @@ final class OfficeViewModel {
         missalDay?.info.colors?.first.flatMap { MissalVestment(rawValue: $0) }
     }
 
-    /// The day's feast, in English where it can be had.
+    /// The day's feast, in English where it can be had. A Spanish app
+    /// names it as the breviary does, and never by the Missal's
+    /// title, which is English only: the Latin stands beside Spanish
     var feastTitle: String? {
-        missalDay?.info.title ?? day?.celebration?.title
+        Self.feastTitle(missal: missalDay?.info.title, breviary: day?.celebration?.title,
+                        spanish: SpanishContent.isActive)
+    }
+
+    static func feastTitle(missal: String?, breviary: String?, spanish: Bool) -> String? {
+        spanish ? breviary : (missal ?? breviary)
     }
 
     /// Hours fetched this session, keyed by "day/hour"
