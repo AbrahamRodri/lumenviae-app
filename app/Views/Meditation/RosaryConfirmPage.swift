@@ -67,7 +67,7 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
 
     /// Where the title block begins, from the top of the glass: over the
     /// painting's foot, where it has begun to dissolve
-    private var titleTop: CGFloat { userSettings.oneRosaryBeta ? 150 : 212 }
+    private var titleTop: CGFloat { userSettings.oneRosaryBeta ? 132 : 212 }
 
     /// The room the scrolled content keeps clear of the fixed PRAY
     private static var footClearance: CGFloat { 132 }
@@ -95,9 +95,12 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
                         .devotionalEntrance(delay: 0.08)
 
                     // Well clear of the rows, so the ledger reads as its
-                    // own part of the page rather than a second rule
+                    // own part of the page rather than a second rule. With
+                    // the One Rosary beta, whose page is longer, the ledger
+                    // goes straight on from the last row, its first rule
+                    // laid over the row's, so no empty band stands between
                     ledger()
-                        .padding(.top, 52)
+                        .padding(.top, userSettings.oneRosaryBeta ? -AppLine.hairline : 52)
                         .padding(.horizontal, 24)
                         .devotionalEntrance(delay: 0.16)
                 }

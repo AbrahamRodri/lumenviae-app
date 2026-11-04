@@ -97,7 +97,7 @@ enum RosaryChoice: Hashable, CaseIterable {
         switch self {
         case .audio: return "ph-speaker-high"
         case .counting: return "lv-rosary"
-        case .helps: return "ph-info"
+        case .helps: return "ph-question"
         }
     }
 

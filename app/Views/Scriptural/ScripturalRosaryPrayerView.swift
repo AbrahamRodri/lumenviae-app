@@ -1652,10 +1652,11 @@ extension ScripturalRosaryPrayerView {
                 title: pendant.heading,
                 bead: OneRosaryColumn<EmptyView>.pendantLabel(prayer: pendant.title, count: viewModel.silentPendantCount),
                 help: oneRosaryHelp,
+                balancesWords: true,
                 wordsKey: Self.pendantKey(pendant) + (viewModel.silentPendantCount ?? "")
             ) {
                 VStack(alignment: .leading, spacing: 8) {
-                    OneRosaryColumn<EmptyView>.prayerWords(lines, size: userSettings.meditationFontSize - 2)
+                    OneRosaryColumn<EmptyView>.prayerWords(lines, size: userSettings.meditationFontSize - 2, raisesShort: true)
                     AITranslationNote(prayerID: pendant.prayerID)
                 }
             }

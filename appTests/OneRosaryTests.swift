@@ -244,7 +244,9 @@ struct OneRosaryTests {
         #expect(overview.parts.first?.beads.contains(.crucifix) == true)
         #expect(overview.parts[1].beads.count == 11)
         #expect(overview.parts[1].beads.contains(RosaryMap.ourFatherBead(decade: 0)))
-        #expect(overview.parts.last?.beads == [.medal, .crucifix])
+        #expect(overview.parts.last?.beads == [.medal, .crucifix, .pendantLarge(0), .pendantSmall(0), .pendantSmall(1), .pendantSmall(2)])
+        // The opening and the close light the same pendant
+        #expect(overview.parts.first?.beads.isSubset(of: overview.parts.last?.beads ?? []) == true)
         // No two mysteries share a bead
         let mysteries = overview.mysteries.map(\.beads)
         for (i, a) in mysteries.enumerated() {

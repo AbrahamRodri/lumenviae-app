@@ -21203,13 +21203,13 @@
         }
       }
     },
-    "Tap a bead on the strand to go to it." : {
-      "comment" : "One Rosary beta: a one-time hint that the beads on the strand can be tapped",
+    "Tap a bead to go to it." : {
+      "comment" : "One Rosary beta: a one-time hint beside the strand that its beads can be tapped",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca una cuenta del rosario para ir a ella."
+            "value" : "Toca una cuenta para ir a ella."
           }
         }
       }

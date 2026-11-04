@@ -42,7 +42,8 @@ struct RosaryOverview: Equatable {
         /// The beads of the drawn rosary this part is prayed on, lit in
         /// the drawing while the part is chosen in the list. The first
         /// mystery's Our Father hangs on the pendant's second large bead
-        /// (`RosaryMap.ourFatherBead`), so the opening ends below it.
+        /// (`RosaryMap.ourFatherBead`), so the opening ends below it; the
+        /// closing lights the same pendant and the centrepiece.
         var beads: Set<RosaryPart> {
             switch kind {
             case .opening:
@@ -53,7 +54,10 @@ struct RosaryOverview: Equatable {
                 return Set((0..<10).map { RosaryPart.loopSmall(decade: decade, bead: $0) })
                     .union([RosaryMap.ourFatherBead(decade: decade)])
             case .closing:
-                return [.medal, .crucifix]
+                // Said on the centrepiece and the cross, after the hand
+                // has come back round: the pendant lit as for the opening,
+                // with the centrepiece it hangs from
+                return [.medal, .crucifix, .pendantLarge(0), .pendantSmall(0), .pendantSmall(1), .pendantSmall(2)]
             }
         }
     }

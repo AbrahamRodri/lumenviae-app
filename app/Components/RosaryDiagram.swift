@@ -47,6 +47,12 @@ struct RosaryDiagram: View {
     /// The decade (0-based) whose number is lit, with `numbersDecades`
     var litDecade: Int? = nil
 
+    /// Drawn as the One Rosary beta's rail and pendant draw it: a firmer
+    /// chain, numerals at a readable size, the centrepiece oval and the
+    /// cross budded, and while parts are lit the rest stepped back, so
+    /// the part chosen is the one thing that shines
+    var matchesPendant: Bool = false
+
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// Height over width
@@ -58,10 +64,13 @@ struct RosaryDiagram: View {
             let layout = Layout(width: width)
             let currentPosition = current.map { RosaryMap.position(of: $0) }
 
+            let chainColor = AppColors.gold.opacity(matchesPendant ? 0.6 : 0.28)
+            let chainWidth = matchesPendant ? 1.5 : max(1, width * 0.004)
+
             ZStack {
                 // The chain: the loop, and the pendant down to the cross
                 Circle()
-                    .stroke(AppColors.gold.opacity(0.28), lineWidth: max(1, width * 0.004))
+                    .stroke(chainColor, lineWidth: chainWidth)
                     .frame(width: layout.radius * 2, height: layout.radius * 2)
                     .position(layout.center)
 
@@ -69,7 +78,7 @@ struct RosaryDiagram: View {
                     path.move(to: layout.point(for: .medal))
                     path.addLine(to: layout.point(for: .crucifix))
                 }
-                .stroke(AppColors.gold.opacity(0.28), lineWidth: max(1, width * 0.004))
+                .stroke(chainColor, lineWidth: chainWidth)
 
                 ForEach(RosaryMap.traversal.dropLast(), id: \.self) { part in
                     bead(part, layout: layout, currentPosition: currentPosition)
@@ -169,8 +178,12 @@ struct RosaryDiagram: View {
             let radius = layout.radius * (lit ? 1.36 : 1.22)
 
             Text(verbatim: "\(decade + 1)")
-                .font(AppFonts.labelFont(max(10, layout.width * (lit ? 0.1 : 0.085))))
-                .foregroundColor(lit ? AppColors.goldLight : AppColors.gold.opacity(0.8))
+                .font(
+                    matchesPendant
+                        ? AppFonts.headlineFont(lit ? 17 : 14)
+                        : AppFonts.labelFont(max(10, layout.width * (lit ? 0.1 : 0.085)))
+                )
+                .foregroundColor(lit ? AppColors.goldLight : AppColors.gold.opacity(matchesPendant ? 0.95 : 0.8))
                 .position(
                     x: layout.center.x + radius * CGFloat(Foundation.cos(angle)),
                     y: layout.center.y + radius * CGFloat(Foundation.sin(angle))
@@ -198,7 +211,15 @@ struct RosaryDiagram: View {
         let state = state(of: part, currentPosition: currentPosition)
         let point = layout.point(for: part)
 
-        if part == .crucifix {
+        if part == .crucifix, matchesPendant {
+            // The rail's and the pendant's budded cross
+            BuddedCross()
+                .fill(state == .lit ? AppColors.goldLight : AppColors.gold.opacity(0.9))
+                .frame(width: layout.width * 0.13, height: layout.width * 0.17)
+                .shadow(color: AppColors.goldLight.opacity(state == .lit ? 0.8 : 0), radius: state == .lit ? 6 : 0)
+                .opacity(stepsBack(state) ? 0.4 : 1)
+                .position(x: point.x, y: point.y + layout.width * 0.07)
+        } else if part == .crucifix {
             CrossShape()
                 .fill(fill(for: state))
                 .overlay(CrossShape().stroke(AppColors.gold.opacity(state == .ahead ? 0.7 : 1), lineWidth: 1))
@@ -212,14 +233,22 @@ struct RosaryDiagram: View {
                 .fill(fill(for: state))
                 .overlay(
                     Circle().strokeBorder(
-                        state == .lit ? AppColors.goldLight : AppColors.gold.opacity(state == .ahead ? 0.55 : 0.9),
+                        state == .lit
+                            ? AppColors.goldLight
+                            : AppColors.gold.opacity(state == .ahead ? (matchesPendant ? 0.85 : 0.55) : 0.9),
                         lineWidth: 1
                     )
                 )
                 .frame(width: size, height: size)
                 .shadow(color: AppColors.goldLight.opacity(state == .lit ? 0.85 : 0), radius: state == .lit ? 5 : 0)
+                .opacity(stepsBack(state) ? 0.45 : 1)
                 .position(point)
         }
+    }
+
+    /// With `matchesPendant`, a part not lit while others are steps back
+    private func stepsBack(_ state: BeadState) -> Bool {
+        matchesPendant && state != .lit && !highlighted.isEmpty
     }
 
     private func medal(layout: Layout, currentPosition: Int?) -> some View {
@@ -228,12 +257,23 @@ struct RosaryDiagram: View {
         // The centrepiece swells a little less than a bead
         let size = layout.width * 0.07 * (lit ? 1 + (litGrowth - 1) * 0.6 : 1)
 
-        return Diamond()
-            .fill(fill(for: state))
-            .overlay(Diamond().stroke(lit ? AppColors.goldLight : AppColors.gold.opacity(0.9), lineWidth: 1))
-            .frame(width: size, height: size * 1.2)
-            .shadow(color: AppColors.goldLight.opacity(lit ? 0.85 : 0), radius: lit ? 6 : 0)
-            .position(layout.point(for: .medal))
+        return Group {
+            if matchesPendant {
+                // Oval, as the rail and the pendant drawing hang it
+                Ellipse()
+                    .fill(fill(for: state))
+                    .overlay(Ellipse().stroke(lit ? AppColors.goldLight : AppColors.gold.opacity(0.9), lineWidth: 1))
+                    .frame(width: size * 0.85, height: size * 1.15)
+            } else {
+                Diamond()
+                    .fill(fill(for: state))
+                    .overlay(Diamond().stroke(lit ? AppColors.goldLight : AppColors.gold.opacity(0.9), lineWidth: 1))
+                    .frame(width: size, height: size * 1.2)
+            }
+        }
+        .shadow(color: AppColors.goldLight.opacity(lit ? 0.85 : 0), radius: lit ? 6 : 0)
+        .opacity(stepsBack(state) ? 0.45 : 1)
+        .position(layout.point(for: .medal))
     }
 
     /// How much a lit bead swells; not at all under Reduce Motion, where

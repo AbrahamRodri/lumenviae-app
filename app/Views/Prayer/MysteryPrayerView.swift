@@ -365,8 +365,8 @@ struct MysteryPrayerView: View {
             userSettings.hasSeenBeadTapHint = true
             withAnimation(.easeInOut(duration: 0.5)) { tapHintShowing = true }
             tapHintPulse += 1
-            try? await Task.sleep(for: .seconds(6))
-            withAnimation(.easeInOut(duration: 0.4)) { tapHintShowing = false }
+            try? await Task.sleep(for: .seconds(4))
+            withAnimation(.easeInOut(duration: 0.6)) { tapHintShowing = false }
         }
         // The hint's own life, owned by a task that exists only while it is
         // on screen. Counting it down inside the task that raised it meant
@@ -1727,10 +1727,11 @@ extension MysteryPrayerView {
                 OneRosaryHeader(subtitle: meditationSet.name) { router.popToRoot() }
                     .padding(.top, 12)
             }
-            .overlay(alignment: .bottom) {
+            .overlay(alignment: .topTrailing) {
                 if tapHintShowing {
                     OneRosaryTapHint()
-                        .padding(.bottom, controlsHeight + 10)
+                        .padding(.top, OneRosaryTapHint.top(fullHeight: fullHeight, topInset: geometry.safeAreaInsets.top))
+                        .padding(.trailing, OneRosaryTapHint.trailing)
                         .transition(.opacity)
                 }
             }
@@ -1800,10 +1801,11 @@ extension MysteryPrayerView {
                 title: pendant.heading,
                 bead: OneRosaryColumn<EmptyView>.pendantLabel(prayer: pendant.title, count: viewModel.silentPendantCount),
                 help: oneRosaryHelp,
+                balancesWords: true,
                 wordsKey: "\(pendant.heading)|\(pendant.title)|\(viewModel.silentPendantCount ?? "")"
             ) {
                 VStack(alignment: .leading, spacing: 8) {
-                    OneRosaryColumn<EmptyView>.prayerWords(lines, size: userSettings.meditationFontSize - 2)
+                    OneRosaryColumn<EmptyView>.prayerWords(lines, size: userSettings.meditationFontSize - 2, raisesShort: true)
                     AITranslationNote(prayerID: pendant.prayerID)
                 }
             }

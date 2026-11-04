@@ -159,7 +159,7 @@ struct AccountView: View {
                             // Rosary behind one row, which opens them
                             if userSettings.oneRosaryBeta {
                                 ActionRow(
-                                    icon: "lv-lozenge",
+                                    icon: "ch-praying-hands",
                                     title: String(localized: "After the Rosary", comment: "One Rosary beta, Settings, The Rosary: the row that opens the prayers said after the Rosary"),
                                     subtitle: afterTheRosarySummary
                                 ) {

@@ -48,13 +48,13 @@ struct RosaryOverviewSection: View {
 
     /// The drawing's width, beside the list: short enough that the first
     /// rows of the list stand clear of PRAY on the first screen
-    private static let drawingWidth: CGFloat = 132
+    private static let drawingWidth: CGFloat = 118
 
     var body: some View {
         let overview = overview
         let chosenPart = overview.parts.first { $0.id == chosen } ?? overview.parts.first
 
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 12) {
                 Text(
                     "THE WHOLE ROSARY",
@@ -77,12 +77,11 @@ struct RosaryOverviewSection: View {
 
             if let helps {
                 helps
-                    .padding(.bottom, 4)
             }
 
             // The drawing beside the list, so a row and its beads are
             // read together; the chaplet has no drawing
-            HStack(alignment: .top, spacing: 14) {
+            HStack(alignment: .top, spacing: 8) {
                 if category != .sevenSorrows {
                     RosaryDiagram(
                         highlighted: chosenPart?.beads ?? [],
@@ -94,7 +93,8 @@ struct RosaryOverviewSection: View {
                         litDecade: chosenPart.flatMap { part in
                             if case .mystery(let number) = part.kind { return number - 1 }
                             return nil
-                        }
+                        },
+                        matchesPendant: true
                     )
                     .frame(width: Self.drawingWidth)
                     .padding(.top, 6)
@@ -106,15 +106,15 @@ struct RosaryOverviewSection: View {
                     }
 
                     Text(overview.decadeNote)
-                        .font(AppFonts.italicFont(14))
+                        .font(AppFonts.italicFont(13.5))
                         .foregroundColor(AppColors.cream.opacity(0.72))
                         .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 10)
+                        .padding(.top, 8)
                         .padding(.horizontal, 10)
 
                     if let contextLine {
                         Text(contextLine)
-                            .font(AppFonts.italicFont(14))
+                            .font(AppFonts.italicFont(13.5))
                             .foregroundColor(AppColors.cream.opacity(0.72))
                             .fixedSize(horizontal: false, vertical: true)
                             .padding(.top, 2)
@@ -124,7 +124,9 @@ struct RosaryOverviewSection: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .padding(.bottom, 18)
+        // Room enough that the next section's heading begins behind PRAY
+        // rather than half-read in its fade on the first screen
+        .padding(.bottom, 56)
         .animation(Motion.crossfade, value: chosen)
     }
 
@@ -161,7 +163,7 @@ struct RosaryOverviewSection: View {
                 }
                 Spacer(minLength: 0)
             }
-            .padding(.vertical, 6)
+            .padding(.vertical, 5)
             .padding(.horizontal, 10)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
@@ -206,7 +208,7 @@ struct RosaryHelpLine: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
-            AppIcon("ph-info", size: 15)
+            AppIcon("ph-question", size: 15)
                 .foregroundColor(AppColors.goldLight.opacity(0.85))
                 .padding(.top, 2)
                 .accessibilityHidden(true)
@@ -295,7 +297,7 @@ struct OneRosaryRailView: View {
             // enough that no bead is read against a face, dissolving at
             // both ends with the window
             Capsule()
-                .fill(AppColors.backgroundDeep.opacity(0.82))
+                .fill(AppColors.backgroundDeep.opacity(0.9))
                 .frame(width: Self.beadColumn + 18, height: height)
                 .padding(.trailing, Self.trailingRoom - 9)
 
@@ -400,45 +402,40 @@ struct OneRosaryRailView: View {
     }
 }
 
-/// A bead of the rail, drawn to read over anything: a bead to come has a
-/// fill of its own and a clear edge, a prayed one is gold, and the bead
-/// under the hand is gold inside one crisp ring, with no glow to blur it
+/// A bead of the rail, in three states that never look alike, over any
+/// painting: a bead to come is a clear cream outline round a dark fill,
+/// a prayed bead is solid gold with no edge of its own, and the bead
+/// under the hand is the one bright bead inside the one ring
 private struct RailBead: View {
     let state: RosaryBeadState
     let size: CGFloat
 
     var body: some View {
-        let active = state == .active
-
         ZStack {
+            // The ring: the bead under the hand alone
             Circle()
-                .strokeBorder(AppColors.goldLight, lineWidth: 1.5)
-                .frame(width: size + 11, height: size + 11)
-                .opacity(active ? 1 : 0)
-                .scaleEffect(active ? 1 : 0.7)
+                .strokeBorder(AppColors.goldLight, lineWidth: 2)
+                .frame(width: size + 12, height: size + 12)
+                .opacity(state == .active ? 1 : 0)
+                .scaleEffect(state == .active ? 1 : 0.7)
 
-            Circle()
-                .fill(fill)
-                .overlay(Circle().strokeBorder(edge, lineWidth: state == .ahead ? 1.25 : 1))
-                .frame(width: size, height: size)
+            switch state {
+            case .ahead:
+                Circle()
+                    .fill(AppColors.backgroundDeep.opacity(0.92))
+                    .overlay(Circle().strokeBorder(AppColors.cream.opacity(0.88), lineWidth: 1.5))
+                    .frame(width: size, height: size)
+            case .prayed:
+                Circle()
+                    .fill(AppColors.gold)
+                    .frame(width: size, height: size)
+            case .active:
+                Circle()
+                    .fill(AppColors.goldLight)
+                    .frame(width: size + 1, height: size + 1)
+            }
         }
-        .frame(width: size + 11, height: size + 11)
-    }
-
-    private var fill: Color {
-        switch state {
-        case .ahead: return AppColors.cream.opacity(0.4)
-        case .prayed: return AppColors.gold.opacity(0.9)
-        case .active: return AppColors.goldLight
-        }
-    }
-
-    private var edge: Color {
-        switch state {
-        case .ahead: return AppColors.cream.opacity(0.9)
-        case .prayed: return AppColors.goldLight.opacity(0.9)
-        case .active: return AppColors.goldLight
-        }
+        .frame(width: size + 12, height: size + 12)
     }
 }
 
@@ -464,29 +461,36 @@ private struct RailBeadPressStyle: ButtonStyle {
     }
 }
 
-/// The cross at the rail's foot and head: drawn as the rosary drawing
-/// draws it, gold once prayed, lit under the hand
+/// The cross at the rail's foot and head: the budded cross the pendant
+/// drawing above the words hangs (`BuddedCross`), so the two are plainly
+/// one object, in the rail's three states — quiet cream to come, gold
+/// once prayed, and lit under the hand
 private struct RailCross: View {
     let state: RosaryBeadState
     var glows: Bool = false
 
     var body: some View {
-        let active = state == .active
-        let large = active || glows
-        ZStack {
-            RailCrossShape()
-                .fill(
-                    state == .ahead
-                        ? AppColors.cream.opacity(0.4)
-                        : (glows ? AppColors.goldLight : AppColors.gold.opacity(active ? 0.45 : 0.9)))
-            RailCrossShape()
-                .stroke(large ? AppColors.goldLight : AppColors.gold.opacity(0.8), lineWidth: 1)
+        let lit = state == .active || glows
+        // The budded cross is slender, so it is told by its fill alone:
+        // a quiet cream to come, gold prayed, lit under the hand
+        BuddedCross()
+            .fill(fill)
+            .frame(width: lit ? 24 : 21, height: lit ? 33 : 29)
+            .shadow(color: AppColors.goldLight.opacity(lit ? 0.8 : 0), radius: lit ? 6 : 0)
+    }
+
+    private var fill: Color {
+        if glows { return AppColors.goldLight }
+        switch state {
+        case .ahead: return AppColors.cream.opacity(0.72)
+        case .prayed: return AppColors.gold
+        case .active: return AppColors.goldLight
         }
-        .frame(width: large ? 15 : 12, height: large ? 22 : 18)
-        .shadow(color: AppColors.gold.opacity(large ? (glows ? 0.9 : 0.6) : 0), radius: glows ? 8 : 5)
     }
 }
 
+/// The centrepiece, oval as the pendant drawing draws it, in the rail's
+/// three states
 private struct RailMedal: View {
     let state: RosaryBeadState
 
@@ -494,23 +498,21 @@ private struct RailMedal: View {
         let active = state == .active
         ZStack {
             Ellipse()
-                .fill(state == .ahead ? AppColors.cream.opacity(0.4) : AppColors.gold.opacity(active ? 0.35 : 0.9))
+                .strokeBorder(AppColors.goldLight, lineWidth: 2)
+                .frame(width: 26, height: 31)
+                .opacity(active ? 1 : 0)
             Ellipse()
-                .strokeBorder(active ? AppColors.goldLight : AppColors.gold.opacity(0.8), lineWidth: 1.2)
+                .fill(
+                    state == .ahead
+                        ? AppColors.backgroundDeep.opacity(0.92)
+                        : (active ? AppColors.goldLight : AppColors.gold))
+                .overlay(
+                    Ellipse().strokeBorder(
+                        AppColors.cream.opacity(state == .ahead ? 0.88 : 0), lineWidth: 1.5)
+                )
+                .frame(width: 14, height: 18)
         }
-        .frame(width: active ? 16 : 13, height: active ? 21 : 17)
-        .shadow(color: AppColors.gold.opacity(active ? 0.6 : 0), radius: 5)
-    }
-}
-
-private struct RailCrossShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        let bar = rect.width * 0.3
-        let arm = rect.height * 0.3
-        var path = Path()
-        path.addRect(CGRect(x: rect.midX - bar / 2, y: rect.minY, width: bar, height: rect.height))
-        path.addRect(CGRect(x: rect.minX, y: rect.minY + arm - bar / 2, width: rect.width, height: bar))
-        return path
+        .frame(width: 26, height: 31)
     }
 }
 
@@ -593,6 +595,11 @@ struct OneRosaryColumn<Words: View>: View {
     let bead: String?
     var help: RosaryHelps.Line? = nil
 
+    /// Whether the words stand a third of the way down the room left to
+    /// them rather than under the label (the opening and closing
+    /// prayers); the column must then be given the room's height
+    var balancesWords: Bool = false
+
     /// What the column's words are keyed by, so a new bead's words
     /// crossfade whole in their slot
     let wordsKey: String
@@ -622,22 +629,38 @@ struct OneRosaryColumn<Words: View>: View {
             // reaching out past them
             OneRosaryStepLabel(text: bead ?? " ")
                 .opacity(bead == nil ? 0 : 1)
-                .padding(.leading, -10)
+                .padding(.leading, -12)
                 .padding(.top, 10)
 
-            ZStack(alignment: .topLeading) {
-                words()
-                    .id(wordsKey)
-                    .transition(.opacity)
+            // On the opening and closing prayers, which stand on the dark
+            // ground and are often short, the words are set a third of
+            // the way down the room left above the foot, so a Sign of the
+            // Cross leaves no dead band beneath it; a long prayer fills
+            // the room as it did
+            if balancesWords {
+                Spacer(minLength: 6)
             }
-            .frame(maxWidth: .infinity, alignment: .topLeading)
-            .padding(.top, 12)
-            .animation(Motion.crossfade, value: wordsKey)
 
-            if let help {
-                RosaryHelpLine(line: help)
-                    .padding(.top, 14)
-                    .transition(.opacity)
+            VStack(alignment: .leading, spacing: 0) {
+                ZStack(alignment: .topLeading) {
+                    words()
+                        .id(wordsKey)
+                        .transition(.opacity)
+                }
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+                .padding(.top, balancesWords ? 0 : 12)
+                .animation(Motion.crossfade, value: wordsKey)
+
+                if let help {
+                    RosaryHelpLine(line: help)
+                        .padding(.top, 14)
+                        .transition(.opacity)
+                }
+            }
+
+            if balancesWords {
+                Spacer(minLength: 0)
+                Spacer(minLength: 0)
             }
         }
         .shadow(color: .black.opacity(0.55), radius: 6, y: 1)
@@ -657,10 +680,14 @@ struct OneRosaryColumn<Words: View>: View {
     }
 
     /// The prayer's words as the column sets them: quiet, so the painting
-    /// still leads, and whole — a long prayer (the Creed) comes down a
+    /// still leads (`raisesShort`: a short prayer on the pendant a size
+    /// up), and whole — a long prayer (the Creed) comes down a
     /// size rather than run under the foot
-    static func prayerWords(_ lines: [String], size: CGFloat = 17) -> some View {
-        let fitted: CGFloat = lines.joined().count > 280 ? size - 1 : size + 1
+    static func prayerWords(_ lines: [String], size: CGFloat = 17, raisesShort: Bool = false) -> some View {
+        let length = lines.joined().count
+        // A short prayer of the opening or the close (the Sign of the
+        // Cross, the Glory Be) is set larger, so it holds its room
+        let fitted: CGFloat = length > 280 ? size - 1 : (raisesShort && length < 160 ? size + 5 : size + 1)
         let words = Rubric.paragraph(lines, size: fitted)
         return ViewThatFits(in: .vertical) {
             prayerText(words, size: fitted)
@@ -681,22 +708,24 @@ struct OneRosaryColumn<Words: View>: View {
 
 /// The one label every step wears, opening, decades and close: what is
 /// said here and its count, on one line ("HAIL MARY · 4 OF 10", "THE
-/// APOSTLES' CREED · 2 OF 7"), in cream on a solid ground of its own
+/// APOSTLES' CREED · 2 OF 7"), in full cream at the size of a row's
+/// name, on a solid ground of its own with a gold edge
 struct OneRosaryStepLabel: View {
     let text: String
 
     var body: some View {
         Text(text.uppercased())
-            .font(AppFonts.labelFont(11))
-            .tracking(1.6)
-            .foregroundColor(AppColors.cream.opacity(0.85))
+            .font(AppFonts.labelFont(13))
+            .tracking(1.5)
+            .foregroundColor(AppColors.cream)
             .lineLimit(1)
-            .minimumScaleFactor(0.75)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
+            .minimumScaleFactor(0.7)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 7)
             .background(
                 Capsule()
-                    .fill(AppColors.backgroundDeep.opacity(0.88))
+                    .fill(AppColors.backgroundDeep.opacity(0.94))
+                    .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.32), lineWidth: AppLine.hairline))
             )
             .contentTransition(.numericText())
     }
@@ -899,22 +928,39 @@ struct OneRosaryReadLink: View {
 
 // MARK: - OneRosaryTapHint
 
-/// Once, the first time the beads can be tapped: that they can. Floats
-/// above the footer and goes on its own.
+/// Once, the first time the beads can be tapped: that they can. Set
+/// beside the strand, level with the next bead (which rings as it comes),
+/// pointing at it, and gone on its own after a few seconds.
 struct OneRosaryTapHint: View {
     var body: some View {
-        HStack(spacing: 8) {
-            AppIcon("lv-rosary", size: 13)
-            Text("Tap a bead on the strand to go to it.", comment: "One Rosary beta: a one-time hint that the beads on the strand can be tapped")
-                .font(AppFonts.italicFont(14))
+        HStack(spacing: 6) {
+            Text("Tap a bead to go to it.", comment: "One Rosary beta: a one-time hint beside the strand that its beads can be tapped")
+                .font(AppFonts.italicFont(15))
+                .multilineTextAlignment(.trailing)
+                .fixedSize(horizontal: false, vertical: true)
+            AppIcon("ph-caret-right", size: 10)
+                .foregroundColor(AppColors.goldLight)
+                .accessibilityHidden(true)
         }
-        .foregroundColor(AppColors.cream.opacity(0.9))
-        .padding(.horizontal, 14)
+        .foregroundColor(AppColors.cream)
+        .padding(.leading, 14)
+        .padding(.trailing, 10)
         .padding(.vertical, 8)
-        .background(Capsule().fill(AppColors.background.opacity(0.85)))
-        .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline))
+        .background(Capsule().fill(AppColors.backgroundDeep.opacity(0.94)))
+        .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline))
+        .frame(maxWidth: 220, alignment: .trailing)
         .accessibilityElement(children: .combine)
     }
+
+    /// Where it stands, from the top of the glass and the trailing edge:
+    /// level with the bead above the hand, just clear of the rail
+    static func top(fullHeight: CGFloat, topInset: CGFloat) -> CGFloat {
+        let windowTop = max(OneRosaryRailView.windowTop(fullHeight: fullHeight) - topInset, 0)
+        let windowHeight = OneRosaryRailView.windowHeight(fullHeight: fullHeight)
+        return windowTop + windowHeight / 2 - RosaryStrandView.rowHeight - 18
+    }
+
+    static let trailing: CGFloat = 62
 }
 
 // MARK: - OneRosaryHeader
@@ -934,8 +980,8 @@ struct OneRosaryHeader: View {
                     .tracking(2.4)
                     .foregroundColor(AppColors.goldLight)
                 Text(subtitle)
-                    .font(AppFonts.italicFont(14))
-                    .foregroundColor(AppColors.cream.opacity(0.82))
+                    .font(AppFonts.italicFont(15))
+                    .foregroundColor(AppColors.cream.opacity(0.92))
             }
             .lineLimit(1)
             .minimumScaleFactor(0.8)
@@ -956,6 +1002,25 @@ struct OneRosaryHeader: View {
             }
         }
         .padding(.horizontal, 16)
+        // The column's scrim, turned to the head: the painting quietened
+        // behind the name and its line, dissolving to clear below them,
+        // so the italic reads over the brightest sky
+        .background(alignment: .top) {
+            LinearGradient(
+                stops: [
+                    .init(color: .black.opacity(0.72), location: 0),
+                    .init(color: .black.opacity(0.5), location: 0.55),
+                    .init(color: .black.opacity(0), location: 1),
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 200)
+            .padding(.top, -110)
+            .ignoresSafeArea()
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+        }
     }
 }
 
