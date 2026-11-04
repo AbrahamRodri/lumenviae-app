@@ -39,6 +39,14 @@ struct RosaryDiagram: View {
     /// the drawing numbers it
     var bracketLabel: String? = nil
 
+    /// Every decade's number set outside the loop at its middle, as the
+    /// list beside the drawing numbers the mysteries, so the drawing says
+    /// which beads are which without the list
+    var numbersDecades: Bool = false
+
+    /// The decade (0-based) whose number is lit, with `numbersDecades`
+    var litDecade: Int? = nil
+
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// Height over width
@@ -73,6 +81,10 @@ struct RosaryDiagram: View {
                     bracketMark(layout: layout)
                         .transition(.opacity)
                 }
+
+                if numbersDecades {
+                    decadeNumerals(layout: layout)
+                }
             }
             // Under Reduce Motion the lit bead does not swell, and the
             // light passes as a crossfade rather than a settle
@@ -80,6 +92,7 @@ struct RosaryDiagram: View {
             .animation(Motion.crossfade, value: highlighted)
             .animation(Motion.crossfade, value: completed)
             .animation(Motion.crossfade, value: bracket)
+            .animation(Motion.crossfade, value: litDecade)
         }
         .aspectRatio(1 / Self.aspect, contentMode: .fit)
         .accessibilityHidden(true)
@@ -137,6 +150,31 @@ struct RosaryDiagram: View {
                 path.addLine(to: CGPoint(x: x, y: bottom))
             }
             .stroke(AppColors.goldLight, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+        }
+    }
+
+    // MARK: - Decade Numerals
+
+    /// 1 to 5 just outside the loop, each at the middle of its decade
+    private func decadeNumerals(layout: Layout) -> some View {
+        let slots = Double(RosaryMap.loop.count + 1)
+        return ForEach(0..<5, id: \.self) { decade in
+            let indices = (0..<10).compactMap {
+                RosaryMap.loop.firstIndex(of: .loopSmall(decade: decade, bead: $0))
+            }
+            let middleIndex = Double((indices.min() ?? 0) + (indices.max() ?? 0)) / 2
+            let angle = (90 + (middleIndex + 1) * 360 / slots) * Double.pi / 180
+            let lit = litDecade == decade
+            // Beyond the lit arc for the chosen decade, close in for the rest
+            let radius = layout.radius * (lit ? 1.36 : 1.22)
+
+            Text(verbatim: "\(decade + 1)")
+                .font(AppFonts.labelFont(max(10, layout.width * (lit ? 0.1 : 0.085))))
+                .foregroundColor(lit ? AppColors.goldLight : AppColors.gold.opacity(0.8))
+                .position(
+                    x: layout.center.x + radius * CGFloat(Foundation.cos(angle)),
+                    y: layout.center.y + radius * CGFloat(Foundation.sin(angle))
+                )
         }
     }
 

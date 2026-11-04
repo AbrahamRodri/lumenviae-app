@@ -10622,6 +10622,17 @@
         }
       }
     },
+    "Help: %@" : {
+      "comment" : "One Rosary beta, the player with Helps on: VoiceOver reading of the help line; the argument is what to do",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayuda: %@"
+          }
+        }
+      }
+    },
     "Helps" : {
       "comment" : "One Rosary beta: a Rosary choice's name, whether a plain line on each step says what to do and which bead you are on",
       "localizations" : {
@@ -11631,17 +11642,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gozosos el jueves, Gloriosos el sábado"
-          }
-        }
-      }
-    },
-    "Just the prayers and the beads." : {
-      "comment" : "One Rosary beta: the line under the Helps choice when it is off",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Solo las oraciones y las cuentas."
           }
         }
       }
@@ -14914,6 +14914,17 @@
         }
       }
     },
+    "On adds a line to each step: what to do, and which bead you are on." : {
+      "comment" : "One Rosary beta: the line under the Helps choice when it is off, saying what turning it on adds",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al activarlo, cada paso lleva una línea: qué hacer y en qué cuenta estás."
+          }
+        }
+      }
+    },
     "On each of the next three small beads, a Hail Mary. This first one asks God for an increase of faith." : {
       "comment" : "Guided Rosary: what to do on the first of the three small beads, a Hail Mary for faith",
       "localizations" : {
@@ -17636,6 +17647,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "LEER LA LICENCIA"
+          }
+        }
+      }
+    },
+    "READ THE MEDITATION" : {
+      "comment" : "One Rosary beta, the player on a mystery's Our Father: the quiet door to the meditation as text",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LEER LA MEDITACIÓN"
           }
         }
       }
@@ -25387,6 +25409,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sitio web de Verbum Gloriae"
+          }
+        }
+      }
+    },
+    "Verses from Scripture" : {
+      "comment" : "One Rosary beta, the Scriptural Rosary's player: the line under THE ROSARY, naming what its beads carry as a set's player names its set",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versículos de la Escritura"
           }
         }
       }

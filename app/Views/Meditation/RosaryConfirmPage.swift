@@ -58,12 +58,16 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
     @ViewBuilder let choices: () -> Choices
     @ViewBuilder let ledger: () -> Ledger
 
-    /// The painting's height, from the very top of the glass
-    private static var paintingHeight: CGFloat { 360 }
+    @Environment(UserSettings.self) private var userSettings
+
+    /// The painting's height, from the very top of the glass. With the
+    /// One Rosary beta a little shorter, so the whole Rosary at a glance
+    /// stands above PRAY on the first screen.
+    private var paintingHeight: CGFloat { userSettings.oneRosaryBeta ? 290 : 360 }
 
     /// Where the title block begins, from the top of the glass: over the
     /// painting's foot, where it has begun to dissolve
-    private static var titleTop: CGFloat { 212 }
+    private var titleTop: CGFloat { userSettings.oneRosaryBeta ? 150 : 212 }
 
     /// The room the scrolled content keeps clear of the fixed PRAY
     private static var footClearance: CGFloat { 132 }
@@ -81,7 +85,7 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     titleBlock
-                        .padding(.top, Self.titleTop)
+                        .padding(.top, titleTop)
                         .padding(.horizontal, 28)
                         .devotionalEntrance()
 
@@ -194,7 +198,7 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
     private var paintingPlate: some View {
         painting()
             .frame(maxWidth: .infinity)
-            .frame(height: Self.paintingHeight)
+            .frame(height: paintingHeight)
             .clipped()
             .overlay(
                 LinearGradient(

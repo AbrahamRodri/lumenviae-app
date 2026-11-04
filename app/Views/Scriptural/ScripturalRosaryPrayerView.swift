@@ -1553,12 +1553,16 @@ extension ScripturalRosaryPrayerView {
                 + geometry.safeAreaInsets.top
                 + geometry.safeAreaInsets.bottom
             let rail = rail
+            let columnTop = max(
+                OneRosaryRailView.windowTop(fullHeight: fullHeight) - geometry.safeAreaInsets.top,
+                12 + 44 + 14
+            )
 
             VStack(spacing: 0) {
                 oneRosaryColumn
                     .padding(.leading, 28)
                     .padding(.trailing, Self.readingTrailingInset)
-                    .padding(.top, max(OneRosaryRailView.windowTop(fullHeight: fullHeight) - geometry.safeAreaInsets.top, 12 + 44 + 14))
+                    .padding(.top, columnTop)
                     .frame(maxHeight: .infinity, alignment: .top)
 
                 oneRosaryFoot
@@ -1575,7 +1579,8 @@ extension ScripturalRosaryPrayerView {
                 topInset: geometry.safeAreaInsets.top,
                 dragOffset: strandDrag,
                 turnPulse: turnPulse,
-                tappable: tappableBeads(rail)
+                tappable: tappableBeads(rail),
+                complete: oneRosaryComplete
             ) { index in
                 if case .strand(let bead) = rail.target(at: index) { goToBead(bead) }
             }
@@ -1583,12 +1588,19 @@ extension ScripturalRosaryPrayerView {
             .allowsHitTesting(!chromeHidden)
             .background {
                 ZStack {
-                    if viewModel.spokenPendant != nil {
-                        AppColors.appGradient
-                            .ignoresSafeArea()
-                            .contentShape(Rectangle())
-                            .onTapGesture { toggleChrome() }
-                            .transition(.opacity)
+                    if let pendant = viewModel.spokenPendant {
+                        // As the meditation's player: the pendant where
+                        // the painting stands
+                        OneRosaryPendantGround(
+                            pendant: pendant,
+                            width: geometry.size.width,
+                            fullHeight: fullHeight,
+                            columnTop: columnTop + geometry.safeAreaInsets.top,
+                            chromeHidden: chromeHidden
+                        ) {
+                            toggleChrome()
+                        }
+                        .transition(.opacity)
                     } else {
                         PrayerPaintingStage(
                             painting: painting,
@@ -1610,10 +1622,25 @@ extension ScripturalRosaryPrayerView {
         }
     }
 
-    /// The way out, and the Rosary's one name, the form beneath it: as
-    /// the meditation's player
+    /// The way out, and the Rosary's one name, with what its beads carry
+    /// beneath it, as the meditation's player names its set: the verses,
+    /// or the Audio Rosary's voice
     fileprivate var oneRosaryHeader: some View {
-        OneRosaryHeader(subtitle: viewModel.displayName) { router.popToRoot() }
+        OneRosaryHeader(
+            subtitle: viewModel.isPlain
+                ? viewModel.displayName
+                : String(
+                    localized: "Verses from Scripture",
+                    comment: "One Rosary beta, the Scriptural Rosary's player: the line under THE ROSARY, naming what its beads carry as a set's player names its set"
+                )
+        ) { router.popToRoot() }
+    }
+
+    /// The last step, the whole Rosary prayed
+    fileprivate var oneRosaryComplete: Bool {
+        viewModel.isPrayingAloud && viewModel.spokenFailure == nil
+            ? viewModel.isSpokenFinished
+            : viewModel.isLastBeadOfRosary
     }
 
     @ViewBuilder
@@ -1699,9 +1726,7 @@ extension ScripturalRosaryPrayerView {
                     && (!viewModel.isFirstBeadOfRosary || viewModel.canStepBackIntoOpening
                         || (aloud && viewModel.spokenPendant != nil)),
                 canGoOn: !beadsHeld && !viewModel.isSpokenFinished,
-                isLast: aloud && viewModel.spokenFailure == nil
-                    ? viewModel.isSpokenFinished
-                    : viewModel.isLastBeadOfRosary,
+                isLast: oneRosaryComplete,
                 amenBeckons: viewModel.isSpokenFinished,
                 onBack: prayBack,
                 onNext: prayForward,
@@ -1710,8 +1735,7 @@ extension ScripturalRosaryPrayerView {
             .padding(.horizontal, 22)
             .padding(.top, 16)
 
-            // The meditation's player's row, less READ: the verse is
-            // already on the page, and there is no meditation to open
+            // The meditation's player's row, the same three
             OneRosaryUtilityRow(items: [
                 OneRosaryUtilityRow.voice { activeSheet = .playback },
                 OneRosaryUtilityRow.text { activeSheet = .text },

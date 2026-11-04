@@ -147,7 +147,7 @@ enum RosaryChoice: Hashable, CaseIterable {
         case (.helps, _):
             return value
                 ? String(localized: "A line on each step says what to do and which bead you are on.", comment: "One Rosary beta: the line under the Helps choice when it is on")
-                : String(localized: "Just the prayers and the beads.", comment: "One Rosary beta: the line under the Helps choice when it is off")
+                : String(localized: "On adds a line to each step: what to do, and which bead you are on.", comment: "One Rosary beta: the line under the Helps choice when it is off, saying what turning it on adds")
         }
     }
 

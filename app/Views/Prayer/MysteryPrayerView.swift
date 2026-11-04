@@ -1679,6 +1679,14 @@ extension MysteryPrayerView {
             .map { rail.index(strandIndex: $0) })
     }
 
+    /// The last step, the whole Rosary prayed: AMEN stands, and the rail
+    /// shows every bead gold
+    fileprivate var oneRosaryComplete: Bool {
+        viewModel.isPrayingAloud && viewModel.spokenFailure == nil
+            ? viewModel.isSpokenFinished
+            : viewModel.isLastBeadOfRosary
+    }
+
     /// With Helps on, the line for the hand's place
     fileprivate var oneRosaryHelp: RosaryHelps.Line? {
         guard userSettings.rosaryHelps,
@@ -1735,7 +1743,8 @@ extension MysteryPrayerView {
                 turnPulse: turnPulse,
                 locked: viewModel.pendant == nil && !viewModel.beadsUnlocked,
                 tappable: tappableBeads(rail),
-                hintPulse: tapHintPulse
+                hintPulse: tapHintPulse,
+                complete: oneRosaryComplete
             ) { index in
                 if case .strand(let bead) = rail.target(at: index) { oneRosaryGoToBead(bead) }
             }
@@ -1743,15 +1752,22 @@ extension MysteryPrayerView {
             .allowsHitTesting(!chromeHidden)
             .background {
                 ZStack {
-                    if viewModel.pendant != nil {
+                    if let pendant = viewModel.pendant {
                         // The opening and closing prayers are not a
-                        // mystery's: the page's own ground, which a tap
-                        // clears for prayer as the painting's does
-                        AppColors.appGradient
-                            .ignoresSafeArea()
-                            .contentShape(Rectangle())
-                            .onTapGesture { toggleChrome() }
-                            .transition(.opacity)
+                        // mystery's: the pendant they are said on hangs
+                        // where a decade's painting stands, lit where
+                        // the hand is, and a tap clears it for prayer
+                        // as the painting's does
+                        OneRosaryPendantGround(
+                            pendant: pendant,
+                            width: geometry.size.width,
+                            fullHeight: fullHeight,
+                            columnTop: columnTop + geometry.safeAreaInsets.top,
+                            chromeHidden: chromeHidden
+                        ) {
+                            toggleChrome()
+                        }
+                        .transition(.opacity)
                     } else {
                         PrayerPaintingStage(
                             painting: painting,
@@ -1832,14 +1848,12 @@ extension MysteryPrayerView {
         }
 
         return VStack(spacing: 0) {
-            if let narratedTitle, viewModel.currentBeadIndex == 0 {
-                Text(narratedTitle)
-                    .font(AppFonts.italicFont(15))
-                    .foregroundColor(AppColors.textSecondary)
-                    .lineLimit(2)
+            // The meditation's door, on the step it belongs to: the
+            // mystery's Our Father, where it is heard
+            if meditation != nil, viewModel.currentBeadIndex == 0 {
+                OneRosaryReadLink(title: narratedTitle) { setReaderOpen(true) }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 22)
-                    .padding(.bottom, 6)
                     .transition(.opacity)
             }
 
@@ -1874,9 +1888,7 @@ extension MysteryPrayerView {
                     : !beadsLocked && !voiceHoldsStrand,
                 // Said aloud, AMEN once the voice has said the last Amen;
                 // until then Next steps the closing prayers
-                isLast: aloud && viewModel.spokenFailure == nil
-                    ? viewModel.isSpokenFinished
-                    : viewModel.isLastBeadOfRosary,
+                isLast: oneRosaryComplete,
                 amenBeckons: viewModel.isSpokenFinished,
                 onBack: { oneRosaryStep(forward: false) },
                 onNext: { oneRosaryStep(forward: true) },
@@ -1885,16 +1897,12 @@ extension MysteryPrayerView {
             .padding(.horizontal, 22)
             .padding(.top, 16)
 
-            OneRosaryUtilityRow(
-                items: [OneRosaryUtilityRow.voice { activeSheet = .playback }]
-                    // The pendant's prayers have no meditation to read
-                    + (viewModel.silentPendantPrayer == nil && viewModel.pendant == nil
-                        ? [OneRosaryUtilityRow.read { setReaderOpen(true) }] : [])
-                    + [
-                        OneRosaryUtilityRow.text { activeSheet = .text },
-                        OneRosaryUtilityRow.more { activeSheet = .tray },
-                    ]
-            )
+            // The same three on every step and on both players
+            OneRosaryUtilityRow(items: [
+                OneRosaryUtilityRow.voice { activeSheet = .playback },
+                OneRosaryUtilityRow.text { activeSheet = .text },
+                OneRosaryUtilityRow.more { activeSheet = .tray },
+            ])
             .padding(.top, 10)
             .padding(.bottom, 8)
         }
