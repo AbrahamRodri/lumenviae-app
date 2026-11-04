@@ -135,7 +135,11 @@ struct ScripturalRosaryPrayerView: View {
                 // While the opening or closing prayers are said aloud the
                 // column names them, and the pendant hangs below it
                 Group {
-                    if let pendant = viewModel.spokenPendant {
+                    if unitedPendant != nil {
+                        // One Rosary beta: the prayer's words stand with
+                        // Back and Next under the pendant, at the foot
+                        Color.clear.frame(height: 0)
+                    } else if let pendant = viewModel.spokenPendant {
                         pendantColumn(pendant)
                             .transition(.opacity)
                     } else if countsOnScreen {
@@ -152,9 +156,43 @@ struct ScripturalRosaryPrayerView: View {
                 // The column is given the glass above the foot and no
                 // more, so words too long for it — a prayer at a large
                 // text size — can never push the foot off the screen
-                .frame(maxHeight: .infinity, alignment: .top)
+                .frame(maxHeight: unitedPendant != nil ? 0 : .infinity, alignment: .top)
 
-                foot
+                // One Rosary beta: the prayer stands at the foot, under
+                // the pendant
+                if unitedPendant != nil { Spacer(minLength: 0) }
+
+                VStack(spacing: 0) {
+                    // One Rosary beta: the opening and closing prayers in
+                    // the layout the meditation's player shares
+                    if let pendant = unitedPendant {
+                        PendantPrayerPanel(
+                            pendant: pendant,
+                            count: viewModel.silentPendantCount ?? "",
+                            lines: viewModel.spokenPendantLines ?? [],
+                            isFirst: viewModel.isFirstBeadOfRosary,
+                            isLast: viewModel.isLastBeadOfRosary,
+                            isLastOpening: viewModel.currentPendantStep == viewModel.silentPendant.lastOpening,
+                            help: helpLine,
+                            // A size less than the meditation player gives, since the foot
+                            // beneath is taller, so the pendant above hangs as large
+                            wordsMaxHeight: fullHeight * 0.28,
+                            onBack: prayBack,
+                            onNext: prayForward,
+                            onAmen: finishRosary
+                        )
+                        .padding(.horizontal, 22)
+                        .padding(.bottom, 16)
+                        .transition(.opacity)
+                    } else if let help = helpLine {
+                        RosaryHelpLine(line: help)
+                            .padding(.horizontal, 22)
+                            .padding(.bottom, 16)
+                            .transition(.opacity)
+                    }
+                    foot
+                }
+                    .animation(Motion.crossfade, value: unitedPendant == nil)
                     .onGeometryChange(for: CGFloat.self) { proxy in
                         proxy.frame(in: .global).minY
                     } action: { top in
@@ -187,9 +225,10 @@ struct ScripturalRosaryPrayerView: View {
                         fullHeight: fullHeight,
                         topInset: geometry.safeAreaInsets.top,
                         dragOffset: strandDrag,
-                        turnPulse: turnPulse
+                        turnPulse: turnPulse,
+                        onBeadTap: userSettings.oneRosaryBeta ? { goToBead($0) } : nil
                     )
-                    .allowsHitTesting(false)
+                    .allowsHitTesting(userSettings.oneRosaryBeta)
                 }
             }
             .opacity(chromeHidden ? 0 : 1)
@@ -210,12 +249,16 @@ struct ScripturalRosaryPrayerView: View {
                             pendant: pendant,
                             width: geometry.size.width,
                             fullHeight: fullHeight,
-                            heightFraction: viewModel.setsPendantWords ? 0.435 : 0.4,
-                            topFraction: viewModel.setsPendantWords
-                                ? RosaryStrandView.windowTop(fullHeight: fullHeight) / max(fullHeight, 1)
-                                : 0.355,
+                            heightFraction: unitedPendant != nil
+                                ? Self.unitedPendantHeightFraction(fullHeight: fullHeight, footTop: footTop)
+                                : (viewModel.setsPendantWords ? 0.435 : 0.4),
+                            topFraction: unitedPendant != nil
+                                ? 0.165
+                                : (viewModel.setsPendantWords
+                                    ? RosaryStrandView.windowTop(fullHeight: fullHeight) / max(fullHeight, 1)
+                                    : 0.355),
                             bottomLimit: footTop.map { $0 - Self.pendantFootClearance },
-                            trailingColumn: viewModel.setsPendantWords ? Self.readingTrailingInset : nil,
+                            trailingColumn: unitedPendant == nil && viewModel.setsPendantWords ? Self.readingTrailingInset : nil,
                             chromeHidden: chromeHidden,
                             onTap: toggleChrome
                         )
@@ -483,8 +526,52 @@ struct ScripturalRosaryPrayerView: View {
     private var countsOnScreen: Bool {
         RosaryForm(viewModel.form).countsOnScreen(
             aloud: userSettings.prayAloud,
-            onBeads: userSettings.prayOnBeads
+            onBeads: userSettings.prayOnBeads,
+            oneRosary: userSettings.oneRosaryBeta
         )
+    }
+
+    // MARK: - One Rosary (beta)
+
+    /// The opening or closing prayer prayed in silence, set in the layout
+    /// both players share while the beta is on; nil otherwise, and while
+    /// the voice says them
+    private var unitedPendant: SpokenPendant? {
+        guard userSettings.oneRosaryBeta, viewModel.currentPendantStep != nil else { return nil }
+        return viewModel.spokenPendant
+    }
+
+    /// The pendant's height in the shared layout, fitted above the words
+    /// as the meditation's player fits it (`pendantHeightFraction`)
+    private static func unitedPendantHeightFraction(fullHeight: CGFloat, footTop: CGFloat?) -> CGFloat {
+        guard let footTop, fullHeight > 0 else { return 0.46 }
+        let room = footTop - fullHeight * 0.165 - 16
+        return min(0.46, max(room, 0) / fullHeight)
+    }
+
+    /// With Helps on, the line for the hand's place
+    private var helpLine: RosaryHelps.Line? {
+        // Not while the voice says the opening or closing prayers: the
+        // decades' line would stand under the wrong prayer
+        guard userSettings.oneRosaryBeta, userSettings.rosaryHelps,
+              viewModel.spokenPendant == nil || viewModel.currentPendantStep != nil else { return nil }
+        return RosaryHelps.line(
+            for: viewModel.category,
+            pendantStep: viewModel.currentPendantStep,
+            mystery: viewModel.currentMysteryIndex,
+            bead: viewModel.currentBeadIndex
+        )
+    }
+
+    /// A tap on a bead of the strand: the hand taken there, unless the
+    /// recordings are still being fetched
+    private func goToBead(_ index: Int) {
+        guard !beadsHeld, !movesByPrayer else { return }
+        travel = index > viewModel.strandIndex ? .forward : .back
+        withAnimation(Motion.beadSlide) {
+            viewModel.goToBead(at: index)
+            strandDrag = 0
+        }
     }
 
     /// Left for the next mystery, right for the one before, while the

@@ -83,6 +83,18 @@ struct AccountView: View {
                     // mysteries
                     AccountSection(title: String(localized: "The Rosary", comment: "Settings: a section heading"), icon: "lv-rosary") {
                         VStack(spacing: 0) {
+                            // The One Rosary beta, off by default: off,
+                            // this section and the Rosary are as they were
+                            ToggleRow(
+                                icon: "lv-rosary",
+                                title: String(localized: "One Rosary (beta)", comment: "Settings, The Rosary: the switch for the One Rosary beta, a new way to pray the Rosary"),
+                                subtitle: String(localized: "Try the new way to pray the Rosary", comment: "Settings, The Rosary: the line under the One Rosary (beta) switch"),
+                                isOn: Bindable(userSettings).oneRosaryBeta
+                            )
+
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
                             // Audio: the meditation alone, or the Whole
                             // Rosary said aloud in the voice chosen above,
                             // the beads moving with it, for prayer with the
@@ -102,11 +114,20 @@ struct AccountView: View {
                             // rosary the player moves a mystery at a time.
                             // Moot with the Whole Rosary, whose voice moves
                             // the beads on the screen
-                            RosaryChoiceSettingsRow(
-                                choice: .counting,
-                                value: Bindable(userSettings).prayOnBeads,
-                                isAvailable: !userSettings.prayAloud
-                            )
+                            // With the One Rosary beta the beads always
+                            // hang, and Helps stands in Counting's place
+                            if userSettings.oneRosaryBeta {
+                                RosaryChoiceSettingsRow(
+                                    choice: .helps,
+                                    value: Bindable(userSettings).rosaryHelps
+                                )
+                            } else {
+                                RosaryChoiceSettingsRow(
+                                    choice: .counting,
+                                    value: Bindable(userSettings).prayOnBeads,
+                                    isAvailable: !userSettings.prayAloud
+                                )
+                            }
 
                             Divider()
                                 .background(AppColors.gold.opacity(0.2))

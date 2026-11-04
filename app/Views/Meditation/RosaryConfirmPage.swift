@@ -331,10 +331,19 @@ struct RosaryChoicesSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
+            // One Rosary beta: the whole Rosary at a glance, first
+            if settings.oneRosaryBeta {
+                RosaryOverviewSection(
+                    category: chosenCategory ?? today,
+                    includesPendant: settings.showsOpeningPrayers || form.praysAloud(setting: settings.prayAloud)
+                )
+                .padding(.bottom, 10)
+            }
+
             YourRosaryTodayLabel()
                 .padding(.bottom, 6)
 
-            ForEach(RosaryChoice.offered(for: form, aloud: settings.prayAloud), id: \.self) { choice in
+            ForEach(offeredChoices, id: \.self) { choice in
                 RosaryChoiceGroup(choice: choice, form: form, value: binding(for: choice))
                     .transition(RosaryChoiceGroup.comingAndGoing)
             }
@@ -367,11 +376,19 @@ struct RosaryChoicesSection: View {
         }
     }
 
+    /// The choices offered, Helps left out for the chaplet, which has
+    /// no guide to draw its line from
+    private var offeredChoices: [RosaryChoice] {
+        RosaryChoice.offered(for: form, aloud: settings.prayAloud, oneRosary: settings.oneRosaryBeta)
+            .filter { $0 != .helps || (chosenCategory.map { GuidedRosary.isGuidable($0) } ?? true) }
+    }
+
     private func binding(for choice: RosaryChoice) -> Binding<Bool> {
         @Bindable var settings = settings
         switch choice {
         case .audio: return $settings.prayAloud
         case .counting: return $settings.prayOnBeads
+        case .helps: return $settings.rosaryHelps
         }
     }
 

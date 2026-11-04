@@ -254,11 +254,12 @@ struct PlaybackSettingsSheet: View {
                 // meditation alone: with the Whole Rosary it moves the
                 // beads on the screen itself
                 VStack(spacing: 0) {
-                    ForEach(RosaryChoice.offered(for: .meditation, aloud: settings.prayAloud), id: \.self) { choice in
+                    ForEach(RosaryChoice.offered(for: .meditation, aloud: settings.prayAloud, oneRosary: settings.oneRosaryBeta), id: \.self) { choice in
                         RosaryChoiceGroup(
                             choice: choice,
                             form: .meditation,
-                            value: choice == .audio ? $settings.prayAloud : $settings.prayOnBeads
+                            value: choice == .audio ? $settings.prayAloud
+                                : (choice == .helps ? $settings.rosaryHelps : $settings.prayOnBeads)
                         )
                         .transition(RosaryChoiceGroup.comingAndGoing)
                     }

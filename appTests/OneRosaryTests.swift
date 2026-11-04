@@ -1,0 +1,165 @@
+//
+//  OneRosaryTests.swift
+//  Lumen Viae Tests
+//
+//  The One Rosary beta: off until chosen; with it on the beads always
+//  hang and Helps stands in Counting's place; the overview's order of the
+//  Rosary; the Helps line for each place on a player; and which beads a
+//  tap on the strand may reach.
+//
+
+import Foundation
+import Testing
+
+@testable import app
+
+@MainActor
+struct OneRosaryTests {
+
+    // MARK: - The Switch
+
+    @Test func theBetaIsOffUntilChosen() throws {
+        let defaults = try #require(UserDefaults(suiteName: "OneRosaryTests.\(UUID().uuidString)"))
+        #expect(!UserSettings.storedOneRosaryBeta(in: defaults))
+        defaults.set(true, forKey: UserSettings.oneRosaryBetaKey)
+        #expect(UserSettings.storedOneRosaryBeta(in: defaults))
+        #expect(UserSettings.oneRosaryBetaKey == "userSettings.oneRosaryBeta")
+    }
+
+    // MARK: - The Beads Always Hang
+
+    @Test(arguments: [RosaryForm.meditation, .scriptural, .holy])
+    func withTheBetaTheBeadsAlwaysCountOnTheScreen(form: RosaryForm) {
+        for aloud in [false, true] {
+            for onBeads in [false, true] {
+                #expect(form.countsOnScreen(aloud: aloud, onBeads: onBeads, oneRosary: true))
+            }
+        }
+    }
+
+    @Test func withoutTheBetaCountingStillDecides() {
+        #expect(!RosaryForm.meditation.countsOnScreen(aloud: false, onBeads: false, oneRosary: false))
+        #expect(!RosaryForm.scriptural.countsOnScreen(aloud: false, onBeads: false))
+    }
+
+    @Test func withTheBetaHelpsTakesCountingsPlace() {
+        for aloud in [false, true] {
+            #expect(RosaryChoice.offered(for: .meditation, aloud: aloud, oneRosary: true) == [.audio, .helps])
+            #expect(RosaryChoice.offered(for: .scriptural, aloud: aloud, oneRosary: true) == [.audio, .helps])
+            #expect(RosaryChoice.offered(for: .holy, aloud: aloud, oneRosary: true) == [.helps])
+        }
+        // Off, as it was
+        #expect(RosaryChoice.offered(for: .meditation, aloud: false) == [.audio, .counting])
+        #expect(RosaryChoice.offered(for: .meditation, aloud: false, oneRosary: false) == [.audio, .counting])
+    }
+
+    @Test func helpsIsOffOrOn() {
+        #expect(RosaryChoice.helps.title == "Helps")
+        #expect(RosaryChoice.helps.options(for: .meditation).map(\.name) == ["Off", "On"])
+        #expect(RosaryChoice.helps.note(for: false) != RosaryChoice.helps.note(for: true))
+    }
+
+    // MARK: - The Overview
+
+    @Test func theOverviewRunsFromTheOpeningToTheClose() {
+        let overview = RosaryOverview(category: .joyful, includesPendant: true)
+        #expect(
+            overview.parts.map(\.kind) == [
+                .opening, .mystery(1), .mystery(2), .mystery(3), .mystery(4), .mystery(5), .closing,
+            ])
+        #expect(overview.mysteries.map(\.title) == MysteryData.mysteries(for: .joyful).map(\.name))
+        #expect(overview.parts.first?.detail != nil)
+        #expect(overview.parts.last?.detail != nil)
+    }
+
+    @Test func theChapletHasSevenSorrows() {
+        let overview = RosaryOverview(category: .sevenSorrows, includesPendant: true)
+        #expect(overview.mysteries.count == 7)
+        #expect(overview.parts.count == 9)
+    }
+
+    @Test func withoutTheOpeningPrayersTheOverviewIsTheMysteries() {
+        let overview = RosaryOverview(category: .glorious, includesPendant: false)
+        #expect(overview.parts.map(\.kind) == (1...5).map { RosaryOverview.Kind.mystery($0) })
+    }
+
+    // MARK: - Helps
+
+    @Test func helpsFollowsTheGuideOnThePendant() {
+        let steps = GuidedRosary.steps(for: .joyful)
+        let first = RosaryHelps.line(for: .joyful, pendantStep: .opening(0), mystery: 0, bead: 0)
+        #expect(first == RosaryHelps.Line(place: steps[0].place, instruction: steps[0].instruction))
+
+        let creed = RosaryHelps.line(for: .joyful, pendantStep: .opening(1), mystery: 0, bead: 0)
+        #expect(creed?.instruction == steps[1].instruction)
+
+        let closing = steps.filter(\.isClosing)
+        let last = RosaryHelps.line(for: .joyful, pendantStep: .closing(2), mystery: 4, bead: 11)
+        #expect(last?.instruction == closing[2].instruction)
+    }
+
+    @Test func helpsFollowsTheGuideOnTheDecades() {
+        let mystery = MysteryData.mysteries(for: .sorrowful)[2]
+        // The Our Father
+        let ourFather = RosaryHelps.line(for: .sorrowful, pendantStep: nil, mystery: 2, bead: 0)
+        #expect(ourFather?.place.contains(mystery.name) == true)
+        // A Hail Mary: the guide's own place for it
+        let hailMary = RosaryHelps.line(for: .sorrowful, pendantStep: nil, mystery: 2, bead: 4)
+        #expect(hailMary?.place == GuidedRosary.hailMaryPlace(mystery.name, bead: 4))
+        // The Glory Be closes the decade
+        let close = RosaryHelps.line(for: .sorrowful, pendantStep: nil, mystery: 2, bead: 11)
+        let decade = GuidedRosary.steps(for: .sorrowful).filter { $0.decade == 2 }
+        #expect(close?.instruction == decade.last?.instruction)
+    }
+
+    @Test func everyPlaceOnTheRosaryHasAHelp() {
+        let pendant = SilentPendant(category: .luminous)
+        for index in pendant.opening.indices {
+            #expect(RosaryHelps.line(for: .luminous, pendantStep: .opening(index), mystery: 0, bead: 0) != nil)
+        }
+        for index in pendant.closing.indices {
+            #expect(RosaryHelps.line(for: .luminous, pendantStep: .closing(index), mystery: 4, bead: 11) != nil)
+        }
+        for mystery in 0..<5 {
+            for bead in 0...11 {
+                #expect(RosaryHelps.line(for: .luminous, pendantStep: nil, mystery: mystery, bead: bead) != nil)
+            }
+        }
+    }
+
+    @Test func theChapletHasNoHelps() {
+        #expect(RosaryHelps.line(for: .sevenSorrows, pendantStep: nil, mystery: 0, bead: 3) == nil)
+    }
+
+    // MARK: - Tapping the Strand
+
+    @Test func aTapReachesBackAndAheadToTheNextOurFather() {
+        let strand = RosaryStrand(decades: 5, hailMarys: 10)
+        let active = strand.index(mystery: 1, bead: 3)
+        #expect(!strand.canTap(active, from: active))
+        #expect(strand.canTap(active - 5, from: active))
+        #expect(strand.canTap(strand.index(mystery: 2, bead: 0), from: active))
+        #expect(!strand.canTap(strand.index(mystery: 2, bead: 1), from: active))
+        #expect(!strand.canTap(strand.count, from: active))
+    }
+
+    @Test func aPositionOnTheStringIsAMysteryAndABead() {
+        let strand = RosaryStrand(decades: 5, hailMarys: 10)
+        #expect(strand.position(at: strand.index(mystery: 3, bead: 7)) == BeadPosition(mystery: 3, bead: 7))
+        #expect(strand.position(at: strand.count - 1) == BeadPosition(mystery: 4, bead: strand.gloryBe))
+    }
+
+    @Test func aTapWalksTheHandToTheBead() {
+        let vm = ScripturalRosaryViewModel(category: .joyful, startAtIndex: 1, startAtBead: 4, showsOpeningPrayers: false)
+        #expect(vm.goToBead(at: vm.strand.index(mystery: 1, bead: 1)))
+        #expect(vm.beadPosition == BeadPosition(mystery: 1, bead: 1))
+        // Back across the decade's turn, to the mystery before
+        #expect(vm.goToBead(at: vm.strand.index(mystery: 0, bead: 9)))
+        #expect(vm.beadPosition == BeadPosition(mystery: 0, bead: 9))
+        // Ahead as far as the next Our Father, where the Glory Be is said
+        #expect(vm.goToBead(at: vm.strand.index(mystery: 1, bead: 0)))
+        #expect(vm.strandIndex == vm.strand.index(mystery: 1, bead: 0))
+        // Never past it
+        #expect(!vm.goToBead(at: vm.strand.index(mystery: 1, bead: 5)))
+    }
+}

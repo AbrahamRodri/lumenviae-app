@@ -3779,6 +3779,17 @@
         }
       }
     },
+    "A line on each step says what to do and which bead you are on." : {
+      "comment" : "One Rosary beta: the line under the Helps choice when it is on",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En cada paso, una línea te dice qué hacer y en qué cuenta vas."
+          }
+        }
+      }
+    },
     "A litany is a prayer of short petitions, each answered by the same response." : {
       "localizations" : {
         "es" : {
@@ -8568,6 +8579,28 @@
         }
       }
     },
+    "Each mystery: an Our Father, ten Hail Marys and a Glory Be" : {
+      "comment" : "One Rosary beta, the Rosary's overview: what is prayed on each mystery",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada misterio: un Padrenuestro, diez avemarías y un Gloria"
+          }
+        }
+      }
+    },
+    "Each sorrow: an Our Father, seven Hail Marys and a Glory Be" : {
+      "comment" : "One Rosary beta, the Rosary's overview: what is prayed on each sorrow of the chaplet",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada dolor: un Padrenuestro, siete avemarías y un Gloria"
+          }
+        }
+      }
+    },
     "Early Morning Prayer" : {
       "comment" : "Hours of Prayer (the Divine Office): an hour of prayer's plain name, the app's title for it; never 'Morning Prayer' or 'Night Prayer', which are other prayers in the app",
       "localizations" : {
@@ -10589,6 +10622,17 @@
         }
       }
     },
+    "Helps" : {
+      "comment" : "One Rosary beta: a Rosary choice's name, whether a plain line on each step says what to do and which bead you are on",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayudas"
+          }
+        }
+      }
+    },
     "Her feast days, what the Church teaches about her, where she has appeared, and the saints who loved her." : {
       "localizations" : {
         "es" : {
@@ -11587,6 +11631,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gozosos el jueves, Gloriosos el sábado"
+          }
+        }
+      }
+    },
+    "Just the prayers and the beads." : {
+      "comment" : "One Rosary beta: the line under the Helps choice when it is off",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo las oraciones y las cuentas."
           }
         }
       }
@@ -15042,6 +15097,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Una avemaría, y luego otra"
+          }
+        }
+      }
+    },
+    "One Rosary (beta)" : {
+      "comment" : "Settings, The Rosary: the switch for the One Rosary beta, a new way to pray the Rosary",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un solo Rosario (beta)"
           }
         }
       }
@@ -20881,6 +20947,17 @@
         }
       }
     },
+    "THE WHOLE ROSARY" : {
+      "comment" : "One Rosary beta, a Rosary's own page: heading over the order of the whole Rosary, before PRAY",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TODO EL ROSARIO"
+          }
+        }
+      }
+    },
     "THE WORD BEHIND THE BEADS" : {
       "localizations" : {
         "es" : {
@@ -21895,6 +21972,17 @@
         }
       }
     },
+    "The Hail, Holy Queen, the closing prayer and the Sign of the Cross" : {
+      "comment" : "One Rosary beta, the Rosary's overview: what the Rosary closes with",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Salve, la oración final y la Señal de la Cruz"
+          }
+        }
+      }
+    },
     "The Holy Bible" : {
       "localizations" : {
         "es" : {
@@ -22436,6 +22524,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La Señal de la Cruz"
+          }
+        }
+      }
+    },
+    "The Sign of the Cross and the Act of Contrition" : {
+      "comment" : "One Rosary beta, the Rosary's overview: what the Seven Sorrows chaplet opens with",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Señal de la Cruz y el Acto de contrición"
+          }
+        }
+      }
+    },
+    "The Sign of the Cross, the Creed, an Our Father, three Hail Marys and a Glory Be" : {
+      "comment" : "One Rosary beta, the Rosary's overview: what the Rosary opens with",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Señal de la Cruz, el Credo, un Padrenuestro, tres avemarías y un Gloria"
           }
         }
       }
@@ -24340,6 +24450,17 @@
         }
       }
     },
+    "Three Hail Marys for her tears, the closing prayer and the Sign of the Cross" : {
+      "comment" : "One Rosary beta, the Rosary's overview: what the Seven Sorrows chaplet closes with",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tres avemarías por sus lágrimas, la oración final y la Señal de la Cruz"
+          }
+        }
+      }
+    },
     "Three Hail Marys, asking for an increase of faith, hope and charity." : {
       "comment" : "How to Pray, the beads lesson: what is prayed on this part of the rosary",
       "localizations" : {
@@ -24887,6 +25008,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pruébalo aquí. Desliza hacia abajo sobre las cuentas."
+          }
+        }
+      }
+    },
+    "Try the new way to pray the Rosary" : {
+      "comment" : "Settings, The Rosary: the line under the One Rosary (beta) switch",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prueba la nueva forma de rezar el Rosario"
           }
         }
       }
