@@ -9624,6 +9624,17 @@
         }
       }
     },
+    "For spoken prayers and meditations. Chants have one singer." : {
+      "comment" : "Caption under every choice of narration voice (Settings, the player's sheet, a Rosary's Voice & speed): the voice does not change chants, which each have one recording",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para las oraciones en voz alta y las meditaciones. Los cantos tienen un solo cantor."
+          }
+        }
+      }
+    },
     "For the Dead" : {
       "comment" : "Add a chant sheet: short name of a section of the chant book in the jump strip; the Mass for the Dead",
       "localizations" : {

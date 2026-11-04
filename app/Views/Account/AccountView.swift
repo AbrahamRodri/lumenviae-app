@@ -1164,6 +1164,13 @@ struct NarrationVoiceRow: View {
                 Spacer()
             }
 
+            Text(UserSettings.narrationVoiceCaption)
+                .font(AppFonts.italicFont(13))
+                .foregroundColor(AppColors.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, 40)
+
             VStack(spacing: 8) {
                 ForEach(catalog.voices) { voice in
                     let selected = catalog.chosenSlug == voice.slug
