@@ -21907,6 +21907,17 @@
         }
       }
     },
+    "The Gospel" : {
+      "comment" : "The name of the bundled meditation set that reads the Gospel at each mystery, shown on the mysteries' page and over the player",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El Evangelio"
+          }
+        }
+      }
+    },
     "The Gospel first" : {
       "comment" : "Kinds of Meditation sheet, the Gospel card: its headline, what praying with this kind is like",
       "localizations" : {
