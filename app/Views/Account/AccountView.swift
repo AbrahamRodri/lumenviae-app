@@ -211,12 +211,25 @@ struct AccountView: View {
                             // section's foot, under the choices it changes:
                             // off, this section and the Rosary are as they
                             // were
-                            ToggleRow(
-                                icon: "lv-rosary",
-                                title: String(localized: "One Rosary (beta)", comment: "Settings, The Rosary: the switch for the One Rosary beta, a new way to pray the Rosary"),
-                                subtitle: String(localized: "Try the new way to pray the Rosary", comment: "Settings, The Rosary: the line under the One Rosary (beta) switch"),
-                                isOn: Bindable(userSettings).oneRosaryBeta
-                            )
+                            // On, it is set as the section's other
+                            // choices are, a pill of two named options,
+                            // so no gold switch stands alone on the page
+                            if userSettings.oneRosaryBeta {
+                                RosaryChoiceSettingsRow(
+                                    icon: "lv-rosary",
+                                    title: String(localized: "One Rosary (beta)", comment: "Settings, The Rosary: the switch for the One Rosary beta, a new way to pray the Rosary"),
+                                    options: RosaryChoice.helps.options(for: .meditation),
+                                    value: Bindable(userSettings).oneRosaryBeta,
+                                    note: { _ in String(localized: "Try the new way to pray the Rosary", comment: "Settings, The Rosary: the line under the One Rosary (beta) switch") }
+                                )
+                            } else {
+                                ToggleRow(
+                                    icon: "lv-rosary",
+                                    title: String(localized: "One Rosary (beta)", comment: "Settings, The Rosary: the switch for the One Rosary beta, a new way to pray the Rosary"),
+                                    subtitle: String(localized: "Try the new way to pray the Rosary", comment: "Settings, The Rosary: the line under the One Rosary (beta) switch"),
+                                    isOn: Bindable(userSettings).oneRosaryBeta
+                                )
+                            }
                         }
                     }
                     .padding(.top, 30)
@@ -1204,7 +1217,10 @@ struct NarrationVoiceRow: View {
     var body: some View {
         VStack(spacing: 12) {
             HStack(spacing: 16) {
-                AppIcon("ph-speaker-high", size: 18)
+                // With the One Rosary beta, the faders the player's VOICE
+                // button wears, which opens this same choice; the speaker
+                // is the Rosary's Audio alone
+                AppIcon(UserSettings.shared.oneRosaryBeta ? "ph-faders" : "ph-speaker-high", size: 18)
                     .foregroundColor(AppColors.textSecondary)
                     .frame(width: 24)
 

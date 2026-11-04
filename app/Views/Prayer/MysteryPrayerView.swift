@@ -1724,16 +1724,8 @@ extension MysteryPrayerView {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .overlay(alignment: .top) {
-                OneRosaryHeader(subtitle: meditationSet.name) { router.popToRoot() }
+                OneRosaryHeader { router.popToRoot() }
                     .padding(.top, 12)
-            }
-            .overlay(alignment: .topTrailing) {
-                if tapHintShowing {
-                    OneRosaryTapHint()
-                        .padding(.top, OneRosaryTapHint.top(fullHeight: fullHeight, topInset: geometry.safeAreaInsets.top))
-                        .padding(.trailing, OneRosaryTapHint.trailing)
-                        .transition(.opacity)
-                }
             }
             .oneRosaryRail(
                 rail,
@@ -1753,42 +1745,40 @@ extension MysteryPrayerView {
             .allowsHitTesting(!chromeHidden)
             .background {
                 ZStack {
-                    if let pendant = viewModel.pendant {
-                        // The opening and closing prayers are not a
-                        // mystery's: the pendant they are said on hangs
-                        // where a decade's painting stands, lit where
-                        // the hand is, and a tap clears it for prayer
-                        // as the painting's does
-                        OneRosaryPendantGround(
-                            pendant: pendant,
-                            width: geometry.size.width,
-                            fullHeight: fullHeight,
-                            columnTop: columnTop + geometry.safeAreaInsets.top,
-                            chromeHidden: chromeHidden
-                        ) {
-                            toggleChrome()
-                        }
-                        .transition(.opacity)
-                    } else {
-                        PrayerPaintingStage(
-                            painting: painting,
-                            paintingID: viewModel.currentMysteryIndex,
-                            chromeHidden: chromeHidden,
-                            width: geometry.size.width,
-                            fullHeight: fullHeight
-                        ) {
-                            dismissSwipeHint()
-                            toggleChrome()
-                        }
-                        .transition(.opacity)
-
-                        OneRosaryColumnScrim()
-                            .opacity(chromeHidden ? 0 : 1)
+                    // One stage on every step: the mystery's painting. On
+                    // the opening and closing prayers it is the first (or
+                    // last) mystery's, veiled deeper, and the pendant they
+                    // are said on is the rail's alone, at its head: one
+                    // cross, drawn once
+                    PrayerPaintingStage(
+                        painting: painting,
+                        paintingID: viewModel.currentMysteryIndex,
+                        chromeHidden: chromeHidden,
+                        width: geometry.size.width,
+                        fullHeight: fullHeight
+                    ) {
+                        dismissSwipeHint()
+                        toggleChrome()
                     }
+                    .transition(.opacity)
+
+                    OneRosaryPendantVeil()
+                        .opacity(viewModel.pendant != nil && !chromeHidden ? 1 : 0)
+
+                    OneRosaryColumnScrim()
+                        .opacity(chromeHidden ? 0 : 1)
                 }
                 .animation(Motion.decadeTurn, value: viewModel.pendant == nil)
             }
         }
+    }
+
+    /// The column's one kicker: the mysteries and the meditation set
+    /// chosen ("Joyful Mysteries · Blessed Fulton J. Sheen"), the set's own
+    /// name as its page names it
+    fileprivate var oneRosaryKicker: String {
+        OneRosaryColumn<EmptyView>.kicker(
+            mysteries: meditationSet.mysteryCategory?.devotionTitle, chosen: meditationSet.name)
     }
 
     /// The column: where on the Rosary, the title, the bead, the words
@@ -1797,7 +1787,7 @@ extension MysteryPrayerView {
         if let pendant = viewModel.pendant {
             let lines = SilentPendant.lines(of: pendant.prayerID, in: userSettings.prayerLanguage)
             OneRosaryColumn(
-                kicker: meditationSet.mysteryCategory?.devotionTitle ?? meditationSet.name,
+                kicker: oneRosaryKicker,
                 title: pendant.heading,
                 bead: OneRosaryColumn<EmptyView>.pendantLabel(prayer: pendant.title, count: viewModel.silentPendantCount),
                 help: oneRosaryHelp,
@@ -1813,10 +1803,12 @@ extension MysteryPrayerView {
         } else {
             let locked = beadsLocked
             OneRosaryColumn(
-                kicker: mysteryKicker,
+                kicker: oneRosaryKicker,
                 title: viewModel.currentMystery?.name ?? viewModel.currentMeditation?.displayTitle ?? "",
+                number: viewModel.currentMysteryIndex + 1,
                 bead: locked ? RosaryStrandView.lockedLines.joined(separator: " ") : viewModel.beadLabel,
                 help: oneRosaryHelp,
+                tapHint: tapHintShowing,
                 wordsKey: "\(viewModel.beadPosition.mystery).\(viewModel.beadPosition.bead).\(locked)"
             ) {
                 if locked {

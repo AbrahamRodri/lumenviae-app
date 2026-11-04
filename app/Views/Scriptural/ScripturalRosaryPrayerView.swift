@@ -1588,52 +1588,41 @@ extension ScripturalRosaryPrayerView {
             .allowsHitTesting(!chromeHidden)
             .background {
                 ZStack {
-                    if let pendant = viewModel.spokenPendant {
-                        // As the meditation's player: the pendant where
-                        // the painting stands
-                        OneRosaryPendantGround(
-                            pendant: pendant,
-                            width: geometry.size.width,
-                            fullHeight: fullHeight,
-                            columnTop: columnTop + geometry.safeAreaInsets.top,
-                            chromeHidden: chromeHidden
-                        ) {
-                            toggleChrome()
-                        }
-                        .transition(.opacity)
-                    } else {
-                        PrayerPaintingStage(
-                            painting: painting,
-                            paintingID: viewModel.currentMysteryIndex,
-                            chromeHidden: chromeHidden,
-                            width: geometry.size.width,
-                            fullHeight: fullHeight
-                        ) {
-                            toggleChrome()
-                        }
-                        .transition(.opacity)
-
-                        OneRosaryColumnScrim()
-                            .opacity(chromeHidden ? 0 : 1)
+                    // As the meditation's player: the painting on every
+                    // step, veiled deeper on the pendant, whose cross is
+                    // the rail's alone
+                    PrayerPaintingStage(
+                        painting: painting,
+                        paintingID: viewModel.currentMysteryIndex,
+                        chromeHidden: chromeHidden,
+                        width: geometry.size.width,
+                        fullHeight: fullHeight
+                    ) {
+                        toggleChrome()
                     }
+                    .transition(.opacity)
+
+                    OneRosaryPendantVeil()
+                        .opacity(viewModel.spokenPendant != nil && !chromeHidden ? 1 : 0)
+
+                    OneRosaryColumnScrim()
+                        .opacity(chromeHidden ? 0 : 1)
                 }
                 .animation(Motion.decadeTurn, value: viewModel.spokenPendant == nil)
             }
         }
     }
 
-    /// The way out, and the Rosary's one name, with what its beads carry
-    /// beneath it, as the meditation's player names its set: the verses,
-    /// or the Audio Rosary's voice
+    /// The way out
     fileprivate var oneRosaryHeader: some View {
-        OneRosaryHeader(
-            subtitle: viewModel.isPlain
-                ? viewModel.displayName
-                : String(
-                    localized: "Verses from Scripture",
-                    comment: "One Rosary beta, the Scriptural Rosary's player: the line under THE ROSARY, naming what its beads carry as a set's player names its set"
-                )
-        ) { router.popToRoot() }
+        OneRosaryHeader { router.popToRoot() }
+    }
+
+    /// The column's one kicker: the mysteries and the form chosen
+    /// ("Joyful Mysteries · The Scriptural Rosary"), as the meditation's
+    /// player names its set
+    fileprivate var oneRosaryKicker: String {
+        OneRosaryColumn<EmptyView>.kicker(mysteries: viewModel.category.devotionTitle, chosen: viewModel.displayName)
     }
 
     /// The last step, the whole Rosary prayed
@@ -1648,7 +1637,7 @@ extension ScripturalRosaryPrayerView {
         if let pendant = viewModel.spokenPendant {
             let lines = SilentPendant.lines(of: pendant.prayerID, in: userSettings.prayerLanguage)
             OneRosaryColumn(
-                kicker: viewModel.category.devotionTitle,
+                kicker: oneRosaryKicker,
                 title: pendant.heading,
                 bead: OneRosaryColumn<EmptyView>.pendantLabel(prayer: pendant.title, count: viewModel.silentPendantCount),
                 help: oneRosaryHelp,
@@ -1664,8 +1653,9 @@ extension ScripturalRosaryPrayerView {
         } else {
             let reading = viewModel.reading
             OneRosaryColumn(
-                kicker: viewModel.mysteryKicker,
+                kicker: oneRosaryKicker,
                 title: viewModel.currentMystery?.name ?? "",
+                number: viewModel.currentMysteryIndex + 1,
                 bead: viewModel.beadLabel,
                 help: oneRosaryHelp,
                 wordsKey: "\(viewModel.beadPosition.mystery).\(viewModel.beadPosition.bead)"

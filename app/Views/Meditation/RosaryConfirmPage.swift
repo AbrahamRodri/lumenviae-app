@@ -291,13 +291,20 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
         ), glyph: .play, action: onPray)
             .disabled(!prayEnabled)
             .padding(.horizontal, 24)
-            .padding(.top, 40)
+            // With the beta a shorter fade, so the line above PRAY is read
+            // whole or not at all, never half through the scrim
+            .padding(.top, userSettings.oneRosaryBeta ? 22 : 40)
             .padding(.bottom, 8)
             .background(
                 LinearGradient(
                     stops: [
                         .init(color: AppColors.backgroundDeep.opacity(0), location: 0),
-                        .init(color: AppColors.backgroundDeep.opacity(0.92), location: 0.4),
+                        // With the beta, whose page runs longer, solid by
+                        // the button's top, so no word of the page beneath
+                        // shows half-read in the fade
+                        .init(
+                            color: AppColors.backgroundDeep.opacity(userSettings.oneRosaryBeta ? 1 : 0.92),
+                            location: userSettings.oneRosaryBeta ? 0.28 : 0.4),
                         // Solid well before the foot, which runs on under
                         // the home indicator
                         .init(color: AppColors.backgroundDeep, location: 0.6)
@@ -350,20 +357,20 @@ struct RosaryChoicesSection: View {
                     category: chosenCategory ?? today,
                     includesPendant: settings.showsOpeningPrayers || form.praysAloud(setting: settings.prayAloud),
                     meditationTitles: meditationTitles,
-                    contextLine: contextLine,
-                    // Helps stands with the overview, over the list, and
-                    // not after it among the choices
-                    helps: offersHelps
-                        ? AnyView(RosaryChoiceGroup(choice: .helps, form: form, value: binding(for: .helps)))
-                        : nil
+                    contextLine: contextLine
                 )
-                .padding(.bottom, 10)
+                // Room enough that, at rest on the first screen, Audio's
+                // note stands whole above PRAY's fade and the next row's
+                // name begins behind the button, not half-read in it
+                .padding(.bottom, 19)
             }
 
             YourRosaryTodayLabel()
                 .padding(.bottom, 6)
 
-            ForEach(offeredChoices.filter { !settings.oneRosaryBeta || $0 != .helps }, id: \.self) { choice in
+            // With the beta, Audio and then Helps, one group under one
+            // heading after the order of the Rosary
+            ForEach(offeredChoices, id: \.self) { choice in
                 RosaryChoiceGroup(choice: choice, form: form, value: binding(for: choice))
                     .transition(RosaryChoiceGroup.comingAndGoing)
             }
@@ -402,9 +409,6 @@ struct RosaryChoicesSection: View {
         RosaryChoice.offered(for: form, aloud: settings.prayAloud, oneRosary: settings.oneRosaryBeta)
             .filter { $0 != .helps || (chosenCategory.map { GuidedRosary.isGuidable($0) } ?? true) }
     }
-
-    /// One Rosary beta: whether Helps is offered, for the overview to set
-    private var offersHelps: Bool { offeredChoices.contains(.helps) }
 
     private func binding(for choice: RosaryChoice) -> Binding<Bool> {
         @Bindable var settings = settings

@@ -20993,6 +20993,17 @@
         }
       }
     },
+    "THE ORDER OF THE ROSARY" : {
+      "comment" : "One Rosary beta, a Rosary's own page: heading over the order of the whole Rosary, before PRAY",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EL ORDEN DEL ROSARIO"
+          }
+        }
+      }
+    },
     "THE PASSAGE" : {
       "localizations" : {
         "es" : {
@@ -21009,17 +21020,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "LAS SIETE GRACIAS"
-          }
-        }
-      }
-    },
-    "THE WHOLE ROSARY" : {
-      "comment" : "One Rosary beta, a Rosary's own page: heading over the order of the whole Rosary, before PRAY",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "TODO EL ROSARIO"
           }
         }
       }
@@ -21203,13 +21203,24 @@
         }
       }
     },
-    "Tap a bead to go to it." : {
-      "comment" : "One Rosary beta: a one-time hint beside the strand that its beads can be tapped",
+    "Tap a bead on the rail to go to it." : {
+      "comment" : "One Rosary beta: a one-time hint under the prayer that the beads of the rail beside it can be tapped",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca una cuenta para ir a ella."
+            "value" : "Toca una cuenta del rosario de al lado para ir a ella."
+          }
+        }
+      }
+    },
+    "Tap a part to see it on the beads. PRAY always begins at the start." : {
+      "comment" : "One Rosary beta, a Rosary's own page: the line under the order of the Rosary, saying a row only shows its beads and does not change where the Rosary begins",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca una parte para verla en las cuentas. REZAR siempre empieza por el principio."
           }
         }
       }
@@ -25409,17 +25420,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sitio web de Verbum Gloriae"
-          }
-        }
-      }
-    },
-    "Verses from Scripture" : {
-      "comment" : "One Rosary beta, the Scriptural Rosary's player: the line under THE ROSARY, naming what its beads carry as a set's player names its set",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Versículos de la Escritura"
           }
         }
       }

@@ -183,7 +183,12 @@ struct RosaryDiagram: View {
                         ? AppFonts.headlineFont(lit ? 17 : 14)
                         : AppFonts.labelFont(max(10, layout.width * (lit ? 0.1 : 0.085)))
                 )
-                .foregroundColor(lit ? AppColors.goldLight : AppColors.gold.opacity(matchesPendant ? 0.95 : 0.8))
+                // With a decade lit, the other numerals step back, so the
+                // one that answers the chosen row is plain
+                .foregroundColor(
+                    lit
+                        ? AppColors.goldLight
+                        : AppColors.gold.opacity(matchesPendant ? (litDecade == nil ? 0.95 : 0.45) : 0.8))
                 .position(
                     x: layout.center.x + radius * CGFloat(Foundation.cos(angle)),
                     y: layout.center.y + radius * CGFloat(Foundation.sin(angle))

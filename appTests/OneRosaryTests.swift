@@ -187,14 +187,16 @@ struct OneRosaryTests {
         let rail = OneRosaryRail(strand: strand, pendant: pendant, showsPendant: true)
 
         // The cross (the Sign of the Cross and the Creed), the large bead,
-        // three small beads, the medal for the Glory Be
-        #expect(Array(rail.kinds.prefix(6)) == [.cross, .largeBead, .smallBead, .smallBead, .smallBead, .medal])
-        #expect(rail.strandStart == 6)
+        // three small beads; the Glory Be on the first mystery's Our
+        // Father bead, the pendant's second large bead, as on a rosary
+        #expect(Array(rail.kinds.prefix(5)) == [.cross, .largeBead, .smallBead, .smallBead, .smallBead])
+        #expect(rail.strandStart == 5)
         #expect(rail.index(of: .opening(0)) == 0)
         #expect(rail.index(of: .opening(1)) == 0)
         #expect(rail.index(of: .opening(2)) == 1)
-        #expect(rail.index(strandIndex: 0) == 6)
-        #expect(rail.kinds[6] == .ourFather(decade: 0))
+        #expect(rail.index(of: .opening(pendant.opening.count - 1)) == 5)
+        #expect(rail.index(strandIndex: 0) == 5)
+        #expect(rail.kinds[5] == .ourFather(decade: 0))
 
         // The last Glory Be, the Hail, Holy Queen and the closing prayer
         // on the medal; the last Sign of the Cross on the cross
@@ -204,7 +206,7 @@ struct OneRosaryTests {
         #expect(rail.index(of: .closing(1)) == end)
         #expect(rail.index(of: .closing(2)) == end + 1)
         #expect(rail.kinds.last == .cross)
-        #expect(rail.count == 6 + strand.count + 1)
+        #expect(rail.count == 5 + strand.count + 1)
     }
 
     @Test func theRailIsTheStrandWithoutThePendant() {
@@ -287,5 +289,65 @@ struct OneRosaryTests {
             }
             #expect(last - first == indices.count - 1)
         }
+    }
+
+    // MARK: - Round 6
+
+    @Test(arguments: [MysteryCategory.joyful, .sorrowful, .glorious, .luminous, .sevenSorrows])
+    func everyPendantLabelHasItsNumber(category: MysteryCategory) {
+        let pendant = SilentPendant(category: category)
+        let steps = pendant.opening.indices.map { SilentPendant.Step.opening($0) }
+            + pendant.closing.indices.map { SilentPendant.Step.closing($0) }
+        #expect(!steps.isEmpty)
+        for step in steps {
+            guard let prayer = pendant.pendant(at: step) else {
+                Issue.record("a step with no prayer"); continue
+            }
+            let label = OneRosaryColumn<EmptyView>.pendantLabel(prayer: prayer.title, count: pendant.count(of: step))
+            let (number, total): (Int, Int) = {
+                switch step {
+                case .opening(let i): return (i + 1, pendant.opening.count)
+                case .closing(let i): return (i + 1, pendant.closing.count)
+                }
+            }()
+            #expect(label.hasSuffix(" · \(number) of \(total)"), "\(label)")
+            #expect(!label.contains("?"))
+        }
+    }
+
+    @Test func noNumeralStandsBesideAPendantBead() {
+        let strand = RosaryStrand(decades: 5, hailMarys: 10)
+        let rail = OneRosaryRail(strand: strand, pendant: SilentPendant(category: .joyful), showsPendant: true)
+        for index in 0..<rail.count where rail.label(at: index) != nil {
+            switch rail.kinds[index] {
+            case .ourFather, .end: break
+            default: Issue.record("a numeral beside \(rail.kinds[index])")
+            }
+        }
+        // The pendant's only large bead before the decades is its first:
+        // no unnumbered large ring stands under the "1"
+        let beforeDecades = rail.kinds.prefix(rail.strandStart)
+        #expect(beforeDecades.filter { $0 == .largeBead || $0 == .medal }.count == 1)
+    }
+
+    @Test(arguments: [CGFloat(812), 852, 874, 932, 956])
+    func theRailsWindowEndsOnTheGapBetweenBeads(fullHeight: CGFloat) {
+        let height = OneRosaryRailView.windowHeight(fullHeight: fullHeight)
+        let rows = height / OneRosaryRailView.rowHeight
+        // An odd whole number of rows, so with the hand's bead at the
+        // middle both edges fall between two beads
+        #expect(rows == rows.rounded())
+        #expect(Int(rows) % 2 == 1)
+        let fade = OneRosaryRailView.fadeStops(height: height)
+        // Clear across the outermost row, solid within the next
+        #expect(fade.clear * height >= OneRosaryRailView.rowHeight - 3)
+        #expect(fade.solid * height <= OneRosaryRailView.rowHeight * 1.5)
+    }
+
+    @Test func theKickerNamesTheMysteriesAndWhatWasChosen() {
+        #expect(OneRosaryColumn<EmptyView>.kicker(mysteries: "Joyful Mysteries", chosen: "Blessed Fulton J. Sheen")
+            == "Joyful Mysteries · Blessed Fulton J. Sheen")
+        #expect(OneRosaryColumn<EmptyView>.kicker(mysteries: nil, chosen: "The Gospel") == "The Gospel")
+        #expect(OneRosaryColumn<EmptyView>.kicker(mysteries: "Joyful Mysteries", chosen: "") == "Joyful Mysteries")
     }
 }

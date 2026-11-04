@@ -330,11 +330,18 @@ struct OneRosaryRail: Equatable {
 
         var kinds: [Kind] = []
         var opening = groups(pendant.opening)
+        // The opening's Glory Be is said where the hand comes to the first
+        // mystery's Our Father bead (the pendant's second large bead), not
+        // on a bead of its own: drawn apart, it stood as an unnumbered
+        // large ring under the "1" and read as a decade bead
+        let mergesIntoStart = opening.count > 1 && (opening.last?.place == .chain || opening.last?.place == .medal)
         for index in opening.indices {
+            if index == opening.count - 1, mergesIntoStart { continue }
             opening[index].railIndex = kinds.count
             kinds.append(Self.kind(of: opening[index].place))
         }
         strandStart = kinds.count
+        if mergesIntoStart { opening[opening.count - 1].railIndex = strandStart }
 
         var closing = groups(pendant.closing)
         let mergesIntoEnd = closing.first?.place == .medal
