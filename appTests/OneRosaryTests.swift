@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import SwiftUI
 import Testing
 
 @testable import app
@@ -257,5 +258,32 @@ struct OneRosaryTests {
         let overview = RosaryOverview(category: .joyful, includesPendant: false, meditationTitles: titles)
         #expect(overview.mysteries.map(\.detail) == [nil, "The Word Made Flesh", nil, nil, "Lost and Found"])
     }
-}
 
+    @Test func thePendantsLabelIsThePrayerAndItsCount() {
+        #expect(OneRosaryColumn<EmptyView>.pendantLabel(prayer: "The Apostles' Creed", count: "2 of 7")
+            == "The Apostles' Creed · 2 of 7")
+        #expect(OneRosaryColumn<EmptyView>.pendantLabel(prayer: "The Sign of the Cross", count: nil)
+            == "The Sign of the Cross")
+    }
+
+    @Test func theRailHangsBelowTheStrandsPlace() {
+        let height: CGFloat = 956
+        #expect(OneRosaryRailView.windowTop(fullHeight: height) > RosaryStrandView.windowTop(fullHeight: height))
+        // The window still ends above the foot's Back and Next
+        #expect(OneRosaryRailView.windowTop(fullHeight: height) + OneRosaryRailView.windowHeight(fullHeight: height)
+            < height * 0.8)
+    }
+
+    @Test func eachMysteryIsOneSpanOfTheLoop() {
+        // The bracket the overview draws spans a decade's beads, which
+        // stand together on the loop
+        let overview = RosaryOverview(category: .joyful, includesPendant: true)
+        for part in overview.mysteries {
+            let indices = part.beads.compactMap { RosaryMap.loop.firstIndex(of: $0) }.sorted()
+            guard let first = indices.first, let last = indices.last else {
+                Issue.record("a mystery with no beads on the loop"); continue
+            }
+            #expect(last - first == indices.count - 1)
+        }
+    }
+}

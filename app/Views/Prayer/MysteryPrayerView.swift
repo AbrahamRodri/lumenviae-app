@@ -119,6 +119,9 @@ struct MysteryPrayerView: View {
     /// One Rosary beta: the one-time hint that the beads take a tap
     @State private var tapHintShowing = false
 
+    /// One Rosary beta: rings the next bead once as the hint shows
+    @State private var tapHintPulse = 0
+
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.scenePhase) private var scenePhase
@@ -361,6 +364,7 @@ struct MysteryPrayerView: View {
             guard !Task.isCancelled else { return }
             userSettings.hasSeenBeadTapHint = true
             withAnimation(.easeInOut(duration: 0.5)) { tapHintShowing = true }
+            tapHintPulse += 1
             try? await Task.sleep(for: .seconds(6))
             withAnimation(.easeInOut(duration: 0.4)) { tapHintShowing = false }
         }
@@ -430,6 +434,15 @@ struct MysteryPrayerView: View {
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+
+            case .text:
+                ReaderTextOptionsSheet(showsNarrationOptions: false)
+                    .presentationDetents([
+                        .height(ReaderTextOptionsSheet.height(showsNarrationOptions: false))
+                    ])
+                    .presentationDragIndicator(.visible)
+                    .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .tray:
                 PrayerTrackTray(
@@ -1687,7 +1700,7 @@ extension MysteryPrayerView {
                 + geometry.safeAreaInsets.bottom
             let rail = rail
             let columnTop = max(
-                RosaryStrandView.windowTop(fullHeight: fullHeight) - geometry.safeAreaInsets.top,
+                OneRosaryRailView.windowTop(fullHeight: fullHeight) - geometry.safeAreaInsets.top,
                 12 + 44 + 14
             )
 
@@ -1703,7 +1716,7 @@ extension MysteryPrayerView {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .overlay(alignment: .top) {
-                playerHeader
+                OneRosaryHeader(subtitle: meditationSet.name) { router.popToRoot() }
                     .padding(.top, 12)
             }
             .overlay(alignment: .bottom) {
@@ -1721,7 +1734,8 @@ extension MysteryPrayerView {
                 dragOffset: strandDrag,
                 turnPulse: turnPulse,
                 locked: viewModel.pendant == nil && !viewModel.beadsUnlocked,
-                tappable: tappableBeads(rail)
+                tappable: tappableBeads(rail),
+                hintPulse: tapHintPulse
             ) { index in
                 if case .strand(let bead) = rail.target(at: index) { oneRosaryGoToBead(bead) }
             }
@@ -1766,9 +1780,9 @@ extension MysteryPrayerView {
         if let pendant = viewModel.pendant {
             let lines = SilentPendant.lines(of: pendant.prayerID, in: userSettings.prayerLanguage)
             OneRosaryColumn(
-                kicker: pendant.heading,
-                title: pendant.title,
-                bead: viewModel.silentPendantCount,
+                kicker: meditationSet.mysteryCategory?.devotionTitle ?? meditationSet.name,
+                title: pendant.heading,
+                bead: OneRosaryColumn<EmptyView>.pendantLabel(prayer: pendant.title, count: viewModel.silentPendantCount),
                 help: oneRosaryHelp,
                 wordsKey: "\(pendant.heading)|\(pendant.title)|\(viewModel.silentPendantCount ?? "")"
             ) {
@@ -1871,9 +1885,18 @@ extension MysteryPrayerView {
             .padding(.horizontal, 22)
             .padding(.top, 16)
 
-            utilityRow
-                .padding(.top, 14)
-                .padding(.bottom, 16)
+            OneRosaryUtilityRow(
+                items: [OneRosaryUtilityRow.voice { activeSheet = .playback }]
+                    // The pendant's prayers have no meditation to read
+                    + (viewModel.silentPendantPrayer == nil && viewModel.pendant == nil
+                        ? [OneRosaryUtilityRow.read { setReaderOpen(true) }] : [])
+                    + [
+                        OneRosaryUtilityRow.text { activeSheet = .text },
+                        OneRosaryUtilityRow.more { activeSheet = .tray },
+                    ]
+            )
+            .padding(.top, 10)
+            .padding(.bottom, 8)
         }
         .animation(Motion.crossfade, value: meditation?.hasAudio)
     }
@@ -1913,6 +1936,8 @@ private enum PlayerSheet: String, Identifiable {
     case playback
     case tray
     case feedback
+    /// One Rosary beta: the text's size, as the Scriptural player has it
+    case text
 
     var id: String { rawValue }
 }

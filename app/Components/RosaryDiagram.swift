@@ -29,6 +29,16 @@ struct RosaryDiagram: View {
     /// first part of the traversal — and every bead has been prayed
     var completed: Bool = false
 
+    /// Parts marked off as one span, by a lit arc outside the loop (a
+    /// decade) or a rule beside the pendant: so a part chosen in a list
+    /// reads as one stretch of the rosary, not as scattered beads.
+    /// Empty draws no mark.
+    var bracket: Set<RosaryPart> = []
+
+    /// Set at the arc's middle: the decade's number, as the list beside
+    /// the drawing numbers it
+    var bracketLabel: String? = nil
+
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// Height over width
@@ -58,15 +68,76 @@ struct RosaryDiagram: View {
                 }
 
                 medal(layout: layout, currentPosition: currentPosition)
+
+                if !bracket.isEmpty {
+                    bracketMark(layout: layout)
+                        .transition(.opacity)
+                }
             }
             // Under Reduce Motion the lit bead does not swell, and the
             // light passes as a crossfade rather than a settle
             .animation(reduceMotion ? Motion.crossfade : Motion.settle, value: current)
             .animation(Motion.crossfade, value: highlighted)
             .animation(Motion.crossfade, value: completed)
+            .animation(Motion.crossfade, value: bracket)
         }
         .aspectRatio(1 / Self.aspect, contentMode: .fit)
         .accessibilityHidden(true)
+    }
+
+    // MARK: - Bracket
+
+    /// The span `bracket` marks: an arc just outside the loop over the
+    /// decade's beads, with its number beyond it, or a rule beside the
+    /// pendant over the beads it holds there
+    @ViewBuilder
+    private func bracketMark(layout: Layout) -> some View {
+        let loopIndices = bracket.compactMap { RosaryMap.loop.firstIndex(of: $0) }.sorted()
+        let lineWidth = max(1.5, layout.width * 0.016)
+
+        if let first = loopIndices.first, let last = loopIndices.last {
+            let slots = Double(RosaryMap.loop.count + 1)
+            let start = 90 + Double(first + 1) * 360 / slots - 3
+            let end = 90 + Double(last + 1) * 360 / slots + 3
+            let radius = layout.radius * 1.17
+            let middle = (start + end) / 2 * Double.pi / 180
+
+            ZStack {
+                Path { path in
+                    path.addArc(
+                        center: layout.center,
+                        radius: radius,
+                        startAngle: .degrees(start),
+                        endAngle: .degrees(end),
+                        clockwise: false
+                    )
+                }
+                .stroke(AppColors.goldLight, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+
+                if let bracketLabel {
+                    Text(verbatim: bracketLabel)
+                        .font(AppFonts.labelFont(max(9, layout.width * 0.085)))
+                        .foregroundColor(AppColors.goldLight)
+                        .position(
+                            x: layout.center.x + layout.radius * 1.36 * CGFloat(Foundation.cos(middle)),
+                            y: layout.center.y + layout.radius * 1.36 * CGFloat(Foundation.sin(middle))
+                        )
+                }
+            }
+        } else {
+            // The pendant: a rule to its right, from the highest part
+            // marked to the lowest
+            let points = bracket.map { layout.point(for: $0) }
+            let top = (points.map(\.y).min() ?? 0) - layout.width * 0.03
+            let bottom = (points.map(\.y).max() ?? 0) + layout.width * 0.09
+            let x = layout.center.x + layout.width * 0.1
+
+            Path { path in
+                path.move(to: CGPoint(x: x, y: top))
+                path.addLine(to: CGPoint(x: x, y: bottom))
+            }
+            .stroke(AppColors.goldLight, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+        }
     }
 
     // MARK: - State

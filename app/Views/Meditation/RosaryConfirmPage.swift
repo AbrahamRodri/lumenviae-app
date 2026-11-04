@@ -343,7 +343,12 @@ struct RosaryChoicesSection: View {
                     category: chosenCategory ?? today,
                     includesPendant: settings.showsOpeningPrayers || form.praysAloud(setting: settings.prayAloud),
                     meditationTitles: meditationTitles,
-                    contextLine: contextLine
+                    contextLine: contextLine,
+                    // Helps stands with the overview, over the list, and
+                    // not after it among the choices
+                    helps: offersHelps
+                        ? AnyView(RosaryChoiceGroup(choice: .helps, form: form, value: binding(for: .helps)))
+                        : nil
                 )
                 .padding(.bottom, 10)
             }
@@ -351,7 +356,7 @@ struct RosaryChoicesSection: View {
             YourRosaryTodayLabel()
                 .padding(.bottom, 6)
 
-            ForEach(offeredChoices, id: \.self) { choice in
+            ForEach(offeredChoices.filter { !settings.oneRosaryBeta || $0 != .helps }, id: \.self) { choice in
                 RosaryChoiceGroup(choice: choice, form: form, value: binding(for: choice))
                     .transition(RosaryChoiceGroup.comingAndGoing)
             }
@@ -390,6 +395,9 @@ struct RosaryChoicesSection: View {
         RosaryChoice.offered(for: form, aloud: settings.prayAloud, oneRosary: settings.oneRosaryBeta)
             .filter { $0 != .helps || (chosenCategory.map { GuidedRosary.isGuidable($0) } ?? true) }
     }
+
+    /// One Rosary beta: whether Helps is offered, for the overview to set
+    private var offersHelps: Bool { offeredChoices.contains(.helps) }
 
     private func binding(for choice: RosaryChoice) -> Binding<Bool> {
         @Bindable var settings = settings

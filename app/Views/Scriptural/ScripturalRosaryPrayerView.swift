@@ -1558,7 +1558,7 @@ extension ScripturalRosaryPrayerView {
                 oneRosaryColumn
                     .padding(.leading, 28)
                     .padding(.trailing, Self.readingTrailingInset)
-                    .padding(.top, readingTop(fullHeight: fullHeight, topInset: geometry.safeAreaInsets.top))
+                    .padding(.top, max(OneRosaryRailView.windowTop(fullHeight: fullHeight) - geometry.safeAreaInsets.top, 12 + 44 + 14))
                     .frame(maxHeight: .infinity, alignment: .top)
 
                 oneRosaryFoot
@@ -1610,34 +1610,10 @@ extension ScripturalRosaryPrayerView {
         }
     }
 
-    /// The way out, and the Rosary's name: as the meditation's player
+    /// The way out, and the Rosary's one name, the form beneath it: as
+    /// the meditation's player
     fileprivate var oneRosaryHeader: some View {
-        ZStack {
-            Text(
-                (viewModel.isPlain
-                    ? viewModel.displayName
-                    : String(localized: "Scriptural Rosary", comment: "Scriptural Rosary's prayer screen: the header's name, set in capitals"))
-                    .uppercased()
-            )
-            .font(AppFonts.labelFont(9))
-            .tracking(2.5)
-            .foregroundColor(AppColors.goldLight)
-            .shadow(color: .black.opacity(0.6), radius: 6, y: 1)
-            .lineLimit(1)
-            .padding(.horizontal, 60)
-
-            HStack {
-                PrayerHeaderButton(
-                    icon: "ph-x",
-                    size: 18,
-                    label: String(localized: "End prayer", comment: "Prayer screen: VoiceOver name of the close button that leaves the Rosary")
-                ) {
-                    router.popToRoot()
-                }
-                Spacer()
-            }
-        }
-        .padding(.horizontal, 16)
+        OneRosaryHeader(subtitle: viewModel.displayName) { router.popToRoot() }
     }
 
     @ViewBuilder
@@ -1645,9 +1621,9 @@ extension ScripturalRosaryPrayerView {
         if let pendant = viewModel.spokenPendant {
             let lines = SilentPendant.lines(of: pendant.prayerID, in: userSettings.prayerLanguage)
             OneRosaryColumn(
-                kicker: pendant.heading,
-                title: pendant.title,
-                bead: viewModel.silentPendantCount,
+                kicker: viewModel.category.devotionTitle,
+                title: pendant.heading,
+                bead: OneRosaryColumn<EmptyView>.pendantLabel(prayer: pendant.title, count: viewModel.silentPendantCount),
                 help: oneRosaryHelp,
                 wordsKey: Self.pendantKey(pendant) + (viewModel.silentPendantCount ?? "")
             ) {
@@ -1673,9 +1649,9 @@ extension ScripturalRosaryPrayerView {
                     , size: userSettings.meditationFontSize - 2)
                     if let reference = reading.reference {
                         Text(reference.uppercased())
-                            .font(AppFonts.labelFont(9.5))
+                            .font(AppFonts.labelFont(10.5))
                             .tracking(1.5)
-                            .foregroundColor(AppColors.gold.opacity(0.85))
+                            .foregroundColor(AppColors.goldLight)
                             .lineLimit(1)
                     }
                     if let footnote = reading.footnote {
@@ -1734,39 +1710,15 @@ extension ScripturalRosaryPrayerView {
             .padding(.horizontal, 22)
             .padding(.top, 16)
 
-            HStack(spacing: 40) {
-                ReaderChromeButton(
-                    icon: "ph-faders",
-                    size: 21,
-                    tint: Self.utilityTint,
-                    label: String(
-                        localized: "Playback settings",
-                        comment: "Prayer screen: VoiceOver name of the button that opens the voice, speed and Rosary choices"
-                    )
-                ) {
-                    activeSheet = .playback
-                }
-
-                ReaderChromeButton(
-                    icon: "ph-text-aa",
-                    size: 21,
-                    tint: Self.utilityTint,
-                    label: String(localized: "Text options", comment: "Scriptural Rosary's prayer screen: VoiceOver name of the button that opens text size")
-                ) {
-                    activeSheet = .text
-                }
-
-                ReaderChromeButton(
-                    icon: "ph-dots-three",
-                    size: 23,
-                    tint: Self.utilityTint,
-                    label: String(localized: "More", comment: "Prayer screen: VoiceOver name of the button that opens the menu of more actions")
-                ) {
-                    activeSheet = .tray
-                }
-            }
-            .padding(.top, 14)
-            .padding(.bottom, 16)
+            // The meditation's player's row, less READ: the verse is
+            // already on the page, and there is no meditation to open
+            OneRosaryUtilityRow(items: [
+                OneRosaryUtilityRow.voice { activeSheet = .playback },
+                OneRosaryUtilityRow.text { activeSheet = .text },
+                OneRosaryUtilityRow.more { activeSheet = .tray },
+            ])
+            .padding(.top, 10)
+            .padding(.bottom, 8)
         }
         .animation(Motion.crossfade, value: aloud)
     }
