@@ -155,9 +155,24 @@ struct MeditationSet: nonisolated Codable, Identifiable, Hashable {
     /// the API sends it, in which case the picker shows a flat list.
     let labels: [String]?
 
-    /// Array of meditations, one per mystery (5 for standard Rosary).
-    /// Optional because list endpoint doesn't include this.
-    let meditations: [Meditation]?
+    /// The meditations as the server sent them, in English, one per
+    /// mystery (5 for standard Rosary). Optional because the list endpoint
+    /// doesn't include them. Read `meditations`, which lays the Spanish
+    /// over them in a Spanish app.
+    let englishMeditations: [Meditation]?
+
+    /// The meditations that have Spanish, as `?lang=es` sends them
+    /// (`translations`): nil for a set fetched without `lang`, a bundled
+    /// set, or one stored before Spanish. Kept beside the English, so an
+    /// offline copy reads right in either language.
+    let translations: [MeditationTranslation]?
+
+    /// The meditations as the app shows them: each one's Spanish in place
+    /// of its English in a Spanish app, title and text together, and the
+    /// English for one with no Spanish. Never a mix inside one meditation.
+    nonisolated var meditations: [Meditation]? {
+        MeditationTranslation.overlay(englishMeditations, with: translations)
+    }
 
     /// Whose voice the set is, when the API can say so for the whole set:
     /// the set's own byline, or the meditations' when every one agrees.
@@ -188,7 +203,8 @@ struct MeditationSet: nonisolated Codable, Identifiable, Hashable {
     // CodingKeys does not throw, it decodes to nil and empties the prayer
     // screen.
     enum CodingKeys: String, CodingKey {
-        case id, name, category, description, labels, meditations, author, source
+        case id, name, category, description, labels, author, source, translations
+        case englishMeditations = "meditations"
         case audioExpiresAt = "audio_expires_at"
         case imageUrl = "image_url"
         case imageAlignment = "image_alignment"
@@ -217,14 +233,16 @@ struct MeditationSet: nonisolated Codable, Identifiable, Hashable {
         imageWidth: Int? = nil,
         imageHeight: Int? = nil,
         imageAlt: String? = nil,
-        imageAttribution: ArtworkAttribution? = nil
+        imageAttribution: ArtworkAttribution? = nil,
+        translations: [MeditationTranslation]? = nil
     ) {
         self.id = id
         self.name = name
         self.category = category
         self.description = description
         self.labels = labels
-        self.meditations = meditations
+        self.englishMeditations = meditations
+        self.translations = translations
         self.author = author
         self.source = source
         self.audioExpiresAt = audioExpiresAt

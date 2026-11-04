@@ -677,6 +677,10 @@ struct ConsecrationDayOverviewView: View {
                     .lineSpacing(ReadingTypography.lineSpacing(for: 17))
                     .fixedSize(horizontal: false, vertical: true)
 
+                // The day's title and question are translated together:
+                // one line here says so for both
+                AINote(shows: ConsecrationSpanish.dayIsAITranslated(displayDayNumber))
+
                 QuietGoldButton(
                     title: String(localized: "Write in your journal", comment: "Consecration day overview: quiet button opening the day's reflection editor"),
                     leadingIcon: "ph-note-pencil",

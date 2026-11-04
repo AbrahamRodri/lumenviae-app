@@ -544,3 +544,124 @@ nonisolated struct PrayerBookTranslations: Codable, Sendable, Equatable {
         Dictionary(translations.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
     }
 }
+
+// MARK: - The Consecration's Spanish
+
+/// The Consecration in Spanish, as `GET /api/v2/consecration?lang=es` sends
+/// its `translations` (api docs/JSON_API.md, "The Consecration in
+/// Spanish"): the days and prayers that have Spanish, keyed as the bundled
+/// English keys them (a day by its number, a reading by its order, a prayer
+/// by its id), with `ai_translated` on the team's own translation. The
+/// phases' and the feasts' names are the app's own words, in the String
+/// Catalog, so they are not read from here. Kept with a version of its own,
+/// apart from the English, which stays bundled.
+nonisolated struct ConsecrationTranslations: Codable, Sendable, Equatable {
+    var version: String?
+    var updatedAt: String?
+    var days: [Day]
+    var prayers: [Prayer]
+
+    nonisolated struct Day: Codable, Sendable, Equatable {
+        let number: Int
+        let title: String?
+        let journalPrompt: String?
+        var readings: [Reading]
+        /// The title and the journal question are the team's translation
+        var aiTranslated: Bool?
+
+        enum CodingKeys: String, CodingKey {
+            case number, title, readings
+            case journalPrompt = "journal_prompt"
+            case aiTranslated = "ai_translated"
+        }
+
+        init(number: Int, title: String?, journalPrompt: String?, readings: [Reading] = [], aiTranslated: Bool? = nil) {
+            self.number = number
+            self.title = title
+            self.journalPrompt = journalPrompt
+            self.readings = readings
+            self.aiTranslated = aiTranslated
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            number = try container.decode(Int.self, forKey: .number)
+            title = try container.decodeIfPresent(String.self, forKey: .title)
+            journalPrompt = try container.decodeIfPresent(String.self, forKey: .journalPrompt)
+            readings = try container.decodeIfPresent([Reading].self, forKey: .readings) ?? []
+            aiTranslated = try container.decodeIfPresent(Bool.self, forKey: .aiTranslated)
+        }
+    }
+
+    nonisolated struct Reading: Codable, Sendable, Equatable {
+        let order: Int
+        /// The Spanish citation
+        let title: String
+        /// In the same ReadingText grammar as the English
+        let text: String
+        /// The Spanish edition ("Biblia de Torres Amat")
+        let source: String?
+        var aiTranslated: Bool?
+
+        enum CodingKeys: String, CodingKey {
+            case order, title, text, source
+            case aiTranslated = "ai_translated"
+        }
+    }
+
+    nonisolated struct Prayer: Codable, Sendable, Equatable {
+        let id: String
+        let title: String
+        /// In the PrayerText grammar the English uses
+        let text: String
+        var aiTranslated: Bool?
+
+        enum CodingKeys: String, CodingKey {
+            case id, title, text
+            case aiTranslated = "ai_translated"
+        }
+    }
+
+    private nonisolated struct Sections: Codable, Sendable {
+        var days: [Day]?
+        var prayers: [Prayer]?
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case version, translations
+        case updatedAt = "updated_at"
+    }
+
+    init(version: String? = nil, updatedAt: String? = nil, days: [Day] = [], prayers: [Prayer] = []) {
+        self.version = version
+        self.updatedAt = updatedAt
+        self.days = days
+        self.prayers = prayers
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        version = try container.decodeIfPresent(String.self, forKey: .version)
+        updatedAt = try container.decodeIfPresent(String.self, forKey: .updatedAt)
+        let sections = try container.decodeIfPresent(Sections.self, forKey: .translations)
+        days = sections?.days ?? []
+        prayers = sections?.prayers ?? []
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(version, forKey: .version)
+        try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
+        try container.encode(Sections(days: days, prayers: prayers), forKey: .translations)
+    }
+
+    /// The days by number
+    var dayByNumber: [Int: Day] {
+        Dictionary(days.map { ($0.number, $0) }, uniquingKeysWith: { first, _ in first })
+    }
+
+    /// The prayers by id
+    var prayerByID: [String: Prayer] {
+        Dictionary(prayers.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+    }
+}

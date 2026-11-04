@@ -59,12 +59,21 @@ struct Meditation: nonisolated Codable, Identifiable, Hashable {
     /// The mystery this meditation belongs to (includes name, scripture, etc.)
     let mystery: Mystery?
 
+    /// Its title and text are the Spanish laid over the English
+    /// (`MeditationTranslation.overlay`); its recordings are still English.
+    /// Never stored: the offline copy keeps the English and the Spanish
+    /// apart, and lays them over again on reading.
+    var isSpanish = false
+
+    /// Its Spanish is the team's own translation, not a published one
+    var aiTranslated = false
+
     enum CodingKeys: String, CodingKey {
         case id, title, content, author, source, mystery, narrations
         case audioUrl = "audio_url"
     }
 
-    init(
+    nonisolated init(
         id: Int,
         title: String?,
         content: String,

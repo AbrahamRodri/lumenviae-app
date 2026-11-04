@@ -23785,6 +23785,17 @@
         }
       }
     },
+    "The voice reads the meditation in English." : {
+      "comment" : "Shown only in Spanish, under a meditation shown in Spanish: its recording is in English",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La voz lee la meditación en inglés."
+          }
+        }
+      }
+    },
     "The way St. Louis de Montfort taught in his book %@" : {
       "localizations" : {
         "es" : {
