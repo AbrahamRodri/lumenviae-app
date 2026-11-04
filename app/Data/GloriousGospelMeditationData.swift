@@ -19,7 +19,7 @@ enum GloriousGospelMeditationData {
     /// with a server-assigned meditation set ID.
     static let setID = -4
 
-    static let name = "The Gospel"
+    static let name = String(localized: "The Gospel", comment: "The name of the bundled meditation set that reads the Gospel at each mystery, shown on the mysteries' page and over the player")
     static let category = "glorious"
     static let description = "The Gospel and the Acts of the Apostles at each mystery, and the Scriptures the Church reads of Mary's Assumption and crowning, in the Douay-Rheims translation."
     static let labels = ["Scriptural"]
