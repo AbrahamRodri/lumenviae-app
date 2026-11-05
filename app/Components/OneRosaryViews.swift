@@ -161,11 +161,15 @@ struct RosaryOverviewSection: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.85)
 
-                    if let detail = part.detail {
+                    // What a part holds is said once it is chosen, so at
+                    // rest every row is one line and the whole order and
+                    // the first choice stand clear of PRAY
+                    if let detail = part.detail, isChosen {
                         Text(detail)
                             .font(AppFonts.italicFont(13))
                             .foregroundColor(AppColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
+                            .transition(.opacity)
                     }
                 }
                 Spacer(minLength: 0)
@@ -200,7 +204,8 @@ struct RosaryOverviewSection: View {
                     .padding(.horizontal, 10)
             }
         }
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text([part.title, part.detail].compactMap { $0 }.joined(separator: ", ")))
         .accessibilityAddTraits(isChosen ? .isSelected : [])
         .accessibilityHint(category == .sevenSorrows ? Text(verbatim: "") : Text("Shows it on the rosary", comment: "One Rosary beta, the Rosary's overview: VoiceOver hint on a part of the Rosary, which lights its beads in the drawing"))
     }
@@ -488,7 +493,7 @@ private struct RailBead: View {
 }
 
 /// A rail bead's press: the bead itself swells, solid and bright, and the
-/// step it goes to is named beside it for as long as the finger is down
+/// step it goes to is named over it for as long as the finger is down
 /// ("Hail Mary · 6 of 10"), so a tap is seen landing before it is let go
 private struct RailBeadPressStyle: ButtonStyle {
     let lines: [String]
@@ -510,8 +515,10 @@ private struct RailBeadPressStyle: ButtonStyle {
                 .opacity(pressed ? 1 : 0)
                 .allowsHitTesting(false)
             }
-            .overlay(alignment: .trailing) {
-                VStack(alignment: .trailing, spacing: 1) {
+            // The step's name stands over the bead, above the rail's
+            // next row and clear of the prayer's words to its left
+            .overlay {
+                VStack(alignment: .center, spacing: 1) {
                     ForEach(lines, id: \.self) { line in
                         Text(line.uppercased())
                             .font(AppFonts.labelFont(10.5))
@@ -531,7 +538,7 @@ private struct RailBeadPressStyle: ButtonStyle {
                                 .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline))
                 )
                 .fixedSize()
-                .offset(x: -52)
+                .offset(x: -12, y: -46)
                 .opacity(pressed ? 1 : 0)
                 .allowsHitTesting(false)
             }
@@ -781,6 +788,9 @@ struct OneRosaryColumn<Words: View>: View {
                         .transition(.opacity)
                 }
             }
+            // Its own height, overflowing the room upward when a help line
+            // stands above the words, so nothing in it is squeezed
+            .fixedSize(horizontal: false, vertical: true)
             .frame(height: Self.headHeight, alignment: .bottomLeading)
 
             VStack(alignment: .leading, spacing: 0) {
@@ -904,8 +914,12 @@ struct OneRosaryStepLabel: View {
                 .tracking(1.8)
                 .monospacedDigit()
                 .foregroundColor(AppColors.cream.opacity(0.9))
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
+                // A long step ("The Sign of the Cross · back on the
+                // cross") wraps at the same size rather than shrinking;
+                // the head grows up from the words, which never move
+                .lineLimit(2)
+                .minimumScaleFactor(0.9)
+                .fixedSize(horizontal: false, vertical: true)
                 .id(text)
                 .transition(.opacity)
         }

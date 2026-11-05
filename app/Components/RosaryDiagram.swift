@@ -53,7 +53,6 @@ struct RosaryDiagram: View {
     /// the part chosen is the one thing that shines
     var matchesPendant: Bool = false
 
-
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// Height over width

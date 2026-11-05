@@ -1679,14 +1679,14 @@ extension MysteryPrayerView {
             .map { rail.index(strandIndex: $0) })
     }
 
-    /// The last step, the whole Rosary prayed: AMEN stands, and the rail
-    /// shows every bead gold
     /// The hand on the closing prayers, back at the medal or the cross
     fileprivate var oneRosaryOnClose: Bool {
         if case .closing = viewModel.currentPendantStep { return true }
         return viewModel.spokenPendant?.phase == .closing
     }
 
+    /// The last step, the whole Rosary prayed: AMEN stands, and the rail
+    /// shows every bead gold
     fileprivate var oneRosaryComplete: Bool {
         viewModel.isPrayingAloud && viewModel.spokenFailure == nil
             ? viewModel.isSpokenFinished

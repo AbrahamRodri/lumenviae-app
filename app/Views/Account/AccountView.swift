@@ -158,8 +158,10 @@ struct AccountView: View {
                             // One Rosary beta: the three prayers after the
                             // Rosary behind one row, which opens them
                             if userSettings.oneRosaryBeta {
+                                // The plus: prayers added after the Rosary;
+                                // the joined hands are the Audio choice's
                                 ActionRow(
-                                    icon: "ch-praying-hands",
+                                    icon: "ph-plus",
                                     title: String(localized: "After the Rosary", comment: "One Rosary beta, Settings, The Rosary: the row that opens the prayers said after the Rosary"),
                                     subtitle: afterTheRosarySummary
                                 ) {

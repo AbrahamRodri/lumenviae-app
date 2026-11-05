@@ -1630,13 +1630,13 @@ extension ScripturalRosaryPrayerView {
         OneRosaryColumn<EmptyView>.kicker(mysteries: viewModel.category.devotionTitle, chosen: viewModel.displayName)
     }
 
-    /// The last step, the whole Rosary prayed
     /// The hand on the closing prayers, back at the medal or the cross
     fileprivate var oneRosaryOnClose: Bool {
         if case .closing = viewModel.currentPendantStep { return true }
         return viewModel.spokenPendant?.phase == .closing
     }
 
+    /// The last step, the whole Rosary prayed
     fileprivate var oneRosaryComplete: Bool {
         viewModel.isPrayingAloud && viewModel.spokenFailure == nil
             ? viewModel.isSpokenFinished
