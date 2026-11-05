@@ -39,8 +39,7 @@ struct PrayActWordsTests {
     @Test func theWordsKeepThePlainLanguageRulings() {
         for act in PrayerShortcut.allCases {
             let words = [act.title, act.subtitle, act.actName,
-                         act.trayDetail(today: .joyful, praysAloud: false),
-                         act.trayDetail(today: .joyful, praysAloud: true)]
+                         act.trayDetail(today: .joyful)]
             for line in words {
                 #expect(!line.uppercased().contains("OFFERED"), "\(act): \(line)")
                 #expect(!line.contains("1962"), "\(act): \(line)")
@@ -50,11 +49,10 @@ struct PrayActWordsTests {
     }
 
     @Test func theTraysDetailNamesTheDaysMysteriesAndHowTheySound() {
-        #expect(PrayerShortcut.todaysRosary.trayDetail(today: .glorious, praysAloud: false) == "Glorious Mysteries · with a meditation")
-        #expect(PrayerShortcut.todaysRosary.trayDetail(today: .glorious, praysAloud: true) == "Glorious Mysteries · with the whole Rosary read to you")
-        #expect(PrayerShortcut.scripturalRosary.trayDetail(today: .joyful, praysAloud: false) == "Joyful Mysteries · a verse for every bead")
-        #expect(PrayerShortcut.rosaryAloud.trayDetail(today: .sevenSorrows, praysAloud: false) == "Seven Sorrows of Mary · listen and pray along")
-        #expect(PrayerShortcut.mass.trayDetail(today: .joyful, praysAloud: true) == PrayerShortcut.mass.subtitle)
+        #expect(PrayerShortcut.todaysRosary.trayDetail(today: .glorious) == "Glorious Mysteries · with a meditation")
+        #expect(PrayerShortcut.scripturalRosary.trayDetail(today: .joyful) == "Joyful Mysteries · a verse for every bead")
+        #expect(PrayerShortcut.rosaryAloud.trayDetail(today: .sevenSorrows) == "Seven Sorrows of Mary · listen and pray along")
+        #expect(PrayerShortcut.mass.trayDetail(today: .joyful) == PrayerShortcut.mass.subtitle)
     }
 
     @Test func thePrayerBooksOrdersMarkTheirOwnOrderPrayed() {

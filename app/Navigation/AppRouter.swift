@@ -114,7 +114,7 @@ enum AppRoute: Hashable {
     /// is its own.
     case rosaryAloud(MysteryCategory)
 
-    /// The simple Rosary's beginner's path (the One Rosary beta): St.
+    /// The simple Rosary's beginner's path: St.
     /// Alphonsus Liguori's meditations for these mysteries, on their own
     /// page with a way to say no, then prayed with the helps on
     case beginnerRosary(MysteryCategory)

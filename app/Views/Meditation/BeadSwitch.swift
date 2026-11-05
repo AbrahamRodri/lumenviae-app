@@ -2,61 +2,11 @@
 //  BeadSwitch.swift
 //  Lumen Viae
 //
-//  A switch in the app's own hand, and the pill that names one.
-//
-//  These once lived beside the HOW YOU'LL PRAY line and its sheet, which
-//  the Rosary's own pages have replaced with the choices set out above
-//  PRAY (`RosaryConfirmPage`). The switch still stands wherever a single
-//  setting is on or off — the prayers after the Rosary, the Scriptural
-//  Rosary's Whole Rosary in its foot.
+//  A switch in the app's own hand, wherever a single setting is on or
+//  off: the prayers after the Rosary in the Voice & speed sheet.
 //
 
 import SwiftUI
-
-// MARK: - SetupTogglePill
-
-/// A named switch as one capsule: the icon, the words, and a bead for a
-/// knob. The whole pill is the target; the switch inside it is only the
-/// drawing.
-struct SetupTogglePill: View {
-
-    let icon: String
-    let title: String
-    @Binding var isOn: Bool
-    var hint: String = ""
-
-    var body: some View {
-        Button {
-            withAnimation(Motion.settle) { isOn.toggle() }
-        } label: {
-            HStack(spacing: 7) {
-                AppIcon(icon, size: 14)
-                    .foregroundColor(isOn ? AppColors.gold : AppColors.cream.opacity(0.6))
-
-                Text(title)
-                    .font(AppFonts.bodyFont(14))
-                    .foregroundColor(AppColors.cream.opacity(isOn ? 1 : 0.75))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
-
-                Spacer(minLength: 4)
-
-                BeadSwitch(isOn: isOn)
-            }
-            .padding(.leading, 12)
-            .padding(.trailing, 8)
-            .frame(maxWidth: .infinity)
-            .frame(height: 44)
-            .background(Capsule().fill(AppColors.cardElevated))
-            .contentShape(Capsule())
-        }
-        .buttonStyle(GoldCTAButtonStyle())
-        .accessibilityLabel(title)
-        .accessibilityValue(isOn ? Text("On") : Text("Off"))
-        .accessibilityHint(hint)
-        .accessibilityAddTraits(.isToggle)
-    }
-}
 
 // MARK: - BeadSwitch
 

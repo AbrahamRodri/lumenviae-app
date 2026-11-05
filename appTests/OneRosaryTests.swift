@@ -2,10 +2,9 @@
 //  OneRosaryTests.swift
 //  Lumen Viae Tests
 //
-//  The One Rosary beta: off until chosen; with it on the beads always
-//  hang and no choice is offered; the Helps line for each place on a
-//  player (the beginner's path); and which beads a tap on the strand may
-//  reach. The simple Rosary's own rules are SimpleRosaryTests.
+//  The Rosary's player: the Helps line for each place (the beginner's
+//  path), and which beads a tap on the rail may reach. The simple
+//  Rosary's own rules are SimpleRosaryTests.
 //
 
 import Foundation
@@ -16,43 +15,6 @@ import Testing
 
 @MainActor
 struct OneRosaryTests {
-
-    // MARK: - The Switch
-
-    @Test func theBetaIsOffUntilChosen() throws {
-        let defaults = try #require(UserDefaults(suiteName: "OneRosaryTests.\(UUID().uuidString)"))
-        #expect(!UserSettings.storedOneRosaryBeta(in: defaults))
-        defaults.set(true, forKey: UserSettings.oneRosaryBetaKey)
-        #expect(UserSettings.storedOneRosaryBeta(in: defaults))
-        #expect(UserSettings.oneRosaryBetaKey == "userSettings.oneRosaryBeta")
-    }
-
-    // MARK: - The Beads Always Hang
-
-    @Test(arguments: [RosaryForm.meditation, .scriptural, .holy])
-    func withTheBetaTheBeadsAlwaysCountOnTheScreen(form: RosaryForm) {
-        for aloud in [false, true] {
-            for onBeads in [false, true] {
-                #expect(form.countsOnScreen(aloud: aloud, onBeads: onBeads, oneRosary: true))
-            }
-        }
-    }
-
-    @Test func withoutTheBetaCountingStillDecides() {
-        #expect(!RosaryForm.meditation.countsOnScreen(aloud: false, onBeads: false, oneRosary: false))
-        #expect(!RosaryForm.scriptural.countsOnScreen(aloud: false, onBeads: false))
-    }
-
-    @Test func withTheBetaNoChoiceIsOffered() {
-        for aloud in [false, true] {
-            #expect(RosaryChoice.offered(for: .meditation, aloud: aloud, oneRosary: true).isEmpty)
-            #expect(RosaryChoice.offered(for: .scriptural, aloud: aloud, oneRosary: true).isEmpty)
-            #expect(RosaryChoice.offered(for: .holy, aloud: aloud, oneRosary: true).isEmpty)
-        }
-        // Off, as it was
-        #expect(RosaryChoice.offered(for: .meditation, aloud: false) == [.audio, .counting])
-        #expect(RosaryChoice.offered(for: .meditation, aloud: false, oneRosary: false) == [.audio, .counting])
-    }
 
     // MARK: - Helps
 

@@ -2,16 +2,13 @@
 //  OneRosaryViews.swift
 //  Lumen Viae
 //
-//  What the One Rosary beta (`UserSettings.oneRosaryBeta`), the simple
-//  Rosary, draws: the one player every form prays on — the rail of the
+//  What the Rosary's player draws: the one player every form prays on — the rail of the
 //  whole Rosary at the edge (`OneRosaryRailView`), the pill at the top
 //  that goes to any part of the Rosary (`RosaryStopsPill`), the speaker
 //  that mutes the voice, the prayer's words in one column at one size,
 //  lit line by line where the recording is timed (`SimpleRosaryWords`),
 //  and one footer of Back, play and Next (`OneRosaryFooter`), the same
 //  from the first Sign of the Cross to the AMEN.
-//
-//  Off, none of this is drawn.
 //
 
 import SwiftUI
@@ -561,10 +558,9 @@ struct OneRosaryColumn<Words: View>: View {
     /// crossfade whole in their slot
     let wordsKey: String
 
-    /// The simple Rosary's parts (`simpleRosaryShowsParts`): off, where
-    /// the Rosary stands and the step line stand aside, in their room,
-    /// so the words never move
-    var showsParts: Bool = true
+    /// The prayer's words (`rosaryShowsWordsAndBeads`): off, they stand
+    /// aside and the title, the place and the step stay where they are
+    var showsWords: Bool = true
 
     @ViewBuilder let words: () -> Words
 
@@ -582,7 +578,7 @@ struct OneRosaryColumn<Words: View>: View {
         fullHeight * 0.55
     }
 
-    /// The painting's share of the glass on the beta's players, so it
+    /// The painting's share of the glass on the players, so it
     /// has dissolved by the time the words begin
     static var paintingFraction: CGFloat { 0.65 }
 
@@ -607,12 +603,10 @@ struct OneRosaryColumn<Words: View>: View {
                     .minimumScaleFactor(0.85)
                     .contentTransition(.opacity)
                     .padding(.top, 2)
-                    .opacity(showsParts ? 1 : 0)
-                    .accessibilityHidden(!showsParts)
 
                 OneRosaryStepLabel(text: bead ?? " ")
-                    .opacity(bead == nil || !showsParts ? 0 : 1)
-                    .accessibilityHidden(bead == nil || !showsParts)
+                    .opacity(bead == nil ? 0 : 1)
+                    .accessibilityHidden(bead == nil)
                     .padding(.top, 12)
             }
             .fixedSize(horizontal: false, vertical: true)
@@ -625,9 +619,11 @@ struct OneRosaryColumn<Words: View>: View {
                         .transition(.opacity)
                 }
                 ZStack(alignment: .topLeading) {
-                    words()
-                        .id(wordsKey)
-                        .transition(.opacity)
+                    if showsWords {
+                        words()
+                            .id(wordsKey)
+                            .transition(.opacity)
+                    }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .padding(.top, 14)
@@ -648,7 +644,7 @@ struct OneRosaryColumn<Words: View>: View {
         .animation(Motion.words, value: bead)
         .animation(Motion.crossfade, value: help)
         .animation(Motion.crossfade, value: tapHint)
-        .animation(Motion.crossfade, value: showsParts)
+        .animation(Motion.crossfade, value: showsWords)
     }
 
     /// Where the Rosary stands, in plain words, under the title: a
@@ -1173,6 +1169,10 @@ struct SimpleRosaryWords: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    /// Where the lit line's top is scrolled to: a line's room above it
+    /// for the line before, the rest of the words' height for it
+    static let litLineAnchor = UnitPoint(x: 0, y: 0.06)
+
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
@@ -1205,10 +1205,13 @@ struct SimpleRosaryWords: View {
             )
             .onChange(of: highlighted) { _, line in
                 guard let line else { return }
+                // The lit line's top near the top of the words, so a line
+                // that wraps to many (a recording's line can run 39
+                // seconds) is read whole below it, never under the foot
                 if reduceMotion {
-                    proxy.scrollTo(line, anchor: UnitPoint(x: 0, y: 0.3))
+                    proxy.scrollTo(line, anchor: Self.litLineAnchor)
                 } else {
-                    withAnimation(Motion.crossfade) { proxy.scrollTo(line, anchor: UnitPoint(x: 0, y: 0.3)) }
+                    withAnimation(Motion.crossfade) { proxy.scrollTo(line, anchor: Self.litLineAnchor) }
                 }
             }
         }

@@ -8,25 +8,13 @@
 //
 //  The painting fills the top and dissolves into the page; over its foot
 //  the title block — a kicker, the name in Cinzel, one italic line. Then
-//  YOUR ROSARY TODAY: the two choices that change the prayer, each set
-//  out as a pill of two named options with a line beneath saying what the
-//  chosen one does, and under them ruled rows for what else is set — the
-//  voice and its speed, which mysteries. One gold act at the foot, PRAY,
-//  and nothing beneath it.
+//  YOUR ROSARY TODAY: ruled rows for what is set — which mysteries, and
+//  the voice and the prayers' speed. One gold act at the foot, PRAY, and
+//  nothing beneath it.
 //
-//  The choices once stood in a sheet behind one quiet line ("Female voice
-//  · 1× · Every prayer aloud · On the beads"), because open on the page
-//  they were a filled card of capsules and switches three of them gold,
-//  and the title page read as a settings form. What changed is how few
-//  there are: two choices, each a single pill, the rest in rows. Whether
-//  the voice says every prayer, and whether the beads are on the screen,
-//  change what praying is like; they are shown before PRAY, where they
-//  apply, rather than found after it. Counting is offered only while the
-//  voice reads the meditation alone (`RosaryChoice.offered`).
-//
-//  Every choice here is the setting Settings, onboarding and the player's
-//  playback sheet keep, so a change made on one page carries to the next
-//  Rosary and to every other place it is offered.
+//  There are no choices to make before PRAY: every Rosary is said aloud
+//  and the beads always hang (Abraham, Nov 2026: "Yes, only Rosary").
+//  The Audio and Counting pills that stood here went with the switch.
 //
 //  Beneath the rows a page may add its own ledger — a meditation set's
 //  meditations, its source, the copy saved on the device — scrolled to
@@ -388,22 +376,12 @@ struct RosaryChoicesSection: View {
             YourRosaryTodayLabel()
                 .padding(.bottom, 6)
 
-            // With the simple Rosary (the beta), none: every prayer is
-            // said aloud and the beads always hang
-            ForEach(offeredChoices, id: \.self) { choice in
-                RosaryChoiceGroup(choice: choice, form: form, value: binding(for: choice))
-                    .transition(RosaryChoiceGroup.comingAndGoing)
-            }
-
-            // Voice & speed comes and goes with the Scriptural Rosary's
-            // Audio, on Counting's timing, since nothing is spoken when
-            // its verses are read in silence
+            // No choices: every prayer is said aloud and the beads always
+            // hang. Abraham, Nov 2026: "Yes, only Rosary"
             ForEach(trailingInfoRows, id: \.self) { row in
                 infoRow(row)
-                    .transition(RosaryChoiceGroup.comingAndGoing)
             }
         }
-        .animation(Motion.choice, value: settings.prayAloud)
         .sheet(item: $sheet) { sheet in
             switch sheet {
             case .voice:
@@ -423,22 +401,9 @@ struct RosaryChoicesSection: View {
         }
     }
 
-    /// The rows after the choices. With the simple Rosary every form is
-    /// said aloud, so Voice & speed always stands
+    /// The rows. Every form is said aloud, so Voice & speed always stands
     private var trailingInfoRows: [RosaryInfoRow] {
-        RosaryInfoRow.rows(for: form, aloud: settings.oneRosaryBeta || settings.prayAloud)
-    }
-
-    private var offeredChoices: [RosaryChoice] {
-        RosaryChoice.offered(for: form, aloud: settings.prayAloud, oneRosary: settings.oneRosaryBeta)
-    }
-
-    private func binding(for choice: RosaryChoice) -> Binding<Bool> {
-        @Bindable var settings = settings
-        switch choice {
-        case .audio: return $settings.prayAloud
-        case .counting: return $settings.prayOnBeads
-        }
+        RosaryInfoRow.rows(for: form, aloud: true)
     }
 
     @ViewBuilder
@@ -448,7 +413,7 @@ struct RosaryChoicesSection: View {
             RosaryInfoRowView(
                 title: row.title,
                 value: RosaryInfoRow.holyAudioValue,
-                icon: RosaryChoice.audio.icon
+                icon: "ph-speaker-high"
             )
         case .mysteries:
             RosaryInfoRowView(
@@ -509,66 +474,6 @@ struct YourRosaryTodayLabel: View {
             )
             .frame(height: AppLine.hairline)
             .accessibilityHidden(true)
-        }
-    }
-}
-
-// MARK: - RosaryChoiceGroup
-
-/// One choice: its glyph and name, the pill of its two options, and a
-/// line saying what the chosen one does. Ruled off beneath.
-struct RosaryChoiceGroup: View {
-
-    let choice: RosaryChoice
-    let form: RosaryForm
-    @Binding var value: Bool
-
-    /// How a choice arrives and leaves beneath another — Counting, as the
-    /// Audio above it changes, and the Scriptural Rosary's Voice & speed
-    /// row with it. Leaving, it is gone before the rows below close over
-    /// its place; arriving, it waits for them to make room. As one plain
-    /// fade on the rows' own timing, the rows slid through the choice
-    /// while it was still half there, words over words.
-    static let comingAndGoing: AnyTransition = .asymmetric(
-        insertion: .opacity.animation(Motion.choice.delay(0.14)),
-        removal: .opacity.animation(Motion.ease(0.1))
-    )
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 8) {
-                AppIcon(choice.icon, size: 13)
-                    .foregroundColor(AppColors.gold.opacity(0.75))
-                    .accessibilityHidden(true)
-
-                Text(choice.title.uppercased())
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2)
-                    .foregroundColor(AppColors.cream)
-            }
-            .accessibilityHidden(true)
-
-            RosaryChoicePill(
-                title: choice.title,
-                options: choice.options(for: form),
-                value: $value
-            )
-
-            Text(choice.note(for: value, form: form))
-                .font(AppFonts.italicFont(14))
-                .foregroundColor(AppColors.textSecondary)
-                .lineSpacing(4)
-                .fixedSize(horizontal: false, vertical: true)
-                .contentTransition(.opacity)
-                .animation(Motion.choice, value: value)
-        }
-        .padding(.top, 12)
-        .padding(.bottom, 14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .overlay(alignment: .bottom) {
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.15))
-                .frame(height: AppLine.hairline)
         }
     }
 }
@@ -695,18 +600,6 @@ struct RosaryChoiceSettingsRow: View {
     /// False while the setting stands at a default nobody chose
     /// (`RosaryChoicePill.isAnswered`)
     var isAnswered: Bool = true
-
-    /// One of the Rosary's two choices, in `RosaryChoice`'s words
-    init(choice: RosaryChoice, value: Binding<Bool>, isAvailable: Bool = true) {
-        self.init(
-            icon: choice.icon,
-            title: choice.title,
-            options: choice.options(for: .meditation),
-            value: value,
-            isAvailable: isAvailable,
-            note: { choice.note(for: $0) }
-        )
-    }
 
     init(
         icon: String,

@@ -2,8 +2,7 @@
 //  SimpleRosary.swift
 //  Lumen Viae
 //
-//  The pure parts of the simple Rosary, which the One Rosary beta
-//  (`UserSettings.oneRosaryBeta`) now is: one player for every form,
+//  The pure parts of the simple Rosary: one player for every form,
 //  every prayer said aloud from the moment PRAY is pressed, a pill at the
 //  top to go to any part of the Rosary (`RosaryStop`), a speaker to mute
 //  the voice while the Rosary goes on at the recording's own pace, and
@@ -12,7 +11,8 @@
 //  read, and someone who came to the Rosary to learn it begins on St.
 //  Alphonsus Liguori's meditations with the helps on (`SimpleRosary`).
 //
-//  Off, nothing here is read, and the app is as it was.
+//  Abraham, Nov 2026: "Yes, only Rosary". It was the One Rosary beta
+//  behind a switch; the switch and the Rosary it replaced are gone.
 //
 
 import Foundation
@@ -90,19 +90,17 @@ enum RosaryStop: Hashable {
 /// The simple Rosary's rules, kept pure so the tests can hold them
 enum SimpleRosary {
 
-    /// Whether every prayer is said aloud. With the beta on, always,
-    /// except a meditation set with no recording, which opens as text to
-    /// read. Off, as the Audio choice says, as it always was.
-    static func praysAloud(beta: Bool, setting: Bool, form: RosaryForm, setHasRecording: Bool = true) -> Bool {
-        guard beta else { return form.praysAloud(setting: setting) }
-        return form == .meditation ? setHasRecording : true
+    /// Whether every prayer is said aloud: always, except a meditation
+    /// set with no recording, which opens as text to read
+    static func praysAloud(form: RosaryForm, setHasRecording: Bool = true) -> Bool {
+        form == .meditation ? setHasRecording : true
     }
 
-    /// Whether a meditation set opens as text to read: with the beta on,
-    /// a set none of whose meditations has a recording. With one, it
-    /// stays in the player, and there is no switching between the two.
-    static func opensAsText(beta: Bool, setHasRecording: Bool) -> Bool {
-        beta && !setHasRecording
+    /// Whether a meditation set opens as text to read: a set none of
+    /// whose meditations has a recording. With one, it stays in the
+    /// player, and the meditation can be opened as text from it.
+    static func opensAsText(setHasRecording: Bool) -> Bool {
+        !setHasRecording
     }
 
     /// Whether the words are lit: only from a recording's real lines,
@@ -114,14 +112,14 @@ enum SimpleRosary {
 
     /// Whether someone begins on the beginner's path — St. Alphonsus
     /// Liguori's meditations with the helps on, after a page that lets
-    /// them say no: with the beta on, whoever said in onboarding (or
+    /// them say no: whoever said in onboarding (or
     /// Settings) that they came to learn the Rosary
     ///
     /// Once they say no ("No thanks, I'll choose") it is not offered
     /// again (`declined`). To ask every time again, set
     /// `remembersDecline` false: that is the one place it is read.
-    static func beginnerPath(beta: Bool, intentions: [PrayerIntention], declined: Bool = false) -> Bool {
-        beta && intentions.contains(.learning) && !(remembersDecline && declined)
+    static func beginnerPath(intentions: [PrayerIntention], declined: Bool = false) -> Bool {
+        intentions.contains(.learning) && !(remembersDecline && declined)
     }
 
     /// Whether a "No thanks" on the beginner's page is kept, so the page
@@ -132,7 +130,6 @@ enum SimpleRosary {
     /// the settings
     static func offersBeginnerPath(_ settings: UserSettings) -> Bool {
         beginnerPath(
-            beta: settings.oneRosaryBeta,
             intentions: settings.intentions,
             declined: settings.declinedBeginnerRosary
         )
@@ -146,6 +143,22 @@ enum SimpleRosary {
             ($0.author ?? "").localizedCaseInsensitiveContains("Liguori")
                 || $0.name.localizedCaseInsensitiveContains("Liguori")
         } ?? summaries.first
+    }
+
+    /// The paragraph of a page that holds a timed line, so the reader
+    /// follows the voice by what it is really saying: matched on the
+    /// line's opening words, with case, accents and spacing folded. Nil
+    /// when no paragraph holds it, and then the page is not moved.
+    static func paragraph(of line: String, in paragraphs: [String]) -> Int? {
+        func fold(_ text: String) -> String {
+            text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+                .components(separatedBy: CharacterSet.alphanumerics.inverted)
+                .filter { !$0.isEmpty }
+                .joined(separator: " ")
+        }
+        let words = fold(line).split(separator: " ").prefix(6).joined(separator: " ")
+        guard !words.isEmpty else { return nil }
+        return paragraphs.firstIndex { fold($0).contains(words) }
     }
 
     /// The one size every prayer's words are set at on the players, the

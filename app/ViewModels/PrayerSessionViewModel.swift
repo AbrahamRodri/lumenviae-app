@@ -331,7 +331,7 @@ final class PrayerSessionViewModel {
         spokenFollowHand()
     }
 
-    /// One Rosary beta: the hand taken to the bead at `index` on the
+    /// The hand taken to the bead at `index` on the
     /// strand by a tap, walked there a bead at a time as the swipe would
     /// take it, so the decade turns, the voice follows and the narration
     /// loads exactly as they do for a swipe. Only as far as
@@ -925,7 +925,9 @@ final class PrayerSessionViewModel {
             }
             return claim
         }
-        let claim = audioService.claim(.prayerFlow) { [weak self] in
+        // A meditation is always heard at 1×; the app's speed is the
+        // prayers' (the step buttons), and comes back when the claim ends
+        let claim = audioService.claim(.prayerFlow, rate: .borrowed(1.0)) { [weak self] in
             self?.narrationClaim = nil
             self?.pendingRemoteAutoplay = false
         }!
@@ -1317,9 +1319,7 @@ extension PrayerSessionViewModel: SpokenRosaryHost {
         // The meditations' timings are fetched beside the voice, never
         // before its first word: the opening prayers are said while they
         // arrive, and a meditation reached without them is simply unlit
-        if UserSettings.shared.oneRosaryBeta {
-            Task { [weak self] in await self?.fetchTimedNarrations() }
-        }
+        Task { [weak self] in await self?.fetchTimedNarrations() }
         // The step an interrupted Rosary stopped on, only while the hand
         // still stands where it stopped: turned on after the hand has
         // moved on, the voice would take it back there

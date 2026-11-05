@@ -2,7 +2,7 @@
 //  BeginnerRosaryView.swift
 //  Lumen Viae
 //
-//  The simple Rosary's beginner's path (the One Rosary beta): someone
+//  The simple Rosary's beginner's path: someone
 //  who said in onboarding that they came to learn the Rosary begins on
 //  St. Alphonsus Liguori's meditations for the day's mysteries, with the
 //  helps on — one plain line on each step saying what to pray and which

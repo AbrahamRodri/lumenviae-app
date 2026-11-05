@@ -53,8 +53,8 @@ struct AssetNamesTests {
         #expect(missing(names) == [])
     }
 
-    @Test func everyRosaryChoiceAndAfterPrayerGlyphIsInTheCatalog() {
-        let names = RosaryChoice.allCases.map(\.icon) + RosaryClosingExtra.allCases.map(\.icon)
+    @Test func everyAfterPrayerGlyphIsInTheCatalog() {
+        let names = RosaryClosingExtra.allCases.map(\.icon)
         #expect(missing(names) == [])
     }
 

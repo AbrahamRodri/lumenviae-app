@@ -2,31 +2,20 @@
 //  RosaryForm.swift
 //  Lumen Viae
 //
-//  One Rosary in three forms, and the two choices that change how it is
-//  prayed.
+//  One Rosary in three forms, and the rows its own page carries.
 //
 //  The app once looked as though it held four Rosaries — Pray with a
 //  Meditation, the Scriptural Rosary, the Rosary Aloud, and an "Every
 //  prayer aloud" switch that quietly made a fourth of the first. They
 //  are one prayer: the same mysteries, prayed with a meditation read
 //  between the decades, with a verse of Scripture on every bead, or with
-//  nothing read between at all. The form is chosen on the mysteries'
-//  page; what changes the prayer beyond that is two choices, confirmed
-//  on the form's own page just above PRAY:
+//  nothing read between at all (No Meditation). The form is chosen on the
+//  mysteries' page. Every form is said aloud and the beads always hang:
+//  the Audio and Counting choices that once stood above PRAY went with
+//  the switch (Abraham, Nov 2026: "Yes, only Rosary").
 //
-//  Audio — whether the voice reads only the meditation (Meditation Only;
-//  in the Scriptural Rosary, Read in Silence) or says every prayer
-//  (Whole Rosary). The setting is `UserSettings.prayAloud`.
-//
-//  Counting — whether the beads are on the screen (On the Screen) or in
-//  the hand (On My Rosary). The setting is `UserSettings.prayOnBeads`.
-//  Offered only while the voice reads the meditation alone: when it says
-//  every prayer, it moves the beads on the screen itself.
-//
-//  Everything else — the voice, its speed, which mysteries — is a row
-//  beneath the choices. The words for every choice live here, once, so
-//  the pages, the player's sheet, Settings and onboarding say the same
-//  thing.
+//  What is set — which mysteries, the voice and the prayers' speed — is a
+//  row on the form's own page.
 //
 
 import Foundation
@@ -49,114 +38,19 @@ enum RosaryForm: Hashable {
         case .plain: self = .holy
         }
     }
-
-    /// Whether every prayer is said aloud: always in the Holy Rosary,
-    /// otherwise as the Audio choice says
-    func praysAloud(setting: Bool) -> Bool {
-        self == .holy || setting
-    }
-
-    /// Whether the beads are counted on the screen. When the voice says
-    /// every prayer it moves them there itself, so the Counting choice
-    /// only holds while it reads the meditation alone.
-    ///
-    /// With the One Rosary beta on (`oneRosary`), always: the beads hang
-    /// on every player, and Counting is not offered.
-    func countsOnScreen(aloud: Bool, onBeads: Bool, oneRosary: Bool = false) -> Bool {
-        oneRosary || praysAloud(setting: aloud) || onBeads
-    }
 }
 
 // MARK: - RosaryChoice
 
-/// One of the two choices that change how the Rosary is prayed
-enum RosaryChoice: Hashable, CaseIterable {
-    /// `UserSettings.prayAloud`: the meditation alone, or every prayer
-    case audio
-    /// `UserSettings.prayOnBeads`: on your own rosary, or on the screen
-    case counting
-
+/// A choice set as a pill of two named options (Opening and Closing
+/// Prayers, the Prayers tab's Audio). The Rosary's own two choices, Audio
+/// and Counting, went with the switch (Abraham, Nov 2026: "Yes, only
+/// Rosary"): every Rosary is said aloud and the beads always hang.
+enum RosaryChoice {
     /// One of a choice's two options: the setting's value, and its name
     struct Option: Hashable {
         let value: Bool
         let name: String
-    }
-
-    var title: String {
-        switch self {
-        case .audio: return String(localized: "Rosary Audio", comment: "One of the Rosary's two choices, its name: Rosary Audio (what the voice says) or Counting (where the beads are counted)")
-        case .counting: return String(localized: "Counting", comment: "One of the Rosary's two choices, its name: Rosary Audio (what the voice says) or Counting (where the beads are counted)")
-        }
-    }
-
-    var icon: String {
-        switch self {
-        // The speaker: whether there is audio, and how much. With the One
-        // Rosary beta the voice that reads wears a reader of its own
-        // (`lv-voice`), and the joined hands mark prayers alone
-        case .audio: return "ph-speaker-high"
-        case .counting: return "lv-rosary"
-        }
-    }
-
-    /// The two options in the order they are set side by side — the
-    /// quieter way first, as the setting's `false`
-    func options(for form: RosaryForm) -> [Option] {
-        [Option(value: false, name: name(of: false, for: form)),
-         Option(value: true, name: name(of: true, for: form))]
-    }
-
-    /// What an option is called. In the Scriptural Rosary there is no
-    /// meditation, so the quieter way is named for what is left: the
-    /// verses read in silence.
-    func name(of value: Bool, for form: RosaryForm = .meditation) -> String {
-        switch self {
-        case .audio:
-            if value { return String(localized: "Whole Rosary", comment: "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen") }
-            return form == .scriptural
-                ? String(localized: "Read in Silence", comment: "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen")
-                : String(localized: "Meditation Only", comment: "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen")
-        case .counting:
-            return value
-                ? String(localized: "On the Screen", comment: "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen")
-                : String(localized: "On My Rosary", comment: "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen")
-        }
-    }
-
-    /// What the chosen option does, said as what is heard or seen
-    func note(for value: Bool, form: RosaryForm = .meditation) -> String {
-        switch (self, form == .scriptural) {
-        case (.audio, false):
-            return value
-                ? String(localized: "You hear every prayer. Pray along with the voice.", comment: "The line under a Rosary choice, saying what the chosen option does")
-                : String(localized: "You hear the meditation. You say the prayers.", comment: "The line under a Rosary choice, saying what the chosen option does")
-        case (.audio, true):
-            return value
-                ? String(localized: "You hear every verse and prayer.", comment: "The line under a Rosary choice, saying what the chosen option does")
-                : String(localized: "A verse is shown for each Hail Mary. You read and pray in silence.", comment: "The line under a Rosary choice, saying what the chosen option does")
-        case (.counting, _):
-            return value
-                ? String(localized: "The beads are on the screen. Swipe for each Hail Mary.", comment: "The line under a Rosary choice, saying what the chosen option does")
-                : String(localized: "Count on your own rosary. The screen shows one mystery at a time.", comment: "The line under a Rosary choice, saying what the chosen option does")
-        }
-    }
-
-    /// The choices a page offers for a form. The Holy Rosary is always
-    /// said aloud and its beads always move with the voice, so it offers
-    /// neither; with Whole Rosary chosen, Counting falls away for the
-    /// same reason.
-    ///
-    /// With the One Rosary beta on (`oneRosary`), the simple Rosary,
-    /// none: every Rosary is said aloud from PRAY and the beads always
-    /// hang (`SimpleRosary.praysAloud`).
-    static func offered(for form: RosaryForm, aloud: Bool, oneRosary: Bool = false) -> [RosaryChoice] {
-        if oneRosary { return [] }
-        switch form {
-        case .holy:
-            return []
-        case .meditation, .scriptural:
-            return aloud ? [.audio] : [.audio, .counting]
-        }
     }
 }
 
@@ -186,7 +80,7 @@ enum RosaryInfoRow: Hashable {
 
     var title: String {
         switch self {
-        case .audio: return RosaryChoice.audio.title
+        case .audio: return String(localized: "Rosary Audio", comment: "A Rosary's own page: the name of the row saying the Audio Rosary is said aloud")
         case .mysteries:
             return String(localized: "Mysteries", comment: "A Rosary's own page: name of the row that opens the choice of mysteries")
         case .voice:

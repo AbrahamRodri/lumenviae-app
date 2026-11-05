@@ -388,7 +388,7 @@ extension View {
     ///   - onLabelTap: Shows the words of the bead's prayer, from a tap
     ///     on the bead under the hand or its name. Not on the final
     ///     bead, where the AMEN stands under the name.
-    ///   - onBeadTap: One Rosary beta: takes the hand to a bead tapped
+    ///   - onBeadTap: Takes the hand to a bead tapped
     ///     near the one under it, as far as `RosaryStrand.canTap`
     ///     allows. Nil leaves the strand a readout, as it always was.
     func rosaryStrand(
@@ -444,7 +444,7 @@ extension View {
                     .accessibilityHidden(true)
                 }
 
-                // One Rosary beta: the beads near the hand, each a target
+                // The beads near the hand, each a target
                 // that takes the hand there. The strand still moves by the
                 // swipe, the voice and Next; this only adds a way
                 if let onBeadTap {

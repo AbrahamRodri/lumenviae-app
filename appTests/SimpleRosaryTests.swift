@@ -2,12 +2,11 @@
 //  SimpleRosaryTests.swift
 //  Lumen Viae Tests
 //
-//  The simple Rosary (the One Rosary beta): where the pill's parts go in
+//  The simple Rosary: where the pill's parts go in
 //  a spoken Rosary, that nothing is lit without a recording's real
 //  timings, muted or not, that a set with no recording opens as text,
 //  who begins on the beginner's path (and that a no is kept), the
-//  speed steps and the one text size, and that with the switch off
-//  every rule is the app's as it was.
+//  speed steps, the one text size, and the reader following real lines.
 //
 
 import Foundation
@@ -117,52 +116,37 @@ struct SimpleRosaryTests {
 
     // MARK: - Every Prayer Aloud, or Read
 
-    @Test func withTheBetaEveryFormIsSaidAloud() {
-        #expect(SimpleRosary.praysAloud(beta: true, setting: false, form: .meditation, setHasRecording: true))
-        #expect(SimpleRosary.praysAloud(beta: true, setting: false, form: .scriptural))
-        #expect(SimpleRosary.praysAloud(beta: true, setting: false, form: .holy))
+    @Test func everyFormIsSaidAloud() {
+        #expect(SimpleRosary.praysAloud(form: .meditation, setHasRecording: true))
+        #expect(SimpleRosary.praysAloud(form: .scriptural))
+        #expect(SimpleRosary.praysAloud(form: .holy))
     }
 
     @Test func aSetWithNoRecordingOpensAsText() {
-        #expect(SimpleRosary.opensAsText(beta: true, setHasRecording: false))
-        #expect(!SimpleRosary.opensAsText(beta: true, setHasRecording: true))
-        #expect(!SimpleRosary.praysAloud(beta: true, setting: true, form: .meditation, setHasRecording: false))
-    }
-
-    @Test func withTheSwitchOffTheAudioChoiceDecidesAsItDid() {
-        for setting in [false, true] {
-            for recording in [false, true] {
-                #expect(SimpleRosary.praysAloud(beta: false, setting: setting, form: .meditation, setHasRecording: recording) == setting)
-                #expect(!SimpleRosary.opensAsText(beta: false, setHasRecording: recording))
-            }
-            #expect(SimpleRosary.praysAloud(beta: false, setting: setting, form: .scriptural) == setting)
-            #expect(SimpleRosary.praysAloud(beta: false, setting: setting, form: .holy))
-        }
-        #expect(RosaryChoice.offered(for: .meditation, aloud: false, oneRosary: false) == [.audio, .counting])
+        #expect(SimpleRosary.opensAsText(setHasRecording: false))
+        #expect(!SimpleRosary.opensAsText(setHasRecording: true))
+        #expect(!SimpleRosary.praysAloud(form: .meditation, setHasRecording: false))
     }
 
     // MARK: - The Beginner
 
-    @Test func aLearnerTakesTheBeginnersPathOnlyWithTheBeta() {
-        #expect(SimpleRosary.beginnerPath(beta: true, intentions: [.learning]))
-        #expect(SimpleRosary.beginnerPath(beta: true, intentions: [.peace, .learning]))
-        #expect(!SimpleRosary.beginnerPath(beta: true, intentions: [.peace, .habit]))
-        #expect(!SimpleRosary.beginnerPath(beta: false, intentions: [.learning]))
+    @Test func aLearnerTakesTheBeginnersPath() {
+        #expect(SimpleRosary.beginnerPath(intentions: [.learning]))
+        #expect(SimpleRosary.beginnerPath(intentions: [.peace, .learning]))
+        #expect(!SimpleRosary.beginnerPath(intentions: [.peace, .habit]))
     }
 
     @Test func aNoOnTheBeginnersPageIsKept() {
         #expect(SimpleRosary.remembersDecline)
-        #expect(!SimpleRosary.beginnerPath(beta: true, intentions: [.learning], declined: true))
-        #expect(SimpleRosary.beginnerPath(beta: true, intentions: [.learning], declined: false))
+        #expect(!SimpleRosary.beginnerPath(intentions: [.learning], declined: true))
+        #expect(SimpleRosary.beginnerPath(intentions: [.learning], declined: false))
 
         let settings = UserSettings.shared
-        let (beta, intentions, declined) = (settings.oneRosaryBeta, settings.onboardingIntentions, settings.declinedBeginnerRosary)
+        let (intentions, declined) = (settings.onboardingIntentions, settings.declinedBeginnerRosary)
         defer {
-            settings.oneRosaryBeta = beta
             settings.onboardingIntentions = intentions
             settings.declinedBeginnerRosary = declined
         }
-        settings.oneRosaryBeta = true
         settings.onboardingIntentions = [PrayerIntention.learning.rawValue]
         settings.declinedBeginnerRosary = false
         #expect(SimpleRosary.offersBeginnerPath(settings))
@@ -197,6 +181,21 @@ struct SimpleRosaryTests {
         #expect(PlaybackSpeedChoice.isChosen(1.1, appRate: AudioService.resolvedRate(1.1)))
         // A speed kept from the slider that is no step lights none
         #expect(!PlaybackSpeedChoice.steps.contains { PlaybackSpeedChoice.isChosen($0, appRate: 1.5) })
+    }
+
+    // MARK: - The Reader Follows Real Lines
+
+    @Test func theReaderFindsTheParagraphALineIsIn() {
+        let paragraphs = [
+            "Behold, the angel Gabriel was sent from God to a city of Galilee.",
+            "And the angel being come in, said unto her: Hail, full of grace, the Lord is with thee.",
+        ]
+        #expect(SimpleRosary.paragraph(of: "And the angel being come in, said unto her:", in: paragraphs) == 1)
+        // Case, accents and punctuation folded
+        #expect(SimpleRosary.paragraph(of: "behold — the ANGEL Gabriel", in: paragraphs) == 0)
+        // A line no paragraph holds moves nothing
+        #expect(SimpleRosary.paragraph(of: "Glory be to the Father", in: paragraphs) == nil)
+        #expect(SimpleRosary.paragraph(of: "", in: paragraphs) == nil)
     }
 
     @Test func everyPrayerIsSetAtOneSizeThatNeverOutgrowsTheColumn() {

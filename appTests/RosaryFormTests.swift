@@ -2,10 +2,8 @@
 //  RosaryFormTests.swift
 //  Lumen Viae Tests
 //
-//  One Rosary in three forms: which choices each form's page offers and
-//  when, what every option is called, that Whole Rosary always counts on
-//  the screen, which rows stand beneath the choices, and the line a
-//  meditation set's page sets under its name.
+//  One Rosary in three forms: which rows each form's own page carries,
+//  and the line a meditation set's page sets under its name.
 //
 
 import Testing
@@ -14,71 +12,7 @@ import Testing
 @MainActor
 struct RosaryFormTests {
 
-    // MARK: - The Choices Offered
-
-    @Test(arguments: [RosaryForm.meditation, .scriptural])
-    func bothChoicesStandWhileTheVoiceReadsTheMeditationAlone(form: RosaryForm) {
-        #expect(RosaryChoice.offered(for: form, aloud: false) == [.audio, .counting])
-    }
-
-    @Test(arguments: [RosaryForm.meditation, .scriptural])
-    func countingFallsAwayWhenEveryPrayerIsSaidAloud(form: RosaryForm) {
-        #expect(RosaryChoice.offered(for: form, aloud: true) == [.audio])
-    }
-
-    @Test(arguments: [false, true])
-    func theHolyRosaryOffersNoChoice(aloud: Bool) {
-        #expect(RosaryChoice.offered(for: .holy, aloud: aloud).isEmpty)
-    }
-
-    // MARK: - What Each Option Is Called
-
-    @Test func theOptionsAreNamedAsTheDesignNamesThem() {
-        #expect(RosaryChoice.audio.options(for: .meditation).map(\.name) == ["Meditation Only", "Whole Rosary"])
-        #expect(RosaryChoice.audio.options(for: .scriptural).map(\.name) == ["Read in Silence", "Whole Rosary"])
-        #expect(RosaryChoice.counting.options(for: .meditation).map(\.name) == ["On My Rosary", "On the Screen"])
-        #expect(RosaryChoice.counting.options(for: .scriptural).map(\.name) == ["On My Rosary", "On the Screen"])
-    }
-
-    @Test func theQuieterWayComesFirstAsTheSettingsFalse() {
-        for choice in RosaryChoice.allCases {
-            #expect(choice.options(for: .meditation).map(\.value) == [false, true])
-        }
-    }
-
-    @Test func everyNoteIsItsOwn() {
-        let notes = [
-            RosaryChoice.audio.note(for: false), RosaryChoice.audio.note(for: true),
-            RosaryChoice.audio.note(for: false, form: .scriptural), RosaryChoice.audio.note(for: true, form: .scriptural),
-            RosaryChoice.counting.note(for: false), RosaryChoice.counting.note(for: true),
-        ]
-        #expect(Set(notes).count == notes.count)
-        #expect(RosaryChoice.counting.note(for: false, form: .scriptural) == RosaryChoice.counting.note(for: false))
-    }
-
-    @Test func theChoicesAreCalledAudioAndCounting() {
-        #expect(RosaryChoice.audio.title == "Rosary Audio")
-        #expect(RosaryChoice.counting.title == "Counting")
-    }
-
-    // MARK: - Where the Beads Are Counted
-
-    @Test func wholeRosaryAlwaysCountsOnTheScreen() {
-        for form in [RosaryForm.meditation, .scriptural, .holy] {
-            #expect(form.countsOnScreen(aloud: true, onBeads: false))
-            #expect(form.countsOnScreen(aloud: true, onBeads: true))
-        }
-    }
-
-    @Test func readingTheMeditationAloneCountsWhereChosen() {
-        #expect(!RosaryForm.meditation.countsOnScreen(aloud: false, onBeads: false))
-        #expect(RosaryForm.meditation.countsOnScreen(aloud: false, onBeads: true))
-        #expect(!RosaryForm.scriptural.countsOnScreen(aloud: false, onBeads: false))
-        #expect(RosaryForm.scriptural.countsOnScreen(aloud: false, onBeads: true))
-        // The Holy Rosary is said aloud whatever the setting
-        #expect(RosaryForm.holy.countsOnScreen(aloud: false, onBeads: false))
-        #expect(RosaryForm.holy.praysAloud(setting: false))
-    }
+    // MARK: - The Forms
 
     @Test func theSpokenFormsAreTheirRosaryForms() {
         #expect(RosaryForm(SpokenForm.scriptural) == .scriptural)

@@ -424,7 +424,7 @@ final class ScripturalRosaryViewModel {
         spokenFollowHand()
     }
 
-    /// One Rosary beta: the hand taken to the bead at `index` on the
+    /// The hand taken to the bead at `index` on the
     /// strand by a tap, walked there a bead at a time as the swipe would
     /// take it, so the decade turns, the voice follows and the narration
     /// loads exactly as they do for a swipe. Only as far as

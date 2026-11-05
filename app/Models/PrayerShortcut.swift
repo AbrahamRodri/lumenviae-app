@@ -80,15 +80,10 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     }
 
     /// The line under the title in the Pray tray, where the Rosary's
-    /// forms each say whose mysteries they are — and Today's Rosary,
-    /// what the voice will do — in the same words as the mysteries' page
-    func trayDetail(today: MysteryCategory, praysAloud: Bool) -> String {
+    /// forms each say whose mysteries they are, in the same words as the
+    /// mysteries' page. Every form is said aloud, so none says so
+    func trayDetail(today: MysteryCategory) -> String {
         switch self {
-        case .todaysRosary where praysAloud:
-            return String(
-                localized: "\(today.devotionTitle) · with the whole Rosary read to you",
-                comment: "Pray button tray, under Pray Today's Rosary when every prayer is said aloud: the day's mysteries (like Joyful Mysteries), then what the voice will do"
-            )
         case .todaysRosary:
             return String(
                 localized: "\(today.devotionTitle) · with a meditation",

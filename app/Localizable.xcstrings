@@ -14992,6 +14992,17 @@
         }
       }
     },
+    "Off, only the prayer's name stays" : {
+      "comment" : "The Rosary's player, text sheet: the line under Show Words and Beads, saying what is left when it is off",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si lo apagas, solo queda el nombre de la oración"
+          }
+        }
+      }
+    },
     "Offertory Chant" : {
       "comment" : "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it",
       "localizations" : {
@@ -19878,6 +19889,17 @@
         }
       }
     },
+    "Show Words and Beads" : {
+      "comment" : "The Rosary's player, text sheet: switch that shows the prayer's words and the beads at the edge",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar palabras y cuentas"
+          }
+        }
+      }
+    },
     "Show all" : {
       "comment" : "How to Pray, lesson 2: small capitals button under a prayer; shows the whole prayer again",
       "localizations" : {
@@ -19946,17 +19968,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "Show the Rosary's Parts" : {
-      "comment" : "The Rosary's player, text sheet: switch that shows the beads, the parts and where the Rosary stands",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar las partes del Rosario"
           }
         }
       }
@@ -21440,7 +21451,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca una cuenta del rosario de al lado para ir a ella."
+            "value" : "Toca una cuenta del rosario para ir a ella."
           }
         }
       }
@@ -23033,17 +23044,6 @@
         }
       }
     },
-    "The beads, the parts and where you are" : {
-      "comment" : "The Rosary's player, text sheet: the line under Show the Rosary's Parts",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las cuentas, las partes y dónde vas"
-          }
-        }
-      }
-    },
     "The birth of the Blessed Virgin" : {
       "comment" : "Consecration feast chooser: one short line saying what the feast of Our Lady remembers",
       "localizations" : {
@@ -23548,7 +23548,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Primero se lee la meditación. Las cuentas se abren cuando termina."
+            "value" : "Primero se lee la meditación. Podrás pasar las cuentas cuando termine."
           }
         }
       }

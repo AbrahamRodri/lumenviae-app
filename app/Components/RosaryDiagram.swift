@@ -47,7 +47,7 @@ struct RosaryDiagram: View {
     /// The decade (0-based) whose number is lit, with `numbersDecades`
     var litDecade: Int? = nil
 
-    /// Drawn as the One Rosary beta's rail and pendant draw it: a firmer
+    /// Drawn as the player's rail and pendant draw it: a firmer
     /// chain, numerals at a readable size, the centrepiece oval and the
     /// cross budded, and while parts are lit the rest stepped back, so
     /// the part chosen is the one thing that shines
@@ -175,7 +175,7 @@ struct RosaryDiagram: View {
             let angle = (90 + (middleIndex + 1) * 360 / slots) * Double.pi / 180
             let lit = litDecade == decade
             // Beyond the lit arc for the chosen decade, close in for the
-            // rest; with the beta's look, every numeral the same distance
+            // rest; with the rail's look, every numeral the same distance
             // outside the ring, clear of the arc and the pendant
             let radius = layout.radius * (matchesPendant ? 1.5 : (lit ? 1.36 : 1.22))
 
@@ -199,7 +199,7 @@ struct RosaryDiagram: View {
     }
 
     /// Where a decade's numeral stands in a drawing `width` wide, with
-    /// the beta's look (`matchesPendant`, `numbersDecades`), so a host can
+    /// the rail's look (`matchesPendant`, `numbersDecades`), so a host can
     /// lay a tap target over it
     static func numeralPoint(decade: Int, width: CGFloat) -> CGPoint {
         let layout = Layout(width: width, numbersOutside: true)

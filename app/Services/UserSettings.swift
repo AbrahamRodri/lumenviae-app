@@ -167,47 +167,7 @@ final class UserSettings {
         CGFloat(16 + textSizeScale * 8) // 16–24 pt
     }
 
-    // MARK: - Prayer View Mode
-
-    /// Whether the prayer flow opens in full-bleed image mode (vs. reading
-    /// mode). Persisted so the preference survives between sessions.
-    var prayerImageMode: Bool = true {
-        didSet { UserDefaults.standard.set(prayerImageMode, forKey: "userSettings.prayerImageMode") }
-    }
-
-    // MARK: - The Beads
-
-    /// Whether the meditation's player is prayed on the beads: the whole
-    /// Rosary as one strand at the screen's edge, a swipe down for each
-    /// Hail Mary, the mystery turning on its own when the next Our
-    /// Father arrives. Off, the player is the decade-at-a-time screen it
-    /// was — the meditation, its narration, and arrows between the
-    /// mysteries — for a hand that keeps its own count on a rosary.
-    ///
-    /// On by default: the beads are the experience as designed, and the
-    /// choice exists so nobody is made to pray a way they don't. It
-    /// reaches the Scriptural Rosary too, which off the beads sets a
-    /// decade's verses together and moves a mystery at a time. It holds
-    /// only while the voice reads the meditation alone: with every
-    /// prayer said aloud the voice moves the beads on the screen
-    /// (`RosaryForm.countsOnScreen`). Wherever it is offered it is called
-    /// Counting, On My Rosary or On the Screen (`RosaryChoice.counting`).
-    var prayOnBeads: Bool = true {
-        didSet { UserDefaults.standard.set(prayOnBeads, forKey: "userSettings.prayOnBeads") }
-    }
-
-    // MARK: - The Rosary Said Aloud
-
-    /// Whether the player says the whole Rosary aloud — the Creed, every
-    /// Our Father, Hail Mary and Glory Be, the announcements, and in the
-    /// Scriptural Rosary each bead's verse — moving the beads with the
-    /// voice, so it can be prayed with the phone in a pocket. Off until
-    /// chosen: someone who prays along with the meditation alone should
-    /// not find the app praying over them. Wherever it is offered it is
-    /// called Audio, Meditation Only or Whole Rosary (`RosaryChoice.audio`).
-    var prayAloud: Bool = false {
-        didSet { UserDefaults.standard.set(prayAloud, forKey: "userSettings.prayAloud") }
-    }
+    // MARK: - The Rosary
 
     /// Whether a Rosary prayed in silence begins and ends on the pendant:
     /// the Sign of the Cross, the Creed, the Our Father, three Hail Marys
@@ -222,14 +182,15 @@ final class UserSettings {
         didSet { UserDefaults.standard.set(showsOpeningPrayers, forKey: "userSettings.showsOpeningPrayers") }
     }
 
-    /// The simple Rosary's players: whether the Rosary's parts are shown
-    /// around the prayer — the beads at the edge, the pill of the parts at
-    /// the head, and where the Rosary stands under the title. Off, the
-    /// player is the prayer's name, its words and the voice's controls.
-    /// The reader (a set with no recording) shows them whatever this says,
-    /// since there the hand keeps its own place. On by default.
-    var simpleRosaryShowsParts: Bool = true {
-        didSet { UserDefaults.standard.set(simpleRosaryShowsParts, forKey: "userSettings.simpleRosaryShowsParts") }
+    /// The Rosary's players: whether the prayer's words and the beads at
+    /// the edge are shown. Off, the player is the pill of the parts, the
+    /// prayer's name and the voice's controls over the painting, to pray
+    /// by ear. The reader (a set with no recording) shows both whatever
+    /// this says, since there they are the Rosary. On by default.
+    /// Abraham, Nov 2026: it hides the prayer text and the beads, and
+    /// keeps the mystery pills and the mystery's name.
+    var rosaryShowsWordsAndBeads: Bool = true {
+        didSet { UserDefaults.standard.set(rosaryShowsWordsAndBeads, forKey: "userSettings.rosaryShowsWordsAndBeads") }
     }
 
     /// Whether a learner said "No thanks, I'll choose" on the beginner's
@@ -239,28 +200,10 @@ final class UserSettings {
         didSet { UserDefaults.standard.set(declinedBeginnerRosary, forKey: "userSettings.declinedBeginnerRosary") }
     }
 
-    // MARK: - One Rosary (beta)
+    // MARK: - The Rosary's Player
 
-    /// The One Rosary beta, off by default, now the simple Rosary
-    /// (`SimpleRosary`): no Audio or Counting choice, every Rosary said
-    /// aloud from PRAY on one player with a pill to go to any part and a
-    /// speaker to mute, the beads always hanging, a set with no recording
-    /// opening as text, and a learner begun on St. Alphonsus Liguori's
-    /// meditations with the helps, after a page that lets them say no.
-    /// Off, the app is as it was.
-    var oneRosaryBeta: Bool = false {
-        didSet { UserDefaults.standard.set(oneRosaryBeta, forKey: Self.oneRosaryBetaKey) }
-    }
-
-    static let oneRosaryBetaKey = "userSettings.oneRosaryBeta"
-
-    /// The beta's setting as stored: off until chosen
-    static func storedOneRosaryBeta(in defaults: UserDefaults) -> Bool {
-        defaults.bool(forKey: oneRosaryBetaKey)
-    }
-
-    /// With the One Rosary beta on: whether the one-time hint that a bead
-    /// of the rail takes a tap has been shown
+    /// Whether the one-time hint that a bead of the rail takes a tap has
+    /// been shown
     var hasSeenBeadTapHint: Bool = false {
         didSet { UserDefaults.standard.set(hasSeenBeadTapHint, forKey: "userSettings.hasSeenBeadTapHint") }
     }
@@ -393,14 +336,6 @@ final class UserSettings {
         "userSettings.readingRate.\(bookID)"
     }
 
-    /// Whether the swipe-between-mysteries hint has been shown.
-    ///
-    /// The gesture is a shortcut for something the arrows already do, so
-    /// the hint is a courtesy, not an instruction — it appears on a first
-    /// Rosary and never again.
-    var hasSeenPrayerSwipeHint: Bool = false {
-        didSet { UserDefaults.standard.set(hasSeenPrayerSwipeHint, forKey: "userSettings.hasSeenPrayerSwipeHint") }
-    }
 
     // MARK: - Prayer Language
 
@@ -715,7 +650,6 @@ final class UserSettings {
         if d.object(forKey: "userSettings.prayerLanguage") != nil {
             prayerLanguagePreference = d.string(forKey: "userSettings.prayerLanguage") ?? PrayerLanguage.english.rawValue
         }
-        hasSeenPrayerSwipeHint = d.bool(forKey: "userSettings.hasSeenPrayerSwipeHint")
         if d.object(forKey: "userSettings.readerAutoScroll") != nil {
             readerAutoScroll = d.bool(forKey: "userSettings.readerAutoScroll")
         }
@@ -723,25 +657,17 @@ final class UserSettings {
             // A retired voice's choice carries over to its successor
             narrationVoiceSlug = NarrationVoice.successors[voice] ?? voice
         }
-        if d.object(forKey: "userSettings.prayOnBeads") != nil {
-            prayOnBeads = d.bool(forKey: "userSettings.prayOnBeads")
-        }
-        prayAloud = d.bool(forKey: "userSettings.prayAloud")
         if d.object(forKey: "userSettings.showsOpeningPrayers") != nil {
             showsOpeningPrayers = d.bool(forKey: "userSettings.showsOpeningPrayers")
         }
         declinedBeginnerRosary = d.bool(forKey: "userSettings.declinedBeginnerRosary")
-        if d.object(forKey: "userSettings.simpleRosaryShowsParts") != nil {
-            simpleRosaryShowsParts = d.bool(forKey: "userSettings.simpleRosaryShowsParts")
+        if d.object(forKey: "userSettings.rosaryShowsWordsAndBeads") != nil {
+            rosaryShowsWordsAndBeads = d.bool(forKey: "userSettings.rosaryShowsWordsAndBeads")
         }
-        oneRosaryBeta = Self.storedOneRosaryBeta(in: d)
         hasSeenBeadTapHint = d.bool(forKey: "userSettings.hasSeenBeadTapHint")
         prayForHolyFather = d.bool(forKey: "userSettings.prayForHolyFather")
         prayMemorare = d.bool(forKey: "userSettings.prayMemorare")
         praySaintMichael = d.bool(forKey: "userSettings.praySaintMichael")
-        if d.object(forKey: "userSettings.prayerImageMode") != nil {
-            prayerImageMode = d.bool(forKey: "userSettings.prayerImageMode")
-        }
         if d.object(forKey: "userSettings.missalLayout") != nil {
             missalLayoutPreference = d.string(forKey: "userSettings.missalLayout") ?? ""
         }

@@ -41,7 +41,7 @@ struct PrayerPaintingStage: View {
 
     var style: Style = .seated
 
-    /// The seated painting's share of the glass. The One Rosary beta
+    /// The seated painting's share of the glass. The Rosary's player
     /// seats it higher, so the words stand on the dark ground beneath it
     var seatedFraction: CGFloat = 0.75
 

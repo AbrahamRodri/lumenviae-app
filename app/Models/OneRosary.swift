@@ -2,12 +2,9 @@
 //  OneRosary.swift
 //  Lumen Viae
 //
-//  The pure parts of the One Rosary beta (`UserSettings.oneRosaryBeta`)'s
-//  rail: which beads of the strand a tap may go to
+//  The pure parts of the Rosary player's rail: which beads of the strand a tap may go to
 //  (`RosaryStrand.canTap`), and the whole Rosary as one rail
 //  (`OneRosaryRail`). The simple Rosary's rules are `SimpleRosary`.
-//
-//  Off, nothing here is read, and the app is as it was.
 //
 
 import Foundation
@@ -127,7 +124,7 @@ enum RosaryHelps {
 extension RosaryStrand {
 
     /// Whether a tap on the bead at `index` may take the hand there from
-    /// `active`, with the One Rosary beta on: any bead behind it, and
+    /// `active`: any bead behind it, and
     /// ahead only as far as the next Our Father, so a tap never passes
     /// over a mystery's meditation unheard. On a decade's Glory Be
     /// (`onGloryBe`) the hand already stands on the next Our Father's
@@ -153,7 +150,7 @@ extension RosaryStrand {
 
 // MARK: - OneRosaryRail
 
-/// The whole Rosary as one rail, with the One Rosary beta on: drawn as a
+/// The whole Rosary as one rail: drawn as a
 /// rosary unrolled into one string, read one way only, from the cross at
 /// its foot to the medal at its head. The opening prayers climb the
 /// pendant from the cross; the centrepiece (the medal) stands between the

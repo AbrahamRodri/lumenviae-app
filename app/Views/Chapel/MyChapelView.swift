@@ -646,7 +646,7 @@ struct MyChapelView: View {
             return ScheduleService.categoryForToday().devotionTitle
         // In the words the Pray tray uses for the same acts
         case .scripturalRosary, .rosaryAloud:
-            return item.trayDetail(today: ScheduleService.categoryForToday(), praysAloud: true)
+            return item.trayDetail(today: ScheduleService.categoryForToday())
         case .consecration:
             guard let progress = activeConsecration else {
                 return String(localized: "Not yet begun", comment: "Chapel, Today tile: the consecration row's second line before the preparation has begun")

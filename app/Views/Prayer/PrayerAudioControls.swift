@@ -122,95 +122,21 @@ struct NarrationPlayButton: View {
     }
 }
 
-/// The play button together with the position VoiceOver reads from it.
-///
-/// It exists only to keep the read of `currentTime` in a leaf. The
-/// narration clock ticks twice a second, and `@Observable` makes whoever
-/// reads it re-render — so building this string in the prayer screen's
-/// body rebuilt the whole screen, blurred artwork and all, at 2 Hz for
-/// the length of every meditation.
-struct NarrationPlayControl: View {
-
-    let viewModel: PrayerSessionViewModel
-    var diameter: CGFloat = 64
-
-    var body: some View {
-        // After the last Amen said aloud there is nothing left to play;
-        // the button stands aside, and AMEN is what glows. Said aloud,
-        // the Rosary is ready whenever it is not finished: a prayer
-        // stepped to while paused has no recording loaded until play is
-        // pressed, and gated on a track's length the button stood lit
-        // and did nothing, with no other way to go on
-        let aloud = viewModel.isPrayingAloud
-        let ready = aloud
-            ? !viewModel.isSpokenFinished
-            : !viewModel.isLoadingAudio && viewModel.totalDuration > 0
-
-        NarrationPlayButton(
-            isPlaying: viewModel.isPlaying,
-            isLoading: viewModel.isLoadingAudio,
-            diameter: diameter
-        ) {
-            viewModel.isPlaying.toggle()
-        }
-        .disabled(!ready)
-        .opacity(viewModel.isSpokenFinished ? 0.35 : 1)
-        .animation(Motion.crossfade, value: viewModel.isSpokenFinished)
-        // With no scrubber on screen there is nothing else for VoiceOver
-        // to read position from, or to seek with
-        // Said aloud, the prayer being said rather than a clock that runs
-        // a few seconds and starts again at every prayer
-        .accessibilityValue(
-            !ready ? Text("Not ready")
-                : aloud ? Text(viewModel.spokenCaption ?? "")
-                : Text("\(NarrationClock.spoken(viewModel.currentTime)) of \(NarrationClock.spoken(viewModel.totalDuration))")
-        )
-        .accessibilityHint(
-            ready
-                ? (aloud
-                    ? Text("Swipe up or down for the next or previous prayer")
-                    : Text("Swipe up or down to move through the narration"))
-                : Text(verbatim: "")
-        )
-        // Said aloud, a prayer at a swipe, so the value read out is the
-        // one moved: fifteen seconds ran a Hail Mary off its end while it
-        // played, and did nothing to be heard while it was paused
-        .accessibilityAdjustableAction { direction in
-            switch direction {
-            case .increment:
-                if aloud { viewModel.stepSpokenPrayer(forward: true) } else { viewModel.skipForward(15) }
-            case .decrement:
-                if aloud { viewModel.stepSpokenPrayer(forward: false) } else { viewModel.skipBackward(15) }
-            @unknown default: break
-            }
-        }
-    }
-}
-
 // MARK: - Playback Settings
 
-/// The tray beside the reader button: which voice reads, how fast it
-/// reads, and the Rosary's two choices — Audio, and while the voice
-/// reads the meditation alone, Counting.
+/// The player's Voice sheet: which voice reads, and how fast the
+/// prayers are said (meditations are always read at 1×).
 ///
-/// The voice and the choices live here as well as in Settings
-/// because this is the one settings surface the player has: someone
-/// who finds the strand, or the narrator, is not for them mid-Rosary
-/// should not have to leave the Rosary to say so, and someone who
-/// changed it should be able to find it again from the same place.
+/// The voice lives here as well as in Settings because this is the
+/// player's own settings surface: someone who finds the narrator is not
+/// for them mid-Rosary should not have to leave the Rosary to say so.
 struct PlaybackSettingsSheet: View {
 
-    @Environment(UserSettings.self) private var userSettings
     @Environment(\.dismiss) private var dismiss
 
-    /// The Rosary the sheet is opened over: its choices are that form's
-    /// (One Rosary beta: the Scriptural and Audio Rosaries open it too)
-    var form: RosaryForm = .meditation
-
     /// The sheet's height, for its detent: the header, the voices and
-    /// the speeds under their labels, and the two choices with their
-    /// notes
-    static let height: CGFloat = 600
+    /// the prayers' speed under their labels, and the speed's note
+    static let height: CGFloat = 360
 
     /// The detents the player gives it: its own height, or at the
     /// accessibility text sizes the whole glass, where the rows once
@@ -220,10 +146,8 @@ struct PlaybackSettingsSheet: View {
     }
 
     var body: some View {
-        @Bindable var settings = userSettings
-
         // Scrolls only when the words outgrow the sheet
-        return ScrollView {
+        ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 SheetHeader(title: String(
                     localized: "Playback",
@@ -255,26 +179,6 @@ struct PlaybackSettingsSheet: View {
                     comment: "Playback settings sheet: the note under the prayers' speed: it does not change the meditations"
                 ))
 
-                // The two choices as the set's page sets them (`RosaryChoiceGroup`),
-                // in the same order and the same words, so a change made
-                // mid-Rosary is recognised as the one made before PRAY.
-                // Counting stands only while the voice reads the
-                // meditation alone: with the Whole Rosary it moves the
-                // beads on the screen itself
-                VStack(spacing: 0) {
-                    ForEach(RosaryChoice.offered(for: form, aloud: settings.prayAloud, oneRosary: settings.oneRosaryBeta), id: \.self) { choice in
-                        RosaryChoiceGroup(
-                            choice: choice,
-                            form: form,
-                            value: choice == .audio ? $settings.prayAloud
-                                : $settings.prayOnBeads
-                        )
-                        .transition(RosaryChoiceGroup.comingAndGoing)
-                    }
-                }
-                .padding(.horizontal, SheetMetrics.gutter)
-                .padding(.top, 14)
-                .animation(Motion.choice, value: settings.prayAloud)
             }
             .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding(.bottom, 20)
