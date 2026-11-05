@@ -63,4 +63,20 @@ struct SetTranslationTests {
         #expect(set.setTranslation == nil)
         #expect(set.name == "Gospel")
     }
+
+    @Test("A set is found by its English names as well as its Spanish")
+    func searchKeepsTheEnglish() throws {
+        let set = try JSONDecoder().decode(MeditationSetSummary.self, from: json)
+        #expect(AppSearch.matches(set, needle: "liguori"))
+        #expect(AppSearch.matches(set, needle: "glories"))
+    }
+
+    @Test("The bundled sets' copy keeps the English and the Spanish apart")
+    func withTranslationsKeepsBoth() throws {
+        let set = try JSONDecoder().decode(MeditationSet.self, from: json)
+        let copy = set.withTranslations([])
+        #expect(copy.englishName == "St. Alphonsus Liguori")
+        #expect(copy.englishImageAlt == "Portrait of St. Alphonsus")
+        #expect(copy.setTranslation == set.setTranslation)
+    }
 }

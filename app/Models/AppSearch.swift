@@ -369,11 +369,13 @@ enum AppSearch {
         return hits.map { Hit.reading(shelf: $0.0, reading: $0.1) }
     }
 
-    /// A meditation set by its name, author, source, labels (by the word
+    /// A meditation set by its name, author, source (in English too, so
+    /// "Liguori" still finds San Alfonso in Spanish), labels (by the word
     /// the shelf shows as well as the one the server stores) or devotion
     static func matches(_ summary: MeditationSetSummary, needle: String) -> Bool {
         let words =
             [summary.name, summary.author, summary.source,
+             summary.englishName, summary.englishAuthor, summary.englishSource,
              MysteryCategory(rawValue: summary.category)?.devotionTitle]
             .compactMap { $0 }
             + (summary.labels ?? []).flatMap { [$0, MeditationLabel.displayName($0)] }
