@@ -17,6 +17,33 @@ import Testing
 @MainActor
 struct SimpleRosaryTests {
 
+    // MARK: - The Helps on a Spoken Pendant
+
+    /// Said aloud, the opening and closing prayers are the spoken
+    /// script's, and the beginner's helps must still find their step on
+    /// the pendant: every opening and closing prayer of the voice's
+    /// script is the same step the silent pendant has, and a prayer said
+    /// after the Rosary has none
+    @Test func everyPrayerTheVoiceSaysOnThePendantIsAStep() {
+        let pendant = SilentPendant(category: .joyful)
+        let keys = MysteryData.mysteries(for: .joyful).map { "\($0.category.lowercased())_\($0.order)" }
+        let script = SpokenRosaryScript.build(
+            category: .joyful, mysteryKeys: keys, hailMarys: 10, style: .plain,
+            extras: [.holyFather, .memorare, .stMichael]
+        )
+        let opening = script.indices.filter { script[$0].phase == .opening }
+        #expect(opening.compactMap { pendant.step(at: $0, in: script) }
+            == pendant.opening.indices.map(SilentPendant.Step.opening))
+        let closing = script.indices.compactMap { pendant.step(at: $0, in: script) }.filter {
+            if case .closing = $0 { return true } else { return false }
+        }
+        #expect(closing == pendant.closing.indices.map(SilentPendant.Step.closing))
+        let memorare = script.firstIndex { $0.kind == .prayer("memorare") }
+        #expect(memorare.flatMap { pendant.step(at: $0, in: script) } == nil)
+        let decade = script.firstIndex { $0.phase == .decade }
+        #expect(decade.flatMap { pendant.step(at: $0, in: script) } == nil)
+    }
+
     // MARK: - The Pill's Parts
 
     @Test func theStopsRunFromTheOpeningToTheClose() {

@@ -150,6 +150,15 @@ final class PrayerSessionViewModel {
         pendantShown ? pendantStep : nil
     }
 
+    /// The opening or closing prayer under the hand, as a step of the
+    /// pendant, whether it is said aloud or prayed in silence: what the
+    /// beginner's helps read on the pendant
+    var helpsPendantStep: SilentPendant.Step? {
+        if let step = currentPendantStep { return step }
+        guard let spoken, spokenPendant != nil else { return nil }
+        return silentPendant.step(at: min(spoken.index, spoken.script.count - 1), in: spoken.script)
+    }
+
     /// The opening or closing prayer under the hand, prayed in silence
     var silentPendantPrayer: SpokenPendant? {
         currentPendantStep.flatMap(silentPendant.pendant(at:))

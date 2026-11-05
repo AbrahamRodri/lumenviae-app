@@ -759,12 +759,12 @@ extension MysteryPrayerView {
     /// The beginner's path: the line for the hand's place, from the
     /// guide; never on the chaplet, which has none
     fileprivate var oneRosaryHelp: RosaryHelps.Line? {
-        guard showsHelps, viewModel.spokenPendant == nil || viewModel.currentPendantStep != nil,
+        guard showsHelps, viewModel.spokenPendant == nil || viewModel.helpsPendantStep != nil,
               let category = meditationSet.mysteryCategory
         else { return nil }
         return RosaryHelps.line(
             for: category,
-            pendantStep: viewModel.currentPendantStep,
+            pendantStep: viewModel.helpsPendantStep,
             mystery: viewModel.currentMysteryIndex,
             bead: viewModel.currentBeadIndex
         )
