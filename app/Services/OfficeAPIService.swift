@@ -3,7 +3,7 @@
 //  Lumen Viae
 //
 //  HTTP client for the Divine Office endpoints of the Lumen Viae API
-//  (https://lumenviae.fly.dev/api/office/*). Our own API and envelope —
+//  (https://www.lumenviae.org/api/office/*). Our own API and envelope —
 //  but its own client beside APIService, the way MissalAPIService is:
 //  the office is assembled from the Divinum Officium engine upstream,
 //  and an upstream outage (the API's `office_unavailable`) should never
@@ -48,7 +48,7 @@ final class OfficeAPIService {
     /// Every edition the cache may hold, for pruning
     static var editions: [String] { [edition(spanish: false), edition(spanish: true)] }
 
-    private let baseURL = "https://lumenviae.fly.dev/api/office"
+    private let baseURL = "https://www.lumenviae.org/api/office"
     private let session: URLSession
     private let decoder = JSONDecoder()
 
