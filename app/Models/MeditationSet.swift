@@ -142,13 +142,13 @@ struct MeditationSet: nonisolated Codable, Identifiable, Hashable {
     let id: Int
 
     /// Set name (e.g., "Traditional Meditations")
-    let name: String
+    let englishName: String
 
     /// Category string (e.g., "joyful")
     let category: String
 
     /// Optional description of this meditation style
-    let description: String?
+    let englishDescription: String?
 
     /// Descriptive labels for browsing/filtering (e.g., ["Saints", "Scriptural"]).
     /// The first label is the set's primary group. Optional — absent until
@@ -178,10 +178,10 @@ struct MeditationSet: nonisolated Codable, Identifiable, Hashable {
     /// the set's own byline, or the meditations' when every one agrees.
     /// Null for a set of mixed voices — render nothing rather than a name
     /// true of most of it.
-    let author: String?
+    let englishAuthor: String?
 
     /// The book the meditations were drawn from, on the same terms as `author`
-    let source: String?
+    let englishSource: String?
 
     /// When every `audio_url` in this response stops working, ISO 8601.
     /// Kept as the string the server sent: the offline store round-trips
@@ -196,14 +196,33 @@ struct MeditationSet: nonisolated Codable, Identifiable, Hashable {
     let imageFocalY: Double?
     let imageWidth: Int?
     let imageHeight: Int?
-    let imageAlt: String?
+    let englishImageAlt: String?
+
+    /// The set's own words in Spanish, as `?lang=es` sends them
+    /// (`set_translation`): nil without `lang`, for a bundled set, or one
+    /// stored before Spanish. Kept beside the English, so a stored copy
+    /// reads right in either language.
+    let setTranslation: SetTranslation?
+
+    /// The set as the app names it: its Spanish in a Spanish app, where it
+    /// has some, else the English
+    nonisolated var name: String { SetTranslation.pick(setTranslation?.name, englishName) ?? englishName }
+    nonisolated var description: String? { SetTranslation.pick(setTranslation?.description, englishDescription) }
+    nonisolated var author: String? { SetTranslation.pick(setTranslation?.author, englishAuthor) }
+    nonisolated var source: String? { SetTranslation.pick(setTranslation?.source, englishSource) }
+    nonisolated var imageAlt: String? { SetTranslation.pick(setTranslation?.imageAlt, englishImageAlt) }
     let imageAttribution: ArtworkAttribution?
 
     // Every key is listed — leaving `meditations` out of an explicit
     // CodingKeys does not throw, it decodes to nil and empties the prayer
     // screen.
     enum CodingKeys: String, CodingKey {
-        case id, name, category, description, labels, author, source, translations
+        case id, category, labels, translations
+        case englishName = "name"
+        case englishDescription = "description"
+        case englishAuthor = "author"
+        case englishSource = "source"
+        case setTranslation = "set_translation"
         case englishMeditations = "meditations"
         case audioExpiresAt = "audio_expires_at"
         case imageUrl = "image_url"
@@ -212,7 +231,7 @@ struct MeditationSet: nonisolated Codable, Identifiable, Hashable {
         case imageFocalY = "image_focal_y"
         case imageWidth = "image_width"
         case imageHeight = "image_height"
-        case imageAlt = "image_alt"
+        case englishImageAlt = "image_alt"
         case imageAttribution = "image_attribution"
     }
 
@@ -234,17 +253,18 @@ struct MeditationSet: nonisolated Codable, Identifiable, Hashable {
         imageHeight: Int? = nil,
         imageAlt: String? = nil,
         imageAttribution: ArtworkAttribution? = nil,
-        translations: [MeditationTranslation]? = nil
+        translations: [MeditationTranslation]? = nil,
+        setTranslation: SetTranslation? = nil
     ) {
         self.id = id
-        self.name = name
+        self.englishName = name
         self.category = category
-        self.description = description
+        self.englishDescription = description
         self.labels = labels
         self.englishMeditations = meditations
         self.translations = translations
-        self.author = author
-        self.source = source
+        self.englishAuthor = author
+        self.englishSource = source
         self.audioExpiresAt = audioExpiresAt
         self.imageUrl = imageUrl
         self.imageAlignment = imageAlignment
@@ -252,7 +272,8 @@ struct MeditationSet: nonisolated Codable, Identifiable, Hashable {
         self.imageFocalY = imageFocalY
         self.imageWidth = imageWidth
         self.imageHeight = imageHeight
-        self.imageAlt = imageAlt
+        self.englishImageAlt = imageAlt
+        self.setTranslation = setTranslation
         self.imageAttribution = imageAttribution
     }
 
@@ -310,23 +331,23 @@ struct MeditationSetSummary: nonisolated Codable, Identifiable, Hashable {
     let id: Int
 
     /// Set name (e.g., "St. Louis de Montfort")
-    let name: String
+    let englishName: String
 
     /// Category string (e.g., "sorrowful")
     let category: String
 
     /// Optional description
-    let description: String?
+    let englishDescription: String?
 
     /// Descriptive labels for browsing/filtering (e.g., ["Saints", "Scriptural"]).
     /// The first label is the set's primary group; nil until the API sends it.
     let labels: [String]?
 
     /// Whose voice the set is, on the same terms as `MeditationSet.author`
-    let author: String?
+    let englishAuthor: String?
 
     /// The book behind it, on the same terms as `MeditationSet.source`
-    let source: String?
+    let englishSource: String?
 
     // Artwork — flat, as the API sends them. Read through `artwork`.
     let imageUrl: String?
@@ -335,18 +356,37 @@ struct MeditationSetSummary: nonisolated Codable, Identifiable, Hashable {
     let imageFocalY: Double?
     let imageWidth: Int?
     let imageHeight: Int?
-    let imageAlt: String?
+    let englishImageAlt: String?
+
+    /// The set's own words in Spanish, as `?lang=es` sends them
+    /// (`set_translation`): nil without `lang`, for a bundled set, or one
+    /// stored before Spanish. Kept beside the English, so a stored copy
+    /// reads right in either language.
+    let setTranslation: SetTranslation?
+
+    /// The set as the app names it: its Spanish in a Spanish app, where it
+    /// has some, else the English
+    nonisolated var name: String { SetTranslation.pick(setTranslation?.name, englishName) ?? englishName }
+    nonisolated var description: String? { SetTranslation.pick(setTranslation?.description, englishDescription) }
+    nonisolated var author: String? { SetTranslation.pick(setTranslation?.author, englishAuthor) }
+    nonisolated var source: String? { SetTranslation.pick(setTranslation?.source, englishSource) }
+    nonisolated var imageAlt: String? { SetTranslation.pick(setTranslation?.imageAlt, englishImageAlt) }
     let imageAttribution: ArtworkAttribution?
 
     enum CodingKeys: String, CodingKey {
-        case id, name, category, description, labels, author, source
+        case id, category, labels
+        case englishName = "name"
+        case englishDescription = "description"
+        case englishAuthor = "author"
+        case englishSource = "source"
+        case setTranslation = "set_translation"
         case imageUrl = "image_url"
         case imageAlignment = "image_alignment"
         case imageFocalX = "image_focal_x"
         case imageFocalY = "image_focal_y"
         case imageWidth = "image_width"
         case imageHeight = "image_height"
-        case imageAlt = "image_alt"
+        case englishImageAlt = "image_alt"
         case imageAttribution = "image_attribution"
     }
 
@@ -365,22 +405,24 @@ struct MeditationSetSummary: nonisolated Codable, Identifiable, Hashable {
         imageWidth: Int? = nil,
         imageHeight: Int? = nil,
         imageAlt: String? = nil,
-        imageAttribution: ArtworkAttribution? = nil
+        imageAttribution: ArtworkAttribution? = nil,
+        setTranslation: SetTranslation? = nil
     ) {
         self.id = id
-        self.name = name
+        self.englishName = name
         self.category = category
-        self.description = description
+        self.englishDescription = description
         self.labels = labels
-        self.author = author
-        self.source = source
+        self.englishAuthor = author
+        self.englishSource = source
         self.imageUrl = imageUrl
         self.imageAlignment = imageAlignment
         self.imageFocalX = imageFocalX
         self.imageFocalY = imageFocalY
         self.imageWidth = imageWidth
         self.imageHeight = imageHeight
-        self.imageAlt = imageAlt
+        self.englishImageAlt = imageAlt
+        self.setTranslation = setTranslation
         self.imageAttribution = imageAttribution
     }
 
@@ -403,5 +445,28 @@ struct MeditationSetSummary: nonisolated Codable, Identifiable, Hashable {
             width: imageWidth, height: imageHeight, alt: imageAlt,
             attribution: imageAttribution
         )
+    }
+}
+
+/// A meditation set's own words in Spanish: its name, byline, line, book
+/// and the painting's description (the api's `set_translation`)
+nonisolated struct SetTranslation: Codable, Hashable {
+    var name: String?
+    var description: String?
+    var author: String?
+    var source: String?
+    var imageAlt: String?
+    var aiTranslated: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case name, description, author, source
+        case imageAlt = "image_alt"
+        case aiTranslated = "ai_translated"
+    }
+
+    /// The Spanish in a Spanish app when it has some, else the English
+    static func pick(_ spanish: String?, _ english: String?, spanish isSpanish: Bool = MeditationTranslation.isActive) -> String? {
+        guard isSpanish, let spanish, !spanish.isEmpty else { return english }
+        return spanish
     }
 }
