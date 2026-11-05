@@ -185,6 +185,15 @@ enum SimpleRosary {
     /// The words the column sets for a prayer: the recording's own lines
     /// where it has them, so what is lit is what is said; otherwise the
     /// app's lines
+    /// Whether what is said keeps its own words, unlit, rather than the
+    /// recording's timed lines: a fixed prayer in Spanish, whose
+    /// recording is English. Meditations and verses are shown in the
+    /// recording's English in either language, so they are lit.
+    static func keepsOwnWords(_ kind: SpokenSegment.Kind, spanish: Bool) -> Bool {
+        guard spanish, case .prayer = kind else { return false }
+        return true
+    }
+
     static func displayedLines(timings: [TimedLine]?, fallback: [String]) -> [String] {
         guard let timings, !timings.isEmpty else { return fallback }
         return timings.map(\.text)

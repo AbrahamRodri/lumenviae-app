@@ -449,6 +449,9 @@ extension ScripturalRosaryPrayerView {
     /// the column sets: never an announcement's
     fileprivate var shownTimings: [TimedLine]? {
         guard let segment = viewModel.spoken?.currentSegment, segment.kind != .announcement else { return nil }
+        // The recordings are English: in Spanish a prayer is shown in
+        // its Spanish words, unlit, never swapped for the English lines
+        if SimpleRosary.keepsOwnWords(segment.kind, spanish: SpanishContent.isActive) { return nil }
         return viewModel.spokenTimings
     }
 

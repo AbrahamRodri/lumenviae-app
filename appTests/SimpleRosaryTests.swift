@@ -249,4 +249,12 @@ struct SimpleRosaryTests {
         #expect(SimpleRosary.litLineProgress(timings: timings, at: 22.5) == 1)
         #expect(SimpleRosary.litLineProgress(timings: timings, at: 23.5) == 0.5)
     }
+
+    @Test("In Spanish a prayer keeps its Spanish words, not the English recording's lines")
+    func spanishPrayersKeepTheirWords() {
+        #expect(SimpleRosary.keepsOwnWords(.prayer("hail_mary"), spanish: true))
+        #expect(!SimpleRosary.keepsOwnWords(.prayer("hail_mary"), spanish: false))
+        #expect(!SimpleRosary.keepsOwnWords(.meditation, spanish: true))
+        #expect(!SimpleRosary.keepsOwnWords(.verse(3), spanish: true))
+    }
 }
