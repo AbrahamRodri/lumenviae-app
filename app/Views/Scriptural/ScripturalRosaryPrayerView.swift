@@ -1535,6 +1535,11 @@ extension ScripturalRosaryPrayerView {
                 .map { rail.index(strandIndex: $0) })
     }
 
+    /// Helps is on for these mysteries: the help line's slot is kept
+    fileprivate var oneRosaryKeepsHelpSlot: Bool {
+        userSettings.rosaryHelps && GuidedRosary.isGuidable(viewModel.category)
+    }
+
     fileprivate var oneRosaryHelp: RosaryHelps.Line? {
         guard userSettings.rosaryHelps,
             viewModel.spokenPendant == nil || viewModel.currentPendantStep != nil
@@ -1557,7 +1562,8 @@ extension ScripturalRosaryPrayerView {
             // stands in its room above them
             let columnTop = max(
                 OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight)
-                    - OneRosaryColumn<EmptyView>.headHeight - geometry.safeAreaInsets.top,
+                    - OneRosaryColumn<EmptyView>.headHeight(keepsHelpSlot: oneRosaryKeepsHelpSlot)
+                    - geometry.safeAreaInsets.top,
                 12 + 44 + 14
             )
 
@@ -1623,13 +1629,6 @@ extension ScripturalRosaryPrayerView {
         OneRosaryHeader { router.popToRoot() }
     }
 
-    /// The column's one kicker: the mysteries and the form chosen
-    /// ("Joyful Mysteries · The Scriptural Rosary"), as the meditation's
-    /// player names its set
-    fileprivate var oneRosaryKicker: String {
-        OneRosaryColumn<EmptyView>.kicker(mysteries: viewModel.category.devotionTitle, chosen: viewModel.displayName)
-    }
-
     /// The hand on the closing prayers, back at the medal or the cross
     fileprivate var oneRosaryOnClose: Bool {
         if case .closing = viewModel.currentPendantStep { return true }
@@ -1648,10 +1647,11 @@ extension ScripturalRosaryPrayerView {
         if let pendant = viewModel.spokenPendant {
             let lines = SilentPendant.lines(of: pendant.prayerID, in: userSettings.prayerLanguage)
             OneRosaryColumn(
-                kicker: oneRosaryKicker,
                 title: pendant.heading,
+                place: OneRosaryColumn<EmptyView>.place(mystery: nil, of: viewModel.strand.decades, phase: pendant.phase),
                 bead: OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount),
                 help: oneRosaryHelp,
+                keepsHelpSlot: oneRosaryKeepsHelpSlot,
                 wordsKey: Self.pendantKey(pendant) + (viewModel.silentPendantCount ?? "")
             ) {
                 VStack(alignment: .leading, spacing: 8) {
@@ -1663,11 +1663,11 @@ extension ScripturalRosaryPrayerView {
         } else {
             let reading = viewModel.reading
             OneRosaryColumn(
-                kicker: oneRosaryKicker,
                 title: viewModel.currentMystery?.name ?? "",
-                number: viewModel.currentMysteryIndex + 1,
+                place: OneRosaryColumn<EmptyView>.place(mystery: viewModel.currentMysteryIndex, of: viewModel.strand.decades),
                 bead: viewModel.beadLabel,
                 help: oneRosaryHelp,
+                keepsHelpSlot: oneRosaryKeepsHelpSlot,
                 wordsKey: "\(viewModel.beadPosition.mystery).\(viewModel.beadPosition.bead)"
             ) {
                 VStack(alignment: .leading, spacing: 10) {
@@ -1714,11 +1714,6 @@ extension ScripturalRosaryPrayerView {
                             .foregroundColor(AppColors.textSecondary)
                             .padding(.bottom, 8)
                     }
-                    NarrationPlayButton(isPlaying: viewModel.isSpeaking, diameter: 56) {
-                        viewModel.toggleSpeaking()
-                    }
-                    .opacity(viewModel.spokenStatus == nil && !viewModel.isSpokenFinished ? 1 : 0.35)
-                    .disabled(viewModel.spokenStatus != nil || viewModel.isSpokenFinished)
                 }
             }
 
@@ -1729,6 +1724,15 @@ extension ScripturalRosaryPrayerView {
                 canGoOn: !beadsHeld && !viewModel.isSpokenFinished,
                 isLast: oneRosaryComplete,
                 amenBeckons: viewModel.isSpokenFinished,
+                // The voice's play and pause, between Back and Next,
+                // while every prayer is said aloud
+                play: aloud && viewModel.spokenFailure == nil
+                    ? OneRosaryPlayDisc(
+                        glyph: viewModel.isSpeaking ? .pause : .play,
+                        isLoading: viewModel.spokenStatus != nil,
+                        isEnabled: !viewModel.isSpokenFinished
+                    ) { viewModel.toggleSpeaking() }
+                    : nil,
                 onBack: prayBack,
                 onNext: prayForward,
                 onAmen: finishRosary

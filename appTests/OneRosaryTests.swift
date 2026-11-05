@@ -89,7 +89,11 @@ struct OneRosaryTests {
     @Test func helpsFollowsTheGuideOnThePendant() {
         let steps = GuidedRosary.steps(for: .joyful)
         let first = RosaryHelps.line(for: .joyful, pendantStep: .opening(0), mystery: 0, bead: 0)
-        #expect(first == RosaryHelps.Line(place: steps[0].place, instruction: steps[0].instruction, leadsWords: true))
+        // The guide's place, and its words as a sentence of their own:
+        // the help line stands over the prayer, not leading into it
+        #expect(first?.place == steps[0].place)
+        #expect(first?.instruction == RosaryHelps.pendantInstruction(.opening(0)))
+        #expect(steps[0].instruction.hasPrefix(String(first?.instruction.dropLast() ?? "")))
 
         let creed = RosaryHelps.line(for: .joyful, pendantStep: .opening(1), mystery: 0, bead: 0)
         #expect(creed?.instruction == steps[1].instruction)
@@ -244,11 +248,12 @@ struct OneRosaryTests {
         #expect(rail.pressLines(strandIndex: strand.index(mystery: 1, bead: 0)) == ["Our Father", "Mystery 2"])
     }
 
-    @Test func theCloseSaysWhereTheHandHasComeBack() {
+    @Test func theCloseCountsAsTheOpeningDoes() {
         let pendant = SilentPendant(category: .joyful)
-        for prayer in pendant.closing {
-            let label = OneRosaryColumn<EmptyView>.pendantLabel(prayer, count: "1 of 3")
-            #expect(label.hasSuffix("back on the medal") || label.hasSuffix("back on the cross"), "\(label)")
+        for (index, prayer) in pendant.closing.enumerated() {
+            let count = pendant.count(of: .closing(index))
+            let label = OneRosaryColumn<EmptyView>.pendantLabel(prayer, count: count)
+            #expect(label == "\(prayer.title) · \(index + 1) of \(pendant.closing.count)", "\(label)")
         }
         let creed = pendant.opening[1]
         #expect(OneRosaryColumn<EmptyView>.pendantLabel(creed, count: "2 of 7") == "\(creed.title) · 2 of 7")
@@ -268,7 +273,8 @@ struct OneRosaryTests {
         #expect(rail.count == strand.count)
         #expect(rail.strandStart == 0)
         #expect(rail.kinds.last == .end)
-        #expect(rail.label(at: rail.count - 1) == "Amen")
+        // Only an Our Father carries a label, its numeral
+        #expect(rail.label(at: rail.count - 1) == nil)
         #expect(rail.label(at: rail.index(strandIndex: strand.index(mystery: 2, bead: 0))) == "3")
     }
 
@@ -403,10 +409,46 @@ struct OneRosaryTests {
         #expect(fade.solid * height <= OneRosaryRailView.rowHeight * 1.5)
     }
 
-    @Test func theKickerNamesTheMysteriesAndWhatWasChosen() {
-        #expect(OneRosaryColumn<EmptyView>.kicker(mysteries: "Joyful Mysteries", chosen: "Blessed Fulton J. Sheen")
-            == "Joyful Mysteries · Blessed Fulton J. Sheen")
-        #expect(OneRosaryColumn<EmptyView>.kicker(mysteries: nil, chosen: "The Gospel") == "The Gospel")
-        #expect(OneRosaryColumn<EmptyView>.kicker(mysteries: "Joyful Mysteries", chosen: "") == "Joyful Mysteries")
+    // MARK: - Round 8
+
+    @Test func thePlaceSaysWhereTheRosaryStands() {
+        #expect(OneRosaryColumn<EmptyView>.place(mystery: 0, of: 5) == "Mystery 1 of 5")
+        #expect(OneRosaryColumn<EmptyView>.place(mystery: 2, of: 7) == "Sorrow 3 of 7")
+        #expect(OneRosaryColumn<EmptyView>.place(mystery: nil, of: 5, phase: .opening) == "Before the first mystery")
+        #expect(OneRosaryColumn<EmptyView>.place(mystery: nil, of: 5, phase: .closing) == "After the last mystery")
+        #expect(OneRosaryColumn<EmptyView>.place(mystery: nil, of: 7, phase: .closing) == "After the last sorrow")
+    }
+
+    @Test(arguments: [MysteryCategory.joyful, .sorrowful, .glorious, .luminous])
+    func noHelpLineLeadsIntoTheWords(category: MysteryCategory) {
+        let pendant = SilentPendant(category: category)
+        let steps = pendant.opening.indices.map { SilentPendant.Step.opening($0) }
+            + pendant.closing.indices.map { SilentPendant.Step.closing($0) }
+        for step in steps {
+            let line = RosaryHelps.line(for: category, pendantStep: step, mystery: 0, bead: 0)
+            #expect(line?.instruction.hasSuffix(":") != true, "\(String(describing: line?.instruction))")
+        }
+        for mystery in 0..<5 {
+            for bead in 0...11 {
+                let line = RosaryHelps.line(for: category, pendantStep: nil, mystery: mystery, bead: bead)
+                #expect(line?.instruction.hasSuffix(":") != true)
+            }
+        }
+    }
+
+    @Test func theHelpSlotKeepsTheHeadOneHeight() {
+        let without = OneRosaryColumn<EmptyView>.headHeight(keepsHelpSlot: false)
+        let with = OneRosaryColumn<EmptyView>.headHeight(keepsHelpSlot: true)
+        #expect(with - without >= OneRosaryColumn<EmptyView>.helpSlotHeight)
+    }
+
+    @Test(arguments: [CGFloat(812), 852, 874, 932, 956])
+    func theRailStaysLevelWithTheWords(fullHeight: CGFloat) {
+        // The hand's bead, at the window's middle, stands below the words'
+        // first line and not past the foot's Back and Next
+        let middle = OneRosaryRailView.windowTop(fullHeight: fullHeight)
+            + OneRosaryRailView.windowHeight(fullHeight: fullHeight) / 2
+        #expect(middle > OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight) - 10)
+        #expect(middle < fullHeight * 0.75)
     }
 }

@@ -95,10 +95,10 @@ enum RosaryChoice: Hashable, CaseIterable {
 
     var icon: String {
         switch self {
-        // With the One Rosary beta the speaker is the narration voice's
-        // alone: Audio, whether the voice prays every prayer, wears the
-        // joined hands that mark praying aloud
-        case .audio: return UserSettings.shared.oneRosaryBeta ? "ch-praying-hands" : "ph-speaker-high"
+        // The speaker: whether there is audio, and how much. With the One
+        // Rosary beta the voice that reads wears a reader of its own
+        // (`lv-voice`), and the joined hands mark prayers alone
+        case .audio: return "ph-speaker-high"
         case .counting: return "lv-rosary"
         case .helps: return "ph-question"
         }

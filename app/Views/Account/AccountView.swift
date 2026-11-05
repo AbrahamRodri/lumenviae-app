@@ -158,10 +158,11 @@ struct AccountView: View {
                             // One Rosary beta: the three prayers after the
                             // Rosary behind one row, which opens them
                             if userSettings.oneRosaryBeta {
-                                // The plus: prayers added after the Rosary;
-                                // the joined hands are the Audio choice's
+                                // The joined hands, which mark a door to
+                                // prayers: this row opens the three prayers
+                                // said after the Rosary
                                 ActionRow(
-                                    icon: "ph-plus",
+                                    icon: "ch-praying-hands",
                                     title: String(localized: "After the Rosary", comment: "One Rosary beta, Settings, The Rosary: the row that opens the prayers said after the Rosary"),
                                     subtitle: afterTheRosarySummary
                                 ) {
@@ -1222,10 +1223,10 @@ struct NarrationVoiceRow: View {
     var body: some View {
         VStack(spacing: 12) {
             HStack(spacing: 16) {
-                // The speaker, as the player's VOICE button wears it, which
-                // opens this same choice (with the One Rosary beta, the
-                // speaker means the voice alone)
-                AppIcon("ph-speaker-high", size: 18)
+                // With the One Rosary beta, the reader, as the player's
+                // VOICE button wears it, which opens this same choice; the
+                // speaker is the Rosary's Audio choice
+                AppIcon(UserSettings.shared.oneRosaryBeta ? "lv-voice" : "ph-speaker-high", size: 18)
                     .foregroundColor(AppColors.textSecondary)
                     .frame(width: 24)
 

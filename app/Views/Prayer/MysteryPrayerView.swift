@@ -1693,6 +1693,12 @@ extension MysteryPrayerView {
             : viewModel.isLastBeadOfRosary
     }
 
+    /// Helps is on for these mysteries: the help line's slot is kept on
+    /// every step, so nothing moves as its lines come and go
+    fileprivate var oneRosaryKeepsHelpSlot: Bool {
+        userSettings.rosaryHelps && (meditationSet.mysteryCategory.map(GuidedRosary.isGuidable) ?? false)
+    }
+
     /// With Helps on, the line for the hand's place
     fileprivate var oneRosaryHelp: RosaryHelps.Line? {
         guard userSettings.rosaryHelps,
@@ -1717,7 +1723,8 @@ extension MysteryPrayerView {
             // stands in its room above them
             let columnTop = max(
                 OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight)
-                    - OneRosaryColumn<EmptyView>.headHeight - geometry.safeAreaInsets.top,
+                    - OneRosaryColumn<EmptyView>.headHeight(keepsHelpSlot: oneRosaryKeepsHelpSlot)
+                    - geometry.safeAreaInsets.top,
                 12 + 44 + 14
             )
 
@@ -1784,24 +1791,17 @@ extension MysteryPrayerView {
         }
     }
 
-    /// The column's one kicker: the mysteries and the meditation set
-    /// chosen ("Joyful Mysteries · Blessed Fulton J. Sheen"), the set's own
-    /// name as its page names it
-    fileprivate var oneRosaryKicker: String {
-        OneRosaryColumn<EmptyView>.kicker(
-            mysteries: meditationSet.mysteryCategory?.devotionTitle, chosen: meditationSet.name)
-    }
-
     /// The column: where on the Rosary, the title, the bead, the words
     @ViewBuilder
     fileprivate var oneRosaryColumn: some View {
         if let pendant = viewModel.pendant {
             let lines = SilentPendant.lines(of: pendant.prayerID, in: userSettings.prayerLanguage)
             OneRosaryColumn(
-                kicker: oneRosaryKicker,
                 title: pendant.heading,
+                place: OneRosaryColumn<EmptyView>.place(mystery: nil, of: viewModel.strand.decades, phase: pendant.phase),
                 bead: OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount),
                 help: oneRosaryHelp,
+                keepsHelpSlot: oneRosaryKeepsHelpSlot,
                 wordsKey: "\(pendant.heading)|\(pendant.title)|\(viewModel.silentPendantCount ?? "")"
             ) {
                 VStack(alignment: .leading, spacing: 8) {
@@ -1813,11 +1813,13 @@ extension MysteryPrayerView {
         } else {
             let locked = beadsLocked
             OneRosaryColumn(
-                kicker: oneRosaryKicker,
                 title: viewModel.currentMystery?.name ?? viewModel.currentMeditation?.displayTitle ?? "",
-                number: viewModel.currentMysteryIndex + 1,
-                bead: locked ? RosaryStrandView.lockedLines.joined(separator: " ") : viewModel.beadLabel,
+                place: OneRosaryColumn<EmptyView>.place(mystery: viewModel.currentMysteryIndex, of: viewModel.strand.decades),
+                // The step line names the bead even while it waits; the
+                // words under it say why
+                bead: viewModel.beadLabel,
                 help: oneRosaryHelp,
+                keepsHelpSlot: oneRosaryKeepsHelpSlot,
                 tapHint: tapHintShowing,
                 wordsKey: "\(viewModel.beadPosition.mystery).\(viewModel.beadPosition.bead).\(locked)"
             ) {
@@ -1872,19 +1874,8 @@ extension MysteryPrayerView {
 
             spokenLine
 
-            // The narration's transport where there is something to hear:
-            // the meditation's ±10 and play, or said aloud the play alone,
-            // since Back and Next below already step the prayers
-            if aloud {
-                playControl
-                    .padding(.top, 14)
-                    .transition(.opacity)
-            } else if meditation?.hasAudio == true {
-                narrationTransport
-                    .padding(.top, 14)
-                    .transition(.opacity)
-            }
-
+            // The voice's play and pause stands between Back and Next,
+            // in one place on every step
             OneRosaryFooter(
                 canGoBack: aloud ? viewModel.spokenStatus == nil : !viewModel.isFirstBeadOfRosary,
                 canGoOn: aloud
@@ -1894,6 +1885,7 @@ extension MysteryPrayerView {
                 // until then Next steps the closing prayers
                 isLast: oneRosaryComplete,
                 amenBeckons: viewModel.isSpokenFinished,
+                play: oneRosaryPlay(meditation: meditation),
                 onBack: { oneRosaryStep(forward: false) },
                 onNext: { oneRosaryStep(forward: true) },
                 onAmen: finishRosary
@@ -1911,6 +1903,36 @@ extension MysteryPrayerView {
             .padding(.bottom, 8)
         }
         .animation(Motion.crossfade, value: meditation?.hasAudio)
+    }
+
+    /// The voice's play and pause in the footer: said aloud, the voice's,
+    /// on every step; otherwise the meditation's, on its Our Father, where
+    /// it is heard, and on any bead while it still sounds. Heard to its
+    /// end, it offers to hear the meditation again from its start.
+    fileprivate func oneRosaryPlay(meditation: Meditation?) -> OneRosaryPlayDisc? {
+        if viewModel.isPrayingAloud {
+            guard viewModel.spokenFailure == nil else { return nil }
+            return OneRosaryPlayDisc(
+                glyph: viewModel.isPlaying ? .pause : .play,
+                isLoading: viewModel.spokenStatus != nil,
+                isEnabled: !viewModel.isSpokenFinished
+            ) {
+                viewModel.isPlaying.toggle()
+            }
+        }
+        guard meditation?.hasAudio == true,
+            viewModel.currentBeadIndex == 0 || viewModel.isPlaying
+        else { return nil }
+        let total = viewModel.totalDuration
+        let ended = !viewModel.isPlaying && total > 0 && viewModel.currentTime >= total - 0.75
+        return OneRosaryPlayDisc(
+            glyph: viewModel.isPlaying ? .pause : (ended ? .replay : .play),
+            isLoading: viewModel.isLoadingAudio,
+            isEnabled: transportReady
+        ) {
+            if ended { viewModel.currentTime = 0 }
+            viewModel.isPlaying.toggle()
+        }
     }
 
     /// Back and Next: a bead (or a prayer of the pendant) at a time, and

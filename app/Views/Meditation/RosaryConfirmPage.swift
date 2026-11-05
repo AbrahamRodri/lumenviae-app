@@ -359,10 +359,9 @@ struct RosaryChoicesSection: View {
                     meditationTitles: meditationTitles,
                     contextLine: contextLine
                 )
-                // Room enough that, at rest on the first screen, Audio's
-                // note stands whole above PRAY's fade and the next row's
-                // name begins behind the button, not half-read in it
-                .padding(.bottom, 19)
+                // Room enough that, at rest on the first screen, Audio and
+                // Voice & speed stand whole above PRAY's fade
+                .padding(.bottom, 14)
             }
 
             YourRosaryTodayLabel()
@@ -373,12 +372,20 @@ struct RosaryChoicesSection: View {
             ForEach(offeredChoices, id: \.self) { choice in
                 RosaryChoiceGroup(choice: choice, form: form, value: binding(for: choice))
                     .transition(RosaryChoiceGroup.comingAndGoing)
+
+                // One Rosary beta: Voice & speed stands with Audio, whose
+                // voice it sets, above PRAY's fade at rest
+                if settings.oneRosaryBeta, choice == .audio, infoRows.contains(.voice) {
+                    infoRow(.voice)
+                        .padding(.bottom, 8)
+                        .transition(RosaryChoiceGroup.comingAndGoing)
+                }
             }
 
             // Voice & speed comes and goes with the Scriptural Rosary's
             // Audio, on Counting's timing, since nothing is spoken when
             // its verses are read in silence
-            ForEach(RosaryInfoRow.rows(for: form, aloud: settings.prayAloud), id: \.self) { row in
+            ForEach(trailingInfoRows, id: \.self) { row in
                 infoRow(row)
                     .transition(RosaryChoiceGroup.comingAndGoing)
             }
@@ -401,6 +408,17 @@ struct RosaryChoicesSection: View {
                 }
             }
         }
+    }
+
+    private var infoRows: [RosaryInfoRow] {
+        RosaryInfoRow.rows(for: form, aloud: settings.prayAloud)
+    }
+
+    /// The rows after the choices: with the beta, Voice & speed has gone
+    /// up beside Audio (where Audio is offered)
+    private var trailingInfoRows: [RosaryInfoRow] {
+        guard settings.oneRosaryBeta, offeredChoices.contains(.audio) else { return infoRows }
+        return infoRows.filter { $0 != .voice }
     }
 
     /// The choices offered, Helps left out for the chaplet, which has

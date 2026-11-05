@@ -188,7 +188,7 @@ enum RosaryHelps {
         guard let step else { return nil }
         let instruction = pendantStep == nil
             ? (sceneFreeInstruction(mystery: mystery, bead: bead) ?? step.instruction)
-            : step.instruction
+            : (pendantInstruction(pendantStep) ?? step.instruction)
         // On the pendant, on a mystery's Our Father, its first Hail Mary
         // and its close the guide says what to do next; on the Hail
         // Marys between, it keeps the mind on the scene while they are
@@ -220,6 +220,17 @@ enum RosaryHelps {
         default:
             return nil
         }
+    }
+
+    /// The guide's words on the first Sign of the Cross end "as you say:",
+    /// leading into the prayer printed under them; on the Rosary itself
+    /// the help line stands in its own slot over the words, so it says
+    /// what to do and stops. Nil where the guide's own words serve.
+    static func pendantInstruction(_ step: SilentPendant.Step?) -> String? {
+        guard case .opening(0) = step else { return nil }
+        return String(
+            localized: "Take the crucifix in your hand. Touch your forehead, your breast, your left shoulder and your right.",
+            comment: "One Rosary beta, Helps on the first Sign of the Cross: what to do, a sentence of its own over the prayer's words")
     }
 
     /// The guide's steps, built once a category and a language
@@ -452,14 +463,12 @@ struct OneRosaryRail: Equatable {
         return nil
     }
 
-    /// The numeral beside a decade's Our Father, or the end's name
+    /// The numeral beside a decade's Our Father: the only label the rail
+    /// carries, so a number always means a mystery
     func label(at index: Int) -> String? {
         guard index >= 0, index < count else { return nil }
-        switch kinds[index] {
-        case .ourFather(let decade): return "\(decade + 1)"
-        case .end: return String(localized: "Amen", comment: "Drawn strand: the label beside the last bead, where the Rosary ends")
-        default: return nil
-        }
+        if case .ourFather(let decade) = kinds[index] { return "\(decade + 1)" }
+        return nil
     }
 
     /// What a press on a bead of the strand goes to, in the rail's

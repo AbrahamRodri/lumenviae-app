@@ -499,6 +499,20 @@ def prayer_book():
     )
 
 
+def voice():
+    """A voice: a reader, head and shoulders, with the sound of the words
+    going out from the head. For the narration voice, who reads the
+    meditations and says the prayers: a person speaking, so it is never
+    taken for the speaker, which means whether there is audio at all
+    (the Rosary's Audio choice). The saint's figure without the halo."""
+    return svg(
+        ring(8.6, 8.4, 3.1),
+        path("M2.4 20.8C2.6 17.5 5.3 15.3 8.6 15.3C11.9 15.3 14.6 17.5 14.8 20.8"),
+        path(arc_d(8.6, 8.4, 6.4, -38, 38)),
+        path(arc_d(8.6, 8.4, 9.8, -34, 34)),
+    )
+
+
 # Drawn for review and not installed until one is chosen
 CANDIDATES = {
     "lv-triptych": triptych,
@@ -525,6 +539,7 @@ GLYPHS = {
     "lv-hourglass": hourglass,
     "lv-lozenge": lozenge,
     "lv-prayer-book": prayer_book,
+    "lv-voice": voice,
 }
 
 
