@@ -9066,13 +9066,13 @@
         }
       }
     },
-    "Everything in the app that is not our own writing, and the people and places it comes from. Every painting is by a painter dead more than a hundred years, and every text is in the public domain or used under an open licence." : {
+    "Everything in the app that is not our own writing, and the people and places it comes from. Every painting is by a painter dead more than a hundred years, and every text is in the public domain or used under an open licence, but for one short quotation, credited below." : {
       "comment" : "About, Sources & Credits: the line under the heading, or a section label",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo lo que en la app no es escrito nuestro, y las personas y lugares de donde viene. Cada pintura es de un pintor que murió hace más de cien años, y cada texto es de dominio público o se usa bajo una licencia abierta."
+            "value" : "Todo lo que en la app no es escrito nuestro, y las personas y lugares de donde viene. Cada pintura es de un pintor que murió hace más de cien años, y cada texto es de dominio público o se usa bajo una licencia abierta, salvo una breve cita, que se reconoce abajo."
           }
         }
       }
@@ -23954,7 +23954,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las palabras de esta app se tradujeron al español con inteligencia artificial. Las oraciones usan los textos tradicionales de la Iglesia."
+            "value" : "Las palabras de esta app se tradujeron al español con inteligencia artificial. Las oraciones usan los textos tradicionales de la Iglesia cuando existen."
           }
         }
       }

@@ -85,7 +85,8 @@ struct HomeView: View {
                         quote: viewModel.currentQuote.text,
                         author: viewModel.currentQuote.author,
                         source: viewModel.currentQuote.source,
-                        aiTranslated: viewModel.currentQuote.aiTranslated
+                        aiTranslated: viewModel.currentQuote.aiTranslated,
+                        showsCredit: viewModel.currentQuote.showsCredit
                     )
                     .padding(.horizontal, 20)
                     // The same air the page's other sections stand apart

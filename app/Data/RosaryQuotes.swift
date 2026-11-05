@@ -52,13 +52,21 @@ struct RosaryQuote: Hashable {
     /// says so beneath it. Never set on an English line.
     var aiTranslated = false
 
+    /// The line is credited in About > Sources & Credits alone, with no
+    /// author or work beneath it on the page. Abraham, of Sheen's line:
+    /// "keep it credit in the credit menu only"
+    var creditedInSourcesOnly = false
+
+    /// Whether the page sets the author and the work under the line
+    var showsCredit: Bool { !creditedInSourcesOnly }
+
     /// The line as a Spanish app shows it: its Spanish in the English's
     /// place, or the line itself
     func shown(spanish isSpanish: Bool) -> RosaryQuote {
         guard isSpanish, let spanish else { return self }
         return RosaryQuote(
             text: spanish.text, author: spanish.author, source: spanish.source,
-            aiTranslated: spanish.aiTranslated
+            aiTranslated: spanish.aiTranslated, creditedInSourcesOnly: creditedInSourcesOnly
         )
     }
 }
@@ -211,7 +219,8 @@ enum RosaryQuotes {
                 author: "Venerable Fulton J. Sheen",
                 source: "El primer amor del mundo",
                 aiTranslated: true
-            )
+            ),
+            creditedInSourcesOnly: true
         ),
         RosaryQuote(
             text: "The greatest method of praying is to pray the Rosary.",
