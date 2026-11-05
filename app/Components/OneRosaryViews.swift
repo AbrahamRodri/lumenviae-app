@@ -16,6 +16,34 @@
 
 import SwiftUI
 
+// MARK: - RosaryHelpLine
+
+/// On the beginner's path (`PrayerLaunch.showsHelps`): what to do here, one plain line in the italic, in the
+/// light gold of the app's guidance, so it is seen at once and still
+/// reads as quieter than the prayer's upright cream; never naming what
+/// the screen already names above it (`RosaryHelps.sceneFreeInstruction`).
+/// No glyph: the line is the same on every step, and a mark before each
+/// one repeated itself fifty times.
+struct RosaryHelpLine: View {
+    let line: RosaryHelps.Line
+
+    static let lineLimit = 3
+
+    var body: some View {
+        Text(line.instruction)
+            .font(AppFonts.italicFont(16.5))
+            .foregroundColor(AppColors.goldLight.opacity(0.92))
+            .lineSpacing(1)
+            .lineLimit(Self.lineLimit)
+            .minimumScaleFactor(0.8)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+        .contentTransition(.opacity)
+        .animation(Motion.words, value: line)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(Text("Help: \(line.instruction)", comment: "One Rosary beta, the player with Helps on: VoiceOver reading of the help line; the argument is what to do"))
+    }
+}
+
 // MARK: - OneRosaryRailView
 
 /// The whole Rosary as one rail at the right edge, drawn as a rosary
@@ -516,6 +544,9 @@ struct OneRosaryColumn<Words: View>: View {
     let place: String
     let bead: String?
 
+    /// The beginner's path: what to pray here, over the words
+    var help: RosaryHelps.Line? = nil
+
     /// Once: the line under the words saying the beads take a tap
     var tapHint: Bool = false
 
@@ -573,6 +604,11 @@ struct OneRosaryColumn<Words: View>: View {
             .frame(height: Self.headHeight, alignment: .bottomLeading)
 
             VStack(alignment: .leading, spacing: 0) {
+                if let help {
+                    RosaryHelpLine(line: help)
+                        .padding(.top, 12)
+                        .transition(.opacity)
+                }
                 ZStack(alignment: .topLeading) {
                     words()
                         .id(wordsKey)
@@ -595,6 +631,7 @@ struct OneRosaryColumn<Words: View>: View {
         .animation(Motion.words, value: title)
         .animation(Motion.words, value: place)
         .animation(Motion.words, value: bead)
+        .animation(Motion.crossfade, value: help)
         .animation(Motion.crossfade, value: tapHint)
     }
 

@@ -114,6 +114,11 @@ enum AppRoute: Hashable {
     /// is its own.
     case rosaryAloud(MysteryCategory)
 
+    /// The simple Rosary's beginner's path (the One Rosary beta): St.
+    /// Alphonsus Liguori's meditations for these mysteries, on their own
+    /// page with a way to say no, then prayed with the helps on
+    case beginnerRosary(MysteryCategory)
+
     /// The Prayer Book: its title page, which opens on the order of
     /// prayer for the hour it is — the Prayers tab's root, to which
     /// `push(.prayerBook)` turns; one of its chapters; and an order of
@@ -245,6 +250,10 @@ struct CompletedPrayer {
 /// parallel optionals so setting and clearing is atomic.
 struct PrayerLaunch {
     let meditationSet: MeditationSet
+
+    /// The simple Rosary's beginner's path: the helps on, one plain line
+    /// on each step saying what to pray (`RosaryHelps`)
+    var showsHelps: Bool = false
 
     /// 0-based mystery index to start at (non-zero when resuming)
     var startIndex: Int = 0
@@ -517,10 +526,12 @@ final class AppRouter {
         startAtIndex: Int = 0,
         startAtBead: Int = 0,
         priorSeconds: Int = 0,
-        startedAt: Date? = nil
+        startedAt: Date? = nil,
+        showsHelps: Bool = false
     ) {
         pendingPrayer = PrayerLaunch(
             meditationSet: meditationSet,
+            showsHelps: showsHelps,
             startIndex: startAtIndex,
             startBead: startAtBead,
             priorSeconds: priorSeconds,

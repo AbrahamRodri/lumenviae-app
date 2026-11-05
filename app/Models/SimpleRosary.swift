@@ -9,8 +9,8 @@
 //  the voice while the Rosary goes on at the recording's own pace, and
 //  the words being said lit from the recording's real timings
 //  (`TimedLine`). A meditation set with no recording opens as text to
-//  read, and someone who came to the Rosary to learn it is offered the
-//  Audio Rosary first (`SimpleRosary`).
+//  read, and someone who came to the Rosary to learn it begins on St.
+//  Alphonsus Liguori's meditations with the helps on (`SimpleRosary`).
 //
 //  Off, nothing here is read, and the app is as it was.
 //
@@ -112,11 +112,22 @@ enum SimpleRosary {
         return timings.lineIndex(at: time)
     }
 
-    /// Whether someone is offered the Audio Rosary before the regular
-    /// Rosary: with the beta on, whoever said in onboarding (or Settings)
-    /// that they came to learn it
-    static func beginnerGoesToAudioRosary(beta: Bool, intentions: [PrayerIntention]) -> Bool {
+    /// Whether someone begins on the beginner's path — St. Alphonsus
+    /// Liguori's meditations with the helps on, after a page that lets
+    /// them say no: with the beta on, whoever said in onboarding (or
+    /// Settings) that they came to learn the Rosary
+    static func beginnerPath(beta: Bool, intentions: [PrayerIntention]) -> Bool {
         beta && intentions.contains(.learning)
+    }
+
+    /// The set the beginner's path opens: St. Alphonsus Liguori's for the
+    /// mysteries, or, where he wrote none (the Luminous), the first set
+    /// offered
+    static func beginnerSet(from summaries: [MeditationSetSummary]) -> MeditationSetSummary? {
+        summaries.first {
+            ($0.author ?? "").localizedCaseInsensitiveContains("Liguori")
+                || $0.name.localizedCaseInsensitiveContains("Liguori")
+        } ?? summaries.first
     }
 
     /// The words the column sets for a prayer: the recording's own lines

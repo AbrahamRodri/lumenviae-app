@@ -117,10 +117,19 @@ struct SimpleRosaryTests {
 
     // MARK: - The Beginner
 
-    @Test func aLearnerIsOfferedTheBeginnersRosaryOnlyWithTheBeta() {
-        #expect(SimpleRosary.beginnerGoesToAudioRosary(beta: true, intentions: [.learning]))
-        #expect(SimpleRosary.beginnerGoesToAudioRosary(beta: true, intentions: [.peace, .learning]))
-        #expect(!SimpleRosary.beginnerGoesToAudioRosary(beta: true, intentions: [.peace, .habit]))
-        #expect(!SimpleRosary.beginnerGoesToAudioRosary(beta: false, intentions: [.learning]))
+    @Test func aLearnerTakesTheBeginnersPathOnlyWithTheBeta() {
+        #expect(SimpleRosary.beginnerPath(beta: true, intentions: [.learning]))
+        #expect(SimpleRosary.beginnerPath(beta: true, intentions: [.peace, .learning]))
+        #expect(!SimpleRosary.beginnerPath(beta: true, intentions: [.peace, .habit]))
+        #expect(!SimpleRosary.beginnerPath(beta: false, intentions: [.learning]))
+    }
+
+    @Test func theBeginnersSetIsStAlphonsus() throws {
+        let json = #"[{"id":26,"name":"Blessed Fulton J. Sheen","category":"joyful","author":"Archbishop Fulton J. Sheen"},{"id":29,"name":"St. Alphonsus Liguori","category":"joyful","author":"St. Alphonsus Liguori"}]"#
+        let joyful = try JSONDecoder().decode([MeditationSetSummary].self, from: Data(json.utf8))
+        #expect(SimpleRosary.beginnerSet(from: joyful)?.id == 29)
+        // Where he wrote none, the first set offered
+        #expect(SimpleRosary.beginnerSet(from: [joyful[0]])?.id == 26)
+        #expect(SimpleRosary.beginnerSet(from: []) == nil)
     }
 }

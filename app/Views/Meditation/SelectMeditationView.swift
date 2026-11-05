@@ -191,15 +191,35 @@ struct SelectMeditationView: View {
                     openOnce(.scripturalRosary(category))
                 }
 
-                OtherWayRow(
-                    icon: PrayerShortcut.rosaryAloud.icon,
-                    title: ScripturalRosaryViewModel.displayName(for: .plain),
-                    detail: String(
-                        localized: "Listen and pray along",
-                        comment: "Mysteries' page, Ways to pray: the line under The Audio Rosary"
-                    )
-                ) {
-                    openOnce(.rosaryAloud(category))
+                // With the simple Rosary (the beta) the Audio Rosary is no
+                // way of its own: it is the Rosary with no meditation.
+                // Abraham, 5 Nov 2026: "audio rosary should just be say no
+                // meditation on the select screen"
+                if UserSettings.shared.oneRosaryBeta {
+                    OtherWayRow(
+                        icon: PrayerShortcut.rosaryAloud.icon,
+                        title: String(
+                            localized: "No Meditation",
+                            comment: "Simple Rosary, the mysteries' page: the choice to pray the Rosary aloud with no meditation read between"
+                        ),
+                        detail: String(
+                            localized: "Every prayer said aloud, nothing read between",
+                            comment: "Simple Rosary, the mysteries' page: the line under No Meditation"
+                        )
+                    ) {
+                        openOnce(.rosaryAloud(category))
+                    }
+                } else {
+                    OtherWayRow(
+                        icon: PrayerShortcut.rosaryAloud.icon,
+                        title: ScripturalRosaryViewModel.displayName(for: .plain),
+                        detail: String(
+                            localized: "Listen and pray along",
+                            comment: "Mysteries' page, Ways to pray: the line under The Audio Rosary"
+                        )
+                    ) {
+                        openOnce(.rosaryAloud(category))
+                    }
                 }
             }
         }

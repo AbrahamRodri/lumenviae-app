@@ -44,13 +44,22 @@ struct MeditationSetDetailView: View {
     /// default: the page's job is to let you begin, not to detain you.
     @State private var showsPreview = false
 
-    init(summary: MeditationSetSummary) {
+    /// The simple Rosary's beginner's path: the page says so over the
+    /// choices, offers a way to say no, and PRAY begins with the helps on
+    private let beginner: Bool
+    private let onDecline: (() -> Void)?
+
+    init(summary: MeditationSetSummary, beginner: Bool = false, onDecline: (() -> Void)? = nil) {
         self._viewModel = State(initialValue: MeditationSetDetailViewModel(summary: summary))
+        self.beginner = beginner
+        self.onDecline = onDecline
     }
 
     /// Preview/testing entry point with a pre-configured view model
     init(viewModel: MeditationSetDetailViewModel) {
         self._viewModel = State(initialValue: viewModel)
+        self.beginner = false
+        self.onDecline = nil
     }
 
     var body: some View {
@@ -68,6 +77,15 @@ struct MeditationSetDetailView: View {
             preparing: isPreparingToPray && viewModel.fullSet == nil ? String(
                 localized: "Preparing the meditations",
                 comment: "A meditation set's page: shown on the Pray button while the set is still loading after Pray was tapped"
+            ) : nil,
+            prompt: beginner ? RosaryConfirmPrompt(
+                text: String(
+                    localized: "New to the Rosary? Pray it with St. Alphonsus's meditations, and a line on each step tells you what to pray and which bead you are on.",
+                    comment: "Simple Rosary, the beginner's path: the line over a meditation set's choices for someone who came to learn the Rosary"),
+                decline: String(
+                    localized: "No thanks, I'll choose",
+                    comment: "Simple Rosary, the beginner's path: the quiet button that declines and opens the day's mysteries' page"),
+                onDecline: { onDecline?() }
             ) : nil,
             onBack: { router.pop() },
             onPray: pray
@@ -474,7 +492,7 @@ struct MeditationSetDetailView: View {
             do {
                 let fullSet = try await viewModel.resolve()
                 guard router.generation == generation else { return }
-                router.navigateToPrayerSession(meditationSet: fullSet)
+                router.navigateToPrayerSession(meditationSet: fullSet, showsHelps: beginner)
             } catch {
                 guard router.generation == generation else { return }
                 showsLoadFailure = true

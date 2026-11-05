@@ -7080,6 +7080,17 @@
         }
       }
     },
+    "Closing Prayers" : {
+      "comment" : "Simple Rosary player: the pill at the top while the closing prayers are said",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oraciones finales"
+          }
+        }
+      }
+    },
     "Closing prayers · %@" : {
       "comment" : "Prayer screen, said aloud: the closing prayers, then the prayer being said, like Closing prayers · Hail, Holy Queen",
       "localizations" : {
@@ -9055,6 +9066,17 @@
         }
       }
     },
+    "Every prayer said aloud, nothing read between" : {
+      "comment" : "Simple Rosary, the mysteries' page: the line under No Meditation",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todas las oraciones en voz alta, sin lecturas entre ellas"
+          }
+        }
+      }
+    },
     "Every prayer written out, in English or in Latin" : {
       "comment" : "Onboarding, What the app holds slide: one line naming something the app offers",
       "localizations" : {
@@ -10137,6 +10159,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gloria a Dios"
+          }
+        }
+      }
+    },
+    "Go to" : {
+      "comment" : "Simple Rosary: kicker over the sheet listing the parts of the Rosary to go to",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir a"
           }
         }
       }
@@ -13567,6 +13600,17 @@
         }
       }
     },
+    "Mute" : {
+      "comment" : "Simple Rosary player: VoiceOver name of the speaker button while the voice is heard",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silenciar"
+          }
+        }
+      }
+    },
     "My Playlists" : {
       "comment" : "Playlist editor: the small kicker over the sheet's title",
       "localizations" : {
@@ -13963,6 +14007,17 @@
         }
       }
     },
+    "New to the Rosary? Pray it with St. Alphonsus's meditations, and a line on each step tells you what to pray and which bead you are on." : {
+      "comment" : "Simple Rosary, the beginner's path: the line over a meditation set's choices for someone who came to learn the Rosary",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Eres nuevo en el Rosario? Rézalo con las meditaciones de san Alfonso; en cada paso, una línea te dice qué rezar y en qué cuenta estás."
+          }
+        }
+      }
+    },
     "Next" : {
       "comment" : "Chapel focus block: small kicker (shown in capitals) over the next daily prayer to pray\nConsecration day page: quiet button turning to the next prayer\nFirst-use tour card: act that moves to the next stop\nGuided Rosary: the gold button on to the next step\nIn Scripture, foot of a passage page: step to the next mystery; VoiceOver adds its name\nLibrary reading, the foot: step to the next reading on the shelf; its title follows",
       "localizations" : {
@@ -14338,6 +14393,17 @@
         }
       }
     },
+    "No Meditation" : {
+      "comment" : "Simple Rosary, the mysteries' page: the choice to pray the Rosary aloud with no meditation read between",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin meditación"
+          }
+        }
+      }
+    },
     "No book open yet · choose one" : {
       "localizations" : {
         "es" : {
@@ -14468,6 +14534,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sin sonido. Las palabras se quedan en la pantalla para que las digas."
+          }
+        }
+      }
+    },
+    "No thanks, I'll choose" : {
+      "comment" : "Simple Rosary, the beginner's path: the quiet button that declines and opens the day's mysteries' page",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No, gracias, prefiero elegir"
           }
         }
       }
@@ -15405,6 +15482,17 @@
         }
       }
     },
+    "Opening Prayers" : {
+      "comment" : "Simple Rosary player: the pill at the top while the opening prayers are said",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oraciones iniciales"
+          }
+        }
+      }
+    },
     "Opening and Closing Prayers" : {
       "comment" : "Settings, The Rosary: whether a Rosary prayed in silence shows the prayers on the cross and first beads",
       "localizations" : {
@@ -15596,6 +15684,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Abre el índice del día"
+          }
+        }
+      }
+    },
+    "Opens the parts of the Rosary, to go to any of them" : {
+      "comment" : "Simple Rosary player: VoiceOver hint on the pill at the top",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre las partes del Rosario para ir a cualquiera de ellas"
           }
         }
       }
@@ -25424,6 +25523,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En curso, %@"
+          }
+        }
+      }
+    },
+    "Unmute" : {
+      "comment" : "Simple Rosary player: VoiceOver name of the speaker button while the voice is muted",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activar el sonido"
           }
         }
       }

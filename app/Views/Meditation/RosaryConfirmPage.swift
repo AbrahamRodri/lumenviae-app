@@ -35,6 +35,16 @@
 
 import SwiftUI
 
+// MARK: - RosaryConfirmPrompt
+
+/// What the simple Rosary's beginner's path says over a set's choices,
+/// and the way to say no
+struct RosaryConfirmPrompt {
+    let text: String
+    let decline: String
+    let onDecline: () -> Void
+}
+
 // MARK: - RosaryConfirmPage
 
 struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
@@ -50,6 +60,10 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
     /// these words, and Back stays reachable above them, so a cold server
     /// never holds anyone here for the length of a timeout
     var preparing: String? = nil
+
+    /// The simple Rosary's beginner's path: a line over the choices
+    /// saying what this Rosary is, and a plain way to say no
+    var prompt: RosaryConfirmPrompt? = nil
 
     let onBack: () -> Void
     let onPray: () -> Void
@@ -86,6 +100,13 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
                         .padding(.top, titleTop)
                         .padding(.horizontal, 28)
                         .devotionalEntrance()
+
+                    if let prompt {
+                        promptBlock(prompt)
+                            .padding(.top, 22)
+                            .padding(.horizontal, 24)
+                            .devotionalEntrance(delay: 0.04)
+                    }
 
                     choices()
                         .padding(.top, 22)
@@ -186,6 +207,36 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
                         .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
                 )
             )
+    }
+
+    // MARK: - The Beginner's Prompt
+
+    private func promptBlock(_ prompt: RosaryConfirmPrompt) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text(prompt.text)
+                .font(AppFonts.italicFont(16))
+                .foregroundColor(AppColors.cream.opacity(0.9))
+                .lineSpacing(3)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Button(action: prompt.onDecline) {
+                Text(prompt.decline.uppercased())
+                    .font(AppFonts.labelFont(11))
+                    .tracking(2)
+                    .foregroundColor(AppColors.cream.opacity(0.88))
+                    .padding(.horizontal, 18)
+                    .frame(minHeight: 44)
+                    .overlay(Capsule().strokeBorder(AppColors.cream.opacity(0.5), lineWidth: 1))
+                    .contentShape(Capsule())
+            }
+            .buttonStyle(GoldCTAButtonStyle())
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
+        )
     }
 
     // MARK: - Painting

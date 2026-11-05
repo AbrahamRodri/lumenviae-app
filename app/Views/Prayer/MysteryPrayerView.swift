@@ -209,8 +209,13 @@ struct MysteryPrayerView: View {
         return min(Self.pendantHeightFraction, max(room, 0) / fullHeight)
     }
 
+    /// The simple Rosary's beginner's path: one plain line on each step
+    /// saying what to pray (`RosaryHelps`)
+    let showsHelps: Bool
+
     init(launch: PrayerLaunch) {
         self.meditationSet = launch.meditationSet
+        self.showsHelps = launch.showsHelps
         self.sessionStartedAt = launch.startedAt
         self._viewModel = State(initialValue: PrayerSessionViewModel(
             meditationSet: launch.meditationSet,
@@ -1742,6 +1747,20 @@ extension MysteryPrayerView {
     /// The words at one size for every prayer, the Creed as the Glory Be
     fileprivate var wordsSize: CGFloat { userSettings.meditationFontSize - 1 }
 
+    /// The beginner's path: the line for the hand's place, from the
+    /// guide; never on the chaplet, which has none
+    fileprivate var oneRosaryHelp: RosaryHelps.Line? {
+        guard showsHelps, viewModel.spokenPendant == nil || viewModel.currentPendantStep != nil,
+              let category = meditationSet.mysteryCategory
+        else { return nil }
+        return RosaryHelps.line(
+            for: category,
+            pendantStep: viewModel.currentPendantStep,
+            mystery: viewModel.currentMysteryIndex,
+            bead: viewModel.currentBeadIndex
+        )
+    }
+
     /// The timed lines of what the voice is saying, where it is the words
     /// the column sets: never an announcement's, which the column leaves
     /// on the Our Father
@@ -1847,6 +1866,7 @@ extension MysteryPrayerView {
                 title: pendant.heading,
                 place: OneRosaryColumn<EmptyView>.place(mystery: nil, of: viewModel.strand.decades, phase: pendant.phase),
                 bead: OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount),
+                help: oneRosaryHelp,
                 wordsKey: "\(pendant.heading)|\(pendant.title)|\(viewModel.silentPendantCount ?? "")"
             ) {
                 VStack(alignment: .leading, spacing: 8) {
@@ -1867,6 +1887,7 @@ extension MysteryPrayerView {
                 // The step line names the bead even while it waits; the
                 // words under it say why
                 bead: viewModel.beadLabel,
+                help: oneRosaryHelp,
                 tapHint: tapHintShowing,
                 wordsKey: "\(viewModel.beadPosition.mystery).\(viewModel.beadPosition.bead).\(locked).\(viewModel.isSpeakingMeditation)"
             ) {

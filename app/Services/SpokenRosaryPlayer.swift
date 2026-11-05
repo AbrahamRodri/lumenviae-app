@@ -210,30 +210,25 @@ final class SpokenRosaryPlayer {
 
     /// Goes to a part of the Rosary from the pill at the top: the opening
     /// prayers, a mystery's announcement (its meditation follows), or the
-    /// closing prayers. Saying carries on if it was; a paused Rosary
-    /// waits there.
+    /// closing prayers. The voice begins there at once: choosing a part
+    /// is asking to pray it (a sheet over the player could leave it
+    /// paused under the choice, and the part chosen then never began).
     @MainActor
     func jump(to stop: RosaryStop) {
         if phase == .finished { phase = .running }
         guard phase == .running, let target = stop.scriptIndex(in: script) else { return }
-        let wasPlaying = isPlaying
         generation &+= 1
         advanceTask?.cancel()
         inPause = false
         heldInPause = false
+        restartOnResume = false
         index = target
         currentTimings = nil
         if let segment = currentSegment {
             host?.spokenRosaryMoved(mystery: segment.mystery, bead: segment.bead)
         }
         reportStep()
-
-        if wasPlaying {
-            sayCurrentSoon()
-        } else {
-            audio.reset(preservingNowPlaying: true)
-            restartOnResume = true
-        }
+        sayCurrentSoon()
     }
 
     /// Whether the Rosary is being said, or is about to be: what a
