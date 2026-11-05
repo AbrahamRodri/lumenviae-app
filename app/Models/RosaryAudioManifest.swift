@@ -69,8 +69,13 @@ struct RosaryAudioClip: Codable, Equatable {
     /// A verse's citation: "Luke 1:28"
     let reference: String?
 
+    /// Each line of the recording and where it falls in it, once the
+    /// server times its prayers; nil until then, and never guessed. Read
+    /// only by the simple Rosary (`SimpleRosary`), to light the words.
+    var lines: [TimedLine]? = nil
+
     enum CodingKeys: String, CodingKey {
-        case file, text, reference
+        case file, text, reference, lines
         case audioUrl = "audio_url"
     }
 }

@@ -75,9 +75,6 @@ enum RosaryChoice: Hashable, CaseIterable {
     case audio
     /// `UserSettings.prayOnBeads`: on your own rosary, or on the screen
     case counting
-    /// `UserSettings.rosaryHelps`, with the One Rosary beta on: a plain
-    /// line on each step saying what to do, or none
-    case helps
 
     /// One of a choice's two options: the setting's value, and its name
     struct Option: Hashable {
@@ -89,7 +86,6 @@ enum RosaryChoice: Hashable, CaseIterable {
         switch self {
         case .audio: return String(localized: "Rosary Audio", comment: "One of the Rosary's two choices, its name: Rosary Audio (what the voice says) or Counting (where the beads are counted)")
         case .counting: return String(localized: "Counting", comment: "One of the Rosary's two choices, its name: Rosary Audio (what the voice says) or Counting (where the beads are counted)")
-        case .helps: return String(localized: "Helps", comment: "One Rosary beta: a Rosary choice's name, whether a plain line on each step says what to do and which bead you are on")
         }
     }
 
@@ -100,7 +96,6 @@ enum RosaryChoice: Hashable, CaseIterable {
         // (`lv-voice`), and the joined hands mark prayers alone
         case .audio: return "ph-speaker-high"
         case .counting: return "lv-rosary"
-        case .helps: return "ph-question"
         }
     }
 
@@ -125,10 +120,6 @@ enum RosaryChoice: Hashable, CaseIterable {
             return value
                 ? String(localized: "On the Screen", comment: "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen")
                 : String(localized: "On My Rosary", comment: "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen")
-        case .helps:
-            return value
-                ? String(localized: "On", comment: "One Rosary beta: the Helps choice's option, short, set in a two-part pill: Off or On")
-                : String(localized: "Off", comment: "One Rosary beta: the Helps choice's option, short, set in a two-part pill: Off or On")
         }
     }
 
@@ -147,10 +138,6 @@ enum RosaryChoice: Hashable, CaseIterable {
             return value
                 ? String(localized: "The beads are on the screen. Swipe for each Hail Mary.", comment: "The line under a Rosary choice, saying what the chosen option does")
                 : String(localized: "Count on your own rosary. The screen shows one mystery at a time.", comment: "The line under a Rosary choice, saying what the chosen option does")
-        case (.helps, _):
-            return value
-                ? String(localized: "A line on each step says what to do and which bead you are on.", comment: "One Rosary beta: the line under the Helps choice when it is on")
-                : String(localized: "On adds a line to each step: what to do, and which bead you are on.", comment: "One Rosary beta: the line under the Helps choice when it is off, saying what turning it on adds")
         }
     }
 
@@ -159,13 +146,11 @@ enum RosaryChoice: Hashable, CaseIterable {
     /// neither; with Whole Rosary chosen, Counting falls away for the
     /// same reason.
     ///
-    /// With the One Rosary beta on (`oneRosary`) the beads always hang,
-    /// so Counting is never offered, and Helps stands in its place, in
-    /// every form.
+    /// With the One Rosary beta on (`oneRosary`), the simple Rosary,
+    /// none: every Rosary is said aloud from PRAY and the beads always
+    /// hang (`SimpleRosary.praysAloud`).
     static func offered(for form: RosaryForm, aloud: Bool, oneRosary: Bool = false) -> [RosaryChoice] {
-        if oneRosary {
-            return form == .holy ? [.helps] : [.audio, .helps]
-        }
+        if oneRosary { return [] }
         switch form {
         case .holy:
             return []

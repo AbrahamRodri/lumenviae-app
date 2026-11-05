@@ -89,8 +89,12 @@ private enum OnboardingPage: Int, CaseIterable {
     /// voice reads the meditation alone: with the whole Rosary said
     /// aloud, the voice moves the beads on the screen and there is
     /// nothing to choose.
-    static func sequence(praysAloud: Bool) -> [OnboardingPage] {
-        allCases.filter { $0 != .beads || !praysAloud }
+    ///
+    /// With the simple Rosary (the One Rosary beta) neither stands: every
+    /// Rosary is said aloud and the beads always hang.
+    static func sequence(praysAloud: Bool, simpleRosary: Bool = UserSettings.shared.oneRosaryBeta) -> [OnboardingPage] {
+        if simpleRosary { return allCases.filter { $0 != .voice && $0 != .beads } }
+        return allCases.filter { $0 != .beads || !praysAloud }
     }
 }
 
@@ -504,7 +508,7 @@ struct OnboardingView: View {
                 .sensoryFeedback(.selection, trigger: selectedIntentions)
             }
         } bottomContent: {
-            continueButton(String(localized: "Continue", comment: "Onboarding: the gold button at a slide's foot that goes on to the next slide"), to: .voice)
+            continueButton(String(localized: "Continue", comment: "Onboarding: the gold button at a slide's foot that goes on to the next slide"), to: page(after: .intention))
         }
     }
 

@@ -2,143 +2,20 @@
 //  OneRosary.swift
 //  Lumen Viae
 //
-//  The pure parts of the One Rosary beta (`UserSettings.oneRosaryBeta`):
-//  the whole Rosary at a glance before PRAY (`RosaryOverview`), the
-//  Guided Rosary's plain words on the Rosary itself (`RosaryHelps`), and
-//  which beads of the strand a tap may go to (`RosaryStrand.canTap`).
+//  The pure parts of the One Rosary beta (`UserSettings.oneRosaryBeta`)'s
+//  rail: which beads of the strand a tap may go to
+//  (`RosaryStrand.canTap`), and the whole Rosary as one rail
+//  (`OneRosaryRail`). The simple Rosary's rules are `SimpleRosary`.
 //
 //  Off, nothing here is read, and the app is as it was.
 //
 
 import Foundation
 
-// MARK: - RosaryOverview
-
-/// The order of one Rosary, opening to close, for the overview on its
-/// own page: the opening prayers, each mystery by name, the closing
-/// prayers. The chaplet of the Seven Sorrows opens and closes its own
-/// way, and has seven.
-struct RosaryOverview: Equatable {
-
-    enum Kind: Equatable {
-        case opening
-        case mystery(Int)
-        case closing
-    }
-
-    struct Part: Equatable, Identifiable {
-        let kind: Kind
-        let title: String
-        var detail: String?
-
-        var id: String {
-            switch kind {
-            case .opening: return "opening"
-            case .mystery(let n): return "mystery.\(n)"
-            case .closing: return "closing"
-            }
-        }
-
-        /// The beads of the drawn rosary this part is prayed on, lit in
-        /// the drawing while the part is chosen in the list. The first
-        /// mystery's Our Father hangs on the pendant's second large bead
-        /// (`RosaryMap.ourFatherBead`), so the opening ends below it; the
-        /// closing lights the same pendant and the centrepiece.
-        var beads: Set<RosaryPart> {
-            switch kind {
-            case .opening:
-                return [.crucifix, .pendantLarge(0), .pendantSmall(0), .pendantSmall(1), .pendantSmall(2)]
-            case .mystery(let n):
-                let decade = n - 1
-                guard decade < 5 else { return [] }
-                return Set((0..<10).map { RosaryPart.loopSmall(decade: decade, bead: $0) })
-                    .union([RosaryMap.ourFatherBead(decade: decade)])
-            case .closing:
-                // Said on the centrepiece and the cross, after the hand
-                // has come back round: the pendant lit as for the opening,
-                // with the centrepiece it hangs from
-                return [.medal, .crucifix, .pendantLarge(0), .pendantSmall(0), .pendantSmall(1), .pendantSmall(2)]
-            }
-        }
-    }
-
-    let parts: [Part]
-
-    /// What each decade is: "Each: an Our Father, ten Hail Marys and a
-    /// Glory Be"
-    let decadeNote: String
-
-    /// - Parameters:
-    ///   - includesPendant: Whether the opening and closing prayers are
-    ///     prayed: shown in Settings, or said by the voice
-    ///   - meditationTitles: A meditation set's own titles for its
-    ///     meditations, in order; each stands under its mystery's name
-    ///     where it says something the name does not, so the set's list
-    ///     of meditations and this order of the Rosary are one list
-    init(category: MysteryCategory, includesPendant: Bool, meditationTitles: [String] = []) {
-        let chaplet = category == .sevenSorrows
-        var parts: [Part] = []
-        if includesPendant {
-            parts.append(
-                Part(
-                    kind: .opening,
-                    title: String(
-                        localized: "The Opening Prayers",
-                        comment: "One Rosary beta, the Rosary's overview: the first part of the Rosary"),
-                    detail: chaplet
-                        ? String(
-                            localized: "The Sign of the Cross and the Act of Contrition",
-                            comment: "One Rosary beta, the Rosary's overview: what the Seven Sorrows chaplet opens with"
-                        )
-                        : String(
-                            localized:
-                                "The Sign of the Cross, the Creed, an Our Father, three Hail Marys and a Glory Be",
-                            comment: "One Rosary beta, the Rosary's overview: what the Rosary opens with")
-                ))
-        }
-        for (index, mystery) in MysteryData.mysteries(for: category).enumerated() {
-            let title = meditationTitles.indices.contains(index) ? meditationTitles[index] : nil
-            let differs = title.map { $0.caseInsensitiveCompare(mystery.name) != .orderedSame && !$0.isEmpty } ?? false
-            parts.append(Part(kind: .mystery(index + 1), title: mystery.name, detail: differs ? title : nil))
-        }
-        if includesPendant {
-            parts.append(
-                Part(
-                    kind: .closing,
-                    title: String(
-                        localized: "The Closing Prayers",
-                        comment: "One Rosary beta, the Rosary's overview: the last part of the Rosary"),
-                    detail: chaplet
-                        ? String(
-                            localized: "Three Hail Marys for her tears, the closing prayer and the Sign of the Cross",
-                            comment:
-                                "One Rosary beta, the Rosary's overview: what the Seven Sorrows chaplet closes with")
-                        : String(
-                            localized: "The Hail, Holy Queen, the closing prayer and the Sign of the Cross",
-                            comment: "One Rosary beta, the Rosary's overview: what the Rosary closes with")
-                ))
-        }
-        self.parts = parts
-        decadeNote =
-            chaplet
-            ? String(
-                localized: "Each sorrow: an Our Father, seven Hail Marys and a Glory Be",
-                comment: "One Rosary beta, the Rosary's overview: what is prayed on each sorrow of the chaplet")
-            : String(
-                localized: "Each mystery: an Our Father, ten Hail Marys and a Glory Be",
-                comment: "One Rosary beta, the Rosary's overview: what is prayed on each mystery")
-    }
-
-    /// The mysteries alone, for counting them
-    var mysteries: [Part] {
-        parts.filter { if case .mystery = $0.kind { return true } else { return false } }
-    }
-}
-
 // MARK: - RosaryHelps
 
-/// The Guided Rosary's words on the Rosary itself, with the One Rosary
-/// beta's Helps on: for the step under the hand, where it is and what
+/// The Guided Rosary's words on the Rosary itself, shown only on the
+/// simple Rosary's beginner's path (never a toggle): for the step under the hand, where it is and what
 /// to do, from `GuidedRosary.steps(for:)` through `RosaryPart`. The
 /// chaplet of the Seven Sorrows has no guide, so no line.
 enum RosaryHelps {

@@ -131,6 +131,10 @@ final class PrayerSessionViewModel {
     /// skipped.
     private(set) var pendantStep: SilentPendant.Step?
 
+    /// The simple Rosary: the meditations' narrations from the v2 API,
+    /// with their timed lines, by meditation id
+    var timedNarrations: [Int: APIService.TimedNarration] = [:]
+
     /// Whether the opening and closing prayers are prayed on the screen:
     /// shown in Settings, and the Rosary not said aloud, whose voice says
     /// them on a pendant of its own
@@ -1310,6 +1314,8 @@ extension PrayerSessionViewModel: SpokenRosaryHost {
         let player = SpokenRosaryPlayer(script: script, host: self, audio: audioService)
         spoken = player
         isPrayedAloud = true
+        if UserSettings.shared.oneRosaryBeta { await fetchTimedNarrations() }
+        guard spoken === player else { return }
         // The step an interrupted Rosary stopped on, only while the hand
         // still stands where it stopped: turned on after the hand has
         // moved on, the voice would take it back there
@@ -1403,5 +1409,90 @@ extension PrayerSessionViewModel: SpokenRosaryHost {
             setId: meditationSet.id,
             category: meditationSet.category
         )
+    }
+}
+
+// MARK: - The Simple Rosary
+
+extension PrayerSessionViewModel {
+
+    /// The parts of this Rosary the pill at the top goes to
+    var stops: [RosaryStop] {
+        RosaryStop.all(decades: totalMysteries, includesPendant: spoken != nil || pendantShown)
+    }
+
+    /// The part the hand is on
+    var currentStop: RosaryStop {
+        if let segment = spoken?.currentSegment, spoken?.phase == .running || spoken?.phase == .finished {
+            return RosaryStop.current(phase: segment.phase, mystery: segment.mystery)
+        }
+        switch currentPendantStep {
+        case .opening: return .opening
+        case .closing: return .closing
+        case nil: return .mystery(currentMysteryIndex)
+        }
+    }
+
+    /// Goes to a part of the Rosary: said aloud, the voice goes there;
+    /// read, the hand does
+    func jump(to stop: RosaryStop) {
+        if let spoken {
+            spoken.jump(to: stop)
+            return
+        }
+        switch stop {
+        case .opening:
+            currentMysteryIndex = 0
+            if pendantShown, let first = silentPendant.firstOpening { pendantStep = first }
+        case .mystery(let n):
+            guard n >= 0, n < totalMysteries else { return }
+            currentMysteryIndex = n
+        case .closing:
+            currentMysteryIndex = max(totalMysteries - 1, 0)
+            currentBeadIndex = strand.gloryBe
+            if pendantShown, let first = silentPendant.firstClosing { pendantStep = first }
+        }
+    }
+
+    /// The voice muted: the Rosary goes on at the recording's pace
+    var isMuted: Bool { spoken?.isMuted ?? false }
+
+    func toggleMuted() {
+        spoken?.setMuted(!(spoken?.isMuted ?? false))
+    }
+
+    /// The timed lines of what is being said, and the line being said
+    /// now; nil for a recording that has not been timed
+    var spokenTimings: [TimedLine]? { spoken?.currentTimings }
+
+    var spokenHighlightedLine: Int? {
+        SimpleRosary.highlightedLine(timings: spoken?.currentTimings, at: spoken?.elapsed ?? 0)
+    }
+
+    /// Whether the voice is reading this mystery's meditation now
+    var isSpeakingMeditation: Bool {
+        spoken?.currentSegment?.kind == .meditation
+    }
+
+    /// The meditations' timed narrations, from the v2 API, once a Rosary
+    /// begins aloud. Silent on failure: the words are then not lit.
+    @MainActor
+    func fetchTimedNarrations() async {
+        let ids = (meditationSet.meditations ?? []).map(\.id).filter { $0 > 0 }
+        guard !ids.isEmpty, timedNarrations.isEmpty else { return }
+        let voice = NarrationVoiceCatalog.shared.chosenSlug
+        guard let answer = try? await APIService.shared.fetchTimedNarrations(meditationIds: ids, voice: voice) else { return }
+        timedNarrations = Dictionary(answer.map { ($0.meditationId, $0) }, uniquingKeysWith: { first, _ in first })
+    }
+
+    func spokenMeditationTimings(decade: Int, url: String) -> [TimedLine]? {
+        guard let meditations = meditationSet.meditations, meditations.indices.contains(decade),
+              let timed = timedNarrations[meditations[decade].id],
+              let lines = timed.lines, !lines.isEmpty
+        else { return nil }
+        // The lines belong to one recording: the voice it is in must be
+        // the voice being heard
+        guard url.contains("/\(timed.voice)/") || url.contains("_\(timed.voice).") else { return nil }
+        return lines
     }
 }

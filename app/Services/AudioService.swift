@@ -47,6 +47,15 @@ final class AudioService {
     /// Error message if playback fails (nil on success)
     var errorMessage: String?
 
+    /// The simple Rosary's speaker (`SpokenRosaryPlayer.isMuted`): the
+    /// recording goes on at its own pace with no sound, so the Rosary
+    /// keeps moving. Held across the Rosary's own track changes, and let
+    /// go when the player is put down for good, so no other flow is ever
+    /// silent for it.
+    var isMuted = false {
+        didSet { player?.isMuted = isMuted }
+    }
+
     // MARK: - Private Properties
 
     private var player: AVPlayer?
@@ -1349,6 +1358,7 @@ final class AudioService {
         let asset = AVURLAsset(url: url)
         let playerItem = AVPlayerItem(asset: asset)
         player = AVPlayer(playerItem: playerItem)
+        player?.isMuted = isMuted
 
         do {
             let cmDuration = try await asset.load(.duration)
@@ -1613,6 +1623,7 @@ final class AudioService {
             sleepTask = nil
             sleepTimer = nil
             sleepRemaining = nil
+            isMuted = false
         }
         player?.volume = 1
         removeTimeObserver()

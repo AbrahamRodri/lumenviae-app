@@ -829,3 +829,60 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
         )
     }
 }
+
+// MARK: - The Simple Rosary
+
+extension ScripturalRosaryViewModel {
+
+    /// The parts of this Rosary the pill at the top goes to
+    var stops: [RosaryStop] {
+        RosaryStop.all(decades: strand.decades, includesPendant: spoken != nil || pendantShown)
+    }
+
+    /// The part the hand is on
+    var currentStop: RosaryStop {
+        if let segment = spoken?.currentSegment, spoken?.phase == .running || spoken?.phase == .finished {
+            return RosaryStop.current(phase: segment.phase, mystery: segment.mystery)
+        }
+        switch currentPendantStep {
+        case .opening: return .opening
+        case .closing: return .closing
+        case nil: return .mystery(currentMysteryIndex)
+        }
+    }
+
+    /// Goes to a part of the Rosary: said aloud, the voice goes there;
+    /// prayed in silence, the hand does
+    func jump(to stop: RosaryStop) {
+        if let spoken {
+            spoken.jump(to: stop)
+            return
+        }
+        switch stop {
+        case .opening:
+            currentMysteryIndex = 0
+            if pendantShown, let first = silentPendant.firstOpening { pendantStep = first }
+        case .mystery(let n):
+            guard n >= 0, n < strand.decades else { return }
+            currentMysteryIndex = n
+        case .closing:
+            currentMysteryIndex = max(strand.decades - 1, 0)
+            currentBeadIndex = strand.gloryBe
+            if pendantShown, let first = silentPendant.firstClosing { pendantStep = first }
+        }
+    }
+
+    /// The voice muted: the Rosary goes on at the recording's pace
+    var isMuted: Bool { spoken?.isMuted ?? false }
+
+    func toggleMuted() {
+        spoken?.setMuted(!(spoken?.isMuted ?? false))
+    }
+
+    /// The timed lines of what is being said; nil when untimed
+    var spokenTimings: [TimedLine]? { spoken?.currentTimings }
+
+    var spokenHighlightedLine: Int? {
+        SimpleRosary.highlightedLine(timings: spoken?.currentTimings, at: spoken?.elapsed ?? 0)
+    }
+}

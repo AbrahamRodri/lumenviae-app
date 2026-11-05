@@ -3,9 +3,9 @@
 //  Lumen Viae Tests
 //
 //  The One Rosary beta: off until chosen; with it on the beads always
-//  hang and Helps stands in Counting's place; the overview's order of the
-//  Rosary; the Helps line for each place on a player; and which beads a
-//  tap on the strand may reach.
+//  hang and no choice is offered; the Helps line for each place on a
+//  player (the beginner's path); and which beads a tap on the strand may
+//  reach. The simple Rosary's own rules are SimpleRosaryTests.
 //
 
 import Foundation
@@ -43,45 +43,15 @@ struct OneRosaryTests {
         #expect(!RosaryForm.scriptural.countsOnScreen(aloud: false, onBeads: false))
     }
 
-    @Test func withTheBetaHelpsTakesCountingsPlace() {
+    @Test func withTheBetaNoChoiceIsOffered() {
         for aloud in [false, true] {
-            #expect(RosaryChoice.offered(for: .meditation, aloud: aloud, oneRosary: true) == [.audio, .helps])
-            #expect(RosaryChoice.offered(for: .scriptural, aloud: aloud, oneRosary: true) == [.audio, .helps])
-            #expect(RosaryChoice.offered(for: .holy, aloud: aloud, oneRosary: true) == [.helps])
+            #expect(RosaryChoice.offered(for: .meditation, aloud: aloud, oneRosary: true).isEmpty)
+            #expect(RosaryChoice.offered(for: .scriptural, aloud: aloud, oneRosary: true).isEmpty)
+            #expect(RosaryChoice.offered(for: .holy, aloud: aloud, oneRosary: true).isEmpty)
         }
         // Off, as it was
         #expect(RosaryChoice.offered(for: .meditation, aloud: false) == [.audio, .counting])
         #expect(RosaryChoice.offered(for: .meditation, aloud: false, oneRosary: false) == [.audio, .counting])
-    }
-
-    @Test func helpsIsOffOrOn() {
-        #expect(RosaryChoice.helps.title == "Helps")
-        #expect(RosaryChoice.helps.options(for: .meditation).map(\.name) == ["Off", "On"])
-        #expect(RosaryChoice.helps.note(for: false) != RosaryChoice.helps.note(for: true))
-    }
-
-    // MARK: - The Overview
-
-    @Test func theOverviewRunsFromTheOpeningToTheClose() {
-        let overview = RosaryOverview(category: .joyful, includesPendant: true)
-        #expect(
-            overview.parts.map(\.kind) == [
-                .opening, .mystery(1), .mystery(2), .mystery(3), .mystery(4), .mystery(5), .closing,
-            ])
-        #expect(overview.mysteries.map(\.title) == MysteryData.mysteries(for: .joyful).map(\.name))
-        #expect(overview.parts.first?.detail != nil)
-        #expect(overview.parts.last?.detail != nil)
-    }
-
-    @Test func theChapletHasSevenSorrows() {
-        let overview = RosaryOverview(category: .sevenSorrows, includesPendant: true)
-        #expect(overview.mysteries.count == 7)
-        #expect(overview.parts.count == 9)
-    }
-
-    @Test func withoutTheOpeningPrayersTheOverviewIsTheMysteries() {
-        let overview = RosaryOverview(category: .glorious, includesPendant: false)
-        #expect(overview.parts.map(\.kind) == (1...5).map { RosaryOverview.Kind.mystery($0) })
     }
 
     // MARK: - Helps
@@ -303,29 +273,7 @@ struct OneRosaryTests {
         #expect(rail.kinds.filter { $0 == .cross }.count == 1)
     }
 
-    // MARK: - Round 2: The Overview Lights Its Beads
-
-    @Test func eachPartOfTheOverviewLightsItsBeads() {
-        let overview = RosaryOverview(category: .joyful, includesPendant: true)
-        #expect(overview.parts.first?.beads.contains(.crucifix) == true)
-        #expect(overview.parts[1].beads.count == 11)
-        #expect(overview.parts[1].beads.contains(RosaryMap.ourFatherBead(decade: 0)))
-        #expect(overview.parts.last?.beads == [.medal, .crucifix, .pendantLarge(0), .pendantSmall(0), .pendantSmall(1), .pendantSmall(2)])
-        // The opening and the close light the same pendant
-        #expect(overview.parts.first?.beads.isSubset(of: overview.parts.last?.beads ?? []) == true)
-        // No two mysteries share a bead
-        let mysteries = overview.mysteries.map(\.beads)
-        for (i, a) in mysteries.enumerated() {
-            for b in mysteries[(i + 1)...] { #expect(a.isDisjoint(with: b)) }
-        }
-    }
-
-    @Test func aSetsOwnTitlesStandUnderTheMysteries() {
-        let names = MysteryData.mysteries(for: .joyful).map(\.name)
-        let titles = [names[0], "The Word Made Flesh", "", names[3], "Lost and Found"]
-        let overview = RosaryOverview(category: .joyful, includesPendant: false, meditationTitles: titles)
-        #expect(overview.mysteries.map(\.detail) == [nil, "The Word Made Flesh", nil, nil, "Lost and Found"])
-    }
+    // MARK: - Round 2
 
     @Test func thePendantsLabelIsThePrayerAndItsCount() {
         #expect(OneRosaryColumn<EmptyView>.pendantLabel(prayer: "The Apostles' Creed", count: "2 of 7")
@@ -341,19 +289,6 @@ struct OneRosaryTests {
         // and Next (its outermost row is faded clear)
         #expect(OneRosaryRailView.windowTop(fullHeight: height) + OneRosaryRailView.windowHeight(fullHeight: height)
             - OneRosaryRailView.rowHeight < height * 0.8)
-    }
-
-    @Test func eachMysteryIsOneSpanOfTheLoop() {
-        // The bracket the overview draws spans a decade's beads, which
-        // stand together on the loop
-        let overview = RosaryOverview(category: .joyful, includesPendant: true)
-        for part in overview.mysteries {
-            let indices = part.beads.compactMap { RosaryMap.loop.firstIndex(of: $0) }.sorted()
-            guard let first = indices.first, let last = indices.last else {
-                Issue.record("a mystery with no beads on the loop"); continue
-            }
-            #expect(last - first == indices.count - 1)
-        }
     }
 
     // MARK: - Round 6
@@ -434,12 +369,6 @@ struct OneRosaryTests {
                 #expect(line?.instruction.hasSuffix(":") != true)
             }
         }
-    }
-
-    @Test func theHelpSlotKeepsTheHeadOneHeight() {
-        let without = OneRosaryColumn<EmptyView>.headHeight(keepsHelpSlot: false)
-        let with = OneRosaryColumn<EmptyView>.headHeight(keepsHelpSlot: true)
-        #expect(with - without >= OneRosaryColumn<EmptyView>.helpSlotHeight)
     }
 
     @Test(arguments: [CGFloat(812), 852, 874, 932, 956])

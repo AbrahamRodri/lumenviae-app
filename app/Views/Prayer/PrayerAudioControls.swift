@@ -263,7 +263,7 @@ struct PlaybackSettingsSheet: View {
                             choice: choice,
                             form: form,
                             value: choice == .audio ? $settings.prayAloud
-                                : (choice == .helps ? $settings.rosaryHelps : $settings.prayOnBeads)
+                                : $settings.prayOnBeads
                         )
                         .transition(RosaryChoiceGroup.comingAndGoing)
                     }

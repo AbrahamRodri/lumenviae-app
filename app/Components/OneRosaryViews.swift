@@ -2,243 +2,19 @@
 //  OneRosaryViews.swift
 //  Lumen Viae
 //
-//  What the One Rosary beta (`UserSettings.oneRosaryBeta`) draws: the
-//  whole Rosary at a glance on its own page (`RosaryOverviewSection`),
-//  and the one player both players become: the rail of the whole Rosary
-//  at the edge (`OneRosaryRailView`), the prayer's words in one column
-//  that never moves (`OneRosaryColumn`), the Helps line in it
-//  (`RosaryHelpLine`), and one footer of Back and Next
-//  (`OneRosaryFooter`), the same from the first Sign of the Cross to
-//  the AMEN.
+//  What the One Rosary beta (`UserSettings.oneRosaryBeta`), the simple
+//  Rosary, draws: the one player every form prays on — the rail of the
+//  whole Rosary at the edge (`OneRosaryRailView`), the pill at the top
+//  that goes to any part of the Rosary (`RosaryStopsPill`), the speaker
+//  that mutes the voice, the prayer's words in one column at one size,
+//  lit line by line where the recording is timed (`SimpleRosaryWords`),
+//  and one footer of Back, play and Next (`OneRosaryFooter`), the same
+//  from the first Sign of the Cross to the AMEN.
 //
 //  Off, none of this is drawn.
 //
 
 import SwiftUI
-
-// MARK: - RosaryOverviewSection
-
-/// THE ORDER OF THE ROSARY: the rosary drawn beside the order of the
-/// prayer as a ruled list, opening to close. The list is a map: a row
-/// tapped lights the beads it is prayed on for a moment and lets go, so
-/// nothing stays chosen and PRAY, which always begins at the start, is
-/// never read as beginning there. The drawing carries no numerals: the
-/// lit arc answers the row. The chaplet has no drawing: the rosary drawn
-/// is the Rosary's five decades.
-struct RosaryOverviewSection: View {
-
-    let category: MysteryCategory
-
-    /// Whether the opening and closing prayers are prayed
-    let includesPendant: Bool
-
-    /// A meditation set's own titles, under the mysteries' names
-    var meditationTitles: [String] = []
-
-    /// Where the set sits in the week, under the list
-    var contextLine: String? = nil
-
-    @State private var chosen: String?
-
-    /// The light's letting go, put off again by each new tap
-    @State private var letGo: Task<Void, Never>?
-
-    /// How long a tapped row stays lit
-    static let lightDuration: Duration = .seconds(2.4)
-
-    private var overview: RosaryOverview {
-        RosaryOverview(category: category, includesPendant: includesPendant, meditationTitles: meditationTitles)
-    }
-
-    /// The drawing's width, beside the list: short enough that the first
-    /// rows of the list stand clear of PRAY on the first screen
-    private static let drawingWidth: CGFloat = 84
-
-    var body: some View {
-        let overview = overview
-        let chosenPart = overview.parts.first { $0.id == chosen }
-
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 12) {
-                Text(
-                    "THE ORDER OF THE ROSARY",
-                    comment:
-                        "One Rosary beta, a Rosary's own page: heading over the order of the whole Rosary, before PRAY"
-                )
-                .font(AppFonts.labelFont(10.5))
-                .tracking(2.2)
-                .foregroundColor(AppColors.goldLight)
-                .lineLimit(1)
-                .fixedSize()
-                .accessibilityAddTraits(.isHeader)
-
-                LinearGradient(
-                    colors: [AppColors.gold.opacity(0.35), AppColors.gold.opacity(0)],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-                .frame(height: AppLine.hairline)
-                .accessibilityHidden(true)
-            }
-
-            // The drawing beside the list, so a row and its beads are
-            // read together; the chaplet has no drawing
-            HStack(alignment: .top, spacing: 8) {
-                if category != .sevenSorrows {
-                    RosaryDiagram(
-                        highlighted: chosenPart?.beads ?? [],
-                        bracket: chosenPart.map { part in
-                            if case .mystery = part.kind { return part.beads }
-                            return []
-                        } ?? [],
-                        matchesPendant: true
-                    )
-                    .frame(width: Self.drawingWidth)
-                    .padding(.top, 10)
-                }
-
-                VStack(alignment: .leading, spacing: 0) {
-                    ForEach(overview.parts) { part in
-                        row(part, isChosen: part == chosenPart, isLast: part == overview.parts.last)
-                    }
-
-                    // One note under the list: what each mystery is
-                    Text(overview.decadeNote)
-                        .font(AppFonts.italicFont(13.5))
-                        .foregroundColor(AppColors.cream.opacity(0.72))
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 6)
-                        .padding(.horizontal, 10)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-        }
-        .animation(Motion.crossfade, value: chosen)
-        .onDisappear { letGo?.cancel() }
-    }
-
-    /// A row tapped: its beads lit for a moment, then let go; a second
-    /// tap while it is lit puts the light out at once
-    private func light(_ id: String) {
-        letGo?.cancel()
-        guard chosen != id else {
-            chosen = nil
-            return
-        }
-        chosen = id
-        letGo = Task { @MainActor in
-            try? await Task.sleep(for: Self.lightDuration)
-            guard !Task.isCancelled else { return }
-            chosen = nil
-        }
-    }
-
-    private func row(_ part: RosaryOverview.Part, isChosen: Bool, isLast: Bool) -> some View {
-        Button {
-            light(part.id)
-        } label: {
-            HStack(alignment: .firstTextBaseline, spacing: 12) {
-                Group {
-                    // The numeral in the drawing's own face and size, so
-                    // a row and its number on the ring read as one
-                    if case .mystery(let number) = part.kind {
-                        Text(verbatim: "\(number)")
-                            .font(AppFonts.headlineFont(isChosen ? 17 : 14))
-                            .foregroundColor(isChosen ? AppColors.goldLight : AppColors.gold.opacity(0.95))
-                    } else {
-                        AppIcon("lv-lozenge", size: 7)
-                            .foregroundColor(isChosen ? AppColors.goldLight : AppColors.gold.opacity(0.6))
-                    }
-                }
-                .frame(width: 14, alignment: .leading)
-                .accessibilityHidden(true)
-
-                VStack(alignment: .leading, spacing: 1) {
-                    // A mystery's row is one line
-                    Text(part.title)
-                        .font(AppFonts.bodyFont(16))
-                        .foregroundColor(isChosen ? AppColors.goldLight : AppColors.cream)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.85)
-
-                    // What a part holds is said once it is chosen, so at
-                    // rest every row is one line and the whole order and
-                    // the first choice stand clear of PRAY
-                    if let detail = part.detail, isChosen {
-                        Text(detail)
-                            .font(AppFonts.italicFont(13))
-                            .foregroundColor(AppColors.textSecondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .transition(.opacity)
-                    }
-                }
-                Spacer(minLength: 0)
-            }
-            .padding(.vertical, 3)
-            .frame(minHeight: 31)
-            .padding(.horizontal, 10)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(AppColors.gold.opacity(isChosen && category != .sevenSorrows ? 0.16 : 0))
-            )
-            // The chosen row's edge, in the light its beads take in the
-            // drawing beside it
-            .overlay(alignment: .leading) {
-                if isChosen && category != .sevenSorrows {
-                    Capsule()
-                        .fill(AppColors.goldLight)
-                        .frame(width: 3)
-                        .padding(.vertical, 6)
-                        .transition(.opacity)
-                }
-            }
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(SacredCardButtonStyle())
-        .overlay(alignment: .bottom) {
-            if !isLast {
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.12))
-                    .frame(height: AppLine.hairline)
-                    .padding(.horizontal, 10)
-            }
-        }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text([part.title, part.detail].compactMap { $0 }.joined(separator: ", ")))
-        .accessibilityAddTraits(isChosen ? .isSelected : [])
-        .accessibilityHint(category == .sevenSorrows ? Text(verbatim: "") : Text("Shows it on the rosary", comment: "One Rosary beta, the Rosary's overview: VoiceOver hint on a part of the Rosary, which lights its beads in the drawing"))
-    }
-}
-
-// MARK: - RosaryHelpLine
-
-/// With Helps on: what to do here, one plain line in the italic, in the
-/// light gold of the app's guidance, so it is seen at once and still
-/// reads as quieter than the prayer's upright cream; never naming what
-/// the screen already names above it (`RosaryHelps.sceneFreeInstruction`).
-/// No glyph: the line is the same on every step, and a mark before each
-/// one repeated itself fifty times.
-struct RosaryHelpLine: View {
-    let line: RosaryHelps.Line
-
-    /// The most lines the slot holds (`OneRosaryColumn.helpSlotHeight`)
-    static let lineLimit = 3
-
-    var body: some View {
-        Text(line.instruction)
-            .font(AppFonts.italicFont(16.5))
-            .foregroundColor(AppColors.goldLight.opacity(0.92))
-            .lineSpacing(1)
-            .lineLimit(Self.lineLimit)
-            .minimumScaleFactor(0.8)
-            .frame(maxWidth: .infinity, alignment: .topLeading)
-        .contentTransition(.opacity)
-        .animation(Motion.words, value: line)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(Text("Help: \(line.instruction)", comment: "One Rosary beta, the player with Helps on: VoiceOver reading of the help line; the argument is what to do"))
-    }
-}
 
 // MARK: - OneRosaryRailView
 
@@ -732,20 +508,13 @@ extension View {
 /// CROSS · 3 OF 3). The Rosary is not named over every step: the page
 /// before PRAY named it.
 ///
-/// With Helps on, the help line has one slot, the same on every step,
-/// between the step line and the words, whether it says what to do or
-/// keeps the mind on the scene. The slot is kept while Helps is on even
-/// where a step has no line, so neither the title nor the words move as
-/// lines come and go.
+/// The words take the room left above the foot, so a long prayer scrolls
+/// in it rather than shrink (`SimpleRosaryWords`).
 struct OneRosaryColumn<Words: View>: View {
     let title: String
     /// Where the Rosary stands, under the title
     let place: String
     let bead: String?
-    var help: RosaryHelps.Line? = nil
-
-    /// Helps is on: the help line's slot is kept on every step
-    var keepsHelpSlot: Bool = false
 
     /// Once: the line under the words saying the beads take a tap
     var tapHint: Bool = false
@@ -756,15 +525,10 @@ struct OneRosaryColumn<Words: View>: View {
 
     @ViewBuilder let words: () -> Words
 
-    /// The help line's slot: three lines of its italic
-    static var helpSlotHeight: CGFloat { 70 }
-
-    /// The room over the words that the title, the place, the step and
-    /// (with Helps on) the help line stand in, set to its foot: the
-    /// column's top is the words' height less this
-    static func headHeight(keepsHelpSlot: Bool) -> CGFloat {
-        112 + (keepsHelpSlot ? helpSlotHeight + 12 : 0)
-    }
+    /// The room over the words that the title, the place and the step
+    /// stand in, set to its foot: the column's top is the words' height
+    /// less this
+    static var headHeight: CGFloat { 112 }
 
     /// Where the first line of the words stands, from the top of the
     /// glass: low enough that the words sit near Back and Next, with the
@@ -804,20 +568,9 @@ struct OneRosaryColumn<Words: View>: View {
                 OneRosaryStepLabel(text: bead ?? " ")
                     .opacity(bead == nil ? 0 : 1)
                     .padding(.top, 12)
-
-                if keepsHelpSlot {
-                    ZStack(alignment: .topLeading) {
-                        if let help {
-                            RosaryHelpLine(line: help)
-                                .transition(.opacity)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, minHeight: Self.helpSlotHeight, maxHeight: Self.helpSlotHeight, alignment: .topLeading)
-                    .padding(.top, 12)
-                }
             }
             .fixedSize(horizontal: false, vertical: true)
-            .frame(height: Self.headHeight(keepsHelpSlot: keepsHelpSlot), alignment: .bottomLeading)
+            .frame(height: Self.headHeight, alignment: .bottomLeading)
 
             VStack(alignment: .leading, spacing: 0) {
                 ZStack(alignment: .topLeading) {
@@ -825,7 +578,7 @@ struct OneRosaryColumn<Words: View>: View {
                         .id(wordsKey)
                         .transition(.opacity)
                 }
-                .frame(maxWidth: .infinity, alignment: .topLeading)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .padding(.top, 14)
                 .animation(Motion.crossfade, value: wordsKey)
 
@@ -842,7 +595,6 @@ struct OneRosaryColumn<Words: View>: View {
         .animation(Motion.words, value: title)
         .animation(Motion.words, value: place)
         .animation(Motion.words, value: bead)
-        .animation(Motion.crossfade, value: help)
         .animation(Motion.crossfade, value: tapHint)
     }
 
@@ -1220,8 +972,12 @@ struct OneRosaryTapHint: View {
 /// The player's head, the same on both players: the way out alone. The
 /// Rosary is named once, in the column's kicker (the mysteries and the
 /// set or form), so no screen stacks a name over a name before the words.
-struct OneRosaryHeader: View {
+struct OneRosaryHeader<Pill: View, Trailing: View>: View {
     let onClose: () -> Void
+    /// The pill that goes to any part of the Rosary, centred
+    @ViewBuilder var pill: () -> Pill
+    /// The speaker, at the trailing edge
+    @ViewBuilder var trailing: () -> Trailing
 
     var body: some View {
         ZStack {
@@ -1234,7 +990,10 @@ struct OneRosaryHeader: View {
                     onClose()
                 }
                 Spacer()
+                trailing()
             }
+            pill()
+                .padding(.horizontal, 56)
         }
         .padding(.horizontal, 16)
         // The column's scrim, turned to the head: the painting quietened
@@ -1331,6 +1090,234 @@ struct OneRosaryUtilityRow: View {
             icon: "ph-dots-three",
             title: String(localized: "More", comment: "Prayer screen: VoiceOver name of the button that opens the menu of more actions"),
             label: String(localized: "More", comment: "Prayer screen: VoiceOver name of the button that opens the menu of more actions"),
+            action: action
+        )
+    }
+}
+
+// MARK: - SimpleRosaryWords
+
+/// A prayer's words as the simple Rosary sets them: every prayer at one
+/// size, the Creed as the Glory Be, never shrunk to fit. A long prayer
+/// scrolls in the room it has; where the recording is timed, the line
+/// being said is lit and the words move to keep it in view. Untimed, no
+/// line is lit and the words rest at the top: a pace is never guessed.
+struct SimpleRosaryWords: View {
+    let lines: [String]
+    /// The line being said, from the recording's real timings; nil for
+    /// none
+    let highlighted: Int?
+    let size: CGFloat
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
+                        Text(Rubric.paragraph([line], size: size))
+                            .font(AppFonts.readingFont(size))
+                            .foregroundColor(AppColors.cream)
+                            .lineSpacing(5)
+                            .opacity(highlighted == nil || highlighted == index ? 1 : 0.5)
+                            .frame(maxWidth: .infinity, alignment: .topLeading)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .id(index)
+                    }
+                }
+                .padding(.bottom, 24)
+                .animation(reduceMotion ? nil : Motion.crossfade, value: highlighted)
+            }
+            // The foot of a long prayer dissolves under Back and Next
+            .mask(
+                LinearGradient(
+                    stops: [
+                        .init(color: .black, location: 0),
+                        .init(color: .black, location: 0.86),
+                        .init(color: .clear, location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .onChange(of: highlighted) { _, line in
+                guard let line else { return }
+                if reduceMotion {
+                    proxy.scrollTo(line, anchor: UnitPoint(x: 0, y: 0.3))
+                } else {
+                    withAnimation(Motion.crossfade) { proxy.scrollTo(line, anchor: UnitPoint(x: 0, y: 0.3)) }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - RosaryStopsPill
+
+/// The pill at the top of the player, as the Consecration's day pill is
+/// drawn: where the Rosary stands in a struck capsule with a caret, over
+/// a dash for each part — the opening, each mystery, the closing — the
+/// one the hand is on drawn long. A tap opens every part to go to.
+struct RosaryStopsPill: View {
+    let stops: [RosaryStop]
+    let current: RosaryStop
+    let isChaplet: Bool
+    let action: () -> Void
+
+    var body: some View {
+        let position = current.position(in: stops)
+        Button(action: action) {
+            VStack(spacing: 7) {
+                HStack(spacing: 6) {
+                    Text(RosaryStopsPill.label(current, of: stops, isChaplet: isChaplet).uppercased())
+                        .font(AppFonts.labelFont(10))
+                        .tracking(2)
+                        .foregroundColor(AppColors.cream.opacity(0.9))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                    AppIcon("ph-caret-down", size: 9)
+                        .foregroundColor(AppColors.gold)
+                }
+                .padding(.horizontal, 13)
+                .padding(.vertical, 6)
+                .background(Capsule().fill(AppColors.background.opacity(0.55)))
+                .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.35), lineWidth: 1))
+
+                HStack(spacing: 5) {
+                    ForEach(Array(stops.indices), id: \.self) { index in
+                        Capsule()
+                            .fill(index <= position ? AppColors.gold : AppColors.cardBackground)
+                            .frame(width: index == position ? 18 : 7, height: 4)
+                    }
+                }
+                .animation(Motion.settle, value: position)
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 4)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityLabel(RosaryStopsPill.label(current, of: stops, isChaplet: isChaplet))
+        .accessibilityHint(Text("Opens the parts of the Rosary, to go to any of them", comment: "Simple Rosary player: VoiceOver hint on the pill at the top"))
+    }
+
+    /// "Mystery 2 of 5", "Sorrow 3 of 7", "Opening Prayers", "Closing
+    /// Prayers"
+    static func label(_ stop: RosaryStop, of stops: [RosaryStop], isChaplet: Bool) -> String {
+        let total = stops.filter { if case .mystery = $0 { return true } else { return false } }.count
+        switch stop {
+        case .opening:
+            return String(localized: "Opening Prayers", comment: "Simple Rosary player: the pill at the top while the opening prayers are said")
+        case .closing:
+            return String(localized: "Closing Prayers", comment: "Simple Rosary player: the pill at the top while the closing prayers are said")
+        case .mystery(let n):
+            return isChaplet
+                ? String(localized: "Sorrow \(n + 1) of \(total)", comment: "One Rosary beta, the player: under the title, which sorrow of the Seven Sorrows chaplet this is, like Sorrow 3 of 7")
+                : String(localized: "Mystery \(n + 1) of \(total)", comment: "One Rosary beta, the player: under the title, which mystery of the Rosary this is, like Mystery 2 of 5")
+        }
+    }
+}
+
+// MARK: - RosaryStopsSheet
+
+/// Every part of the Rosary, to go to any of them: the opening prayers,
+/// each mystery by name (and its meditation's title where it says more),
+/// the closing prayers. Set as the Consecration's day index is.
+struct RosaryStopsSheet: View {
+    let title: String
+    let stops: [RosaryStop]
+    let current: RosaryStop
+    let mysteryNames: [String]
+    var meditationTitles: [String] = []
+    let isChaplet: Bool
+    let onSelect: (RosaryStop) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                SheetHeader(
+                    kicker: String(localized: "Go to", comment: "Simple Rosary: kicker over the sheet listing the parts of the Rosary to go to"),
+                    title: title
+                )
+                ForEach(stops, id: \.self) { stop in
+                    row(stop)
+                }
+                Spacer(minLength: 30)
+            }
+        }
+        .sheetGround()
+        .presentationDetents([.medium, .large])
+    }
+
+    private func row(_ stop: RosaryStop) -> some View {
+        let isCurrent = stop == current
+        let (name, detail, icon) = describe(stop)
+        return Button {
+            dismiss()
+            onSelect(stop)
+        } label: {
+            SheetRow(
+                name,
+                detail: detail,
+                icon: icon,
+                accessory: isCurrent
+                    ? .label(String(localized: "Here", comment: "Consecration day index sheet: small capitals at the end of the row the reader is on now"))
+                    : .caret,
+                isLit: isCurrent
+            )
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityLabel(name)
+    }
+
+    private func describe(_ stop: RosaryStop) -> (String, String?, String) {
+        switch stop {
+        case .opening:
+            return (
+                String(localized: "The Opening Prayers", comment: "Simple Rosary: the row going to the opening prayers"),
+                isChaplet
+                    ? String(localized: "The Sign of the Cross and the Act of Contrition", comment: "Simple Rosary: what the Seven Sorrows chaplet opens with")
+                    : String(localized: "The Sign of the Cross, the Creed, an Our Father, three Hail Marys and a Glory Be", comment: "Simple Rosary: what the Rosary opens with"),
+                "lv-rosary"
+            )
+        case .closing:
+            return (
+                String(localized: "The Closing Prayers", comment: "Simple Rosary: the row going to the closing prayers"),
+                isChaplet
+                    ? String(localized: "Three Hail Marys for her tears, the closing prayer and the Sign of the Cross", comment: "Simple Rosary: what the Seven Sorrows chaplet closes with")
+                    : String(localized: "The Hail, Holy Queen, the closing prayer and the Sign of the Cross", comment: "Simple Rosary: what the Rosary closes with"),
+                "lv-rosary"
+            )
+        case .mystery(let n):
+            let name = mysteryNames.indices.contains(n) ? mysteryNames[n] : ""
+            let title = meditationTitles.indices.contains(n) ? meditationTitles[n] : nil
+            let differs = title.map { !$0.isEmpty && $0.caseInsensitiveCompare(name) != .orderedSame } ?? false
+            let place = RosaryStopsPill.label(stop, of: stops, isChaplet: isChaplet)
+            return (name, differs ? "\(place) · \(title ?? "")" : place, "ch-praying-hands")
+        }
+    }
+}
+
+// MARK: - SimpleRosaryMuteButton
+
+/// The speaker at the top of the player: muted, the voice is silent and
+/// the Rosary goes on at its own pace, the words lit where the recording
+/// is timed
+struct SimpleRosaryMuteButton: View {
+    let isMuted: Bool
+    let action: () -> Void
+
+    var body: some View {
+        PrayerHeaderButton(
+            icon: isMuted ? "ph-speaker-slash" : "ph-speaker-high",
+            size: 17,
+            label: isMuted
+                ? String(localized: "Unmute", comment: "Simple Rosary player: VoiceOver name of the speaker button while the voice is muted")
+                : String(localized: "Mute", comment: "Simple Rosary player: VoiceOver name of the speaker button while the voice is heard"),
+            tint: isMuted ? AppColors.goldLight : .white,
             action: action
         )
     }

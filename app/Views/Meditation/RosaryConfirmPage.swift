@@ -60,14 +60,12 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
 
     @Environment(UserSettings.self) private var userSettings
 
-    /// The painting's height, from the very top of the glass. With the
-    /// One Rosary beta a little shorter, so the whole Rosary at a glance
-    /// stands above PRAY on the first screen.
-    private var paintingHeight: CGFloat { userSettings.oneRosaryBeta ? 290 : 360 }
+    /// The painting's height, from the very top of the glass
+    private var paintingHeight: CGFloat { 360 }
 
     /// Where the title block begins, from the top of the glass: over the
     /// painting's foot, where it has begun to dissolve
-    private var titleTop: CGFloat { userSettings.oneRosaryBeta ? 132 : 212 }
+    private var titleTop: CGFloat { 212 }
 
     /// The room the scrolled content keeps clear of the fixed PRAY
     private static var footClearance: CGFloat { 132 }
@@ -95,12 +93,9 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
                         .devotionalEntrance(delay: 0.08)
 
                     // Well clear of the rows, so the ledger reads as its
-                    // own part of the page rather than a second rule. With
-                    // the One Rosary beta, whose page is longer, the ledger
-                    // goes straight on from the last row, its first rule
-                    // laid over the row's, so no empty band stands between
+                    // own part of the page rather than a second rule
                     ledger()
-                        .padding(.top, userSettings.oneRosaryBeta ? -AppLine.hairline : 52)
+                        .padding(.top, 52)
                         .padding(.horizontal, 24)
                         .devotionalEntrance(delay: 0.16)
                 }
@@ -291,20 +286,13 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
         ), glyph: .play, action: onPray)
             .disabled(!prayEnabled)
             .padding(.horizontal, 24)
-            // With the beta a shorter fade, so the line above PRAY is read
-            // whole or not at all, never half through the scrim
-            .padding(.top, userSettings.oneRosaryBeta ? 22 : 40)
+            .padding(.top, 40)
             .padding(.bottom, 8)
             .background(
                 LinearGradient(
                     stops: [
                         .init(color: AppColors.backgroundDeep.opacity(0), location: 0),
-                        // With the beta, whose page runs longer, solid by
-                        // the button's top, so no word of the page beneath
-                        // shows half-read in the fade
-                        .init(
-                            color: AppColors.backgroundDeep.opacity(userSettings.oneRosaryBeta ? 1 : 0.92),
-                            location: userSettings.oneRosaryBeta ? 0.28 : 0.4),
+                        .init(color: AppColors.backgroundDeep.opacity(0.92), location: 0.4),
                         // Solid well before the foot, which runs on under
                         // the home indicator
                         .init(color: AppColors.backgroundDeep, location: 0.6)
@@ -335,11 +323,6 @@ struct RosaryChoicesSection: View {
     /// offers no prayers after the Rosary
     var category: MysteryCategory? = nil
 
-    /// One Rosary beta: a meditation set's titles for its meditations,
-    /// which the overview sets under the mysteries' names, and where the
-    /// set falls in the week, under the overview
-    var meditationTitles: [String] = []
-    var contextLine: String? = nil
 
     @Environment(UserSettings.self) private var settings
     @State private var sheet: RosaryChoicesSheet?
@@ -351,35 +334,14 @@ struct RosaryChoicesSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // One Rosary beta: the whole Rosary at a glance, first
-            if settings.oneRosaryBeta {
-                RosaryOverviewSection(
-                    category: chosenCategory ?? today,
-                    includesPendant: settings.showsOpeningPrayers || form.praysAloud(setting: settings.prayAloud),
-                    meditationTitles: meditationTitles,
-                    contextLine: contextLine
-                )
-                // Room enough that, at rest on the first screen, Audio and
-                // Voice & speed stand whole above PRAY's fade
-                .padding(.bottom, 14)
-            }
-
             YourRosaryTodayLabel()
                 .padding(.bottom, 6)
 
-            // With the beta, Audio and then Helps, one group under one
-            // heading after the order of the Rosary
+            // With the simple Rosary (the beta), none: every prayer is
+            // said aloud and the beads always hang
             ForEach(offeredChoices, id: \.self) { choice in
                 RosaryChoiceGroup(choice: choice, form: form, value: binding(for: choice))
                     .transition(RosaryChoiceGroup.comingAndGoing)
-
-                // One Rosary beta: Voice & speed stands with Audio, whose
-                // voice it sets, above PRAY's fade at rest
-                if settings.oneRosaryBeta, choice == .audio, infoRows.contains(.voice) {
-                    infoRow(.voice)
-                        .padding(.bottom, 8)
-                        .transition(RosaryChoiceGroup.comingAndGoing)
-                }
             }
 
             // Voice & speed comes and goes with the Scriptural Rosary's
@@ -410,22 +372,14 @@ struct RosaryChoicesSection: View {
         }
     }
 
-    private var infoRows: [RosaryInfoRow] {
-        RosaryInfoRow.rows(for: form, aloud: settings.prayAloud)
-    }
-
-    /// The rows after the choices: with the beta, Voice & speed has gone
-    /// up beside Audio (where Audio is offered)
+    /// The rows after the choices. With the simple Rosary every form is
+    /// said aloud, so Voice & speed always stands
     private var trailingInfoRows: [RosaryInfoRow] {
-        guard settings.oneRosaryBeta, offeredChoices.contains(.audio) else { return infoRows }
-        return infoRows.filter { $0 != .voice }
+        RosaryInfoRow.rows(for: form, aloud: settings.oneRosaryBeta || settings.prayAloud)
     }
 
-    /// The choices offered, Helps left out for the chaplet, which has
-    /// no guide to draw its line from
     private var offeredChoices: [RosaryChoice] {
         RosaryChoice.offered(for: form, aloud: settings.prayAloud, oneRosary: settings.oneRosaryBeta)
-            .filter { $0 != .helps || (chosenCategory.map { GuidedRosary.isGuidable($0) } ?? true) }
     }
 
     private func binding(for choice: RosaryChoice) -> Binding<Bool> {
@@ -433,7 +387,6 @@ struct RosaryChoicesSection: View {
         switch choice {
         case .audio: return $settings.prayAloud
         case .counting: return $settings.prayOnBeads
-        case .helps: return $settings.rosaryHelps
         }
     }
 

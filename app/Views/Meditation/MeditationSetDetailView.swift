@@ -121,10 +121,7 @@ struct MeditationSetDetailView: View {
                 }
             }
 
-            // One Rosary beta: the overview above names the mysteries, so
-            // the set's own titles stand here only where they say more
-            // than the mysteries' names
-            if !viewModel.entryTitles.isEmpty, !UserSettings.shared.oneRosaryBeta || titlesSayMore {
+            if !viewModel.entryTitles.isEmpty {
                 SetSection(label: String(
                     localized: "The\nmeditations",
                     comment: "A meditation set's page, ledger label in two short lines (a line break between) over the list of the set's meditations"
@@ -156,13 +153,6 @@ struct MeditationSetDetailView: View {
 
             firstMeditationSection
         }
-    }
-
-    /// Whether the set titles its meditations otherwise than the
-    /// mysteries' own names
-    private var titlesSayMore: Bool {
-        guard let category = viewModel.category else { return true }
-        return viewModel.entryTitles != MysteryData.mysteries(for: category).map(\.name)
     }
 
     /// The meditations this set holds, numbered, with the devotion's own

@@ -99,36 +99,33 @@ struct AccountView: View {
                             // phone put away. First, as the Rosary's own
                             // page sets it, since it decides whether
                             // Counting is offered at all
-                            RosaryChoiceSettingsRow(
-                                choice: .audio,
-                                value: Bindable(userSettings).prayAloud
-                            )
-
-                            Divider()
-                                .background(AppColors.gold.opacity(0.2))
-
-                            // Counting: the beads on the screen are a way
-                            // of praying, not a requirement — on your own
-                            // rosary the player moves a mystery at a time.
-                            // Moot with the Whole Rosary, whose voice moves
-                            // the beads on the screen
-                            // With the One Rosary beta the beads always
-                            // hang, and Helps stands in Counting's place
-                            if userSettings.oneRosaryBeta {
+                            // With the simple Rosary (the beta) neither
+                            // Audio nor Counting is offered: every Rosary
+                            // is said aloud and the beads always hang
+                            if !userSettings.oneRosaryBeta {
                                 RosaryChoiceSettingsRow(
-                                    choice: .helps,
-                                    value: Bindable(userSettings).rosaryHelps
+                                    choice: .audio,
+                                    value: Bindable(userSettings).prayAloud
                                 )
-                            } else {
+
+                                Divider()
+                                    .background(AppColors.gold.opacity(0.2))
+
+                                // Counting: the beads on the screen are a
+                                // way of praying, not a requirement — on
+                                // your own rosary the player moves a
+                                // mystery at a time. Moot with the Whole
+                                // Rosary, whose voice moves the beads on
+                                // the screen
                                 RosaryChoiceSettingsRow(
                                     choice: .counting,
                                     value: Bindable(userSettings).prayOnBeads,
                                     isAvailable: !userSettings.prayAloud
                                 )
-                            }
 
-                            Divider()
-                                .background(AppColors.gold.opacity(0.2))
+                                Divider()
+                                    .background(AppColors.gold.opacity(0.2))
+                            }
 
                             // The pendant's prayers on a Rosary prayed in
                             // silence (`SilentPendant`). Moot with the
@@ -138,7 +135,9 @@ struct AccountView: View {
                                 title: OpeningPrayersChoice.title,
                                 options: OpeningPrayersChoice.options,
                                 value: Bindable(userSettings).showsOpeningPrayers,
-                                isAvailable: !userSettings.prayAloud,
+                                // With the simple Rosary it holds for a set
+                                // read as text, so it stays open
+                                isAvailable: userSettings.oneRosaryBeta || !userSettings.prayAloud,
                                 unavailableNote: OpeningPrayersChoice.unavailableNote,
                                 note: { OpeningPrayersChoice.note(for: $0) }
                             )
@@ -221,7 +220,10 @@ struct AccountView: View {
                                 RosaryChoiceSettingsRow(
                                     icon: "lv-rosary",
                                     title: String(localized: "One Rosary (beta)", comment: "Settings, The Rosary: the switch for the One Rosary beta, a new way to pray the Rosary"),
-                                    options: RosaryChoice.helps.options(for: .meditation),
+                                    options: [
+                                        RosaryChoice.Option(value: false, name: String(localized: "Off", comment: "One Rosary beta: the Helps choice's option, short, set in a two-part pill: Off or On")),
+                                        RosaryChoice.Option(value: true, name: String(localized: "On", comment: "One Rosary beta: the Helps choice's option, short, set in a two-part pill: Off or On")),
+                                    ],
                                     value: Bindable(userSettings).oneRosaryBeta,
                                     note: { _ in String(localized: "Try the new way to pray the Rosary", comment: "Settings, The Rosary: the line under the One Rosary (beta) switch") }
                                 )
@@ -1599,7 +1601,7 @@ struct AfterTheRosarySheet: View {
                         .background(AppColors.gold.opacity(0.2))
                 }
 
-                Text(userSettings.prayAloud
+                Text(userSettings.oneRosaryBeta || userSettings.prayAloud
                      ? String(localized: "Played after the closing prayer.", comment: "Settings: the line under a row")
                      : String(localized: "Played after the closing prayer, when the Whole Rosary is chosen.", comment: "One Rosary beta, Settings, the After the Rosary sheet: the line under the prayers while the Whole Rosary is not chosen"))
                     .font(AppFonts.italicFont(13))
