@@ -3779,6 +3779,17 @@
         }
       }
     },
+    "A line on each step says what to do and which bead you are on." : {
+      "comment" : "One Rosary beta: the line under the Helps choice when it is on",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En cada paso, una línea te dice qué hacer y en qué cuenta vas."
+          }
+        }
+      }
+    },
     "A litany is a prayer of short petitions, each answered by the same response." : {
       "localizations" : {
         "es" : {
@@ -4716,6 +4727,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Después de la quinta decena."
+          }
+        }
+      }
+    },
+    "After the last mystery" : {
+      "comment" : "One Rosary beta, the player on the closing prayers: under the title, where they fall",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Después del último misterio"
+          }
+        }
+      }
+    },
+    "After the last sorrow" : {
+      "comment" : "One Rosary beta, the player on the closing prayers of the Seven Sorrows chaplet: under the title, where they fall",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Después del último dolor"
           }
         }
       }
@@ -5673,6 +5706,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Antes de entrar"
+          }
+        }
+      }
+    },
+    "Before the first mystery" : {
+      "comment" : "One Rosary beta, the player on the opening prayers: under the title, where they fall",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antes del primer misterio"
+          }
+        }
+      }
+    },
+    "Before the first sorrow" : {
+      "comment" : "One Rosary beta, the player on the opening prayers of the Seven Sorrows chaplet: under the title, where they fall",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antes del primer dolor"
           }
         }
       }
@@ -8601,6 +8656,28 @@
         }
       }
     },
+    "Each mystery: an Our Father, ten Hail Marys and a Glory Be" : {
+      "comment" : "One Rosary beta, the Rosary's overview: what is prayed on each mystery",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada misterio: un Padrenuestro, diez avemarías y un Gloria"
+          }
+        }
+      }
+    },
+    "Each sorrow: an Our Father, seven Hail Marys and a Glory Be" : {
+      "comment" : "One Rosary beta, the Rosary's overview: what is prayed on each sorrow of the chaplet",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada dolor: un Padrenuestro, siete avemarías y un Gloria"
+          }
+        }
+      }
+    },
     "Early Morning Prayer" : {
       "comment" : "Hours of Prayer (the Divine Office): an hour of prayer's plain name, the app's title for it; never 'Morning Prayer' or 'Night Prayer', which are other prayers in the app",
       "localizations" : {
@@ -10558,6 +10635,17 @@
         }
       }
     },
+    "Hear it again" : {
+      "comment" : "One Rosary beta, the player: VoiceOver name of the button that plays the meditation again from its start, once it has been heard",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escúchala de nuevo"
+          }
+        }
+      }
+    },
     "Hear it sung" : {
       "comment" : "Chant practice, under the play disc at rest: a tap plays the whole chant\nLearning a chant: what this step of the four does, one short line",
       "localizations" : {
@@ -10640,6 +10728,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ayuda y soporte"
+          }
+        }
+      }
+    },
+    "Help: %@" : {
+      "comment" : "One Rosary beta, the player with Helps on: VoiceOver reading of the help line; the argument is what to do",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayuda: %@"
+          }
+        }
+      }
+    },
+    "Helps" : {
+      "comment" : "One Rosary beta: a Rosary choice's name, whether a plain line on each step says what to do and which bead you are on",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayudas"
           }
         }
       }
@@ -13578,6 +13688,28 @@
         }
       }
     },
+    "Mystery %lld" : {
+      "comment" : "One Rosary beta, a bead of the rail pressed: the second short line under Our Father, naming which mystery the bead opens, like Mystery 2",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Misterio %lld"
+          }
+        }
+      }
+    },
+    "Mystery %lld of %lld" : {
+      "comment" : "One Rosary beta, the player: under the title, which mystery of the Rosary this is, like Mystery 2 of 5",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Misterio %lld de %lld"
+          }
+        }
+      }
+    },
     "Mystery, topic, or leave blank" : {
       "localizations" : {
         "es" : {
@@ -14427,6 +14559,17 @@
         }
       }
     },
+    "None chosen · said with the Whole Rosary" : {
+      "comment" : "One Rosary beta, Settings: the line under After the Rosary when no prayer is chosen",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguna elegida · se rezan con el Rosario completo"
+          }
+        }
+      }
+    },
     "Nones" : {
       "comment" : "Hours of Prayer: the Church's traditional English name for an hour of the Divine Office, shown small under its plain name",
       "localizations" : {
@@ -14892,6 +15035,17 @@
         }
       }
     },
+    "On adds a line to each step: what to do, and which bead you are on." : {
+      "comment" : "One Rosary beta: the line under the Helps choice when it is off, saying what turning it on adds",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al activarlo, cada paso lleva una línea: qué hacer y en qué cuenta estás."
+          }
+        }
+      }
+    },
     "On each of the next three small beads, a Hail Mary. This first one asks God for an increase of faith." : {
       "comment" : "Guided Rosary: what to do on the first of the three small beads, a Hail Mary for faith",
       "localizations" : {
@@ -15097,6 +15251,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Una avemaría, y luego otra"
+          }
+        }
+      }
+    },
+    "One Rosary (beta)" : {
+      "comment" : "Settings, The Rosary: the switch for the One Rosary beta, a new way to pray the Rosary",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un solo Rosario (beta)"
           }
         }
       }
@@ -16414,6 +16579,17 @@
         }
       }
     },
+    "Played after the closing prayer, when the Whole Rosary is chosen." : {
+      "comment" : "One Rosary beta, Settings, the After the Rosary sheet: the line under the prayers while the Whole Rosary is not chosen",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se dicen después de la oración final, cuando eliges el Rosario completo."
+          }
+        }
+      }
+    },
     "Played after the closing prayer, with the Whole Rosary." : {
       "comment" : "Voice & speed sheet: note under the prayers after the Rosary, which are said only when every prayer is said aloud",
       "localizations" : {
@@ -17592,6 +17768,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "LEER LA LICENCIA"
+          }
+        }
+      }
+    },
+    "READ THE MEDITATION" : {
+      "comment" : "One Rosary beta, the player on a mystery's Our Father: the quiet door to the meditation as text",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LEER LA MEDITACIÓN"
           }
         }
       }
@@ -19738,6 +19925,17 @@
         }
       }
     },
+    "Shows it on the rosary" : {
+      "comment" : "One Rosary beta, the Rosary's overview: VoiceOver hint on a part of the Rosary, which lights its beads in the drawing",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La muestra en el rosario"
+          }
+        }
+      }
+    },
     "Shows its prayers" : {
       "localizations" : {
         "es" : {
@@ -20101,6 +20299,17 @@
         }
       }
     },
+    "Small bead %lld of 10. Keep the scene before you." : {
+      "comment" : "One Rosary beta, Helps on a Hail Mary in the middle of a mystery: which bead you are on and what to do, without naming the mystery, which the screen names above",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuenta pequeña %lld de 10. Ten la escena ante tus ojos."
+          }
+        }
+      }
+    },
     "Small bead %lld of 3" : {
       "comment" : "VoiceOver: the part of the rosary's pendant the voice is on, one of the three small beads, like Small bead 2 of 3",
       "localizations" : {
@@ -20205,6 +20414,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cantos a María"
+          }
+        }
+      }
+    },
+    "Sorrow %lld of %lld" : {
+      "comment" : "One Rosary beta, the player: under the title, which sorrow of the Seven Sorrows chaplet this is, like Sorrow 3 of 7",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dolor %lld de %lld"
           }
         }
       }
@@ -20949,6 +21169,17 @@
         }
       }
     },
+    "THE ORDER OF THE ROSARY" : {
+      "comment" : "One Rosary beta, a Rosary's own page: heading over the order of the whole Rosary, before PRAY",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EL ORDEN DEL ROSARIO"
+          }
+        }
+      }
+    },
     "THE PASSAGE" : {
       "localizations" : {
         "es" : {
@@ -21096,6 +21327,17 @@
         }
       }
     },
+    "Take the crucifix in your hand. Touch your forehead, your breast, your left shoulder and your right." : {
+      "comment" : "One Rosary beta, Helps on the first Sign of the Cross: what to do, a sentence of its own over the prayer's words",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toma el crucifijo en la mano. Tócate la frente, el pecho, el hombro izquierdo y el derecho."
+          }
+        }
+      }
+    },
     "Take turns" : {
       "localizations" : {
         "es" : {
@@ -21144,6 +21386,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Retoma tu turno"
+          }
+        }
+      }
+    },
+    "Tap a bead on the rail to go to it." : {
+      "comment" : "One Rosary beta: a one-time hint under the prayer that the beads of the rail beside it can be tapped",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca una cuenta del rosario de al lado para ir a ella."
           }
         }
       }
@@ -21293,6 +21546,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Diez avemarías, contadas en tu propio rosario"
+          }
+        }
+      }
+    },
+    "Ten Hail Marys, one on each small bead." : {
+      "comment" : "One Rosary beta, Helps on the first Hail Mary of a later mystery: what to do",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diez avemarías, una en cada cuenta pequeña."
+          }
+        }
+      }
+    },
+    "Ten Hail Marys, one on each small bead. Let the words carry you while your mind stays with the scene." : {
+      "comment" : "One Rosary beta, Helps on the first Hail Mary of the first mystery: what to do, without naming the mystery, which the screen names above",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diez avemarías, una en cada cuenta pequeña. Deja que las palabras te lleven mientras tu mente se queda en la escena."
           }
         }
       }
@@ -22016,6 +22291,17 @@
         }
       }
     },
+    "The Hail, Holy Queen, the closing prayer and the Sign of the Cross" : {
+      "comment" : "One Rosary beta, the Rosary's overview: what the Rosary closes with",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Salve, la oración final y la Señal de la Cruz"
+          }
+        }
+      }
+    },
     "The Holy Bible" : {
       "localizations" : {
         "es" : {
@@ -22557,6 +22843,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La Señal de la Cruz"
+          }
+        }
+      }
+    },
+    "The Sign of the Cross and the Act of Contrition" : {
+      "comment" : "One Rosary beta, the Rosary's overview: what the Seven Sorrows chaplet opens with",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Señal de la Cruz y el Acto de contrición"
+          }
+        }
+      }
+    },
+    "The Sign of the Cross, the Creed, an Our Father, three Hail Marys and a Glory Be" : {
+      "comment" : "One Rosary beta, the Rosary's overview: what the Rosary opens with",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Señal de la Cruz, el Credo, un Padrenuestro, tres avemarías y un Gloria"
           }
         }
       }
@@ -23208,6 +23516,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La meditación"
+          }
+        }
+      }
+    },
+    "The meditation is read first. The beads open when it ends." : {
+      "comment" : "One Rosary beta, the player on a mystery's Our Father before its meditation has been heard: why the beads wait",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero se lee la meditación. Las cuentas se abren cuando termina."
           }
         }
       }
@@ -24472,6 +24791,17 @@
         }
       }
     },
+    "Three Hail Marys for her tears, the closing prayer and the Sign of the Cross" : {
+      "comment" : "One Rosary beta, the Rosary's overview: what the Seven Sorrows chaplet closes with",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tres avemarías por sus lágrimas, la oración final y la Señal de la Cruz"
+          }
+        }
+      }
+    },
     "Three Hail Marys, asking for an increase of faith, hope and charity." : {
       "comment" : "How to Pray, the beads lesson: what is prayed on this part of the rosary",
       "localizations" : {
@@ -25030,6 +25360,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pruébalo aquí. Desliza hacia abajo sobre las cuentas."
+          }
+        }
+      }
+    },
+    "Try the new way to pray the Rosary" : {
+      "comment" : "Settings, The Rosary: the line under the One Rosary (beta) switch",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prueba la nueva forma de rezar el Rosario"
           }
         }
       }

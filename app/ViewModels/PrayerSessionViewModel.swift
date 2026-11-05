@@ -327,6 +327,30 @@ final class PrayerSessionViewModel {
         spokenFollowHand()
     }
 
+    /// One Rosary beta: the hand taken to the bead at `index` on the
+    /// strand by a tap, walked there a bead at a time as the swipe would
+    /// take it, so the decade turns, the voice follows and the narration
+    /// loads exactly as they do for a swipe. Only as far as
+    /// `RosaryStrand.canTap` allows; never onto the pendant.
+    ///
+    /// - Returns: whether the hand moved
+    @discardableResult
+    func goToBead(at index: Int) -> Bool {
+        guard currentPendantStep == nil, !voiceHoldsHand, strand.canTap(index, from: strandIndex, onGloryBe: isDecadePrayed) else { return false }
+        let start = beadPosition
+        var moves = 0
+        while strandIndex != index, moves < strand.count * 2 {
+            moves += 1
+            if strandIndex < index {
+                guard prayForward() else { break }
+            } else {
+                prayBack()
+            }
+            if currentPendantStep != nil { break }
+        }
+        return beadPosition != start
+    }
+
     // MARK: - The Rosary Said Aloud
 
     /// The whole Rosary said aloud, while `UserSettings.prayAloud` is on.

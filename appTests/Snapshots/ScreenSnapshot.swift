@@ -145,6 +145,7 @@ private struct DefaultLook {
     let prayerImageMode: Bool
     let prayOnBeads: Bool
     let prayAloud: Bool
+    let oneRosaryBeta: Bool
     let narrationVoiceSlug: String?
     let mysteryScheduleRaw: String
     let hasSeenPrayerSwipeHint: Bool
@@ -159,6 +160,7 @@ private struct DefaultLook {
             prayerImageMode: settings.prayerImageMode,
             prayOnBeads: settings.prayOnBeads,
             prayAloud: settings.prayAloud,
+            oneRosaryBeta: settings.oneRosaryBeta,
             narrationVoiceSlug: settings.narrationVoiceSlug,
             mysteryScheduleRaw: settings.mysteryScheduleRaw,
             hasSeenPrayerSwipeHint: settings.hasSeenPrayerSwipeHint,
@@ -170,6 +172,8 @@ private struct DefaultLook {
         settings.prayerImageMode = true
         settings.prayOnBeads = true
         settings.prayAloud = false
+        // The baselines are the app as it is with the One Rosary beta off
+        settings.oneRosaryBeta = false
         settings.narrationVoiceSlug = nil
         settings.mysteryScheduleRaw = MysterySchedule.traditional.rawValue
         settings.hasSeenPrayerSwipeHint = true
@@ -185,6 +189,7 @@ private struct DefaultLook {
         settings.prayerImageMode = prayerImageMode
         settings.prayOnBeads = prayOnBeads
         settings.prayAloud = prayAloud
+        settings.oneRosaryBeta = oneRosaryBeta
         settings.narrationVoiceSlug = narrationVoiceSlug
         settings.mysteryScheduleRaw = mysteryScheduleRaw
         settings.hasSeenPrayerSwipeHint = hasSeenPrayerSwipeHint

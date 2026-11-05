@@ -203,6 +203,10 @@ struct PlaybackSettingsSheet: View {
     @Environment(UserSettings.self) private var userSettings
     @Environment(\.dismiss) private var dismiss
 
+    /// The Rosary the sheet is opened over: its choices are that form's
+    /// (One Rosary beta: the Scriptural and Audio Rosaries open it too)
+    var form: RosaryForm = .meditation
+
     /// The sheet's height, for its detent: the header, the voices and
     /// the speeds under their labels, and the two choices with their
     /// notes
@@ -255,11 +259,12 @@ struct PlaybackSettingsSheet: View {
                 // meditation alone: with the Whole Rosary it moves the
                 // beads on the screen itself
                 VStack(spacing: 0) {
-                    ForEach(RosaryChoice.offered(for: .meditation, aloud: settings.prayAloud), id: \.self) { choice in
+                    ForEach(RosaryChoice.offered(for: form, aloud: settings.prayAloud, oneRosary: settings.oneRosaryBeta), id: \.self) { choice in
                         RosaryChoiceGroup(
                             choice: choice,
-                            form: .meditation,
-                            value: choice == .audio ? $settings.prayAloud : $settings.prayOnBeads
+                            form: form,
+                            value: choice == .audio ? $settings.prayAloud
+                                : (choice == .helps ? $settings.rosaryHelps : $settings.prayOnBeads)
                         )
                         .transition(RosaryChoiceGroup.comingAndGoing)
                     }

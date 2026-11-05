@@ -222,6 +222,38 @@ final class UserSettings {
         didSet { UserDefaults.standard.set(showsOpeningPrayers, forKey: "userSettings.showsOpeningPrayers") }
     }
 
+    // MARK: - One Rosary (beta)
+
+    /// The One Rosary beta, off by default: the Rosary's own page shows
+    /// the whole Rosary before PRAY, the beads always hang on both
+    /// players (Counting stands down), Helps takes Counting's place, and
+    /// the opening and closing prayers share one layout on both players.
+    /// Off, the app is as it was.
+    var oneRosaryBeta: Bool = false {
+        didSet { UserDefaults.standard.set(oneRosaryBeta, forKey: Self.oneRosaryBetaKey) }
+    }
+
+    static let oneRosaryBetaKey = "userSettings.oneRosaryBeta"
+
+    /// The beta's setting as stored: off until chosen
+    static func storedOneRosaryBeta(in defaults: UserDefaults) -> Bool {
+        defaults.bool(forKey: oneRosaryBetaKey)
+    }
+
+    /// With the One Rosary beta on: one plain line on each step saying
+    /// what to do and which bead the hand is on (`RosaryHelps`), the
+    /// Guided Rosary's words on the Rosary itself. Off until chosen.
+    /// Called Helps, Off or On (`RosaryChoice.helps`).
+    var rosaryHelps: Bool = false {
+        didSet { UserDefaults.standard.set(rosaryHelps, forKey: "userSettings.rosaryHelps") }
+    }
+
+    /// With the One Rosary beta on: whether the one-time hint that a bead
+    /// of the rail takes a tap has been shown
+    var hasSeenBeadTapHint: Bool = false {
+        didSet { UserDefaults.standard.set(hasSeenBeadTapHint, forKey: "userSettings.hasSeenBeadTapHint") }
+    }
+
     // MARK: - After the Rosary
 
     /// Prayers some add after the Rosary's closing prayer, each off until
@@ -695,6 +727,9 @@ final class UserSettings {
         if d.object(forKey: "userSettings.showsOpeningPrayers") != nil {
             showsOpeningPrayers = d.bool(forKey: "userSettings.showsOpeningPrayers")
         }
+        oneRosaryBeta = Self.storedOneRosaryBeta(in: d)
+        rosaryHelps = d.bool(forKey: "userSettings.rosaryHelps")
+        hasSeenBeadTapHint = d.bool(forKey: "userSettings.hasSeenBeadTapHint")
         prayForHolyFather = d.bool(forKey: "userSettings.prayForHolyFather")
         prayMemorare = d.bool(forKey: "userSettings.prayMemorare")
         praySaintMichael = d.bool(forKey: "userSettings.praySaintMichael")

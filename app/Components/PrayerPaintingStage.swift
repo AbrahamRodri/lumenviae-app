@@ -41,6 +41,10 @@ struct PrayerPaintingStage: View {
 
     var style: Style = .seated
 
+    /// The seated painting's share of the glass. The One Rosary beta
+    /// seats it higher, so the words stand on the dark ground beneath it
+    var seatedFraction: CGFloat = 0.75
+
     /// Identity for the crossfade: a new mystery is a new picture
     let paintingID: Int
 
@@ -159,7 +163,7 @@ struct PrayerPaintingStage: View {
         // Seated higher than the painting would like: the player's title,
         // scrubber, transport and utility row are four bands of chrome,
         // and they need ground of their own to sit on.
-        let seatedHeight = fullHeight * 0.75
+        let seatedHeight = fullHeight * seatedFraction
         let artHeight = chromeHidden ? fullHeight : seatedHeight
 
         return VStack(spacing: 0) {
