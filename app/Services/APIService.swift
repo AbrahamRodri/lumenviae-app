@@ -131,8 +131,12 @@ final class APIService {
     // MARK: - Meditation Sets
 
     /// Fetches meditation set summaries (without meditations) for a category.
-    func fetchMeditationSets(category: MysteryCategory) async throws -> [MeditationSetSummary] {
-        let urlString = "\(baseURL)/meditation-sets?category=\(category.rawValue)"
+    func fetchMeditationSets(
+        category: MysteryCategory, lang: String? = MeditationTranslation.requestLanguage
+    ) async throws -> [MeditationSetSummary] {
+        // In Spanish the list asks for each set's Spanish name and line too
+        let language = lang.map { "&lang=\($0)" } ?? ""
+        let urlString = "\(baseURL)/meditation-sets?category=\(category.rawValue)\(language)"
 
         guard let url = URL(string: urlString) else {
             throw APIError.invalidURL

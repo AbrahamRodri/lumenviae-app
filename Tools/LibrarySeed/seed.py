@@ -15,6 +15,12 @@ Usage (through Tools/dev library-seed):
                              # which also gives each its version
     seed.py --check          # exit 1 if the API checkout's files differ from the app's
 
+With --live it also copies the two Spanish documents the app ships
+(consecration.es.json and prayer_book.es.json: GET /api/v2/consecration
+and /api/v2/prayer-book with lang=es), so a new install's first Spanish
+launch reads Spanish; the server's copy is read only at the next launch.
+They are assembled by the server, so they come from the live API alone.
+
 Each copy is the server's file byte for byte with one line added, its
 "version", the fingerprint the server serves (LumenViae.Rosary.Content
 .version: SHA-256 of the sections as compact JSON with sorted keys, its
@@ -138,6 +144,36 @@ def problem(name: str, doc: dict):
     return None
 
 
+# The Spanish documents the app ships: path, JSON:API type, fields
+SPANISH = {
+    "consecration.es": ("consecration", "consecration", "version,updated_at,translations"),
+    "prayer_book.es": ("prayer-book", "prayer_book", "version,updated_at,translations"),
+}
+
+
+def spanish_problem(name: str, doc: dict):
+    """What the app would refuse, or a copy too thin to ship"""
+    if not doc.get("version"):
+        return "no version"
+    translations = doc.get("translations")
+    if name == "consecration.es":
+        days = {d.get("number") for d in (translations or {}).get("days", [])}
+        missing = sorted(set(range(1, 34)) - days)
+        if missing:
+            return f"no Spanish for day {missing[0]}"
+    elif not translations:
+        return "no translations"
+    return None
+
+
+def live_spanish(base: str, name: str) -> dict:
+    path, kind, fields = SPANISH[name]
+    url = f"{base}/v2/{path}?lang=es&fields%5B{kind}%5D={fields}"
+    request = urllib.request.Request(url, headers={"Accept": "application/vnd.api+json"})
+    with urllib.request.urlopen(request, timeout=60) as response:
+        return json.load(response)["data"]["attributes"]
+
+
 def live(base: str, name: str) -> dict:
     path, fields = NAMES[name]
     url = f"{base}/v2/{path}?fields%5B{name}%5D={fields}"
@@ -154,6 +190,7 @@ def main():
         i = args.index("--live")
         base = args[i + 1] if i + 1 < len(args) and not args[i + 1].startswith("--") else "https://www.lumenviae.org/api"
         docs = {name: live(base.rstrip("/"), name) for name in NAMES}
+        docs.update({name: live_spanish(base.rstrip("/"), name) for name in SPANISH})
     else:
         source = pathlib.Path(args[args.index("--from") + 1]) if "--from" in args else api_checkout()
         # Copied byte for byte, so the app's copy is the server's file
@@ -161,11 +198,15 @@ def main():
         docs = {name: json.loads(data) for name, data in raw.items()}
         raw = {name: with_version(name, data, docs[name]) for name, data in raw.items()}
 
-    stale = []
+    # Every document is checked before any is written, so a bad one
+    # leaves the app's copies as they were
     for name, doc in docs.items():
-        bad = problem(name, doc)
+        bad = spanish_problem(name, doc) if name in SPANISH else problem(name, doc)
         if bad:
             sys.exit(f"{name}: {bad}; nothing copied")
+
+    stale = []
+    for name, doc in docs.items():
         dest = SEED / f"{name}.json"
         data = raw.get(name) or (json.dumps(doc, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode()
         if not dest.exists() or dest.read_bytes() != data:

@@ -258,6 +258,7 @@ Every text the app bundles or fetches that is not its own writing, with the edit
 | Maxims and Counsels of St. Francis de Sales for Every Day of the Year | translated by Ella McMahon (1884) | In the daily quotations | Project Gutenberg #73661 | Public domain |
 | Meditations and Devotions | John Henry Newman (Longmans, 1893) | In the daily quotations | Internet Archive (a2514634smrn00newmuoft) | Public domain |
 | The Divine Comedy | Dante, translated by Henry Wadsworth Longfellow (1867) | In the daily quotations | Paradiso XXXIII | Public domain |
+| The World's First Love | Fulton J. Sheen (1952) | One line in the daily quotations, the Rosary as "the book of the blind"; in Spanish, El primer amor del mundo | Credited here rather than under the line | Short quotation, credited |
 | The Roman Missal of 1962 | the Missale Meum project | Today's Mass, fetched when opened | missalemeum.com, MIT licence | MIT |
 | The Roman Breviary of 1962 | The Divinum Officium Project | The Hours of Prayer, fetched when opened | divinumofficium.com, by way of Lumen Viae's own server | Free to use, with the project's credit |
 | Gregorian chant: recordings and scores | Verbum Gloriae (verbumgloriae.es) | The Chant Library's 104 recordings and their scores | verbumgloriae.es, copyleft licence | Copyleft (share alike, no attribution required) |

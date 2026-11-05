@@ -167,7 +167,7 @@ struct SpanishCatalogTests {
         #expect(spanish.localizedString(forKey: "App Language", value: nil, table: nil) == "Idioma de la app")
         #expect(
             spanish.localizedString(forKey: "The words of this app were translated into Spanish with artificial intelligence. The prayers use the Church's traditional texts.", value: nil, table: nil)
-                == "Las palabras de esta app se tradujeron al español con inteligencia artificial. Las oraciones usan los textos tradicionales de la Iglesia."
+                == "Las palabras de esta app se tradujeron al español con inteligencia artificial. Las oraciones usan los textos tradicionales de la Iglesia cuando existen."
         )
     }
 

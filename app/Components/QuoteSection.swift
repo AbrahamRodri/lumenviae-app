@@ -22,16 +22,22 @@ struct QuoteSection: View {
     /// Its Spanish is the team's own (AI) translation
     let aiTranslated: Bool
 
+    /// Whether the author and the work stand under the line; a line
+    /// credited in Sources & Credits alone has neither
+    let showsCredit: Bool
+
     init(
         quote: String = RosaryQuotes.all[0].text,
         author: String = RosaryQuotes.all[0].author,
         source: String? = nil,
-        aiTranslated: Bool = false
+        aiTranslated: Bool = false,
+        showsCredit: Bool = true
     ) {
         self.quote = quote
         self.author = author
         self.source = source
         self.aiTranslated = aiTranslated
+        self.showsCredit = showsCredit
     }
 
     var body: some View {
@@ -48,13 +54,15 @@ struct QuoteSection: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             VStack(spacing: 4) {
-                Text("— \(author)")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold)
-                    .multilineTextAlignment(.center)
+                if showsCredit {
+                    Text("— \(author)")
+                        .font(AppFonts.labelFont(10))
+                        .tracking(2.5)
+                        .foregroundColor(AppColors.gold)
+                        .multilineTextAlignment(.center)
+                }
 
-                if let source {
+                if showsCredit, let source {
                     Text(source)
                         .font(AppFonts.italicFont(11))
                         .foregroundColor(AppColors.textSecondary)
@@ -75,7 +83,7 @@ struct QuoteSection: View {
         .padding(.horizontal, 14)
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(quote) — \(author)")
+        .accessibilityLabel(showsCredit ? "\(quote) — \(author)" : quote)
     }
 }
 

@@ -49,10 +49,20 @@ final class MeditationSetDetailViewModel {
 
     var category: MysteryCategory? { summary.mysteryCategory }
 
-    var name: String { summary.name }
+    /// The words the page names the set by: the list's, or the full
+    /// set's once it has come with its Spanish (`set_translation`), which
+    /// the list may not carry yet
+    private var words: (name: String, description: String?, source: String?, author: String?) {
+        if let fullSet, fullSet.setTranslation != nil, MeditationTranslation.isActive {
+            return (fullSet.name, fullSet.description, fullSet.source, fullSet.author)
+        }
+        return (summary.name, summary.description, summary.source, summary.author)
+    }
+
+    var name: String { words.name }
 
     var description: String? {
-        summary.description.flatMap { $0.isEmpty ? nil : $0 }
+        words.description.flatMap { $0.isEmpty ? nil : $0 }
     }
 
     /// The line under the set's name, in the title block over the
@@ -169,7 +179,7 @@ final class MeditationSetDetailViewModel {
     /// first meditation's book for all five. The summary carries it, so
     /// the line is there before the full set lands.
     var sourceTitle: String? {
-        (summary.source ?? fullSet?.source).flatMap { $0.isEmpty ? nil : $0 }
+        (words.source ?? fullSet?.source).flatMap { $0.isEmpty ? nil : $0 }
     }
 
     /// Who wrote them, on the same terms — suppressed when it only
@@ -177,7 +187,7 @@ final class MeditationSetDetailViewModel {
     /// named after its author ("Blessed Fulton J. Sheen" / "Bishop
     /// Fulton J. Sheen").
     var authorName: String? {
-        guard let author = summary.author ?? fullSet?.author, !author.isEmpty else { return nil }
+        guard let author = words.author ?? fullSet?.author, !author.isEmpty else { return nil }
         let inAuthor = Self.distinctiveWords(author)
         guard !inAuthor.isEmpty else { return nil }
         return inAuthor.isSubset(of: Self.distinctiveWords(name)) ? nil : author
