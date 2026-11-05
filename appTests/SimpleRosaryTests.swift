@@ -269,5 +269,9 @@ struct SimpleRosaryTests {
         // The line's top sits at end * (V - H); its foot at that plus H
         let foot = end * Double(v - h) + Double(h)
         #expect(abs(foot - SimpleRosaryWords.tallLineFoot * Double(v)) < 0.001)
+        // A line a little shorter than the words ends above the fade too
+        let near: CGFloat = 280
+        let nearEnd = SimpleRosaryWords.tallLineAnchor(progress: 1, lineHeight: near, wordsHeight: v)
+        #expect(abs(nearEnd * Double(v - near) + Double(near) - SimpleRosaryWords.tallLineFoot * Double(v)) < 0.001)
     }
 }

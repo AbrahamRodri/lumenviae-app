@@ -1189,10 +1189,12 @@ struct SimpleRosaryWords: View {
     /// the way through it. An anchor y sets the line's point at y of its
     /// height on the words' point at y of theirs, so the line's top is
     /// at the words' top at 0, and its foot at `tallLineFoot` of the
-    /// words at y = (H - fV) / (H - V).
+    /// words at y = (H - fV) / (H - V). It holds for a line a little
+    /// shorter than the words too, whose foot would otherwise end in
+    /// the fade.
     nonisolated static func tallLineAnchor(progress: Double, lineHeight: CGFloat, wordsHeight: CGFloat) -> Double {
         let h = Double(lineHeight), v = Double(wordsHeight)
-        guard h > v, v > 0 else { return litLineAnchor.y }
+        guard v > 0, h != v else { return litLineAnchor.y }
         let end = (h - tallLineFoot * v) / (h - v)
         return min(max(progress, 0), 1) * end
     }
