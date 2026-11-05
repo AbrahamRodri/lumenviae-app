@@ -20628,6 +20628,28 @@
         }
       }
     },
+    "Spanish (beta)" : {
+      "comment" : "Settings, App Language row, shown only in Spanish: the language's own name with beta after it",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Español (beta)"
+          }
+        }
+      }
+    },
+    "Spanish is in beta: the recordings and some meditations are still in English." : {
+      "comment" : "Shown only in Spanish, after the AI translation notice, at first launch and under the language row in Settings: Spanish is a beta, the narration recordings and some meditations are still English",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El español está en beta: las grabaciones y algunas meditaciones siguen en inglés."
+          }
+        }
+      }
+    },
     "Spanish with Latin" : {
       "comment" : "Settings, Prayer Language, in a Spanish app: Spanish with Latin beneath each line",
       "localizations" : {

@@ -169,6 +169,11 @@ struct SpanishCatalogTests {
             spanish.localizedString(forKey: "The words of this app were translated into Spanish with artificial intelligence. The prayers use the Church's traditional texts.", value: nil, table: nil)
                 == "Las palabras de esta app se tradujeron al español con inteligencia artificial. Las oraciones usan los textos tradicionales de la Iglesia cuando existen."
         )
+        #expect(spanish.localizedString(forKey: "Spanish (beta)", value: nil, table: nil) == "Español (beta)")
+        #expect(
+            spanish.localizedString(forKey: "Spanish is in beta: the recordings and some meditations are still in English.", value: nil, table: nil)
+                == "El español está en beta: las grabaciones y algunas meditaciones siguen en inglés."
+        )
     }
 
     @Test func spanishPluralsAgreeWithTheirCount() throws {
