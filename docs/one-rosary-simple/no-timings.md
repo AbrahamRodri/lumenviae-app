@@ -24,14 +24,16 @@ so they open as text to read.
 
 ## Rosary prayer clips (`GET /api/rosary/audio`)
 
-No clip has `lines` yet (api-build is adding the field). Untimed, both voices
-(`frederick`, `female`):
+Rechecked 5 Nov 2026 06:05Z, after api #197 went live. Untimed:
 
-- Prayers (12): act_of_contrition, apostles_creed, fatima_prayer, glory_be,
-  hail_holy_queen, hail_mary, memorare, our_father, rosary_closing_prayer,
-  sign_of_cross, sorrows_closing_prayer, st_michael_prayer
-- Announcements: 27 per voice
-- Scriptural Rosary verses: 249 per voice
+| | frederick | female |
+|---|---|---|
+| Prayers (12) | memorare | memorare |
+| Announcements (27) | seven_sorrows_1, seven_sorrows_2, seven_sorrows_7, sorrowful_2, sorrowful_3 | sorrowful_2, sorrowful_3 |
+| Scriptural verses (249) | 19 | 11 |
 
-The app decodes `lines` on each clip already (`RosaryAudioClip.lines`), so
-these light up as soon as the api serves them; no app change is needed.
+Everything else is timed and lit. In the Spanish app a fixed prayer keeps
+its Spanish words, unlit, since its recording is English.
+
+A phone that saved the clip list before the timings came keeps using it
+until its links expire, at most a day; then it fetches the timed list.
