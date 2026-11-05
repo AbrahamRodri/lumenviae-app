@@ -38,6 +38,21 @@ extension PrayerBookTranslations: LibraryDocument {
     }
 }
 
+extension ConsecrationTranslations: LibraryDocument {
+    nonisolated var problem: String? {
+        let numbers = days.map(\.number)
+        guard Set(numbers).count == numbers.count else { return "a Spanish day twice" }
+        if let stray = numbers.first(where: { !(1...34).contains($0) }) { return "no day \(stray)" }
+        for day in days {
+            let orders = day.readings.map(\.order)
+            guard Set(orders).count == orders.count else { return "day \(day.number) has a reading twice" }
+        }
+        let ids = prayers.map(\.id)
+        guard Set(ids).count == ids.count else { return "a Spanish prayer twice" }
+        return nil
+    }
+}
+
 extension PrayerBookDocument: LibraryDocument {
     /// The topics the app names by id (`PrayerBook.layouts`, the Prayers
     /// page's Mary shelf, the Saved page's First Prayers): a book that
@@ -190,6 +205,9 @@ nonisolated enum LibraryContent {
     /// The Prayer Book's Spanish, kept apart from the English with a version
     /// of its own; the app ships none (the Rosary's own Spanish is bundled)
     static let prayerBookSpanishStore = LibraryDocumentStore<PrayerBookTranslations>(name: "prayer_book.es")
+    /// The Consecration's Spanish, the same way: the English is bundled
+    /// (`ConsecrationData`), and the app ships no Spanish
+    static let consecrationSpanishStore = LibraryDocumentStore<ConsecrationTranslations>(name: "consecration.es")
 
     /// Whether the app was launched to host the unit tests, which read
     /// the shipped copies alone: never what a simulator kept from the
@@ -211,6 +229,14 @@ nonisolated enum LibraryContent {
     static let prayerBookSpanish: [String: PrayerBookTranslations.Translation] = {
         guard SpanishContent.isActive, !hostsTests else { return [:] }
         return prayerBookSpanishStore.current()?.byID ?? [:]
+    }()
+
+    /// The Consecration's Spanish as this launch reads it: empty in
+    /// English, in the tests, and until the server has sent some. Read
+    /// once, as the days it is laid over are built once.
+    static let consecrationSpanish: ConsecrationTranslations = {
+        guard SpanishContent.isActive, !hostsTests else { return ConsecrationTranslations() }
+        return consecrationSpanishStore.current() ?? ConsecrationTranslations()
     }()
 
     static let chantLibrary: ChantLibraryDocument = {
@@ -255,6 +281,7 @@ final class LibraryContentSync {
     private let prayerBookStore: LibraryDocumentStore<PrayerBookDocument>
     private let chantLibraryStore: LibraryDocumentStore<ChantLibraryDocument>
     private let prayerBookSpanishStore: LibraryDocumentStore<PrayerBookTranslations>
+    private let consecrationSpanishStore: LibraryDocumentStore<ConsecrationTranslations>
     private let spanish: Bool
     private var running: Task<Void, Never>?
 
@@ -272,6 +299,8 @@ final class LibraryContentSync {
         prayerBookStore: LibraryDocumentStore<PrayerBookDocument> = LibraryContent.prayerBookStore,
         chantLibraryStore: LibraryDocumentStore<ChantLibraryDocument> = LibraryContent.chantLibraryStore,
         prayerBookSpanishStore: LibraryDocumentStore<PrayerBookTranslations> = LibraryContent.prayerBookSpanishStore,
+        consecrationSpanishStore: LibraryDocumentStore<ConsecrationTranslations> =
+            LibraryContent.consecrationSpanishStore,
         spanish: Bool = SpanishContent.isActive
     ) {
         if let session {
@@ -287,6 +316,7 @@ final class LibraryContentSync {
         self.prayerBookStore = prayerBookStore
         self.chantLibraryStore = chantLibraryStore
         self.prayerBookSpanishStore = prayerBookSpanishStore
+        self.consecrationSpanishStore = consecrationSpanishStore
         self.spanish = spanish
     }
 
@@ -332,6 +362,11 @@ final class LibraryContentSync {
         if spanish {
             _ = try? await refresh(
                 prayerBookSpanishStore, path: "prayer-book", type: "prayer_book",
+                fields: "version,updated_at,translations", lang: "es")
+            // The Consecration's Spanish, laid over the bundled English
+            // at the next launch
+            _ = try? await refresh(
+                consecrationSpanishStore, path: "consecration", type: "consecration",
                 fields: "version,updated_at,translations", lang: "es")
         }
         if allAnswered { defaults.set(now, forKey: Self.checkedKey) }

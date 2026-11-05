@@ -14,14 +14,15 @@ import Foundation
 
 enum BundledMeditationSets {
 
-    /// Every bundled set, in the order the categories are listed.
+    /// Every bundled set, in the order the categories are listed, each
+    /// carrying its reviewed Spanish (shown only in a Spanish app).
     static let all: [MeditationSet] = [
         JoyfulGospelMeditationData.set,
         SorrowfulEmmerichMeditationData.set,
         GloriousGospelMeditationData.set,
         LuminousMeditationData.set,
         SevenSorrowsLiguoriMeditationData.set
-    ]
+    ].map { $0.withTranslations(MeditationTranslation.bundled) }
 
     /// The picker rows for the bundled sets of one category.
     static func summaries(for category: MysteryCategory) -> [MeditationSetSummary] {

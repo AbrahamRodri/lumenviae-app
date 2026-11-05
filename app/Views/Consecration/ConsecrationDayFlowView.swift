@@ -706,6 +706,13 @@ struct ConsecrationDayFlowView: View {
                 )
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 26)
+
+                AINote(
+                    shows: ConsecrationSpanish.readingIsAITranslated(
+                        day: day?.dayNumber ?? 0, order: reading.order)
+                )
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 26)
             }
         }
     }
@@ -766,6 +773,10 @@ struct ConsecrationDayFlowView: View {
             )
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 28)
+
+            AITranslationNote(prayerID: prayer.id)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 28)
         }
     }
 

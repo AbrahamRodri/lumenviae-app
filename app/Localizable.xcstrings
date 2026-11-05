@@ -5082,6 +5082,17 @@
         }
       }
     },
+    "Anne Catherine Emmerich" : {
+      "comment" : "The name of the bundled Sorrowful meditation set, the visionary whose words it reads, shown on the mysteries' page and over the player",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ana Catalina Emmerick"
+          }
+        }
+      }
+    },
     "Another saying" : {
       "comment" : "St. Carlo Acutis page: quiet button under A saying for today, showing another of his sayings",
       "localizations" : {
@@ -6903,6 +6914,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Libros católicos clásicos para leer o escuchar"
+          }
+        }
+      }
+    },
+    "Classic meditations on the Mysteries of Light." : {
+      "comment" : "Shown on the bundled Luminous meditation set's page",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meditaciones clásicas sobre los misterios de luz."
           }
         }
       }
@@ -19001,6 +19023,17 @@
         }
       }
     },
+    "Scenes from The Dolorous Passion of Our Lord Jesus Christ, the visions of Anne Catherine Emmerich, in the 1862 English translation." : {
+      "comment" : "Shown on a bundled meditation set's page, in place of its English description; it names the edition its text is taken from",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escenas de La dolorosa Pasión de Nuestro Señor Jesucristo, las visiones de Ana Catalina Emmerick, en la edición española de Madrid, 1865."
+          }
+        }
+      }
+    },
     "Scenes from the lives of Jesus and Mary" : {
       "localizations" : {
         "es" : {
@@ -20351,6 +20384,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aspersión con agua bendita"
+          }
+        }
+      }
+    },
+    "St. Alphonsus Liguori" : {
+      "comment" : "The name of the bundled Seven Sorrows meditation set, the saint who wrote it, shown on the mysteries' page and over the player",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "San Alfonso María de Ligorio"
+          }
+        }
+      }
+    },
+    "St. Alphonsus Liguori's reflections on each of the seven sorrows of Mary, from The Glories of Mary, in the 1852 English translation." : {
+      "comment" : "Shown on a bundled meditation set's page, in place of its English description; it names the edition its text is taken from",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las reflexiones de san Alfonso María de Ligorio sobre cada uno de los siete dolores de María, de Las glorias de María, en la traducción española de 1868."
           }
         }
       }
@@ -21918,6 +21973,17 @@
         }
       }
     },
+    "The Gospel and the Acts of the Apostles at each mystery, and the Scriptures the Church reads of Mary's Assumption and crowning, in the Douay-Rheims translation." : {
+      "comment" : "Shown on a bundled meditation set's page, in place of its English description; it names the edition its text is taken from",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El Evangelio y los Hechos de los Apóstoles en cada misterio, y las Escrituras que la Iglesia lee en la Asunción y la coronación de María, en la traducción de Torres Amat."
+          }
+        }
+      }
+    },
     "The Gospel first" : {
       "comment" : "Kinds of Meditation sheet, the Gospel card: its headline, what praying with this kind is like",
       "localizations" : {
@@ -21925,6 +21991,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Primero el Evangelio"
+          }
+        }
+      }
+    },
+    "The Gospel of St. Luke, read whole at each mystery, in the Douay-Rheims translation." : {
+      "comment" : "Shown on a bundled meditation set's page, in place of its English description; it names the edition its text is taken from",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El Evangelio de san Lucas, leído entero en cada misterio, en la traducción de Torres Amat."
           }
         }
       }
@@ -23785,6 +23862,17 @@
         }
       }
     },
+    "The voice reads the meditation in English." : {
+      "comment" : "Shown only in Spanish, under a meditation shown in Spanish: its recording is in English",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La voz lee la meditación en inglés."
+          }
+        }
+      }
+    },
     "The way St. Louis de Montfort taught in his book %@" : {
       "localizations" : {
         "es" : {
@@ -24804,6 +24892,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tradicional"
+          }
+        }
+      }
+    },
+    "Traditional Meditations" : {
+      "comment" : "The name of the bundled Luminous meditation set, shown on the mysteries' page and over the player",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meditaciones tradicionales"
           }
         }
       }

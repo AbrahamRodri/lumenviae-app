@@ -203,8 +203,9 @@ Amen.
 
     /// Get a specific prayer by ID, in English
     static func prayer(_ id: String) -> ConsecrationPrayer? {
-        BilingualConsecrationPrayers.allPrayers[id]?.toConsecrationPrayer(for: .english)
-            ?? allPrayers[id]
+        BilingualConsecrationPrayers.allPrayers[id].map {
+            ConsecrationSpanish.vernacular($0).toConsecrationPrayer(for: .english)
+        } ?? allPrayers[id].map { ConsecrationSpanish.vernacular($0) }
     }
 
     /// Get prayers for a phase with language preference applied
@@ -213,18 +214,20 @@ Amen.
 
         return phase.prayerIds.compactMap { id in
             // The prayers with Latin, in the language asked for
+            // (in a Spanish app, the Spanish stands in the English's place)
             if let bilingualPrayer = bilingualPrayers[id] {
-                return bilingualPrayer.toConsecrationPrayer(for: language)
+                return ConsecrationSpanish.vernacular(bilingualPrayer).toConsecrationPrayer(for: language)
             }
             // The prayers that exist in English alone
-            return allPrayers[id]
+            return allPrayers[id].map { ConsecrationSpanish.vernacular($0) }
         }
     }
 
     // MARK: - Days
 
-    /// All 34 days of the consecration
-    static let days: [ConsecrationDay] = buildAllDays()
+    /// All 34 days of the consecration, each with its Spanish laid over it
+    /// in a Spanish app (`ConsecrationSpanish`)
+    static let days: [ConsecrationDay] = buildAllDays().map { ConsecrationSpanish.vernacular($0) }
 
     /// Get a specific day by number (1-34)
     static func day(_ number: Int) -> ConsecrationDay? {

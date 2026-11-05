@@ -348,6 +348,7 @@ struct MeditationReaderView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .id("para-\(index)")
                     }
+                    MeditationLanguageNote(meditation: meditation)
                 }
                 .padding(.horizontal, 26)
                 .padding(.top, pageTopInset)

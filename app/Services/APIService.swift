@@ -141,9 +141,13 @@ final class APIService {
         return try await fetch(url: url, responseType: MeditationSetsResponse.self).data
     }
 
-    /// Fetches a complete meditation set with all meditations.
-    func fetchMeditationSet(id: Int) async throws -> MeditationSet {
-        let urlString = "\(baseURL)/meditation-sets/\(id)"
+    /// Fetches a complete meditation set with all meditations. A Spanish
+    /// app asks with `lang=es`, which adds the meditations' Spanish
+    /// (`translations`) and changes nothing else; an English app's request
+    /// is the one it always sent.
+    func fetchMeditationSet(id: Int, lang: String? = MeditationTranslation.requestLanguage) async throws -> MeditationSet {
+        let language = lang.map { "?lang=\($0)" } ?? ""
+        let urlString = "\(baseURL)/meditation-sets/\(id)\(language)"
 
         guard let url = URL(string: urlString) else {
             throw APIError.invalidURL
