@@ -91,6 +91,7 @@ struct MissalDayRulesTests {
 struct WhatsNewNotesTests {
 
     @Test func aVersionWithNoNotesShowsNothing() {
+        #expect(WhatsNewRelease.release(for: "4.2")?.items.count == 2)
         #expect(WhatsNewRelease.release(for: "0.1") == nil)
         #expect(WhatsNewRelease.release(for: "4.0.1") == nil, "a point release has no notes of its own")
     }

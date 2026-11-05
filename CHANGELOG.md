@@ -10,6 +10,32 @@ entries are written in the imperative and carry a commit reference, and a
 change that was made and then undone inside the same release is not listed
 at all — only the net difference from the version before it.
 
+## 4.2 - Unreleased
+
+The Rosary on one simple screen, and the app in Spanish, as a beta.
+
+### Added
+
+- Add the app in Spanish (beta), followed from the iPhone's language:
+  every screen, the Rosary, the Prayer Book, the meditations' texts
+  (Fulton Sheen's three sets still in English), the 33-day Consecration
+  and the Divine Office. A one-time notice says the app's words were
+  translated with AI and that Spanish is a beta; the voice that reads is
+  still English. Settings' language row reads "Español (beta)" (#107,
+  #104, #111, #114, #115)
+- Add the meditation sets' Spanish names, bylines and lines, read from
+  the api's `set_translation` (#114)
+
+### Changed
+
+- Pray the Rosary on one simple player: it prays aloud and lights each
+  line as it is said, the mysteries are pills to tap, mute keeps the
+  words lit to read along, and the words and beads can be put away so
+  the painting shows. The Audio Rosary is now named "No Meditation", and
+  a beginner is offered a first Rosary with St. Alphonsus (#110)
+- Credit the one short quotation from Fulton Sheen in Sources & Credits
+  alone (#112)
+
 ## 4.1 - Unreleased
 
 Prayers of the reader's own, and playlists to pray them in order.

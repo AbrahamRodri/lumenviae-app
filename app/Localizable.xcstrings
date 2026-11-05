@@ -3538,6 +3538,17 @@
         }
       }
     },
+    "A Simpler Rosary" : {
+      "comment" : "What's New sheet: name of a 4.2 change, the Rosary prayed on one simple screen",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un Rosario más sencillo"
+          }
+        }
+      }
+    },
     "A Sung Rosary" : {
       "comment" : "Chant library: the name of a set of chants for an occasion, on its card, its page, the mini player and the Lock Screen (every prayer of the Rosary sung in Latin)",
       "localizations" : {
@@ -12859,6 +12870,17 @@
         }
       }
     },
+    "Lumen Viae in Spanish (beta)" : {
+      "comment" : "What's New sheet: name of a 4.2 change, the app in Spanish, as a beta",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lumen Viae en español (beta)"
+          }
+        }
+      }
+    },
     "Lumen Viae is made by one person, for the greater glory of God. If a credit here is wrong or missing, write through Send Feedback and it will be put right." : {
       "localizations" : {
         "es" : {
@@ -15406,6 +15428,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Una pregunta para meditar, y un diario para responderla."
+          }
+        }
+      }
+    },
+    "One screen that prays aloud and lights each line; tap a mystery to move, mute the voice to read along, or choose No Meditation" : {
+      "comment" : "What's New sheet: one plain line under A Simpler Rosary, saying what it is; No Meditation is the way to pray named on the mysteries' page",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una sola pantalla que reza en voz alta y resalta cada línea; toca un misterio para ir a él, silencia la voz para leer, o elige Sin meditación"
           }
         }
       }
@@ -26662,6 +26695,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "¿Con voz o en silencio?"
+          }
+        }
+      }
+    },
+    "With your iPhone in Spanish: the screens, the Rosary, the prayers, the meditations, the Consecration and the Divine Office. The voice that reads is still English" : {
+      "comment" : "What's New sheet: one plain line under Lumen Viae in Spanish (beta), saying what is in Spanish and what is not",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las pantallas, el Rosario, las oraciones, las meditaciones, la Consagración y el Oficio divino. La voz que lee sigue en inglés"
           }
         }
       }

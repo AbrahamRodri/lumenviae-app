@@ -41,6 +41,35 @@ struct WhatsNewRelease: Identifiable {
     var id: String { version }
 
     static let all: [WhatsNewRelease] = [
+        WhatsNewRelease(version: "4.2", items: [
+            WhatsNewItem(
+                icon: "lv-rosary",
+                title: String(
+                    localized: "A Simpler Rosary",
+                    comment: "What's New sheet: name of a 4.2 change, the Rosary prayed on one simple screen"
+                ),
+                detail: String(
+                    localized: "One screen that prays aloud and lights each line; tap a mystery to move, mute the voice to read along, or choose No Meditation",
+                    comment: "What's New sheet: one plain line under A Simpler Rosary, saying what it is; No Meditation is the way to pray named on the mysteries' page"
+                ),
+                // Today's mysteries' page, where the Rosary and No
+                // Meditation stand
+                route: .meditationSelection(category: ScheduleService.categoryForToday())
+            ),
+            WhatsNewItem(
+                icon: "ph-globe",
+                title: String(
+                    localized: "Lumen Viae in Spanish (beta)",
+                    comment: "What's New sheet: name of a 4.2 change, the app in Spanish, as a beta"
+                ),
+                detail: String(
+                    localized: "With your iPhone in Spanish: the screens, the Rosary, the prayers, the meditations, the Consecration and the Divine Office. The voice that reads is still English",
+                    comment: "What's New sheet: one plain line under Lumen Viae in Spanish (beta), saying what is in Spanish and what is not"
+                ),
+                // Settings, where the App Language row stands
+                route: .settings
+            )
+        ]),
         WhatsNewRelease(version: "4.1", items: [
             WhatsNewItem(
                 icon: "ph-note-pencil",
