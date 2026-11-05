@@ -198,11 +198,15 @@ def main():
         docs = {name: json.loads(data) for name, data in raw.items()}
         raw = {name: with_version(name, data, docs[name]) for name, data in raw.items()}
 
-    stale = []
+    # Every document is checked before any is written, so a bad one
+    # leaves the app's copies as they were
     for name, doc in docs.items():
         bad = spanish_problem(name, doc) if name in SPANISH else problem(name, doc)
         if bad:
             sys.exit(f"{name}: {bad}; nothing copied")
+
+    stale = []
+    for name, doc in docs.items():
         dest = SEED / f"{name}.json"
         data = raw.get(name) or (json.dumps(doc, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode()
         if not dest.exists() or dest.read_bytes() != data:
