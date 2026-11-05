@@ -20,7 +20,7 @@ enum JoyfulGospelMeditationData {
 
     static let name = String(localized: "The Gospel", comment: "The name of the bundled meditation set that reads the Gospel at each mystery, shown on the mysteries' page and over the player")
     static let category = "joyful"
-    static let description = "The Gospel of St. Luke, read whole at each mystery, in the Douay-Rheims translation."
+    static let description = String(localized: "The Gospel of St. Luke, read whole at each mystery, in the Douay-Rheims translation.", comment: "Shown on a bundled meditation set's page, in place of its English description; it names the edition its text is taken from")
     static let labels = ["Scriptural"]
 
     /// Summary row for the meditation picker.

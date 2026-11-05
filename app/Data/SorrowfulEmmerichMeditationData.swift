@@ -20,7 +20,7 @@ enum SorrowfulEmmerichMeditationData {
 
     static let name = "Anne Catherine Emmerich"
     static let category = "sorrowful"
-    static let description = "Scenes from The Dolorous Passion of Our Lord Jesus Christ, the visions of Anne Catherine Emmerich, in the 1862 English translation."
+    static let description = String(localized: "Scenes from The Dolorous Passion of Our Lord Jesus Christ, the visions of Anne Catherine Emmerich, in the 1862 English translation.", comment: "Shown on a bundled meditation set's page, in place of its English description; it names the edition its text is taken from")
     static let labels = ["Contemplative"]
 
     /// Summary row for the meditation picker.
