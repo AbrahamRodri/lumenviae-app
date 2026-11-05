@@ -234,4 +234,19 @@ struct SimpleRosaryTests {
         #expect(SimpleRosary.wordsSize(scale: 4) == 22)
         #expect(SimpleRosary.wordsSize(scale: -1) == 15)
     }
+
+    @Test("A tall lit line is read down by its own start and end, never a guess")
+    func theLitLinesProgressComesFromItsTimings() {
+        let timings = [
+            TimedLine(text: "And I will pour out upon the house of David", start: 2, end: 22),
+            TimedLine(text: "Amen.", start: 23, end: 24),
+        ]
+        #expect(SimpleRosary.litLineProgress(timings: nil, at: 5) == nil)
+        #expect(SimpleRosary.litLineProgress(timings: timings, at: 1) == nil)
+        #expect(SimpleRosary.litLineProgress(timings: timings, at: 2) == 0)
+        #expect(SimpleRosary.litLineProgress(timings: timings, at: 12) == 0.5)
+        // Held at its end through the breath before the next line
+        #expect(SimpleRosary.litLineProgress(timings: timings, at: 22.5) == 1)
+        #expect(SimpleRosary.litLineProgress(timings: timings, at: 23.5) == 0.5)
+    }
 }

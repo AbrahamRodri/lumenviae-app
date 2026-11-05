@@ -1165,13 +1165,30 @@ struct SimpleRosaryWords: View {
     /// The line being said, from the recording's real timings; nil for
     /// none
     let highlighted: Int?
+    /// How far through the lit line the voice is, 0 to 1, from the
+    /// line's own timings; nil when none is lit
+    var lineProgress: Double? = nil
     let size: CGFloat
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// The words' own height, and the lit line's
+    @State private var viewportHeight: CGFloat = 0
+    @State private var lineHeights: [Int: CGFloat] = [:]
 
     /// Where the lit line's top is scrolled to: a line's room above it
     /// for the line before, the rest of the words' height for it
     static let litLineAnchor = UnitPoint(x: 0, y: 0.06)
+    /// A lit line taller than this share of the words is scrolled
+    /// through as it is said
+    static let tallLineShare: CGFloat = 0.8
+    /// Where a tall line's foot comes to rest, above the fade
+    static let tallLineFoot: Double = 0.84
+
+    /// The lit line's progress in fiftieths, so the words move in small
+    /// steps rather than at every tick of the clock
+    private var steppedProgress: Double? {
+        lineProgress.map { ($0 * 50).rounded() / 50 }
+    }
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -1185,12 +1202,16 @@ struct SimpleRosaryWords: View {
                             .opacity(highlighted == nil || highlighted == index ? 1 : 0.5)
                             .frame(maxWidth: .infinity, alignment: .topLeading)
                             .fixedSize(horizontal: false, vertical: true)
+                            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                                lineHeights[index] = height
+                            }
                             .id(index)
                     }
                 }
                 .padding(.bottom, 24)
                 .animation(reduceMotion ? nil : Motion.crossfade, value: highlighted)
             }
+            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { viewportHeight = $0 }
             // The foot of a long prayer dissolves under Back and Next
             .mask(
                 LinearGradient(
@@ -1212,6 +1233,21 @@ struct SimpleRosaryWords: View {
                     proxy.scrollTo(line, anchor: Self.litLineAnchor)
                 } else {
                     withAnimation(Motion.crossfade) { proxy.scrollTo(line, anchor: Self.litLineAnchor) }
+                }
+            }
+            // A line too tall for the words (a long verse, a large text
+            // size) is read down as it is said: its top at the top as it
+            // begins, its foot clear of the fade as it ends, at the pace
+            // of the line's own start and end in the recording
+            .onChange(of: steppedProgress) { _, step in
+                guard let line = highlighted, let step,
+                      (lineHeights[line] ?? 0) > viewportHeight * Self.tallLineShare
+                else { return }
+                let anchor = UnitPoint(x: 0, y: Self.litLineAnchor.y + step * (Self.tallLineFoot - Self.litLineAnchor.y))
+                if reduceMotion {
+                    proxy.scrollTo(line, anchor: anchor)
+                } else {
+                    withAnimation(.linear(duration: 0.5)) { proxy.scrollTo(line, anchor: anchor) }
                 }
             }
         }

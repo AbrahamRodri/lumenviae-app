@@ -110,6 +110,16 @@ enum SimpleRosary {
         return timings.lineIndex(at: time)
     }
 
+    /// How far through the lit line the voice is, 0 to 1, from the
+    /// line's own start and end in the recording: what a line too tall
+    /// for the words is scrolled through by. Nil when no line is lit.
+    static func litLineProgress(timings: [TimedLine]?, at time: Double) -> Double? {
+        guard let timings, let index = highlightedLine(timings: timings, at: time) else { return nil }
+        let line = timings[index]
+        guard line.end > line.start else { return 0 }
+        return min(max((time - line.start) / (line.end - line.start), 0), 1)
+    }
+
     /// Whether someone begins on the beginner's path — St. Alphonsus
     /// Liguori's meditations with the helps on, after a page that lets
     /// them say no: whoever said in onboarding (or

@@ -567,6 +567,7 @@ extension ScripturalRosaryPrayerView {
                     SimpleRosaryWords(
                         lines: SimpleRosary.displayedLines(timings: shownTimings, fallback: lines),
                         highlighted: shownTimings == nil ? nil : viewModel.spokenHighlightedLine,
+                        lineProgress: shownTimings == nil ? nil : viewModel.spokenLineProgress,
                         size: simpleWordsSize
                     )
                     AITranslationNote(prayerID: pendant.prayerID)
@@ -589,6 +590,7 @@ extension ScripturalRosaryPrayerView {
                             fallback: reading.text.components(separatedBy: "\n")
                                 + (reading.closingPrayer.map { [$0] } ?? [])),
                         highlighted: shownTimings == nil ? nil : viewModel.spokenHighlightedLine,
+                        lineProgress: shownTimings == nil ? nil : viewModel.spokenLineProgress,
                         size: simpleWordsSize
                     )
                     if let reference = reading.reference {

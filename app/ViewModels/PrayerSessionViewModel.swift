@@ -1480,6 +1480,12 @@ extension PrayerSessionViewModel {
         SimpleRosary.highlightedLine(timings: spoken?.currentTimings, at: spoken?.elapsed ?? 0)
     }
 
+    /// How far through the lit line the voice is, for a line taller
+    /// than the words
+    var spokenLineProgress: Double? {
+        SimpleRosary.litLineProgress(timings: spoken?.currentTimings, at: spoken?.elapsed ?? 0)
+    }
+
     /// Whether the voice is reading this mystery's meditation now
     var isSpeakingMeditation: Bool {
         spoken?.currentSegment?.kind == .meditation

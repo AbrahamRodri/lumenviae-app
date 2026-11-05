@@ -882,6 +882,7 @@ extension MysteryPrayerView {
                     SimpleRosaryWords(
                         lines: SimpleRosary.displayedLines(timings: shownTimings, fallback: lines),
                         highlighted: shownTimings == nil ? nil : viewModel.spokenHighlightedLine,
+                        lineProgress: shownTimings == nil ? nil : viewModel.spokenLineProgress,
                         size: wordsSize
                     )
                     AITranslationNote(prayerID: pendant.prayerID)
@@ -917,12 +918,14 @@ extension MysteryPrayerView {
                             timings: shownTimings,
                             fallback: ReadingText.paragraphs(of: meditation.content)),
                         highlighted: shownTimings == nil ? nil : viewModel.spokenHighlightedLine,
+                        lineProgress: shownTimings == nil ? nil : viewModel.spokenLineProgress,
                         size: wordsSize
                     )
                 } else {
                     SimpleRosaryWords(
                         lines: SimpleRosary.displayedLines(timings: shownTimings, fallback: viewModel.beadLines),
                         highlighted: shownTimings == nil ? nil : viewModel.spokenHighlightedLine,
+                        lineProgress: shownTimings == nil ? nil : viewModel.spokenLineProgress,
                         size: wordsSize
                     )
                 }
