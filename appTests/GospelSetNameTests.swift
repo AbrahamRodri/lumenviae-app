@@ -38,5 +38,7 @@ struct GospelSetNameTests {
         #expect(es(GloriousGospelMeditationData.description).contains("Torres Amat"))
         #expect(es(SorrowfulEmmerichMeditationData.description).contains("Madrid, 1865"))
         #expect(es(SevenSorrowsLiguoriMeditationData.description).contains("1868"))
+        #expect(es(SevenSorrowsLiguoriMeditationData.name) == "San Alfonso María de Ligorio")
+        #expect(es(SorrowfulEmmerichMeditationData.name) == "Ana Catalina Emmerick")
     }
 }

@@ -5082,6 +5082,17 @@
         }
       }
     },
+    "Anne Catherine Emmerich" : {
+      "comment" : "The name of the bundled Sorrowful meditation set, the visionary whose words it reads, shown on the mysteries' page and over the player",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ana Catalina Emmerick"
+          }
+        }
+      }
+    },
     "Another saying" : {
       "comment" : "St. Carlo Acutis page: quiet button under A saying for today, showing another of his sayings",
       "localizations" : {
@@ -19018,7 +19029,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escenas de La dolorosa Pasión de Nuestro Señor Jesucristo, las visiones de Ana Catalina Emmerich, en la edición española de Madrid, 1865."
+            "value" : "Escenas de La dolorosa Pasión de Nuestro Señor Jesucristo, las visiones de Ana Catalina Emmerick, en la edición española de Madrid, 1865."
           }
         }
       }
@@ -20373,6 +20384,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aspersión con agua bendita"
+          }
+        }
+      }
+    },
+    "St. Alphonsus Liguori" : {
+      "comment" : "The name of the bundled Seven Sorrows meditation set, the saint who wrote it, shown on the mysteries' page and over the player",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "San Alfonso María de Ligorio"
           }
         }
       }

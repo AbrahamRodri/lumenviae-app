@@ -500,7 +500,8 @@ struct ConsecrationDayOverviewView: View {
         return ConsecrationData
             .prayers(for: phase, language: settings.prayerLanguage)
             .map { prayer in
-                let record = bilingual[prayer.id]
+                // In a Spanish app the Spanish title stands in the English's place
+                let record = bilingual[prayer.id].map { ConsecrationSpanish.vernacular($0) }
                 return (
                     prayer: prayer,
                     english: record?.englishTitle ?? prayer.title,
@@ -597,7 +598,9 @@ struct ConsecrationDayOverviewView: View {
     private var languageSelector: some View {
         HStack(spacing: 6) {
             languageCapsule(
-                String(localized: "English", comment: "Consecration day overview: prayer language choice, shown in capitals"),
+                SpanishContent.isActive
+                    ? String(localized: "Spanish", comment: "Settings, Prayer Language, in a Spanish app: the prayers in Spanish")
+                    : String(localized: "English", comment: "Consecration day overview: prayer language choice, shown in capitals"),
                 language: .english
             )
             languageCapsule(
