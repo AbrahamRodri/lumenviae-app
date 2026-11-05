@@ -1014,7 +1014,7 @@ app/
 │   └── MarianLibraryData, CarloAcutisData, HowToPrayData,
 │       MysteriesInScriptureData   # The resource pages' content
 ├── Services/
-│   ├── APIService            # HTTP client (https://lumenviae.fly.dev/api)
+│   ├── APIService            # HTTP client (https://www.lumenviae.org/api)
 │   ├── AudioService          # Narration and chant playback
 │   ├── AudioClaim            # Who holds the player: one claim at a time
 │   ├── ChantPlayer           # The Chant Library's hold on it, above the views
@@ -3909,7 +3909,7 @@ transition entirely.
 
 ### Data Architecture
 
-**From the API** (`https://lumenviae.fly.dev/api`):
+**From the API** (`https://www.lumenviae.org/api`):
 - Meditation sets and their meditation text
 - Set artwork: each set carries a flat `image_*` block — unsigned, immutable
   URL, a normalized focal point, pixel size, alt text, attribution — all null

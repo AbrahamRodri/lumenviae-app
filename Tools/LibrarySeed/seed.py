@@ -11,7 +11,7 @@ install starts from them.
 Usage (through Tools/dev library-seed):
     seed.py                  # from the API checkout beside this one
     seed.py --from DIR       # from DIR/prayer_book.json and DIR/chant_library.json
-    seed.py --live [BASE]    # from the live API (default https://lumenviae.fly.dev/api),
+    seed.py --live [BASE]    # from the live API (default https://www.lumenviae.org/api),
                              # which also gives each its version
     seed.py --check          # exit 1 if the API checkout's files differ from the app's
 
@@ -152,7 +152,7 @@ def main():
     raw = {}
     if "--live" in args:
         i = args.index("--live")
-        base = args[i + 1] if i + 1 < len(args) and not args[i + 1].startswith("--") else "https://lumenviae.fly.dev/api"
+        base = args[i + 1] if i + 1 < len(args) and not args[i + 1].startswith("--") else "https://www.lumenviae.org/api"
         docs = {name: live(base.rstrip("/"), name) for name in NAMES}
     else:
         source = pathlib.Path(args[args.index("--from") + 1]) if "--from" in args else api_checkout()

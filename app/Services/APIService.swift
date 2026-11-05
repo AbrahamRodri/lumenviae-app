@@ -2,7 +2,7 @@
 //  APIService.swift
 //  Lumen Viae
 //
-//  HTTP client for the Lumen Viae API (https://lumenviae.fly.dev/api):
+//  HTTP client for the Lumen Viae API (https://www.lumenviae.org/api):
 //  - GET  /mysteries[?category=]  - List mysteries
 //  - GET  /meditation-sets        - List meditation sets
 //  - GET  /meditation-sets/:id    - Get full meditation set
@@ -79,7 +79,7 @@ final class APIService {
             return override
         }
         #endif
-        return "https://lumenviae.fly.dev/api"
+        return "https://www.lumenviae.org/api"
     }()
     private let session: URLSession
 
