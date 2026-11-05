@@ -75,8 +75,8 @@ final class ScripturalRosaryViewModel {
     /// What the Prayer Record keeps is `aloudDevotionName`, unchanged.
     static var holyRosaryName: String {
         String(
-            localized: "The Audio Rosary",
-            comment: "Name of the form of the Rosary in which every prayer is said aloud and the listener prays along"
+            localized: "No Meditation",
+            comment: "Simple Rosary: the name of the Rosary with every prayer said aloud and no meditation read between, as the mysteries' page names the choice"
         )
     }
 

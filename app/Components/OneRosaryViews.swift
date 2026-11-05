@@ -1181,8 +1181,21 @@ struct SimpleRosaryWords: View {
     /// A lit line taller than this share of the words is scrolled
     /// through as it is said
     static let tallLineShare: CGFloat = 0.8
-    /// Where a tall line's foot comes to rest, above the fade
+    /// Where a tall line's foot comes to rest, as a share of the words'
+    /// height: above the fade
     static let tallLineFoot: Double = 0.84
+
+    /// The scroll anchor for a line taller than the words, `progress` of
+    /// the way through it. An anchor y sets the line's point at y of its
+    /// height on the words' point at y of theirs, so the line's top is
+    /// at the words' top at 0, and its foot at `tallLineFoot` of the
+    /// words at y = (H - fV) / (H - V).
+    nonisolated static func tallLineAnchor(progress: Double, lineHeight: CGFloat, wordsHeight: CGFloat) -> Double {
+        let h = Double(lineHeight), v = Double(wordsHeight)
+        guard h > v, v > 0 else { return litLineAnchor.y }
+        let end = (h - tallLineFoot * v) / (h - v)
+        return min(max(progress, 0), 1) * end
+    }
 
     /// The lit line's progress in fiftieths, so the words move in small
     /// steps rather than at every tick of the clock
@@ -1243,7 +1256,8 @@ struct SimpleRosaryWords: View {
                 guard let line = highlighted, let step,
                       (lineHeights[line] ?? 0) > viewportHeight * Self.tallLineShare
                 else { return }
-                let anchor = UnitPoint(x: 0, y: Self.litLineAnchor.y + step * (Self.tallLineFoot - Self.litLineAnchor.y))
+                let anchor = UnitPoint(x: 0, y: Self.tallLineAnchor(
+                    progress: step, lineHeight: lineHeights[line] ?? 0, wordsHeight: viewportHeight))
                 if reduceMotion {
                     proxy.scrollTo(line, anchor: anchor)
                 } else {

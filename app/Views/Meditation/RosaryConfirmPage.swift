@@ -101,10 +101,11 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
                         .padding(.horizontal, 24)
                         .devotionalEntrance(delay: 0.08)
 
-                    // Well clear of the rows, so the ledger reads as its
-                    // own part of the page rather than a second rule
+                    // Clear of the rows, so the ledger reads as its own
+                    // part of the page; with one row above it, more read
+                    // as a row left empty
                     ledger()
-                        .padding(.top, 52)
+                        .padding(.top, 28)
                         .padding(.horizontal, 24)
                         .devotionalEntrance(delay: 0.16)
                 }
@@ -378,8 +379,10 @@ struct RosaryChoicesSection: View {
 
             // No choices: every prayer is said aloud and the beads always
             // hang. Abraham, Nov 2026: "Yes, only Rosary"
+            // The last row leaves its rule to the ledger's own, below,
+            // or the gap between the two read as an empty row
             ForEach(trailingInfoRows, id: \.self) { row in
-                infoRow(row)
+                infoRow(row, ruled: row != trailingInfoRows.last)
             }
         }
         .sheet(item: $sheet) { sheet in
@@ -407,17 +410,19 @@ struct RosaryChoicesSection: View {
     }
 
     @ViewBuilder
-    private func infoRow(_ row: RosaryInfoRow) -> some View {
+    private func infoRow(_ row: RosaryInfoRow, ruled: Bool) -> some View {
         switch row {
         case .audio:
             RosaryInfoRowView(
                 title: row.title,
+                showsRule: ruled,
                 value: RosaryInfoRow.holyAudioValue,
                 icon: "ph-speaker-high"
             )
         case .mysteries:
             RosaryInfoRowView(
                 title: row.title,
+                showsRule: ruled,
                 value: RosaryInfoRow.mysteriesValue(chosenCategory ?? today, today: today),
                 hint: String(
                     localized: "Choose the mysteries",
@@ -429,6 +434,7 @@ struct RosaryChoicesSection: View {
         case .voice:
             RosaryInfoRowView(
                 title: row.title,
+                showsRule: ruled,
                 value: RosaryInfoRow.voiceValue(
                     voice: NarrationVoiceCatalog.shared.chosenVoice.displayName,
                     // The app's speed, which a chant or a book sounding
@@ -648,6 +654,8 @@ struct RosaryChoiceSettingsRow: View {
 struct RosaryInfoRowView: View {
 
     let title: String
+    /// Whether the row closes on its own hairline
+    var showsRule: Bool = true
     let value: String
     var icon: String = "ph-caret-right"
     var hint: String = ""
@@ -692,9 +700,11 @@ struct RosaryInfoRowView: View {
         .padding(.vertical, 10)
         .frame(minHeight: 48)
         .overlay(alignment: .bottom) {
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.15))
-                .frame(height: AppLine.hairline)
+            if showsRule {
+                Rectangle()
+                    .fill(AppColors.gold.opacity(0.15))
+                    .frame(height: AppLine.hairline)
+            }
         }
         .contentShape(Rectangle())
     }

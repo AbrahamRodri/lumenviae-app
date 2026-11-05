@@ -256,5 +256,18 @@ struct SimpleRosaryTests {
         #expect(!SimpleRosary.keepsOwnWords(.prayer("hail_mary"), spanish: false))
         #expect(!SimpleRosary.keepsOwnWords(.meditation, spanish: true))
         #expect(!SimpleRosary.keepsOwnWords(.verse(3), spanish: true))
+        // A meditation translated into Spanish keeps its Spanish too
+        #expect(SimpleRosary.keepsOwnWords(.meditation, spanish: true, meditationIsSpanish: true))
+        #expect(!SimpleRosary.keepsOwnWords(.meditation, spanish: false, meditationIsSpanish: true))
+    }
+
+    @Test("A tall line's foot comes to rest above the fade")
+    func aTallLineEndsAboveTheFade() {
+        let h: CGFloat = 600, v: CGFloat = 300
+        #expect(SimpleRosaryWords.tallLineAnchor(progress: 0, lineHeight: h, wordsHeight: v) == 0)
+        let end = SimpleRosaryWords.tallLineAnchor(progress: 1, lineHeight: h, wordsHeight: v)
+        // The line's top sits at end * (V - H); its foot at that plus H
+        let foot = end * Double(v - h) + Double(h)
+        #expect(abs(foot - SimpleRosaryWords.tallLineFoot * Double(v)) < 0.001)
     }
 }

@@ -32,8 +32,9 @@ Rechecked 5 Nov 2026 06:05Z, after api #197 went live. Untimed:
 | Announcements (27) | seven_sorrows_1, seven_sorrows_2, seven_sorrows_7, sorrowful_2, sorrowful_3 | sorrowful_2, sorrowful_3 |
 | Scriptural verses (249) | 19 | 11 |
 
-Everything else is timed and lit. In the Spanish app a fixed prayer keeps
-its Spanish words, unlit, since its recording is English.
+Everything else is timed and lit. In the Spanish app a fixed prayer, and
+a meditation translated into Spanish, keep their Spanish words, unlit,
+since the recordings are English.
 
 A phone that saved the clip list before the timings came keeps using it
 until its links expire, at most a day; then it fetches the timed list.

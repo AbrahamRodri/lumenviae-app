@@ -188,10 +188,15 @@ enum SimpleRosary {
     /// Whether what is said keeps its own words, unlit, rather than the
     /// recording's timed lines: a fixed prayer in Spanish, whose
     /// recording is English. Meditations and verses are shown in the
-    /// recording's English in either language, so they are lit.
-    static func keepsOwnWords(_ kind: SpokenSegment.Kind, spanish: Bool) -> Bool {
-        guard spanish, case .prayer = kind else { return false }
-        return true
+    /// recording's English in either language, so they are lit, unless
+    /// the meditation shown is a Spanish translation.
+    static func keepsOwnWords(_ kind: SpokenSegment.Kind, spanish: Bool, meditationIsSpanish: Bool = false) -> Bool {
+        guard spanish else { return false }
+        switch kind {
+        case .prayer: return true
+        case .meditation: return meditationIsSpanish
+        default: return false
+        }
     }
 
     static func displayedLines(timings: [TimedLine]?, fallback: [String]) -> [String] {

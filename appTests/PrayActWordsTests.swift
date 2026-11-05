@@ -27,7 +27,7 @@ struct PrayActWordsTests {
     }
 
     @Test func theFormsAreNamedAsEverywhereElse() {
-        #expect(PrayerShortcut.rosaryAloud.title == "The Audio Rosary")
+        #expect(PrayerShortcut.rosaryAloud.title == "No Meditation")
         #expect(PrayerShortcut.scripturalRosary.title == "The Scriptural Rosary")
         #expect(PrayerShortcut.sevenSorrows.title == "The Seven Sorrows of Mary")
         #expect(PrayerShortcut.consecration.title == "Consecration to Mary")

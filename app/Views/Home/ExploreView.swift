@@ -517,7 +517,7 @@ struct ExploreView: View {
             // under WAYS TO PRAY with the sets beneath
             LibraryEntry(id: "scripturalRosary", icon: PrayerShortcut.scripturalRosary.icon, title: String(localized: "The Scriptural Rosary", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "scriptural rosary verse every bead gospel douay rheims bible") { openTodaysMysteries() },
-            LibraryEntry(id: "rosaryAloud", icon: PrayerShortcut.rosaryAloud.icon, title: String(localized: "The Audio Rosary", comment: "Explore page and search: the name of a door to a page of the app"),
+            LibraryEntry(id: "rosaryAloud", icon: PrayerShortcut.rosaryAloud.icon, title: String(localized: "No Meditation", comment: "Simple Rosary: the name of the Rosary with every prayer said aloud and no meditation read between, as the mysteries' page names the choice"),
                          matchText: "audio rosary holy rosary aloud said spoken listen voice hear prayers learn by ear no meditation") { openTodaysMysteries() },
             LibraryEntry(id: "howToPray", icon: "lv-rosary", title: String(localized: "How to Pray", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "how to pray the rosary guide montfort methods", route: .howToPray) { router.push(.howToPray) },
