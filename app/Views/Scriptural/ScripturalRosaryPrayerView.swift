@@ -471,11 +471,15 @@ extension ScripturalRosaryPrayerView {
             )
 
             VStack(spacing: 0) {
+                let placed = OneRosaryColumn<EmptyView>.layout(
+                    showsWords: showsWordsAndBeads, columnTop: columnTop, headerFoot: 12 + 44 + 14)
                 oneRosaryColumn
                     .padding(.leading, 28)
                     .padding(.trailing, Self.readingTrailingInset)
-                    .padding(.top, columnTop)
-                    .frame(maxHeight: .infinity, alignment: .top)
+                    .padding(.top, placed.top)
+                    .padding(.bottom, placed.bottom)
+                    .frame(maxHeight: .infinity, alignment: placed.alignment)
+                    .animation(Motion.crossfade, value: showsWordsAndBeads)
 
                 oneRosaryFoot
             }
@@ -509,6 +513,7 @@ extension ScripturalRosaryPrayerView {
                         seatedFraction: OneRosaryColumn<EmptyView>.paintingFraction,
                         paintingID: viewModel.currentMysteryIndex,
                         chromeHidden: chromeHidden,
+                        quiet: !showsWordsAndBeads,
                         width: geometry.size.width,
                         fullHeight: fullHeight
                     ) {
@@ -517,12 +522,17 @@ extension ScripturalRosaryPrayerView {
                     .transition(.opacity)
 
                     OneRosaryPendantVeil()
-                        .opacity(viewModel.spokenPendant != nil && !chromeHidden ? 1 : 0)
+                        .opacity(viewModel.spokenPendant != nil && !chromeHidden ? (showsWordsAndBeads ? 1 : 0.45) : 0)
 
+                    // The words put away, the painting shows: a light
+                    // shade for what remains in place of the column's
                     OneRosaryColumnScrim()
-                        .opacity(chromeHidden ? 0 : 1)
+                        .opacity(chromeHidden || !showsWordsAndBeads ? 0 : 1)
+                    OneRosaryQuietScrim()
+                        .opacity(!chromeHidden && !showsWordsAndBeads ? 1 : 0)
                 }
                 .animation(Motion.decadeTurn, value: viewModel.spokenPendant == nil)
+                .animation(Motion.crossfade, value: showsWordsAndBeads)
             }
         }
     }

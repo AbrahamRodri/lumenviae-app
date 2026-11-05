@@ -10,6 +10,7 @@
 //
 
 import Foundation
+import SwiftUI
 import Testing
 
 @testable import app
@@ -273,5 +274,13 @@ struct SimpleRosaryTests {
         let near: CGFloat = 280
         let nearEnd = SimpleRosaryWords.tallLineAnchor(progress: 1, lineHeight: near, wordsHeight: v)
         #expect(abs(nearEnd * Double(v - near) + Double(near) - SimpleRosaryWords.tallLineFoot * Double(v)) < 0.001)
+    }
+
+    @Test("With the words put away, the head is set low over the foot, not left where the words were")
+    func theHeadIsPlacedWhenTheWordsArePutAway() {
+        let shown = OneRosaryColumn<EmptyView>.layout(showsWords: true, columnTop: 300, headerFoot: 70)
+        #expect(shown.top == 300 && shown.alignment == .top)
+        let hidden = OneRosaryColumn<EmptyView>.layout(showsWords: false, columnTop: 300, headerFoot: 70)
+        #expect(hidden.top == 0 && hidden.alignment == .bottom)
     }
 }

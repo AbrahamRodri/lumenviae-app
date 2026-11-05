@@ -582,6 +582,32 @@ struct OneRosaryColumn<Words: View>: View {
     /// has dissolved by the time the words begin
     static var paintingFraction: CGFloat { 0.65 }
 
+    /// Where the column's head stands with the words and beads put away:
+    /// anchored low, just over Back and Next, as a caption under the
+    /// painting (the default); or high, under the header (a debug build
+    /// launched with `LUMEN_VIAE_QUIET_PLACEMENT=high`, to compare)
+    enum QuietPlacement {
+        case low, high
+
+        static var current: QuietPlacement {
+            #if DEBUG
+            if ProcessInfo.processInfo.environment["LUMEN_VIAE_QUIET_PLACEMENT"] == "high" { return .high }
+            #endif
+            return .low
+        }
+    }
+
+    /// The column's top padding and alignment on the players: the words'
+    /// fixed height while they are shown; put away, the head alone at
+    /// its placement
+    static func layout(showsWords: Bool, columnTop: CGFloat, headerFoot: CGFloat) -> (top: CGFloat, bottom: CGFloat, alignment: Alignment) {
+        guard !showsWords else { return (columnTop, 0, .top) }
+        switch QuietPlacement.current {
+        case .low: return (0, 10, .bottom)
+        case .high: return (headerFoot, 0, .top)
+        }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // The head, set to its foot in a room of one height, so a
@@ -618,16 +644,19 @@ struct OneRosaryColumn<Words: View>: View {
                         .padding(.top, 12)
                         .transition(.opacity)
                 }
-                ZStack(alignment: .topLeading) {
-                    if showsWords {
+                // With the words put away the column is the head alone,
+                // set where the player places it (`QuietPlacement`), with
+                // no empty room kept for words that are not shown
+                if showsWords {
+                    ZStack(alignment: .topLeading) {
                         words()
                             .id(wordsKey)
                             .transition(.opacity)
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .padding(.top, 14)
+                    .animation(Motion.crossfade, value: wordsKey)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .padding(.top, 14)
-                .animation(Motion.crossfade, value: wordsKey)
 
                 // Under the last line, where it can cover no word
                 if tapHint {
@@ -770,6 +799,42 @@ struct OneRosaryColumnScrim: View {
                 endPoint: .bottom
             )
         )
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
+    }
+}
+
+/// With the words and beads put away, the painting all but bare: a light
+/// shade only where the column's head and the foot stand (at the foot,
+/// or under the header for the high placement), so they read over any
+/// painting while the rest of it shows
+struct OneRosaryQuietScrim: View {
+    var high: Bool = OneRosaryColumn<EmptyView>.QuietPlacement.current == .high
+
+    var body: some View {
+        ZStack {
+            // The foot's ground: Back, Next and the low caption
+            LinearGradient(
+                stops: [
+                    .init(color: .clear, location: high ? 0.72 : 0.5),
+                    .init(color: .black.opacity(0.42), location: high ? 0.9 : 0.78),
+                    .init(color: .black.opacity(0.6), location: 1),
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            if high {
+                LinearGradient(
+                    stops: [
+                        .init(color: .black.opacity(0.5), location: 0),
+                        .init(color: .black.opacity(0.3), location: 0.2),
+                        .init(color: .clear, location: 0.34),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+        }
         .ignoresSafeArea()
         .allowsHitTesting(false)
     }
