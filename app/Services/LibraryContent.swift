@@ -203,10 +203,13 @@ nonisolated enum LibraryContent {
     static let prayerBookStore = LibraryDocumentStore<PrayerBookDocument>(name: "prayer_book")
     static let chantLibraryStore = LibraryDocumentStore<ChantLibraryDocument>(name: "chant_library")
     /// The Prayer Book's Spanish, kept apart from the English with a version
-    /// of its own; the app ships none (the Rosary's own Spanish is bundled)
+    /// of its own. The app ships the server's copy
+    /// (`Resources/Library/prayer_book.es.json`), as it ships the English:
+    /// the server's is fetched at a launch and read only at the next, so
+    /// without it a new Spanish reader's first launch read English.
     static let prayerBookSpanishStore = LibraryDocumentStore<PrayerBookTranslations>(name: "prayer_book.es")
     /// The Consecration's Spanish, the same way: the English is bundled
-    /// (`ConsecrationData`), and the app ships no Spanish
+    /// (`ConsecrationData`), the Spanish shipped as `consecration.es.json`
     static let consecrationSpanishStore = LibraryDocumentStore<ConsecrationTranslations>(name: "consecration.es")
 
     /// Whether the app was launched to host the unit tests, which read
