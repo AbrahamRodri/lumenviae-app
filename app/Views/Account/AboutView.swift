@@ -221,7 +221,7 @@ struct SourcesCreditsSheet: View {
                 SheetHeader(
                     kicker: "Lumen Viae",
                     title: String(localized: "Sources & Credits", comment: "About: a row's name, a heading, or the line under it"),
-                    lead: String(localized: "Everything in the app that is not our own writing, and the people and places it comes from. Every painting is by a painter dead more than a hundred years, and every text is in the public domain or used under an open licence.", comment: "About, Sources & Credits: the line under the heading, or a section label")
+                    lead: String(localized: "Everything in the app that is not our own writing, and the people and places it comes from. Every painting is by a painter dead more than a hundred years, and every text is in the public domain or used under an open licence, but for one short quotation, credited below.", comment: "About, Sources & Credits: the line under the heading, or a section label")
                 )
 
                 SheetSectionLabel(String(localized: "The Paintings", comment: "About, Sources & Credits: the line under the heading, or a section label"))

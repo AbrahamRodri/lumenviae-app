@@ -24,8 +24,10 @@
 //  Newman's Meditations and Devotions (Longmans, 1893); Longfellow's
 //  Dante (1867) and his rendering of St. Teresa's bookmark (1877). The
 //  copyrighted lines that stood here until October 2026 — Escrivá,
-//  Sr. Lucia, Fr. Peyton — were taken out; Sheen's line stays, his work
-//  having been checked and found out of copyright (Oct 2026).
+//  Sr. Lucia, Fr. Peyton — were taken out. Sheen's line stays though
+//  his book is in copyright (The World's First Love, 1952, to 2047): it
+//  is one short quotation, used briefly and credited in About > Sources
+//  & Credits alone, not under the line (`creditedInSourcesOnly`).
 //  Tools/ContentSourcing/MANIFEST.md records the sources.
 //
 //  The Spanish is the api's (priv/rosary_content/es/quotes.json, api
@@ -52,13 +54,21 @@ struct RosaryQuote: Hashable {
     /// says so beneath it. Never set on an English line.
     var aiTranslated = false
 
+    /// The line is credited in About > Sources & Credits alone, with no
+    /// author or work beneath it on the page. Abraham, of Sheen's line:
+    /// "keep it credit in the credit menu only"
+    var creditedInSourcesOnly = false
+
+    /// Whether the page sets the author and the work under the line
+    var showsCredit: Bool { !creditedInSourcesOnly }
+
     /// The line as a Spanish app shows it: its Spanish in the English's
     /// place, or the line itself
     func shown(spanish isSpanish: Bool) -> RosaryQuote {
         guard isSpanish, let spanish else { return self }
         return RosaryQuote(
             text: spanish.text, author: spanish.author, source: spanish.source,
-            aiTranslated: spanish.aiTranslated
+            aiTranslated: spanish.aiTranslated, creditedInSourcesOnly: creditedInSourcesOnly
         )
     }
 }
@@ -211,7 +221,8 @@ enum RosaryQuotes {
                 author: "Venerable Fulton J. Sheen",
                 source: "El primer amor del mundo",
                 aiTranslated: true
-            )
+            ),
+            creditedInSourcesOnly: true
         ),
         RosaryQuote(
             text: "The greatest method of praying is to pray the Rosary.",

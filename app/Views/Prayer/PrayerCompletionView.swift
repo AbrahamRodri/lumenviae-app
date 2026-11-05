@@ -128,7 +128,8 @@ struct PrayerCompletionView: View {
                             quote: quote.text,
                             author: quote.author,
                             source: quote.source,
-                            aiTranslated: quote.aiTranslated
+                            aiTranslated: quote.aiTranslated,
+                            showsCredit: quote.showsCredit
                         )
                         .padding(.horizontal, 20)
                         .opacity(showQuote ? 1 : 0)
@@ -753,6 +754,8 @@ struct CompletionQuoteCard: View {
     let author: String
     var source: String? = nil
     var aiTranslated = false
+    /// Whether the author and the work stand under the line
+    var showsCredit = true
 
     /// The opening mark grows with the quotation beneath it
     @ScaledMetric(relativeTo: .body) private var quoteMarkSize: CGFloat = 48
@@ -772,28 +775,30 @@ struct CompletionQuoteCard: View {
                 .multilineTextAlignment(.center)
                 .lineSpacing(7)
 
-            // Author with decorative lines
-            HStack(spacing: 12) {
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.5))
-                    .frame(width: 24, height: 1)
+            if showsCredit {
+                // Author with decorative lines
+                HStack(spacing: 12) {
+                    Rectangle()
+                        .fill(AppColors.gold.opacity(0.5))
+                        .frame(width: 24, height: 1)
 
-                Text(author.uppercased())
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2)
-                    .foregroundColor(AppColors.gold)
+                    Text(author.uppercased())
+                        .font(AppFonts.labelFont(10))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold)
 
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.5))
-                    .frame(width: 24, height: 1)
-            }
+                    Rectangle()
+                        .fill(AppColors.gold.opacity(0.5))
+                        .frame(width: 24, height: 1)
+                }
 
-            if let source {
-                Text(source)
-                    .font(AppFonts.italicFont(11))
-                    .foregroundColor(AppColors.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.top, -6)
+                if let source {
+                    Text(source)
+                        .font(AppFonts.italicFont(11))
+                        .foregroundColor(AppColors.textSecondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.top, -6)
+                }
             }
 
             AIQuoteNote(shows: aiTranslated)

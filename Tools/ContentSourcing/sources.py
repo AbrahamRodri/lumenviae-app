@@ -1001,6 +1001,11 @@ TEXTS = [
          detail="In the daily quotations", source="Internet Archive (a2514634smrn00newmuoft)", licence="Public domain"),
     dict(title="The Divine Comedy", maker="Dante, translated by Henry Wadsworth Longfellow (1867)",
          detail="In the daily quotations", source="Paradiso XXXIII", licence="Public domain"),
+    # Credited here and not under the line itself. Abraham: "keep it
+    # credit in the credit menu only"
+    dict(title="The World's First Love", maker="Fulton J. Sheen (1952)",
+         detail="One line in the daily quotations, the Rosary as \"the book of the blind\"; in Spanish, El primer amor del mundo",
+         source="Credited here rather than under the line", licence="Short quotation, credited"),
     dict(title="The Roman Missal of 1962", maker="the Missale Meum project",
          detail="Today's Mass, fetched when opened", source="missalemeum.com, MIT licence", licence="MIT"),
     dict(title="The Roman Breviary of 1962", maker="The Divinum Officium Project",
