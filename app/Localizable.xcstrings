@@ -15438,7 +15438,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una sola pantalla que reza en voz alta e ilumina cada línea; toca un misterio para avanzar, silencia la voz para leer, o elige Sin meditación"
+            "value" : "Una sola pantalla que reza en voz alta y resalta cada línea; toca un misterio para ir a él, silencia la voz para leer, o elige Sin meditación"
           }
         }
       }
@@ -26705,7 +26705,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las pantallas, el Rosario, las 152 oraciones, las meditaciones, la Consagración y el Oficio divino. La voz que lee sigue en inglés"
+            "value" : "Las pantallas, el Rosario, las oraciones, las meditaciones, la Consagración y el Oficio divino. La voz que lee sigue en inglés"
           }
         }
       }
