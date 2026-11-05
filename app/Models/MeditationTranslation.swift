@@ -88,10 +88,12 @@ extension MeditationSet {
         let ids = Set((englishMeditations ?? []).map(\.id))
         let own = all.filter { ids.contains($0.id) }
         return MeditationSet(
-            id: id, name: name, category: category, description: description, labels: labels,
-            meditations: englishMeditations, author: author, source: source, audioExpiresAt: audioExpiresAt,
+            id: id, name: englishName, category: category, description: englishDescription, labels: labels,
+            meditations: englishMeditations, author: englishAuthor, source: englishSource,
+            audioExpiresAt: audioExpiresAt,
             imageUrl: imageUrl, imageAlignment: imageAlignment, imageFocalX: imageFocalX, imageFocalY: imageFocalY,
-            imageWidth: imageWidth, imageHeight: imageHeight, imageAlt: imageAlt, imageAttribution: imageAttribution,
-            translations: own.isEmpty ? translations : own)
+            imageWidth: imageWidth, imageHeight: imageHeight, imageAlt: englishImageAlt,
+            imageAttribution: imageAttribution,
+            translations: own.isEmpty ? translations : own, setTranslation: setTranslation)
     }
 }
