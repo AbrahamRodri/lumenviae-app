@@ -114,7 +114,8 @@ struct BundledMeditationSpanishTests {
         #expect(bundledIDs.count == 27)
         #expect(Set(spanishIDs) == bundledIDs)
         #expect(spanishIDs.count == Set(spanishIDs).count)
-        #expect(MeditationTranslation.bundled.allSatisfy { !$0.content.isEmpty && $0.title == nil })
+        let allWritten = MeditationTranslation.bundled.allSatisfy { !$0.content.isEmpty && $0.title == nil }
+        #expect(allWritten)
     }
 
     @Test func onlyTheLuminousSetIsMarked() {
@@ -133,7 +134,8 @@ struct BundledMeditationSpanishTests {
     @Test func aBundledSetReadsInSpanish() throws {
         let set = try #require(BundledMeditationSets.byID[SorrowfulEmmerichMeditationData.setID])
         let laid = try #require(MeditationTranslation.overlay(set.englishMeditations, with: set.translations, spanish: true))
-        #expect(laid.allSatisfy(\.isSpanish))
+        let allSpanish = laid.allSatisfy(\.isSpanish)
+        #expect(allSpanish)
         // The reviewed correction of the 1865 print
         #expect(laid[0].content.contains("sobrenaturalmente"))
         #expect(laid[0].source?.contains("1865") == true)
@@ -144,7 +146,8 @@ struct BundledMeditationSpanishTests {
     @Test func aMeditationWithNoSourceGetsNone() throws {
         let set = try #require(BundledMeditationSets.byID[LuminousMeditationData.setID])
         let laid = try #require(MeditationTranslation.overlay(set.englishMeditations, with: set.translations, spanish: true))
-        #expect(laid.allSatisfy { $0.source == nil && $0.aiTranslated })
+        let allMarkedWithNoSource = laid.allSatisfy { $0.source == nil && $0.aiTranslated }
+        #expect(allMarkedWithNoSource)
     }
 }
 
@@ -207,7 +210,8 @@ struct ConsecrationSpanishTests {
 
     @Test func aDayWithNoSpanishIsUnchanged() throws {
         let english = try #require(ConsecrationData.day(2))
-        #expect(ConsecrationSpanish.vernacular(english, from: try spanish()) == english)
+        let es = try spanish()
+        #expect(ConsecrationSpanish.vernacular(english, from: es) == english)
         #expect(ConsecrationSpanish.vernacular(english, from: ConsecrationTranslations()) == english)
     }
 
