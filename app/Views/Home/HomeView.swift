@@ -201,7 +201,13 @@ struct HomeView: View {
         FeaturedMysteryCard(
             category: viewModel.todaysCategory,
             onBeginPrayer: {
-                router.navigateToMeditationSelection(category: viewModel.todaysCategory)
+                // The simple Rosary's learner begins on the beginner's
+                // path, whose page lets them say no
+                if SimpleRosary.offersBeginnerPath(UserSettings.shared) {
+                    router.push(.beginnerRosary(viewModel.todaysCategory))
+                } else {
+                    router.navigateToMeditationSelection(category: viewModel.todaysCategory)
+                }
             }
         )
         .firstUseTourStop(.today)

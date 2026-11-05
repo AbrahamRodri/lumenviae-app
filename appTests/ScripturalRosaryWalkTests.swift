@@ -136,7 +136,7 @@ struct ScripturalRosaryWalkTests {
 
     @Test func saidAloudEachBeadCarriesItsPrayerNotAVerse() {
         let vm = walk(.joyful, form: .plain)
-        #expect(vm.displayName == "The Audio Rosary")
+        #expect(vm.displayName == "No Meditation")
         #expect(vm.resumeKind == .rosaryAloud)
         let ourFather = vm.reading
         #expect(ourFather.reference == nil, "no passage; the prayer is set instead")

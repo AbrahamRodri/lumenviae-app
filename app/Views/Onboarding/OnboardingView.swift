@@ -7,33 +7,23 @@
 //
 //  The order follows two things good first runs have in common: ask
 //  what the person came for before showing them anything, and give
-//  before asking. The notification question comes only after they have
-//  prayed a few beads on the strand.
+//  before asking.
 //
 //    1. Welcome        what the app is, in one sentence
 //    2. Intention      "What brings you to the Rosary?" Multi-select;
 //                      it picks the reminder copy, the For You slide,
 //                      and the last slide's first act
-//    3. Voice          what you'll hear: the meditation alone, or the
-//                      whole Rosary said aloud (userSettings.prayAloud)
-//    4. The beads      where you will count, each way shown working: the
-//                      strand on the screen swiped a bead at a time, or
-//                      arrows stepping a mystery at a time for a hand on
-//                      its own rosary (userSettings.prayOnBeads). Asked
-//                      only with the meditation alone; with the whole
-//                      Rosary aloud the voice moves the beads, and the
-//                      introduction is eight slides
-//    5. For you        what the app holds for the reasons chosen, in
+//    3. For you        what the app holds for the reasons chosen, in
 //                      place of a tour of everything
-//    6. Colors         the theme; the whole app re-themes as you tap
-//    7. Language       English, Latin, or both, previewed on the Ave
-//    8. Reminder       an hour already chosen (evening), so the act is
+//    4. Colors         the theme; the whole app re-themes as you tap
+//    5. Language       English, Latin, or both, previewed on the Ave
+//    6. Reminder       an hour already chosen (evening), so the act is
 //                      one tap and says exactly what it will do
-//    9. The threshold  the cross and the Sign; the button does the first
+//    7. The threshold  the cross and the Sign; the button does the first
 //                      step it names, or the user looks around first
 //
-//  Slides three and four are the "Rosary ways to pray" handoff's, in its
-//  words, which the Rosary's own pages and Settings share.
+//  The voice and beads slides went with the Rosary's Audio and Counting
+//  choices (Abraham, Nov 2026: "Yes, only Rosary").
 //
 //  The strand of progress opens with its first bead already lit: a count
 //  that starts at zero reads as a long way still to go.
@@ -80,18 +70,16 @@ enum OnboardingFirstStep: Equatable {
 
 // MARK: - OnboardingPage
 
-/// The nine slides, in order. At file scope because the slide layout and
+/// The seven slides, in order. At file scope because the slide layout and
 /// the stage behind it are each told which slide they are drawing.
 private enum OnboardingPage: Int, CaseIterable {
-    case welcome, intention, voice, beads, forYou, colors, language, reminder, threshold
+    case welcome, intention, forYou, colors, language, reminder, threshold
 
-    /// The slides as they are shown. The beads slide stands only when the
-    /// voice reads the meditation alone: with the whole Rosary said
-    /// aloud, the voice moves the beads on the screen and there is
-    /// nothing to choose.
-    static func sequence(praysAloud: Bool) -> [OnboardingPage] {
-        allCases.filter { $0 != .beads || !praysAloud }
-    }
+    /// The slides as they are shown: every one. The What You'll Hear and
+    /// How Will You Keep Count slides went with the Rosary's Audio and
+    /// Counting choices: every Rosary is said aloud and the beads always
+    /// hang (Abraham, Nov 2026: "Yes, only Rosary").
+    static var sequence: [OnboardingPage] { allCases }
 }
 
 // MARK: - OnboardingStage
@@ -119,9 +107,8 @@ private nonisolated struct WordsExtent: Equatable {
 private final class OnboardingStage {
 
     /// The slides as they stand side by side. Every position below is a
-    /// place in this, never a slide's own number: the beads slide comes
-    /// and goes with the voice slide's answer, and the slides after it
-    /// move up a place.
+    /// place in this, never a slide's own number, so a slide can come or
+    /// go without a painting or a ground belonging to the wrong page.
     var sequence: [OnboardingPage]
 
     /// The pages' position in page units: 2.4 means the third slide is
@@ -190,7 +177,7 @@ struct OnboardingView: View {
     static let stageSpace = "onboarding-stage"
 
     @State private var stage = OnboardingStage(
-        sequence: OnboardingPage.sequence(praysAloud: UserSettings.shared.prayAloud)
+        sequence: OnboardingPage.sequence
     )
 
     /// The place in the sequence the pages have settled on, or are past
@@ -229,15 +216,6 @@ struct OnboardingView: View {
     /// Seeded from settings so re-running onboarding reflects the choice
     @State private var selectedLanguage: PrayerLanguage = UserSettings.shared.prayerLanguage
 
-    /// Whether the player hangs the strand. On unless the user has turned
-    /// it off; chosen on the beads slide, where both ways are shown working.
-    @State private var praysOnBeads = UserSettings.shared.prayOnBeads
-
-    /// Whether the voice says every prayer, or reads the meditation alone
-    /// (`UserSettings.prayAloud`). Chosen on the voice slide; it decides
-    /// whether the beads slide is asked at all.
-    @State private var praysAloud = UserSettings.shared.prayAloud
-
     private var totalPages: Int { stage.sequence.count }
 
     /// The slide after this one in the sequence as it now stands
@@ -274,12 +252,6 @@ struct OnboardingView: View {
         }
         .onChange(of: selectedLanguage) { _, language in
             UserSettings.shared.prayerLanguagePreference = language.rawValue
-        }
-        .onChange(of: praysOnBeads) { _, onBeads in
-            UserSettings.shared.prayOnBeads = onBeads
-        }
-        .onChange(of: praysAloud) { _, aloud in
-            UserSettings.shared.prayAloud = aloud
         }
     }
 
@@ -323,8 +295,6 @@ struct OnboardingView: View {
         switch page {
         case .welcome:   welcomeSlide
         case .intention: intentionSlide
-        case .voice:     voiceSlide
-        case .beads:     beadsSlide
         case .forYou:    forYouSlide
         case .colors:    colorsSlide
         case .language:  languageSlide
@@ -504,167 +474,7 @@ struct OnboardingView: View {
                 .sensoryFeedback(.selection, trigger: selectedIntentions)
             }
         } bottomContent: {
-            continueButton(String(localized: "Continue", comment: "Onboarding: the gold button at a slide's foot that goes on to the next slide"), to: .voice)
-        }
-    }
-
-    // MARK: - 3. What You'll Hear
-
-    /// One lead for both choices: each card's own line says what the
-    /// voice does, so a lead that said it again read twice
-    private static let voiceLead = String(
-        localized: "Choose what the voice says. You can change it on any Rosary's page.",
-        comment: "Onboarding, What You'll Hear slide: the line under its title; the choice is how much of the Rosary the narration voice says"
-    )
-
-    /// How much of the Rosary the voice says (`UserSettings.prayAloud`),
-    /// asked first of the two because it decides whether the beads
-    /// question is needed at all. The words are the "Rosary ways to pray"
-    /// handoff's, which the Rosary's own pages and Settings share.
-    private var voiceSlide: some View {
-        OnboardingSlideLayout(
-            // With the whole Rosary said aloud the beads question stands
-            // aside, and "1 of 2" promised a second that never came
-            kicker: praysAloud
-                ? String(localized: "Make it yours", comment: "Onboarding, What You'll Hear slide: small kicker over the title when it is the only personal choice")
-                : String(localized: "Make it yours · 1 of 2", comment: "Onboarding, What You'll Hear slide: small kicker over the title, the first of two personal choices"),
-            title: String(localized: "What You'll Hear", comment: "Onboarding: title of the slide choosing how much of the Rosary the voice says"),
-            page: .voice,
-            stage: stage
-        ) {
-            VStack(spacing: 14) {
-                OnboardingLead(Self.voiceLead)
-
-                DecadeVoicePreview(praysAloud: praysAloud)
-
-                VStack(spacing: 10) {
-                    OnboardingChoiceCard(
-                        label: String(localized: "Meditation Only", comment: "Onboarding, What You'll Hear slide: a choice card's name; the voice reads only the meditation"),
-                        detail: String(
-                            localized: "You hear the meditation; you say the prayers",
-                            comment: "Onboarding, What You'll Hear slide: the line under the Meditation Only choice"
-                        ),
-                        isSelected: !praysAloud
-                    ) {
-                        choose(aloud: false)
-                    }
-
-                    OnboardingChoiceCard(
-                        label: String(localized: "Whole Rosary", comment: "Onboarding, What You'll Hear slide: a choice card's name; the voice says every prayer of the Rosary"),
-                        detail: String(
-                            localized: "You hear every prayer; pray along with the voice",
-                            comment: "Onboarding, What You'll Hear slide: the line under the Whole Rosary choice"
-                        ),
-                        isSelected: praysAloud
-                    ) {
-                        choose(aloud: true)
-                    }
-                }
-                .sensoryFeedback(.selection, trigger: praysAloud)
-
-                Text("Every Rosary will begin this way. You can change it on any Rosary's page, or in Settings.")
-                    .font(AppFonts.italicFont(14))
-                    .foregroundColor(AppColors.cream.opacity(0.62))
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        } bottomContent: {
-            continueButton(String(localized: "Continue", comment: "Onboarding: the gold button at a slide's foot that goes on to the next slide"), to: page(after: .voice))
-        }
-    }
-
-    /// Chooses what the voice says, and stands the beads slide aside or
-    /// back. That slide is the next one over, off the glass, so it comes
-    /// and goes without a transition; only the strand of progress above
-    /// gains or loses a bead.
-    private func choose(aloud: Bool) {
-        guard aloud != praysAloud else { return }
-        withAnimation(Motion.ease(0.25)) { praysAloud = aloud }
-
-        var still = Transaction()
-        still.disablesAnimations = true
-        withTransaction(still) { stage.sequence = Page.sequence(praysAloud: aloud) }
-    }
-
-    // MARK: - 4. Where Will You Count?
-
-    private static let onScreenLead = String(
-        localized: "The beads are on the screen. Swipe for each Hail Mary, and the next mystery begins on its own.",
-        comment: "Onboarding, How Will You Keep Count slide: the line under its title when counting on the screen is chosen"
-    )
-    private static let ownRosaryLead = String(
-        localized: "Count on your own rosary. The screen shows one mystery at a time.",
-        comment: "Onboarding, How Will You Keep Count slide: the line under its title when counting on one's own rosary is chosen"
-    )
-
-    /// The prayer screen's one new idea, tried rather than described, and
-    /// chosen rather than imposed. On the screen, a strand moves under the
-    /// thumb a bead at a time and turns to the next mystery by itself. On
-    /// one's own rosary, the player moves a mystery at a time for a hand
-    /// that keeps its own count. Whichever is chosen is the one shown
-    /// working, in the same slot, so the slide never grows or jumps as it
-    /// changes. The same setting Settings and a Rosary's own page call
-    /// Counting (`RosaryChoice.counting`); the slide sets its names and
-    /// notes from its own copy of the handoff's words, so change the two
-    /// together.
-    ///
-    /// Asked only when the voice reads the meditation alone: with the
-    /// whole Rosary aloud, the voice moves the beads on the screen.
-    private var beadsSlide: some View {
-        OnboardingSlideLayout(
-            kicker: String(localized: "Make it yours · 2 of 2", comment: "Onboarding, How Will You Keep Count slide: small kicker over the title, the second of two personal choices"),
-            title: String(
-                localized: "How Will You Keep Count?",
-                comment: "Onboarding: title of the slide choosing to count the Hail Marys on the screen's beads or on one's own rosary"
-            ),
-            page: .beads,
-            stage: stage
-        ) {
-            VStack(spacing: 18) {
-                OnboardingLeadSlot(
-                    praysOnBeads ? Self.onScreenLead : Self.ownRosaryLead,
-                    reserving: [Self.onScreenLead, Self.ownRosaryLead]
-                )
-
-                ZStack {
-                    if praysOnBeads {
-                        BeadStrandDemo()
-                            .transition(.opacity)
-                    } else {
-                        MysteryStepDemo()
-                            .transition(.opacity)
-                    }
-                }
-                .frame(height: BeadStrandDemo.height)
-                .animation(Motion.crossfade, value: praysOnBeads)
-
-                VStack(spacing: 10) {
-                    OnboardingChoiceCard(
-                        label: String(localized: "On My Rosary", comment: "Onboarding, How Will You Keep Count slide: a choice card's name; counting the Hail Marys on one's own rosary"),
-                        detail: String(
-                            localized: "Count on your own rosary; the screen shows one mystery at a time",
-                            comment: "Onboarding, How Will You Keep Count slide: the line under the On My Rosary choice"
-                        ),
-                        isSelected: !praysOnBeads
-                    ) {
-                        withAnimation(Motion.ease(0.25)) { praysOnBeads = false }
-                    }
-
-                    OnboardingChoiceCard(
-                        label: String(localized: "On the Screen", comment: "Onboarding, How Will You Keep Count slide: a choice card's name; counting on beads drawn on the screen"),
-                        detail: String(
-                            localized: "The beads are on the screen; swipe for each Hail Mary",
-                            comment: "Onboarding, How Will You Keep Count slide: the line under the On the Screen choice"
-                        ),
-                        isSelected: praysOnBeads
-                    ) {
-                        withAnimation(Motion.ease(0.25)) { praysOnBeads = true }
-                    }
-                }
-                .sensoryFeedback(.selection, trigger: praysOnBeads)
-            }
-        } bottomContent: {
-            continueButton(String(localized: "Continue", comment: "Onboarding: the gold button at a slide's foot that goes on to the next slide"), to: .forYou)
+            continueButton(String(localized: "Continue", comment: "Onboarding: the gold button at a slide's foot that goes on to the next slide"), to: page(after: .intention))
         }
     }
 
@@ -1257,18 +1067,11 @@ struct OnboardingView: View {
     /// is among them, because its first step is different from the rest.
     private var closingLine: String {
         if selectedIntentions.contains(.learning) {
-            // Only a promise the chosen way of praying keeps: the strand
-            // on the screen counts, and so does a voice that says every
-            // prayer and moves the beads with it
-            return praysOnBeads || praysAloud
-                ? String(
-                    localized: "Everyone who prays the Rosary began with one Hail Mary. The app counts the beads for you.",
-                    comment: "Onboarding, last slide: closing line for someone learning the Rosary who counts on the screen or hears every prayer"
-                )
-                : String(
-                    localized: "Everyone who prays the Rosary began with one Hail Mary.",
-                    comment: "Onboarding, last slide: closing line for someone learning the Rosary who counts on their own rosary"
-                )
+            // The voice says every prayer and moves the beads with it
+            return String(
+                localized: "Everyone who prays the Rosary began with one Hail Mary. The app counts the beads for you.",
+                comment: "Onboarding, last slide: closing line for someone learning the Rosary who counts on the screen or hears every prayer"
+            )
         }
         switch primaryIntention {
         case .peace:
@@ -1364,8 +1167,6 @@ private struct OnboardingBackdrop: View {
     private static let paintings: [OnboardingPage: String] = [
         .welcome: "joyful_annunciation",
         .intention: "joyful_finding",
-        .voice: "luminous_cana",
-        .beads: "joyful_visitation",
         .forYou: "joyful_nativity",
         .colors: "luminous_transfiguration",
         .language: "glorious_pentecost",
@@ -1833,93 +1634,6 @@ private struct OnboardingLead: View {
     }
 }
 
-/// A lead whose words change with the slide's choice. One slot, as tall
-/// as the longest of its sentences, with the new sentence crossfading
-/// whole over the old: a lead that re-wrapped as it faded, a line longer
-/// or shorter, pushed everything beneath it up and down with each tap.
-private struct OnboardingLeadSlot: View {
-    let text: String
-    let alternatives: [String]
-
-    init(_ text: String, reserving alternatives: [String]) {
-        self.text = text
-        self.alternatives = alternatives
-    }
-
-    var body: some View {
-        ZStack {
-            ForEach(alternatives, id: \.self) { alternative in
-                OnboardingLead(alternative)
-                    .hidden()
-            }
-
-            OnboardingLead(text)
-                .id(text)
-                .transition(.opacity)
-        }
-        .animation(Motion.crossfade, value: text)
-    }
-}
-
-/// The voice slide's decade: its four parts, and who says each. The
-/// meditation is always the voice's; the prayers are yours unless the
-/// whole Rosary is said aloud.
-private struct DecadeVoicePreview: View {
-    let praysAloud: Bool
-
-    private static let parts = [
-        String(localized: "A short reading on the mystery", comment: "Onboarding, What You'll Hear slide: the first of a decade's four parts, the meditation"),
-        String(localized: "Our Father", comment: "Onboarding, What You'll Hear slide: a decade's second part, the prayer's name"),
-        String(localized: "Ten Hail Marys", comment: "Onboarding, What You'll Hear slide: a decade's third part"),
-        String(localized: "Glory Be", comment: "Onboarding, What You'll Hear slide: a decade's last part, the prayer's name")
-    ]
-
-    var body: some View {
-        VStack(spacing: 0) {
-            ForEach(Array(Self.parts.enumerated()), id: \.offset) { index, part in
-                row(part, byVoice: index == 0 || praysAloud)
-            }
-        }
-        .overlay(alignment: .top) { rule }
-        .animation(Motion.ease(0.25), value: praysAloud)
-    }
-
-    private func row(_ part: String, byVoice: Bool) -> some View {
-        HStack(spacing: 12) {
-            Text(part)
-                .font(AppFonts.bodyFont(15))
-                .foregroundColor(AppColors.cream)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            ZStack(alignment: .trailing) {
-                tag(byVoice: byVoice)
-                    .id(byVoice)
-                    .transition(.opacity)
-            }
-        }
-        .frame(minHeight: 40)
-        .overlay(alignment: .bottom) { rule }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(byVoice ? Text("\(part): said by the voice") : Text("\(part): said by you"))
-    }
-
-    private func tag(byVoice: Bool) -> some View {
-        HStack(spacing: 5) {
-            AppIcon(byVoice ? "ph-speaker-high" : "ch-praying-hands", size: 12)
-            Text(byVoice ? "VOICE" : "YOU")
-                .font(AppFonts.labelFont(9))
-                .tracking(1.8)
-        }
-        .foregroundColor(byVoice ? AppColors.goldLight : AppColors.textSecondary)
-    }
-
-    private var rule: some View {
-        Rectangle()
-            .fill(AppColors.gold.opacity(0.2))
-            .frame(height: AppLine.hairline)
-    }
-}
-
 /// A choice on any slide, drawn as the "Rosary ways to pray" handoff
 /// draws the voice and beads slides' choices: the name over one italic
 /// line, a mark at the trailing edge, and the chosen card washed in gold.
@@ -2041,272 +1755,6 @@ private struct OfferRow: View {
             Spacer(minLength: 0)
         }
         .accessibilityElement(children: .combine)
-    }
-}
-
-/// The Joyful Mysteries the two demos walk, named as the app names them:
-/// in Spanish in a Spanish app (`SpanishContent.mysteryName`)
-private enum OnboardingJoyfulMysteries {
-    static let english = [
-        "The Annunciation",
-        "The Visitation",
-        "The Nativity",
-        "The Presentation",
-        "The Finding in the Temple"
-    ]
-
-    static var names: [String] {
-        english.enumerated().map { index, name in
-            SpanishContent.mysteryName(name, key: "joyful_\(index + 1)")
-        }
-    }
-}
-
-/// Slide three: the strand the prayer screen hangs, working.
-///
-/// The same `RosaryStrandView` and the same arithmetic as both players, so
-/// what is learned here is exactly what happens there: swipe down for the
-/// next bead, up for the one before, the Glory Be said on the next
-/// decade's Our Father bead, and the mystery turning on its own with the
-/// ripple and the medium beat. The Joyful Mysteries, as the familiar set.
-private struct BeadStrandDemo: View {
-
-    private static let strand = RosaryStrand(decades: 5, hailMarys: 10)
-
-    /// Six beads' length of string in the window. The slide's demo slot is
-    /// held to it in both ways of praying, so choosing never moves the page.
-    static let height = RosaryStrandView.rowHeight * 6
-
-    private static var mysteries: [String] { OnboardingJoyfulMysteries.names }
-
-    @State private var mystery = 0
-    @State private var bead = 0
-    @State private var dragOffset: CGFloat = 0
-    @State private var turnPulse = 0
-
-    /// False until the first bead is moved; until then the column says
-    /// what to do instead of what to pray
-    @State private var hasMoved = false
-
-    private var strand: RosaryStrand { Self.strand }
-    private var position: BeadPosition { BeadPosition(mystery: mystery, bead: bead) }
-    private var isAtStart: Bool { mystery == 0 && bead == 0 }
-    private var isAtEnd: Bool { mystery == strand.decades - 1 && bead == strand.decadeLength }
-
-    var body: some View {
-        HStack(alignment: .center, spacing: 8) {
-            reading
-
-            RosaryStrandView(
-                strand: strand,
-                activeIndex: strand.index(mystery: mystery, bead: bead),
-                height: Self.height,
-                dragOffset: dragOffset,
-                turnPulse: turnPulse,
-                activeLabel: strand.labelLines(bead: bead)
-            )
-        }
-        .frame(height: Self.height)
-        .contentShape(Rectangle())
-        // Simultaneous, so a sideways swipe begun on the beads still
-        // turns the onboarding page
-        .simultaneousGesture(swipe)
-        .onTapGesture { step(forward: true) }
-        .sensoryFeedback(.selection, trigger: position)
-        .sensoryFeedback(.impact(weight: .medium), trigger: turnPulse)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Practice beads. \(MysteryCategory.joyful.mysteryLabel(ordinal: mystery + 1)), \(strand.label(bead: bead))")
-        .accessibilityHint("Swipe up or down to move between beads")
-        .accessibilityAdjustableAction { direction in
-            switch direction {
-            case .increment: step(forward: true)
-            case .decrement: step(forward: false)
-            @unknown default: break
-            }
-        }
-    }
-
-    /// The mystery, and the first words of the prayer on this bead. Both
-    /// hold their room whatever they say, so nothing moves as they change.
-    private var reading: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(MysteryCategory.joyful.mysteryLabel(ordinal: mystery + 1).uppercased())
-                .font(AppFonts.labelFont(9))
-                .tracking(2)
-                .foregroundColor(AppColors.gold)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-                .contentTransition(.opacity)
-
-            Text(Self.mysteries[mystery])
-                .font(AppFonts.headlineFont(17))
-                .foregroundColor(AppColors.cream)
-                .lineLimit(2, reservesSpace: true)
-                .contentTransition(.opacity)
-
-            ZStack(alignment: .topLeading) {
-                (hasMoved ? Text(openingWords) : Text("Try it here. Swipe down on the beads."))
-                    .font(AppFonts.italicFont(15))
-                    .foregroundColor(AppColors.cream.opacity(hasMoved ? 0.8 : 0.62))
-                    .lineLimit(4, reservesSpace: true)
-                    .id(hasMoved ? prayerKind : "hint")
-                    .transition(.opacity)
-            }
-        }
-        .animation(Motion.words, value: position)
-        .animation(Motion.crossfade, value: hasMoved)
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    private var prayerKind: String {
-        if bead == 0 { return "our-father" }
-        return bead > strand.hailMarys ? "glory-be" : "hail-mary"
-    }
-
-    private var openingWords: String {
-        switch prayerKind {
-        case "our-father": return "Our Father, who art in heaven, hallowed be thy name."
-        case "glory-be":   return "Glory be to the Father, and to the Son, and to the Holy Spirit."
-        default:           return "Hail Mary, full of grace, the Lord is with thee."
-        }
-    }
-
-    private var swipe: some Gesture {
-        DragGesture(minimumDistance: 10)
-            .onChanged { value in
-                let travel = value.translation.height
-                guard abs(travel) > abs(value.translation.width) else { return }
-                dragOffset = RosaryStrandView.follow(travel, resisted: travel > 0 ? isAtEnd : isAtStart)
-            }
-            .onEnded { value in
-                let travel = value.translation.height
-                let isVertical = abs(travel) > abs(value.translation.width)
-                if isVertical, travel > 28, !isAtEnd {
-                    step(forward: true)
-                } else if isVertical, travel < -28, !isAtStart {
-                    step(forward: false)
-                } else {
-                    withAnimation(Motion.beadSettle) { dragOffset = 0 }
-                }
-            }
-    }
-
-    /// One bead along the string. From a decade's Glory Be the hand moves
-    /// to the next mystery on the same bead, so the string stays put and
-    /// the ripple marks the turn.
-    private func step(forward: Bool) {
-        withAnimation(Motion.beadSlide) {
-            dragOffset = 0
-            if forward {
-                guard !isAtEnd else { return }
-                if bead < strand.decadeLength {
-                    bead += 1
-                } else {
-                    mystery += 1
-                    bead = 0
-                    turnPulse += 1
-                }
-            } else {
-                guard !isAtStart else { return }
-                if bead > 0 {
-                    bead -= 1
-                } else {
-                    mystery -= 1
-                    bead = strand.decadeLength
-                }
-            }
-            hasMoved = true
-        }
-    }
-}
-
-/// Slide three without the beads: the decade-at-a-time screen, for a hand
-/// that keeps its own count. Arrows step between the mysteries, as they
-/// flank the player's transport, and nothing counts the Hail Marys.
-private struct MysteryStepDemo: View {
-
-    private static var mysteries: [String] { OnboardingJoyfulMysteries.names }
-
-    @State private var mystery = 0
-
-    var body: some View {
-        VStack(spacing: 18) {
-            // The five mysteries as a strand of their own, prayed ones lit
-            HStack(spacing: 14) {
-                ForEach(0..<Self.mysteries.count, id: \.self) { index in
-                    RosaryBead(
-                        state: index < mystery ? .prayed : (index == mystery ? .active : .ahead),
-                        size: 13
-                    )
-                }
-            }
-            .animation(Motion.beadSlide, value: mystery)
-
-            VStack(spacing: 6) {
-                Text(MysteryCategory.joyful.mysteryLabel(ordinal: mystery + 1).uppercased())
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2)
-                    .foregroundColor(AppColors.gold)
-                    .contentTransition(.opacity)
-
-                Text(Self.mysteries[mystery])
-                    .font(AppFonts.headlineFont(19))
-                    .foregroundColor(AppColors.cream)
-                    .contentTransition(.opacity)
-            }
-            .animation(Motion.words, value: mystery)
-
-            HStack(spacing: 16) {
-                arrow(
-                "ph-caret-left",
-                label: String(localized: "Previous mystery", comment: "Onboarding, counting on one's own rosary demo: VoiceOver name of the arrow back a mystery"),
-                enabled: mystery > 0
-            ) {
-                    mystery -= 1
-                }
-
-                Text("Ten Hail Marys, counted on your own rosary")
-                    .font(AppFonts.italicFont(15))
-                    .foregroundColor(AppColors.cream.opacity(0.72))
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity)
-
-                arrow(
-                "ph-caret-right",
-                label: String(localized: "Next mystery", comment: "Onboarding, counting on one's own rosary demo: VoiceOver name of the arrow on a mystery"),
-                enabled: mystery < Self.mysteries.count - 1
-            ) {
-                    mystery += 1
-                }
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .sensoryFeedback(.selection, trigger: mystery)
-    }
-
-    private func arrow(
-        _ icon: String,
-        label: String,
-        enabled: Bool,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button {
-            withAnimation(Motion.settle) { action() }
-        } label: {
-            AppIcon(icon, size: 16)
-                .foregroundColor(AppColors.gold)
-                .frame(width: 44, height: 44)
-                .background(
-                    Circle()
-                        .strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline)
-                )
-                .contentShape(Circle())
-        }
-        .buttonStyle(QuietGlyphButtonStyle())
-        .disabled(!enabled)
-        .opacity(enabled ? 1 : 0.35)
-        .accessibilityLabel(label)
     }
 }
 

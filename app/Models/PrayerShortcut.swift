@@ -43,7 +43,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .chooseMeditation: return String(localized: "Choose How to Pray Today", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
         case .sevenSorrows:     return String(localized: "The Seven Sorrows of Mary", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
         case .scripturalRosary: return String(localized: "The Scriptural Rosary", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
-        case .rosaryAloud:      return String(localized: "The Audio Rosary", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
+        case .rosaryAloud:      return String(localized: "No Meditation", comment: "Simple Rosary: the name of the Rosary with every prayer said aloud and no meditation read between, as the mysteries' page names the choice")
         case .mass:             return String(localized: "The Mass", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
         case .office:           return String(localized: "Hours of Prayer", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
         case .consecration:     return String(localized: "Consecration to Mary", comment: "Pray button tray and its editor: the name of a devotional act the Pray button can open")
@@ -80,15 +80,10 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     }
 
     /// The line under the title in the Pray tray, where the Rosary's
-    /// forms each say whose mysteries they are — and Today's Rosary,
-    /// what the voice will do — in the same words as the mysteries' page
-    func trayDetail(today: MysteryCategory, praysAloud: Bool) -> String {
+    /// forms each say whose mysteries they are, in the same words as the
+    /// mysteries' page. Every form is said aloud, so none says so
+    func trayDetail(today: MysteryCategory) -> String {
         switch self {
-        case .todaysRosary where praysAloud:
-            return String(
-                localized: "\(today.devotionTitle) · with the whole Rosary read to you",
-                comment: "Pray button tray, under Pray Today's Rosary when every prayer is said aloud: the day's mysteries (like Joyful Mysteries), then what the voice will do"
-            )
         case .todaysRosary:
             return String(
                 localized: "\(today.devotionTitle) · with a meditation",
@@ -151,7 +146,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .chooseMeditation: return String(localized: "Choose How to Pray Today", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")
         case .sevenSorrows:     return String(localized: "The Seven Sorrows of Mary", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")
         case .scripturalRosary: return String(localized: "Scriptural Rosary", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")
-        case .rosaryAloud:      return String(localized: "The Audio Rosary", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")
+        case .rosaryAloud:      return String(localized: "No Meditation", comment: "Simple Rosary: the name of the Rosary with every prayer said aloud and no meditation read between, as the mysteries' page names the choice")
         case .mass:             return String(localized: "The Mass", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")
         case .office:           return String(localized: "Hours of Prayer", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")
         case .consecration:     return String(localized: "Consecration to Mary", comment: "Daily prayers list (the rule of prayer): the short name of a devotional act, as a ledger row sets it")

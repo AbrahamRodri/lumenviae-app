@@ -146,10 +146,7 @@ struct PrayShortcutTray: View {
                 comment: "Pray button tray: line under a Rosary left unfinished today; the place is like Third Joyful Mystery"
             )
         }
-        return shortcut.trayDetail(
-            today: ScheduleService.categoryForToday(),
-            praysAloud: settings.prayAloud
-        )
+        return shortcut.trayDetail(today: ScheduleService.categoryForToday())
     }
 
     private func continuation(for shortcut: PrayerShortcut) -> InProgressPrayer? {

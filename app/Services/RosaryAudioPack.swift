@@ -158,7 +158,7 @@ final class RosaryAudioPack {
         voice: String,
         clips: Set<ClipID>,
         progress: @escaping (Int, Int) -> Void = { _, _ in }
-    ) async throws -> (files: [ClipID: URL], voice: String, offline: Bool) {
+    ) async throws -> (files: [ClipID: URL], voice: String, offline: Bool, timings: [ClipID: [TimedLine]]) {
         let kinds = Array(Set(clips.map(\.kind))).sorted()
         let (manifest, offline) = try await manifest(voice: voice, kinds: kinds, clips: clips)
         // A saved manifest answering for an unreachable server may carry
@@ -227,7 +227,13 @@ final class RosaryAudioPack {
         }
 
         await prune(manifest, kinds: kinds)
-        return (files, manifest.voice, offline)
+        // The lines the server timed, for the simple Rosary to light the
+        // words by; a recording without them is left out, never guessed
+        var timings: [ClipID: [TimedLine]] = [:]
+        for id in clips {
+            if let lines = Self.clip(id, in: manifest)?.lines, !lines.isEmpty { timings[id] = lines }
+        }
+        return (files, manifest.voice, offline, timings)
     }
 
     // MARK: - The Manifest

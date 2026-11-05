@@ -49,12 +49,20 @@ protocol SpokenRosaryHost: AnyObject {
     /// The voice has begun a step of the script, or the hand has moved
     /// it to one: the place to come back to after an interruption
     func spokenRosaryReached(_ step: SpokenStep)
+
+    /// The timed lines of the meditation recording at `url`, for the
+    /// simple Rosary to light its words by; nil when that recording has
+    /// not been timed
+    func spokenMeditationTimings(decade: Int, url: String) -> [TimedLine]?
 }
 
 extension SpokenRosaryHost {
     /// A Rosary with no meditations — the Scriptural Rosary, the Rosary
     /// Aloud — has nothing to fall back to
     func spokenMeditationFallbackURL(decade: Int, failed: String) async -> String? { nil }
+
+    /// A Rosary with no meditations has none to time
+    func spokenMeditationTimings(decade: Int, url: String) -> [TimedLine]? { nil }
 }
 
 @Observable
@@ -82,12 +90,12 @@ final class SpokenRosaryPlayer {
             switch self {
             case .offline:
                 return String(
-                    localized: "You're offline. The Whole Rosary needs the internet the first time.",
+                    localized: "You're offline. The Rosary's voice needs the internet the first time.",
                     comment: "Prayer screen notice when the Rosary cannot be said aloud: no connection and the recordings were never downloaded"
                 )
             case .notRecorded:
                 return String(
-                    localized: "The Whole Rosary isn't recorded in this voice yet. Choose another voice.",
+                    localized: "The Rosary isn't recorded in this voice yet. Choose another voice.",
                     comment: "Prayer screen notice when the Rosary cannot be said aloud: no recordings in the chosen narration voice"
                 )
             }
@@ -171,6 +179,63 @@ final class SpokenRosaryPlayer {
     /// The last Amen has been said and the hand rests on the final bead,
     /// waiting for AMEN
     var isFinished: Bool { phase == .finished }
+
+    // MARK: - Muted, and the Words Lit (the simple Rosary)
+
+    /// The simple Rosary's speaker: muted, every recording still plays
+    /// to its end with no sound, so the Rosary goes on at the voice's
+    /// own pace and the hand moves as it would aloud
+    private(set) var isMuted = false
+
+    /// The timed lines of the recording being said, from the server; nil
+    /// when it has none, and then nothing is lit
+    private(set) var currentTimings: [TimedLine]?
+
+    /// The lines the server timed for each recorded prayer
+    private var timings: [RosaryAudioPack.ClipID: [TimedLine]] = [:]
+
+    /// How far into the recording being said the voice is, for the line
+    /// to light
+    var elapsed: Double { ownsPlayer ? audio.currentTime : 0 }
+
+    /// The meditations' timings came after the voice began (they are
+    /// fetched beside it): a meditation being said picks its lines up now
+    @MainActor
+    func refreshMeditationTimings() {
+        guard ownsPlayer, let segment = currentSegment, segment.kind == .meditation,
+              let url = audio.currentURL?.absoluteString
+        else { return }
+        currentTimings = host?.spokenMeditationTimings(decade: segment.mystery, url: url)
+    }
+
+    @MainActor
+    func setMuted(_ muted: Bool) {
+        isMuted = muted
+        audio.isMuted = muted
+    }
+
+    /// Goes to a part of the Rosary from the pill at the top: the opening
+    /// prayers, a mystery's announcement (its meditation follows), or the
+    /// closing prayers. The voice begins there at once: choosing a part
+    /// is asking to pray it (a sheet over the player could leave it
+    /// paused under the choice, and the part chosen then never began).
+    @MainActor
+    func jump(to stop: RosaryStop) {
+        if phase == .finished { phase = .running }
+        guard phase == .running, let target = stop.scriptIndex(in: script) else { return }
+        generation &+= 1
+        advanceTask?.cancel()
+        inPause = false
+        heldInPause = false
+        restartOnResume = false
+        index = target
+        currentTimings = nil
+        if let segment = currentSegment {
+            host?.spokenRosaryMoved(mystery: segment.mystery, bead: segment.bead)
+        }
+        reportStep()
+        sayCurrentSoon()
+    }
 
     /// Whether the Rosary is being said, or is about to be: what a
     /// restart in another voice should carry on doing
@@ -271,6 +336,7 @@ final class SpokenRosaryPlayer {
             }
             guard generation == started else { return }
             files = prepared.files
+            timings = prepared.timings
             offline = prepared.offline
         } catch {
             guard generation == started else { return }
@@ -415,6 +481,11 @@ final class SpokenRosaryPlayer {
         isFetching = false
         letAppSleep()
         if phase != .finished { phase = .idle }
+        if isMuted {
+            isMuted = false
+            audio.isMuted = false
+        }
+        audio.restoreRememberedRate(from: rateLoan)
         guard audio.isTrackNavigationOwner(owner) else { return }
         audio.clearTrackNavigation(owner: owner)
         audio.reset()
@@ -451,6 +522,7 @@ final class SpokenRosaryPlayer {
         }
 
         isFetching = true
+        currentTimings = nil
         host?.spokenRosaryMoved(mystery: segment.mystery, bead: segment.bead)
         reportStep()
 
@@ -498,6 +570,14 @@ final class SpokenRosaryPlayer {
             return
         }
         loadedGeneration = audio.loadGeneration
+        switch segment.kind {
+        case .meditation:
+            currentTimings = audio.currentURL.flatMap {
+                host?.spokenMeditationTimings(decade: segment.mystery, url: $0.absoluteString)
+            }
+        default:
+            currentTimings = RosaryAudioPack.ClipID(segment: segment).flatMap { timings[$0] }
+        }
 
         // Every prayer is said from its first word. The same recording
         // twice in a row — ten Hail Marys — is not loaded again, and
@@ -507,8 +587,33 @@ final class SpokenRosaryPlayer {
         if audio.isPlaying || audio.currentTime > 0 {
             audio.seek(to: 0)
         }
+        // A meditation is heard at the pace it was read, always; the
+        // prayers at the speed the reader chose for them
+        setPace(for: segment.kind)
         audio.play()
         letAppSleep()
+    }
+
+    /// The name the meditations' 1× is borrowed under, so the prayers'
+    /// speed comes back the moment a prayer follows, and when the Rosary
+    /// ends
+    private var rateLoan: AnyHashable { AnyHashable(owner) }
+
+    /// Meditations at 1×, prayers at the app's speed (`appRate`, which
+    /// the step buttons set)
+    @MainActor
+    private func setPace(for kind: SpokenSegment.Kind) {
+        if Self.playsAtNaturalPace(kind) {
+            audio.setPlaybackRate(1.0, remember: false, borrower: rateLoan)
+        } else {
+            audio.restoreRememberedRate(from: rateLoan)
+        }
+    }
+
+    /// Whether a part of the script is always heard at 1×: the meditation,
+    /// read as a reading, not prayed
+    nonisolated static func playsAtNaturalPace(_ kind: SpokenSegment.Kind) -> Bool {
+        kind == .meditation
     }
 
     /// Hands one recording to the shared player, named for the Lock

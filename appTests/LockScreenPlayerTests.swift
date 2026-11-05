@@ -495,7 +495,7 @@ struct LockScreenPlayerTests {
         await vm.loadCurrentAudio()
         #expect(service.nowPlayingInfo != nil)
 
-        // Settled first, so the Whole Rosary below is chosen mid-Rosary,
+        // Settled first, so the voice below is turned on mid-Rosary,
         // while paused: it waits for play, holding the meditation's entry
         await vm.setPrayAloud(false)
         let turnedOn = Task { await vm.setPrayAloud(true) }

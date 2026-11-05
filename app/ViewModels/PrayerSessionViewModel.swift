@@ -39,9 +39,7 @@ final class PrayerSessionViewModel {
     /// because the Rosary is prayed on two surfaces, and the count must
     /// be the same on both.
     ///
-    /// Only walked when the player is prayed on the beads
-    /// (`UserSettings.prayOnBeads`); with the beads off it rests on the
-    /// Our Father and the mystery alone is moved.
+    /// Walked by the voice, by Back and Next, and by a tap on the rail.
     var currentBeadIndex: Int = 0 {
         // A hand that has moved past the Our Father — the reader's bead
         // row is never locked — has its beads for good: stepping back
@@ -49,7 +47,7 @@ final class PrayerSessionViewModel {
         didSet {
             if currentBeadIndex > 0 { unlockedMysteries.insert(currentMysteryIndex) }
             // The voice moving the hand along the decades leaves the
-            // opening behind for good, so the Whole Rosary turned off
+            // opening behind for good, so a voice put down
             // later never brings the Sign of the Cross back. The pendant's
             // own walk sets the bead before its step.
             if currentBeadIndex > 0, case .opening = pendantStep { pendantStep = nil }
@@ -131,6 +129,10 @@ final class PrayerSessionViewModel {
     /// skipped.
     private(set) var pendantStep: SilentPendant.Step?
 
+    /// The simple Rosary: the meditations' narrations from the v2 API,
+    /// with their timed lines, by meditation id
+    var timedNarrations: [Int: APIService.TimedNarration] = [:]
+
     /// Whether the opening and closing prayers are prayed on the screen:
     /// shown in Settings, and the Rosary not said aloud, whose voice says
     /// them on a pendant of its own
@@ -146,6 +148,15 @@ final class PrayerSessionViewModel {
     /// The pendant's step, while it is prayed on the screen
     var currentPendantStep: SilentPendant.Step? {
         pendantShown ? pendantStep : nil
+    }
+
+    /// The opening or closing prayer under the hand, as a step of the
+    /// pendant, whether it is said aloud or prayed in silence: what the
+    /// beginner's helps read on the pendant
+    var helpsPendantStep: SilentPendant.Step? {
+        if let step = currentPendantStep { return step }
+        guard let spoken, spokenPendant != nil else { return nil }
+        return silentPendant.step(at: min(spoken.index, spoken.script.count - 1), in: spoken.script)
     }
 
     /// The opening or closing prayer under the hand, prayed in silence
@@ -327,9 +338,34 @@ final class PrayerSessionViewModel {
         spokenFollowHand()
     }
 
+    /// The hand taken to the bead at `index` on the
+    /// strand by a tap, walked there a bead at a time as the swipe would
+    /// take it, so the decade turns, the voice follows and the narration
+    /// loads exactly as they do for a swipe. Only as far as
+    /// `RosaryStrand.canTap` allows; never onto the pendant.
+    ///
+    /// - Returns: whether the hand moved
+    @discardableResult
+    func goToBead(at index: Int) -> Bool {
+        guard currentPendantStep == nil, !voiceHoldsHand, strand.canTap(index, from: strandIndex, onGloryBe: isDecadePrayed) else { return false }
+        let start = beadPosition
+        var moves = 0
+        while strandIndex != index, moves < strand.count * 2 {
+            moves += 1
+            if strandIndex < index {
+                guard prayForward() else { break }
+            } else {
+                prayBack()
+            }
+            if currentPendantStep != nil { break }
+        }
+        return beadPosition != start
+    }
+
     // MARK: - The Rosary Said Aloud
 
-    /// The whole Rosary said aloud, while `UserSettings.prayAloud` is on.
+    /// The whole Rosary said aloud (`SimpleRosary.praysAloud`: always,
+    /// but for a set with no recording, which opens as text).
     /// While it runs it owns the audio: the mystery's own narration stands
     /// aside, and the hand moves with the voice.
     private(set) var spoken: SpokenRosaryPlayer?
@@ -871,7 +907,7 @@ final class PrayerSessionViewModel {
     /// we awaited, and resetting then would kill *its* audio. The claim
     /// sees to that.
     private func tearDownIfStillOwner() {
-        // Disowned by the Whole Rosary, whose voice takes the entry kept
+        // Disowned by the spoken Rosary, whose voice takes the entry kept
         // for its first prayer: released, it would clear it
         guard spoken == nil else { return }
         narrationClaim?.release()
@@ -890,14 +926,16 @@ final class PrayerSessionViewModel {
     @discardableResult
     private func takePlayer() -> AudioClaim {
         if let claim = narrationClaim, claim.isCurrent {
-            // Taken off while the Whole Rosary was on its way, and the
+            // Taken off while the spoken Rosary was on its way, and the
             // voice failed or was put down before it took the player
             if claim.onTransport == nil {
                 claim.onTransport = { [weak self] request in self?.narrationTransport(request) }
             }
             return claim
         }
-        let claim = audioService.claim(.prayerFlow) { [weak self] in
+        // A meditation is always heard at 1×; the app's speed is the
+        // prayers' (the step buttons), and comes back when the claim ends
+        let claim = audioService.claim(.prayerFlow, rate: .borrowed(1.0)) { [weak self] in
             self?.narrationClaim = nil
             self?.pendingRemoteAutoplay = false
         }!
@@ -1113,14 +1151,13 @@ final class PrayerSessionViewModel {
 extension PrayerSessionViewModel: SpokenRosaryHost {
 
     /// Turns the spoken Rosary on or off for this session: every prayer
-    /// said aloud around the meditations (`UserSettings.prayAloud`).
-    /// Turning it off hands the mystery back to its own narration.
+    /// said aloud around the meditations, as `SimpleRosary.praysAloud`
+    /// decides. Turning it off hands the mystery back to its own narration.
     ///
     /// On arrival, PRAY was the word to begin, and the voice begins. Turned
-    /// on mid-Rosary — from the playback sheet — it carries on only if
-    /// the meditation was playing, and otherwise waits at the hand's
-    /// place for play, the way a new voice does: it once began the Sign
-    /// of the Cross behind the sheet the moment the switch was touched.
+    /// on later it carries on only if the meditation was playing, and
+    /// otherwise waits at the hand's place for play, the way a new voice
+    /// does.
     @MainActor
     func setPrayAloud(_ on: Bool) async {
         let arriving = !prayAloudSettled
@@ -1286,6 +1323,10 @@ extension PrayerSessionViewModel: SpokenRosaryHost {
         let player = SpokenRosaryPlayer(script: script, host: self, audio: audioService)
         spoken = player
         isPrayedAloud = true
+        // The meditations' timings are fetched beside the voice, never
+        // before its first word: the opening prayers are said while they
+        // arrive, and a meditation reached without them is simply unlit
+        Task { [weak self] in await self?.fetchTimedNarrations() }
         // The step an interrupted Rosary stopped on, only while the hand
         // still stands where it stopped: turned on after the hand has
         // moved on, the voice would take it back there
@@ -1379,5 +1420,97 @@ extension PrayerSessionViewModel: SpokenRosaryHost {
             setId: meditationSet.id,
             category: meditationSet.category
         )
+    }
+}
+
+// MARK: - The Simple Rosary
+
+extension PrayerSessionViewModel {
+
+    /// The parts of this Rosary the pill at the top goes to
+    var stops: [RosaryStop] {
+        RosaryStop.all(decades: totalMysteries, includesPendant: spoken != nil || pendantShown)
+    }
+
+    /// The part the hand is on
+    var currentStop: RosaryStop {
+        if let segment = spoken?.currentSegment, spoken?.phase == .running || spoken?.phase == .finished {
+            return RosaryStop.current(phase: segment.phase, mystery: segment.mystery)
+        }
+        switch currentPendantStep {
+        case .opening: return .opening
+        case .closing: return .closing
+        case nil: return .mystery(currentMysteryIndex)
+        }
+    }
+
+    /// Goes to a part of the Rosary: said aloud, the voice goes there;
+    /// read, the hand does
+    func jump(to stop: RosaryStop) {
+        if let spoken {
+            spoken.jump(to: stop)
+            return
+        }
+        switch stop {
+        case .opening:
+            currentMysteryIndex = 0
+            if pendantShown, let first = silentPendant.firstOpening { pendantStep = first }
+        case .mystery(let n):
+            guard n >= 0, n < totalMysteries else { return }
+            currentMysteryIndex = n
+        case .closing:
+            currentMysteryIndex = max(totalMysteries - 1, 0)
+            currentBeadIndex = strand.gloryBe
+            if pendantShown, let first = silentPendant.firstClosing { pendantStep = first }
+        }
+    }
+
+    /// The voice muted: the Rosary goes on at the recording's pace
+    var isMuted: Bool { spoken?.isMuted ?? false }
+
+    func toggleMuted() {
+        spoken?.setMuted(!(spoken?.isMuted ?? false))
+    }
+
+    /// The timed lines of what is being said, and the line being said
+    /// now; nil for a recording that has not been timed
+    var spokenTimings: [TimedLine]? { spoken?.currentTimings }
+
+    var spokenHighlightedLine: Int? {
+        SimpleRosary.highlightedLine(timings: spoken?.currentTimings, at: spoken?.elapsed ?? 0)
+    }
+
+    /// How far through the lit line the voice is, for a line taller
+    /// than the words
+    var spokenLineProgress: Double? {
+        SimpleRosary.litLineProgress(timings: spoken?.currentTimings, at: spoken?.elapsed ?? 0)
+    }
+
+    /// Whether the voice is reading this mystery's meditation now
+    var isSpeakingMeditation: Bool {
+        spoken?.currentSegment?.kind == .meditation
+    }
+
+    /// The meditations' timed narrations, from the v2 API, once a Rosary
+    /// begins aloud. Silent on failure: the words are then not lit.
+    @MainActor
+    func fetchTimedNarrations() async {
+        let ids = (meditationSet.meditations ?? []).map(\.id).filter { $0 > 0 }
+        guard !ids.isEmpty, timedNarrations.isEmpty else { return }
+        let voice = NarrationVoiceCatalog.shared.chosenSlug
+        guard let answer = try? await APIService.shared.fetchTimedNarrations(meditationIds: ids, voice: voice) else { return }
+        timedNarrations = Dictionary(answer.map { ($0.meditationId, $0) }, uniquingKeysWith: { first, _ in first })
+        spoken?.refreshMeditationTimings()
+    }
+
+    func spokenMeditationTimings(decade: Int, url: String) -> [TimedLine]? {
+        guard let meditations = meditationSet.meditations, meditations.indices.contains(decade),
+              let timed = timedNarrations[meditations[decade].id],
+              let lines = timed.lines, !lines.isEmpty
+        else { return nil }
+        // The lines belong to one recording: the voice it is in must be
+        // the voice being heard
+        guard url.contains("/\(timed.voice)/") || url.contains("_\(timed.voice).") else { return nil }
+        return lines
     }
 }

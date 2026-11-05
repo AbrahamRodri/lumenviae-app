@@ -14,12 +14,10 @@
 //  painting dissolving into the page, the name, one line saying what the
 //  form is, then YOUR ROSARY TODAY and PRAY.
 //
-//  The Scriptural Rosary offers the same two choices a set does — Read
-//  in Silence or Whole Rosary, and while in silence, On My Rosary or On
-//  the Screen — then the mysteries and the voice as rows. The Holy
-//  Rosary offers no choice at all: it is always said aloud, the beads
-//  moving with the voice, so its audio is a plain row, and to pray
-//  quietly for a while one pauses the voice.
+//  Neither offers a choice of how to pray: both are said aloud, the
+//  beads moving with the voice, and to pray quietly one mutes or pauses
+//  the voice in the player. The page has the mysteries and the voice as
+//  rows, and the Audio Rosary its audio as a plain row.
 //
 //  The Mysteries row is the picker: choosing another set changes the
 //  painting, and nothing is remembered — tomorrow's page opens on

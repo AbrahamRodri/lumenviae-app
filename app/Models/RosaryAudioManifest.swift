@@ -69,8 +69,27 @@ struct RosaryAudioClip: Codable, Equatable {
     /// A verse's citation: "Luke 1:28"
     let reference: String?
 
+    /// Each line of the recording and where it falls in it, once the
+    /// server times its prayers; nil until then, and never guessed. Read
+    /// only by the simple Rosary (`SimpleRosary`), to light the words.
+    var lines: [TimedLine]? = nil
+
     enum CodingKeys: String, CodingKey {
-        case file, text, reference
+        case file, text, reference, lines
         case audioUrl = "audio_url"
+    }
+}
+
+extension RosaryAudioClip {
+    /// The timings are read leniently: a `lines` the app does not expect
+    /// is read as none, never a manifest that fails for everyone. The
+    /// recordings are what the Rosary needs; the timings only light it.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        file = try container.decode(String.self, forKey: .file)
+        audioUrl = try container.decode(String.self, forKey: .audioUrl)
+        text = try container.decodeIfPresent(String.self, forKey: .text)
+        reference = try container.decodeIfPresent(String.self, forKey: .reference)
+        lines = (try? container.decodeIfPresent([TimedLine].self, forKey: .lines)) ?? nil
     }
 }

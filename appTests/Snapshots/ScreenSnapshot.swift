@@ -142,13 +142,10 @@ private struct DefaultLook {
     let theme: AppTheme
     let textSizeScale: Double
     let readingTextScale: Double
-    let prayerImageMode: Bool
-    let prayOnBeads: Bool
-    let prayAloud: Bool
     let narrationVoiceSlug: String?
     let mysteryScheduleRaw: String
-    let hasSeenPrayerSwipeHint: Bool
     let prayerLanguagePreference: String
+    let rosaryShowsWordsAndBeads: Bool
 
     static func apply() -> DefaultLook {
         let settings = UserSettings.shared
@@ -156,24 +153,18 @@ private struct DefaultLook {
             theme: ThemeManager.shared.current,
             textSizeScale: settings.textSizeScale,
             readingTextScale: settings.readingTextScale,
-            prayerImageMode: settings.prayerImageMode,
-            prayOnBeads: settings.prayOnBeads,
-            prayAloud: settings.prayAloud,
             narrationVoiceSlug: settings.narrationVoiceSlug,
             mysteryScheduleRaw: settings.mysteryScheduleRaw,
-            hasSeenPrayerSwipeHint: settings.hasSeenPrayerSwipeHint,
-            prayerLanguagePreference: settings.prayerLanguagePreference
+            prayerLanguagePreference: settings.prayerLanguagePreference,
+            rosaryShowsWordsAndBeads: settings.rosaryShowsWordsAndBeads
         )
         ThemeManager.shared.current = .candlelit
         settings.textSizeScale = 0.5
         settings.readingTextScale = 0.4
-        settings.prayerImageMode = true
-        settings.prayOnBeads = true
-        settings.prayAloud = false
         settings.narrationVoiceSlug = nil
         settings.mysteryScheduleRaw = MysterySchedule.traditional.rawValue
-        settings.hasSeenPrayerSwipeHint = true
         settings.prayerLanguagePreference = PrayerLanguage.english.rawValue
+        settings.rosaryShowsWordsAndBeads = true
         return saved
     }
 
@@ -182,12 +173,9 @@ private struct DefaultLook {
         ThemeManager.shared.current = theme
         settings.textSizeScale = textSizeScale
         settings.readingTextScale = readingTextScale
-        settings.prayerImageMode = prayerImageMode
-        settings.prayOnBeads = prayOnBeads
-        settings.prayAloud = prayAloud
         settings.narrationVoiceSlug = narrationVoiceSlug
         settings.mysteryScheduleRaw = mysteryScheduleRaw
-        settings.hasSeenPrayerSwipeHint = hasSeenPrayerSwipeHint
         settings.prayerLanguagePreference = prayerLanguagePreference
+        settings.rosaryShowsWordsAndBeads = rosaryShowsWordsAndBeads
     }
 }

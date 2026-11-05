@@ -248,7 +248,7 @@ struct RosaryStrandView: View {
 
 /// A small padlock, drawn rather than imaged — the icon set has no lock —
 /// at the weight of the strand's own lines.
-private struct StrandLockGlyph: View {
+struct StrandLockGlyph: View {
     var body: some View {
         VStack(spacing: -1) {
             LockShackle()
@@ -286,7 +286,7 @@ private struct LockShackle: Shape {
 /// One ring, leaving the bead under the hand as the decade turns:
 /// bright for an instant, then wider and gone. Under Reduce Motion it
 /// only brightens and fades, without growing.
-private struct DecadeTurnRipple: View {
+struct DecadeTurnRipple: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let trigger: Int
@@ -388,6 +388,9 @@ extension View {
     ///   - onLabelTap: Shows the words of the bead's prayer, from a tap
     ///     on the bead under the hand or its name. Not on the final
     ///     bead, where the AMEN stands under the name.
+    ///   - onBeadTap: Takes the hand to a bead tapped
+    ///     near the one under it, as far as `RosaryStrand.canTap`
+    ///     allows. Nil leaves the strand a readout, as it always was.
     func rosaryStrand(
         _ strand: RosaryStrand,
         activeIndex: Int,
@@ -399,7 +402,8 @@ extension View {
         locked: Bool = false,
         onAmen: (() -> Void)? = nil,
         amenBeckons: Bool = false,
-        onLabelTap: (() -> Void)? = nil
+        onLabelTap: (() -> Void)? = nil,
+        onBeadTap: ((Int) -> Void)? = nil
     ) -> some View {
         let windowTop = max(RosaryStrandView.windowTop(fullHeight: fullHeight) - topInset, 0)
         let windowHeight = fullHeight * 0.435
@@ -440,6 +444,26 @@ extension View {
                     .accessibilityHidden(true)
                 }
 
+                // The beads near the hand, each a target
+                // that takes the hand there. The strand still moves by the
+                // swipe, the voice and Next; this only adds a way
+                if let onBeadTap {
+                    ForEach(Self.tappableBeads(strand, activeIndex: activeIndex), id: \.self) { index in
+                        Button {
+                            onBeadTap(index)
+                        } label: {
+                            Color.clear
+                                .frame(width: 44, height: RosaryStrandView.rowHeight)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.top, windowTop + windowHeight / 2 - RosaryStrandView.rowHeight / 2
+                            + CGFloat(activeIndex - index) * RosaryStrandView.rowHeight)
+                        .padding(.trailing, beadInset - 22)
+                        .accessibilityHidden(true)
+                    }
+                }
+
                 if let onAmen {
                     GoldCTAButton(
                         title: String(localized: "Amen", comment: "Gold button on the Rosary's last bead that finishes the Rosary"),
@@ -458,6 +482,15 @@ extension View {
             }
             .animation(Motion.settle, value: onAmen != nil)
         }
+    }
+}
+
+extension View {
+    /// The beads a tap may reach, within the window's clear middle: four
+    /// either side of the hand, as `RosaryStrand.canTap` allows
+    fileprivate static func tappableBeads(_ strand: RosaryStrand, activeIndex: Int) -> [Int] {
+        (max(activeIndex - 4, 0)...min(activeIndex + 4, strand.count - 1))
+            .filter { strand.canTap($0, from: activeIndex) }
     }
 }
 

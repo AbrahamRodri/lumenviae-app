@@ -41,7 +41,7 @@ struct SpokenRosaryNotice: View {
                 GoldCTAButton(
                     title: String(
                         localized: "Try again",
-                        comment: "Prayer screen notice: button that tries again to download the recordings for the Whole Rosary"
+                        comment: "Prayer screen notice: button that tries again to download the Rosary's recordings"
                     ),
                     fill: .outline,
                     prominence: .inline,
@@ -49,7 +49,7 @@ struct SpokenRosaryNotice: View {
                     fullWidth: false,
                     action: onRetry
                 )
-                .accessibilityHint("Downloads the recordings for the Whole Rosary")
+                .accessibilityHint("Downloads the recordings for the Rosary")
 
             case .notRecorded:
                 // Choosing another voice is what the view answers to:

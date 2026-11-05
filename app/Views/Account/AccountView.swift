@@ -15,6 +15,16 @@ struct AccountView: View {
     @State private var showSoundPicker = false
     @State private var showIntentionPicker = false
     @State private var showRuleEditor = false
+    @State private var showAfterTheRosary = false
+
+    /// The prayers chosen after the Rosary, by name, or
+    /// that none is
+    private var afterTheRosarySummary: String {
+        let chosen = RosaryClosingExtra.allCases.filter { userSettings.isChosen($0) }
+        return chosen.isEmpty
+            ? String(localized: "None chosen", comment: "Settings, The Rosary: the line under After the Rosary when no prayer is chosen")
+            : chosen.map(\.title).joined(separator: " · ")
+    }
 
     var body: some View {
         ZStack {
@@ -83,95 +93,34 @@ struct AccountView: View {
                     // mysteries
                     AccountSection(title: String(localized: "The Rosary", comment: "Settings: a section heading"), icon: "lv-rosary") {
                         VStack(spacing: 0) {
-                            // Audio: the meditation alone, or the Whole
-                            // Rosary said aloud in the voice chosen above,
-                            // the beads moving with it, for prayer with the
-                            // phone put away. First, as the Rosary's own
-                            // page sets it, since it decides whether
-                            // Counting is offered at all
-                            RosaryChoiceSettingsRow(
-                                choice: .audio,
-                                value: Bindable(userSettings).prayAloud
-                            )
-
-                            Divider()
-                                .background(AppColors.gold.opacity(0.2))
-
-                            // Counting: the beads on the screen are a way
-                            // of praying, not a requirement — on your own
-                            // rosary the player moves a mystery at a time.
-                            // Moot with the Whole Rosary, whose voice moves
-                            // the beads on the screen
-                            RosaryChoiceSettingsRow(
-                                choice: .counting,
-                                value: Bindable(userSettings).prayOnBeads,
-                                isAvailable: !userSettings.prayAloud
-                            )
-
-                            Divider()
-                                .background(AppColors.gold.opacity(0.2))
-
-                            // The pendant's prayers on a Rosary prayed in
-                            // silence (`SilentPendant`). Moot with the
-                            // Whole Rosary, whose voice says them
+                            // The pendant's prayers (`SilentPendant`): on a
+                            // set read as text, whether the Rosary begins
+                            // and ends on them. Audio and Counting went
+                            // with the switch: every Rosary is said aloud
+                            // and the beads always hang
                             RosaryChoiceSettingsRow(
                                 icon: OpeningPrayersChoice.icon,
                                 title: OpeningPrayersChoice.title,
                                 options: OpeningPrayersChoice.options,
                                 value: Bindable(userSettings).showsOpeningPrayers,
-                                isAvailable: !userSettings.prayAloud,
-                                unavailableNote: OpeningPrayersChoice.unavailableNote,
                                 note: { OpeningPrayersChoice.note(for: $0) }
                             )
 
                             Divider()
                                 .background(AppColors.gold.opacity(0.2))
 
-                            // After the Rosary: prayers after its closing
-                            // prayer, each off until chosen. Only the voice
-                            // says them — nothing else reads these
-                            // switches — so they stand under their own
-                            // name with the set page's note, rather than
-                            // among the ways of praying, where they read
-                            // as prayers added to every Rosary. The Seven
-                            // Sorrows chaplet closes in its own way and
-                            // never says them
-                            Text("AFTER THE ROSARY")
-                                .font(AppFonts.labelFont(9))
-                                .tracking(2)
-                                .foregroundColor(AppColors.textSecondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal, 16)
-                                .padding(.top, 16)
-                                .padding(.bottom, 2)
-                                .accessibilityAddTraits(.isHeader)
-
-                            ForEach(RosaryClosingExtra.allCases, id: \.self) { extra in
-                                ToggleRow(
-                                    icon: extra.icon,
-                                    title: extra.title,
-                                    subtitle: extra.detail,
-                                    isOn: Binding(
-                                        get: { userSettings.isChosen(extra) },
-                                        set: { userSettings.setChosen(extra, $0) }
-                                    )
-                                )
-
-                                Divider()
-                                    .background(AppColors.gold.opacity(0.2))
+                            // After the Rosary: the three prayers said
+                            // after its closing prayer, behind one row,
+                            // which opens them. The Seven Sorrows chaplet
+                            // closes in its own way and never says them.
+                            // The joined hands mark a door to prayers
+                            ActionRow(
+                                icon: "ch-praying-hands",
+                                title: String(localized: "After the Rosary", comment: "One Rosary beta, Settings, The Rosary: the row that opens the prayers said after the Rosary"),
+                                subtitle: afterTheRosarySummary
+                            ) {
+                                showAfterTheRosary = true
                             }
-
-                            // The set page's note, and while the Whole
-                            // Rosary is not chosen, where to choose it
-                            Text(userSettings.prayAloud
-                                 ? String(localized: "Played after the closing prayer.", comment: "Settings: the line under a row")
-                                 : String(localized: "Played after the closing prayer, with the Whole Rosary. Audio is at the top of this section.", comment: "Settings: the line under a row"))
-                                .font(AppFonts.italicFont(13))
-                                .foregroundColor(AppColors.textSecondary)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 14)
                         }
                     }
                     .padding(.top, 30)
@@ -300,8 +249,10 @@ struct AccountView: View {
                                 Divider()
                                     .background(AppColors.gold.opacity(0.2))
 
+                                // The reminder's sound wears the reminder's
+                                // own bell; the reader is the narration voice's
                                 ActionRow(
-                                    icon: "ph-speaker-high",
+                                    icon: "ph-bell",
                                     title: String(localized: "Reminder Sound", comment: "Settings: a row\'s name"),
                                     subtitle: userSettings.reminderSound.displayName
                                 ) {
@@ -380,6 +331,12 @@ struct AccountView: View {
         }
         .sheet(isPresented: $showSoundPicker) {
             ReminderSoundSheet()
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+        }
+        .sheet(isPresented: $showAfterTheRosary) {
+            AfterTheRosarySheet()
+                .presentationDetents([.medium, .large])
+                .presentationBackground(AppColors.background)
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .sheet(isPresented: $showRuleEditor) {
@@ -1153,7 +1110,9 @@ struct NarrationVoiceRow: View {
     var body: some View {
         VStack(spacing: 12) {
             HStack(spacing: 16) {
-                AppIcon("ph-speaker-high", size: 18)
+                // The reader, as the player's VOICE button wears it,
+                // which opens this same choice
+                AppIcon("lv-voice", size: 18)
                     .foregroundColor(AppColors.textSecondary)
                     .frame(width: 24)
 
@@ -1374,7 +1333,7 @@ struct PrivacyPolicySheet: View {
 
                     InfoBlock(
                         title: String(localized: "What Reaches Us", comment: "Privacy Policy: a heading, or the date the policy was last changed"),
-                        text: String(localized: "One short note, when you finish a Rosary prayed with meditations: which meditations they were, and whether you listened to the Whole Rosary. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary, the Audio Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us.", comment: "Privacy Policy: a section's text; keep it as plain and exact as the English")
+                        text: String(localized: "One short note, when you finish a Rosary prayed with meditations: which meditations they were, and whether it was said aloud. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary, the Audio Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us.", comment: "Privacy Policy: a section's text; keep it as plain and exact as the English")
                     )
 
                     InfoBlock(
@@ -1432,7 +1391,7 @@ struct HelpSupportSheet: View {
 
                     InfoBlock(
                         title: String(localized: "How does audio work?", comment: "Help & Support: a question, or a button"),
-                        text: String(localized: "Choose it on the Rosary's own page before you pray, or in Settings under The Rosary: with Meditation Only you hear the meditation and say the prayers yourself, and with Whole Rosary you hear every prayer, the beads moving with the voice. During the prayer, the play button starts and pauses the voice, and the buttons beside it move 10 seconds, or a whole prayer with Whole Rosary.", comment: "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words")
+                        text: String(localized: "Every Rosary is said aloud: the voice says each prayer, and the beads move with it. During the prayer, the play button starts and pauses the voice, Back and Next move a whole prayer, and the speaker at the top mutes the voice so you can pray at your own pace with the words. Voice & speed sets the voice and how fast the prayers are said; meditations are always read at 1×.", comment: "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words")
                     )
 
                     InfoBlock(
@@ -1500,4 +1459,48 @@ private struct InfoBlock: View {
     AccountView()
         .environment(UserSettings.shared)
         .environment(AppRouter())
+}
+
+// MARK: - AfterTheRosarySheet
+
+/// The prayers said after the Rosary's closing prayer,
+/// each off until chosen, in a sheet of their own so the Rosary's section
+/// of Settings stays short
+struct AfterTheRosarySheet: View {
+    @Environment(UserSettings.self) private var userSettings
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                SheetHeader(title: String(localized: "After the Rosary", comment: "One Rosary beta, Settings: the title of the sheet of prayers said after the Rosary")) {
+                    SheetHeaderAction(title: String(localized: "Done", comment: "Sheet header button that closes the sheet")) { dismiss() }
+                }
+
+                ForEach(RosaryClosingExtra.allCases, id: \.self) { extra in
+                    ToggleRow(
+                        icon: extra.icon,
+                        title: extra.title,
+                        subtitle: extra.detail,
+                        isOn: Binding(
+                            get: { userSettings.isChosen(extra) },
+                            set: { userSettings.setChosen(extra, $0) }
+                        )
+                    )
+
+                    Divider()
+                        .background(AppColors.gold.opacity(0.2))
+                }
+
+                Text(String(localized: "Played after the closing prayer.", comment: "Settings: the line under a row"))
+                    .font(AppFonts.italicFont(13))
+                    .foregroundColor(AppColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+            }
+            .padding(.bottom, 20)
+        }
+        .sheetGround()
+    }
 }

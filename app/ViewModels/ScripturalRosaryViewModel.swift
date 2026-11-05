@@ -8,8 +8,8 @@
 //  The devotion is bundled whole — the mysteries from MysteryData, the
 //  verses from ScripturalRosaryData — so it prays with no network. What
 //  it shares with the meditation's player is the shape of a decade, the
-//  timing of a session, and — when the Rosary is said aloud
-//  (`UserSettings.prayAloud`) — the spoken Rosary, which reads each
+//  timing of a session, and — when the Rosary is said aloud,
+//  as it always is now — the spoken Rosary, which reads each
 //  bead's verse before its Hail Mary from recordings kept on the device.
 //
 //  The same model prays the Rosary Aloud (`SpokenForm.plain`): no verses,
@@ -75,8 +75,8 @@ final class ScripturalRosaryViewModel {
     /// What the Prayer Record keeps is `aloudDevotionName`, unchanged.
     static var holyRosaryName: String {
         String(
-            localized: "The Audio Rosary",
-            comment: "Name of the form of the Rosary in which every prayer is said aloud and the listener prays along"
+            localized: "No Meditation",
+            comment: "Simple Rosary: the name of the Rosary with every prayer said aloud and no meditation read between, as the mysteries' page names the choice"
         )
     }
 
@@ -424,6 +424,30 @@ final class ScripturalRosaryViewModel {
         spokenFollowHand()
     }
 
+    /// The hand taken to the bead at `index` on the
+    /// strand by a tap, walked there a bead at a time as the swipe would
+    /// take it, so the decade turns, the voice follows and the narration
+    /// loads exactly as they do for a swipe. Only as far as
+    /// `RosaryStrand.canTap` allows; never onto the pendant.
+    ///
+    /// - Returns: whether the hand moved
+    @discardableResult
+    func goToBead(at index: Int) -> Bool {
+        guard currentPendantStep == nil, strand.canTap(index, from: strandIndex, onGloryBe: isDecadePrayed) else { return false }
+        let start = beadPosition
+        var moves = 0
+        while strandIndex != index, moves < strand.count * 2 {
+            moves += 1
+            if strandIndex < index {
+                guard prayForward() else { break }
+            } else {
+                prayBack()
+            }
+            if currentPendantStep != nil { break }
+        }
+        return beadPosition != start
+    }
+
     /// What the bead under the hand says.
     var reading: BeadReading { reading(bead: currentBeadIndex) }
 
@@ -524,7 +548,7 @@ final class ScripturalRosaryViewModel {
         isPlain || setting
     }
 
-    /// The whole Rosary said aloud, while `UserSettings.prayAloud` is on
+    /// The whole Rosary said aloud
     private(set) var spoken: SpokenRosaryPlayer?
 
     /// The step of the spoken script an interrupted Rosary stopped on,
@@ -803,5 +827,68 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
             setId: 0,
             category: category.rawValue
         )
+    }
+}
+
+// MARK: - The Simple Rosary
+
+extension ScripturalRosaryViewModel {
+
+    /// The parts of this Rosary the pill at the top goes to
+    var stops: [RosaryStop] {
+        RosaryStop.all(decades: strand.decades, includesPendant: spoken != nil || pendantShown)
+    }
+
+    /// The part the hand is on
+    var currentStop: RosaryStop {
+        if let segment = spoken?.currentSegment, spoken?.phase == .running || spoken?.phase == .finished {
+            return RosaryStop.current(phase: segment.phase, mystery: segment.mystery)
+        }
+        switch currentPendantStep {
+        case .opening: return .opening
+        case .closing: return .closing
+        case nil: return .mystery(currentMysteryIndex)
+        }
+    }
+
+    /// Goes to a part of the Rosary: said aloud, the voice goes there;
+    /// prayed in silence, the hand does
+    func jump(to stop: RosaryStop) {
+        if let spoken {
+            spoken.jump(to: stop)
+            return
+        }
+        switch stop {
+        case .opening:
+            currentMysteryIndex = 0
+            if pendantShown, let first = silentPendant.firstOpening { pendantStep = first }
+        case .mystery(let n):
+            guard n >= 0, n < strand.decades else { return }
+            currentMysteryIndex = n
+        case .closing:
+            currentMysteryIndex = max(strand.decades - 1, 0)
+            currentBeadIndex = strand.gloryBe
+            if pendantShown, let first = silentPendant.firstClosing { pendantStep = first }
+        }
+    }
+
+    /// The voice muted: the Rosary goes on at the recording's pace
+    var isMuted: Bool { spoken?.isMuted ?? false }
+
+    func toggleMuted() {
+        spoken?.setMuted(!(spoken?.isMuted ?? false))
+    }
+
+    /// The timed lines of what is being said; nil when untimed
+    var spokenTimings: [TimedLine]? { spoken?.currentTimings }
+
+    var spokenHighlightedLine: Int? {
+        SimpleRosary.highlightedLine(timings: spoken?.currentTimings, at: spoken?.elapsed ?? 0)
+    }
+
+    /// How far through the lit line the voice is, for a line taller
+    /// than the words
+    var spokenLineProgress: Double? {
+        SimpleRosary.litLineProgress(timings: spoken?.currentTimings, at: spoken?.elapsed ?? 0)
     }
 }

@@ -118,7 +118,7 @@ struct PrayerBookTests {
     }
 
     @Test func settingsNamesTheBooksChoiceAsItsOwn() {
-        #expect(PrayerBookAudio.title != RosaryChoice.audio.title)
+        #expect(PrayerBookAudio.title != RosaryInfoRow.audio.title)
         #expect(PrayerBookAudio.options.map(\.name) == ["In Silence", "With a Voice"])
         #expect(PrayerBookAudio.options.map(\.value) == [false, true])
         let notes = [

@@ -122,91 +122,21 @@ struct NarrationPlayButton: View {
     }
 }
 
-/// The play button together with the position VoiceOver reads from it.
-///
-/// It exists only to keep the read of `currentTime` in a leaf. The
-/// narration clock ticks twice a second, and `@Observable` makes whoever
-/// reads it re-render — so building this string in the prayer screen's
-/// body rebuilt the whole screen, blurred artwork and all, at 2 Hz for
-/// the length of every meditation.
-struct NarrationPlayControl: View {
-
-    let viewModel: PrayerSessionViewModel
-    var diameter: CGFloat = 64
-
-    var body: some View {
-        // After the last Amen said aloud there is nothing left to play;
-        // the button stands aside, and AMEN is what glows. Said aloud,
-        // the Rosary is ready whenever it is not finished: a prayer
-        // stepped to while paused has no recording loaded until play is
-        // pressed, and gated on a track's length the button stood lit
-        // and did nothing, with no other way to go on
-        let aloud = viewModel.isPrayingAloud
-        let ready = aloud
-            ? !viewModel.isSpokenFinished
-            : !viewModel.isLoadingAudio && viewModel.totalDuration > 0
-
-        NarrationPlayButton(
-            isPlaying: viewModel.isPlaying,
-            isLoading: viewModel.isLoadingAudio,
-            diameter: diameter
-        ) {
-            viewModel.isPlaying.toggle()
-        }
-        .disabled(!ready)
-        .opacity(viewModel.isSpokenFinished ? 0.35 : 1)
-        .animation(Motion.crossfade, value: viewModel.isSpokenFinished)
-        // With no scrubber on screen there is nothing else for VoiceOver
-        // to read position from, or to seek with
-        // Said aloud, the prayer being said rather than a clock that runs
-        // a few seconds and starts again at every prayer
-        .accessibilityValue(
-            !ready ? Text("Not ready")
-                : aloud ? Text(viewModel.spokenCaption ?? "")
-                : Text("\(NarrationClock.spoken(viewModel.currentTime)) of \(NarrationClock.spoken(viewModel.totalDuration))")
-        )
-        .accessibilityHint(
-            ready
-                ? (aloud
-                    ? Text("Swipe up or down for the next or previous prayer")
-                    : Text("Swipe up or down to move through the narration"))
-                : Text(verbatim: "")
-        )
-        // Said aloud, a prayer at a swipe, so the value read out is the
-        // one moved: fifteen seconds ran a Hail Mary off its end while it
-        // played, and did nothing to be heard while it was paused
-        .accessibilityAdjustableAction { direction in
-            switch direction {
-            case .increment:
-                if aloud { viewModel.stepSpokenPrayer(forward: true) } else { viewModel.skipForward(15) }
-            case .decrement:
-                if aloud { viewModel.stepSpokenPrayer(forward: false) } else { viewModel.skipBackward(15) }
-            @unknown default: break
-            }
-        }
-    }
-}
-
 // MARK: - Playback Settings
 
-/// The tray beside the reader button: which voice reads, how fast it
-/// reads, and the Rosary's two choices — Audio, and while the voice
-/// reads the meditation alone, Counting.
+/// The player's Voice sheet: which voice reads, and how fast the
+/// prayers are said (meditations are always read at 1×).
 ///
-/// The voice and the choices live here as well as in Settings
-/// because this is the one settings surface the player has: someone
-/// who finds the strand, or the narrator, is not for them mid-Rosary
-/// should not have to leave the Rosary to say so, and someone who
-/// changed it should be able to find it again from the same place.
+/// The voice lives here as well as in Settings because this is the
+/// player's own settings surface: someone who finds the narrator is not
+/// for them mid-Rosary should not have to leave the Rosary to say so.
 struct PlaybackSettingsSheet: View {
 
-    @Environment(UserSettings.self) private var userSettings
     @Environment(\.dismiss) private var dismiss
 
     /// The sheet's height, for its detent: the header, the voices and
-    /// the speeds under their labels, and the two choices with their
-    /// notes
-    static let height: CGFloat = 600
+    /// the prayers' speed under their labels, and the speed's note
+    static let height: CGFloat = 360
 
     /// The detents the player gives it: its own height, or at the
     /// accessibility text sizes the whole glass, where the rows once
@@ -216,10 +146,8 @@ struct PlaybackSettingsSheet: View {
     }
 
     var body: some View {
-        @Bindable var settings = userSettings
-
         // Scrolls only when the words outgrow the sheet
-        return ScrollView {
+        ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 SheetHeader(title: String(
                     localized: "Playback",
@@ -241,32 +169,17 @@ struct PlaybackSettingsSheet: View {
                 SheetNote(UserSettings.narrationVoiceCaption)
 
                 SheetSectionLabel(String(
-                    localized: "Speed",
-                    comment: "Playback settings sheet: section label over the narration speed slider"
+                    localized: "Prayer Speed",
+                    comment: "Playback settings sheet: section label over the steps that set how fast the prayers are said"
                 ))
 
                 PlaybackSpeedChoice()
                     .padding(.horizontal, SheetMetrics.gutter)
+                SheetNote(String(
+                    localized: "Meditations are always read at 1×.",
+                    comment: "Playback settings sheet: the note under the prayers' speed: it does not change the meditations"
+                ))
 
-                // The two choices as the set's page sets them (`RosaryChoiceGroup`),
-                // in the same order and the same words, so a change made
-                // mid-Rosary is recognised as the one made before PRAY.
-                // Counting stands only while the voice reads the
-                // meditation alone: with the Whole Rosary it moves the
-                // beads on the screen itself
-                VStack(spacing: 0) {
-                    ForEach(RosaryChoice.offered(for: .meditation, aloud: settings.prayAloud), id: \.self) { choice in
-                        RosaryChoiceGroup(
-                            choice: choice,
-                            form: .meditation,
-                            value: choice == .audio ? $settings.prayAloud : $settings.prayOnBeads
-                        )
-                        .transition(RosaryChoiceGroup.comingAndGoing)
-                    }
-                }
-                .padding(.horizontal, SheetMetrics.gutter)
-                .padding(.top, 14)
-                .animation(Motion.choice, value: settings.prayAloud)
             }
             .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding(.bottom, 20)
@@ -330,137 +243,57 @@ struct NarrationVoiceChoice: View {
     static let largestCapsuleType = DynamicTypeSize.accessibility1
 }
 
-/// The narration's speed on a slider, 0.7× to 1.7× in twentieths,
-/// its value beside it and a quiet way back to 1× at its end. Five fixed
-/// capsules once stood here, and a voice a little too slow at 1× and a
-/// little too quick at 1.25× had nowhere between them to go.
+/// The prayers' speed as six steps, 0.8× to 1.3×, each a capsule as the
+/// voices are. Abraham, Nov 2026: "the step buttons replace the speed
+/// slider". A slider of twentieths from 0.7× to 1.7× stood here, and a
+/// speed a reader had liked could not be found again.
 ///
-/// The value is read straight from the service, so the slider agrees
-/// with whatever the Lock Screen or CarPlay last set. A drag is heard as
-/// it goes when something is playing, and kept only when the finger
-/// lifts; a speed chosen before the Rosary begins is the one its first
-/// narration plays at.
+/// It sets the app's speed (`appRate`), which the prayers are said at;
+/// a meditation is always read at 1× (`SpokenRosaryPlayer.setPace`). The
+/// value is read from the service, so a speed chosen on the Lock Screen
+/// shows; one that is not a step (a 1.5× kept from the slider) lights
+/// none, and a tap on a step takes the prayers there.
 struct PlaybackSpeedChoice: View {
+
+    /// The speeds offered, 1× among them
+    static let steps: [Double] = [0.8, 0.9, 1.0, 1.1, 1.2, 1.3]
 
     private var audio: AudioService { .shared }
 
-    /// The speed under the thumb while it is dragged; the service's own
-    /// otherwise
-    @State private var draft: Double?
-
-    /// Whether a finger is on the thumb. The slider goes on setting its
-    /// value for a moment after the finger lifts, as the thumb settles:
-    /// taken as a drag, those last values were left in `draft`, never
-    /// kept, and the sheet named a speed the voice was not saying, with
-    /// the 1× beside it seeming to do nothing
-    @State private var isEditing = false
-
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    /// The app's narration speed — what this slider sets — rather than
-    /// the player's live one, which a chant or a book may have borrowed:
-    /// read live, it showed a chant's 0.75× as the narration's speed
-    private var shown: Double { draft ?? audio.appRate }
-
     var body: some View {
-        HStack(spacing: 10) {
-            HStack(spacing: 12) {
-                Text(Self.rateLabel(shown))
-                    .font(AppFonts.bodyFont(16))
-                    .monospacedDigit()
-                    .foregroundColor(AppColors.cream)
-                    .lineLimit(1)
-                    .frame(minWidth: 50, alignment: .leading)
-
-                Slider(
-                    value: Binding(
-                        get: { shown },
-                        set: { raw in
-                            let rate = Self.detented(raw)
-                            guard isEditing else {
-                                // Outside a drag, kept at once
-                                if rate != audio.appRate { audio.setAppRate(rate) }
-                                return
-                            }
-                            draft = rate
-                            // Heard as it is dragged, kept on release —
-                            // never over a speed another flow borrowed,
-                            // which a preview once retuned and cleared
-                            if audio.isPlaying { audio.previewAppRate(rate) }
-                        }
-                    ),
-                    in: AudioService.rateRange,
-                    onEditingChanged: { editing in
-                        isEditing = editing
-                        guard !editing else { return }
-                        if let draft { audio.setAppRate(draft) }
-                        draft = nil
-                    }
-                )
-                .tint(AppColors.gold)
-                // The system's unlit track all but vanishes on this
-                // ground, and at the slow end the thumb stood alone with
-                // nothing to say where it could go
-                .background(
-                    Capsule()
-                        .fill(AppColors.cream.opacity(0.16))
-                        .frame(height: 4)
-                )
-            }
-            // One adjustable element for VoiceOver, a quarter at a step:
-            // a twentieth at a swipe was a long way from one end to the other
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Narration speed")
-            .accessibilityValue(Self.spokenRate(shown))
-            .accessibilityAdjustableAction { direction in
-                switch direction {
-                case .increment:
-                    draft = nil
-                    audio.setAppRate((shown * 4).rounded(.down) / 4 + 0.25)
-                case .decrement:
-                    draft = nil
-                    audio.setAppRate((shown * 4).rounded(.up) / 4 - 0.25)
-                @unknown default: break
+        HStack(spacing: 6) {
+            ForEach(Self.steps, id: \.self) { rate in
+                let selected = Self.isChosen(rate, appRate: audio.appRate)
+                Button {
+                    withAnimation(reduceMotion ? nil : Motion.settle) { audio.setAppRate(rate) }
+                } label: {
+                    Text(Self.rateLabel(rate))
+                        .font(AppFonts.bodyFont(14))
+                        .monospacedDigit()
+                        .foregroundColor(selected ? AppColors.background : AppColors.cream.opacity(0.75))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                        .background(
+                            Capsule()
+                                .fill(selected ? AppColors.goldLight : AppColors.cardElevated)
+                        )
                 }
+                .buttonStyle(SacredCardButtonStyle())
+                .accessibilityLabel(Self.spokenRate(rate))
+                .accessibilityAddTraits(selected ? [.isSelected] : [])
             }
-
-            // Outlined, so it reads as the way back rather than as the
-            // slider's far end; always there, only faded at 1×, so the
-            // track never changes length under the thumb
-            Button {
-                withAnimation(reduceMotion ? nil : Motion.settle) {
-                    draft = nil
-                    audio.setAppRate(1)
-                }
-            } label: {
-                Text("1×")
-                    .font(AppFonts.bodyFont(14))
-                    .foregroundColor(AppColors.gold)
-                    .lineLimit(1)
-                    .padding(.horizontal, 12)
-                    .frame(minWidth: 48, minHeight: 30)
-                    .overlay(
-                        Capsule().strokeBorder(AppColors.gold.opacity(0.45), lineWidth: AppLine.hairline)
-                    )
-                    .frame(minHeight: 44)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(QuietGlyphButtonStyle())
-            .disabled(shown == 1)
-            .opacity(shown == 1 ? 0.3 : 1)
-            .accessibilityLabel("Back to normal speed")
-            .accessibilityHidden(shown == 1)
         }
-        .frame(minHeight: 44)
-        // The thumb landing on 1× is felt, the one speed with a name
-        .sensoryFeedback(.selection, trigger: shown == 1) { wasOne, isOne in isOne && !wasOne }
+        .sensoryFeedback(.selection, trigger: audio.appRate)
         .dynamicTypeSize(...NarrationVoiceChoice.largestCapsuleType)
     }
 
-    /// Within a hair of 1× the thumb settles on it; everywhere else it
-    /// keeps to the twentieths
-    static func detented(_ raw: Double) -> Double {
-        abs(raw - 1) < 0.04 ? 1 : AudioService.resolvedRate(raw)
+    /// Whether a step is the speed the prayers are said at
+    static func isChosen(_ step: Double, appRate: Double) -> Bool {
+        abs(step - appRate) < 0.001
     }
 
     /// "1×" rather than "1.0×", but "1.25×" in full — %g drops trailing

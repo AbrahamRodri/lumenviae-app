@@ -330,7 +330,6 @@ struct MeditationReaderView: View {
         // the reader re-renders on scroll, on the pill's height, and on
         // every sheet.
         let paragraphs = ReadingText.paragraphs(of: meditation.content)
-        let count = paragraphs.count
 
         return ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
@@ -383,7 +382,7 @@ struct MeditationReaderView: View {
                 ReaderNarrationWatcher(
                     viewModel: viewModel,
                     reader: reader,
-                    paragraphCount: count,
+                    paragraphs: paragraphs,
                     autoScroll: userSettings.readerAutoScroll,
                     proxy: proxy
                 )
@@ -600,10 +599,17 @@ struct ReaderTextOptionsSheet: View {
     /// would be a promise the screen can't keep.
     var showsNarrationOptions = true
 
+    /// The Rosary's players: the switch that shows or hides the prayer's
+    /// words and the beads (`rosaryShowsWordsAndBeads`). The player's own
+    /// small settings, beside the text's size, so it is found where the
+    /// screen is changed, not in More
+    var showsPartsToggle = false
+
     /// The sheet's height, for its detent — the header and the size
-    /// slider alone, or those and the narration row under its label.
-    static func height(showsNarrationOptions: Bool) -> CGFloat {
-        showsNarrationOptions ? 306 : 196
+    /// slider alone, or those and the narration row under its label, or
+    /// the parts' switch.
+    static func height(showsNarrationOptions: Bool, showsPartsToggle: Bool = false) -> CGFloat {
+        (showsNarrationOptions ? 306 : 196) + (showsPartsToggle ? 92 : 0)
     }
 
     var body: some View {
@@ -621,6 +627,28 @@ struct ReaderTextOptionsSheet: View {
                 localized: "Size",
                 comment: "Meditation reader, text options sheet: the text size slider's name"
             ), scale: $settings.textSizeScale)
+
+            if showsPartsToggle {
+                SheetSectionLabel(String(
+                    localized: "On the Screen",
+                    comment: "The Rosary's player, text sheet: section label over what the screen shows around the prayer"
+                ))
+
+                SheetToggleRow(
+                    title: String(
+                        localized: "Show Words and Beads",
+                        comment: "The Rosary's player, text sheet: switch that shows the prayer's words and the beads at the edge"
+                    ),
+                    detail: String(
+                        localized: "Off, only the prayer's name stays",
+                        comment: "The Rosary's player, text sheet: the line under Show Words and Beads, saying what is left when it is off"
+                    ),
+                    icon: "lv-rosary",
+                    isOn: $settings.rosaryShowsWordsAndBeads,
+                    showsDivider: false,
+                    detailLineLimit: 1
+                )
+            }
 
             if showsNarrationOptions {
                 SheetSectionLabel(String(
@@ -653,9 +681,14 @@ struct ReaderTextOptionsSheet: View {
 
 // MARK: - Narration Watcher
 
-/// Keeps the page in step with the voice.
+/// Keeps the page in step with the voice, from the recording's real
+/// timings only: the line being said is found in the page's paragraphs
+/// (`SimpleRosary.paragraph(of:in:)`) and that paragraph is followed. A
+/// recording with no timings is not followed at all; its pace is never
+/// guessed (it was once followed by proportion, paragraph N of M at N/M
+/// of the audio).
 ///
-/// Reads `currentTime` in its own body on purpose: observed from the
+/// Reads the lit line in its own body on purpose: observed from the
 /// reader, the twice-a-second tick would make the whole page a
 /// dependency of the clock. Here it invalidates a zero-size view, and
 /// writes outward only when the paragraph actually changes.
@@ -663,7 +696,7 @@ private struct ReaderNarrationWatcher: View {
 
     let viewModel: PrayerSessionViewModel
     let reader: ReaderScrollModel
-    let paragraphCount: Int
+    let paragraphs: [String]
     let autoScroll: Bool
     let proxy: ScrollViewProxy
 
@@ -672,22 +705,13 @@ private struct ReaderNarrationWatcher: View {
             .frame(width: 0, height: 0)
             .allowsHitTesting(false)
             .accessibilityHidden(true)
-            .onChange(of: viewModel.currentTime) { _, time in
-                // Only the meditation's own voice: said aloud, the clock
-                // is a Hail Mary's or the Creed's as often as not
-                guard viewModel.isPlaying, viewModel.isHearingMeditation,
-                      viewModel.totalDuration > 0, paragraphCount > 0 else { return }
-
-                // Without per-word timings the mapping is proportional —
-                // paragraph N of M at N/M of the audio — which tracks
-                // spoken pace closely enough.
-                let fraction = min(max(time / viewModel.totalDuration, 0), 1)
-
-                guard autoScroll,
-                      let target = reader.paragraphToFollow(
-                          fraction: fraction,
-                          paragraphCount: paragraphCount
-                      ) else { return }
+            .onChange(of: viewModel.spokenHighlightedLine) { _, line in
+                // Only the meditation's own voice, and only its real lines
+                guard autoScroll, viewModel.isSpeakingMeditation,
+                      let line, let timings = viewModel.spokenTimings, timings.indices.contains(line),
+                      let paragraph = SimpleRosary.paragraph(of: timings[line].text, in: paragraphs),
+                      let target = reader.paragraphToFollow(paragraph)
+                else { return }
 
                 withAnimation(.easeInOut(duration: 1.2)) {
                     proxy.scrollTo("para-\(target)", anchor: UnitPoint(x: 0.5, y: 0.32))
@@ -837,16 +861,12 @@ final class ReaderScrollModel {
         }
     }
 
-    /// The paragraph the narration has reached, or nil when following
-    /// should stand aside — the reader scrolled recently, or the page is
-    /// already there.
-    func paragraphToFollow(fraction: Double, paragraphCount: Int) -> Int? {
-        guard paragraphCount > 0,
-              Date().timeIntervalSince(lastManualScrollAt) > 4 else { return nil }
-
-        let target = min(paragraphCount - 1, Int(fraction * Double(paragraphCount)))
-        guard target != followTarget else { return nil }
-
+    /// The paragraph the narration has reached, to follow, or nil when
+    /// following should stand aside — the reader scrolled recently, or
+    /// the page is already there.
+    func paragraphToFollow(_ target: Int) -> Int? {
+        guard Date().timeIntervalSince(lastManualScrollAt) > 4,
+              target != followTarget else { return nil }
         followTarget = target
         lastAutoScrollAt = Date()
         return target

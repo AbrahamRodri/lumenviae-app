@@ -183,6 +183,48 @@ final class APIService {
         return try await fetch(url: url, responseType: APIResponse<MeditationAudioResponse>.self).data
     }
 
+    // MARK: - Timed Narrations (v2)
+
+    /// One meditation's narration from the v2 API, with the lines the
+    /// recording says and where each falls in it (`lines`, nil when the
+    /// recording has not been timed). Asked for only by the simple
+    /// Rosary, to light the meditation's words; every other fetch stays
+    /// on v1.
+    struct TimedNarration: nonisolated Codable, Equatable {
+        struct Audio: nonisolated Codable, Equatable {
+            let url: String
+        }
+        let meditationId: Int
+        let voice: String
+        let audio: Audio
+        let lines: [TimedLine]?
+
+        enum CodingKeys: String, CodingKey {
+            case voice, audio, lines
+            case meditationId = "meditation_id"
+        }
+    }
+
+    /// `POST /api/v2/meditations/audio`: freshly signed narrations for
+    /// the meditations, each in `voice` where it has one, with its timed
+    /// lines. An id with nothing to play is left out of the answer.
+    func fetchTimedNarrations(meditationIds: [Int], voice: String?) async throws -> [TimedNarration] {
+        guard let url = URL(string: "\(baseURL)/v2/meditations/audio") else { throw APIError.invalidURL }
+        struct Body: Encodable {
+            struct Data: Encodable {
+                let meditation_ids: [Int]
+                let voice: String?
+            }
+            let data: Data
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/vnd.api+json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/vnd.api+json", forHTTPHeaderField: "Accept")
+        request.httpBody = try encoder.encode(Body(data: .init(meditation_ids: meditationIds, voice: voice)))
+        return try await send(request, responseType: [TimedNarration].self)
+    }
+
     // MARK: - Voices
 
     /// Fetches the narration voices, default first.
@@ -198,8 +240,7 @@ final class APIService {
 
     /// Records a prayer completion to the server when the user finishes all 5 mysteries.
     /// `prayedAloud` says whether the Rosary was said aloud by the spoken
-    /// Rosary (`UserSettings.prayAloud`) rather than prayed along with the
-    /// meditation alone.
+    /// Rosary rather than read as text (a set with no recording).
     @discardableResult
     func recordCompletion(meditationSetId: Int, prayedAloud: Bool = false) async throws -> CompletionResponse {
         let urlString = "\(baseURL)/completions"

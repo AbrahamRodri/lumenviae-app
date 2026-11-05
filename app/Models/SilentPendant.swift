@@ -68,6 +68,28 @@ struct SilentPendant: Equatable {
         }
     }
 
+    /// The step a spoken script's segment at `index` is, matched by its
+    /// prayer: the k-th time a prayer is said in the opening (or closing)
+    /// is the k-th step of that prayer here. Nil on the decades, and for a
+    /// prayer this pendant leaves out (the prayers after the Rosary).
+    func step(at index: Int, in script: [SpokenSegment]) -> Step? {
+        guard script.indices.contains(index), case .prayer(let id) = script[index].kind else { return nil }
+        let phase = script[index].phase
+        let steps: [SpokenPendant]
+        switch phase {
+        case .opening: steps = opening
+        case .closing: steps = closing
+        case .decade: return nil
+        }
+        let said = script[..<index].filter { segment in
+            guard segment.phase == phase, case .prayer(let other) = segment.kind else { return false }
+            return other == id
+        }.count
+        let matches = steps.indices.filter { steps[$0].prayerID == id }
+        guard matches.indices.contains(said) else { return nil }
+        return phase == .opening ? .opening(matches[said]) : .closing(matches[said])
+    }
+
     var firstOpening: Step? { opening.isEmpty ? nil : .opening(0) }
     var lastOpening: Step? { opening.isEmpty ? nil : .opening(opening.count - 1) }
     var firstClosing: Step? { closing.isEmpty ? nil : .closing(0) }
@@ -173,10 +195,4 @@ enum OpeningPrayersChoice {
             ? String(localized: "The Rosary begins with the Sign of the Cross and the Creed and ends with the Hail, Holy Queen, each with its words.", comment: "Settings, Opening and Closing Prayers: the line under the chosen option")
             : String(localized: "The Rosary begins at the first mystery and ends at the last Glory Be.", comment: "Settings, Opening and Closing Prayers: the line under the chosen option")
     }
-
-    /// Said aloud, the voice says them whatever is chosen
-    static let unavailableNote = String(
-        localized: "With the Whole Rosary, the voice says them.",
-        comment: "Settings, Opening and Closing Prayers: why the choice is dimmed while the Whole Rosary is chosen"
-    )
 }

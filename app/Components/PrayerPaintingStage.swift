@@ -41,12 +41,25 @@ struct PrayerPaintingStage: View {
 
     var style: Style = .seated
 
+    /// The seated painting's share of the glass. The Rosary's player
+    /// seats it higher, so the words stand on the dark ground beneath it
+    var seatedFraction: CGFloat = 0.75
+
     /// Identity for the crossfade: a new mystery is a new picture
     let paintingID: Int
 
     /// True while a tap has cleared the chrome and the painting fills
     /// the screen
     let chromeHidden: Bool
+
+    /// The simple Rosary with its words put away: the painting is drawn
+    /// as with the chrome cleared, whole and unfrosted, while the chrome
+    /// stays (its own light shade seats what remains)
+    var quiet: Bool = false
+
+    /// The painting opened to the whole glass: the chrome cleared, or
+    /// the words put away
+    private var opensWide: Bool { chromeHidden || quiet }
 
     /// The glass, edge to edge — the host's width and its full height
     /// including both safe-area insets
@@ -159,8 +172,8 @@ struct PrayerPaintingStage: View {
         // Seated higher than the painting would like: the player's title,
         // scrubber, transport and utility row are four bands of chrome,
         // and they need ground of their own to sit on.
-        let seatedHeight = fullHeight * 0.75
-        let artHeight = chromeHidden ? fullHeight : seatedHeight
+        let seatedHeight = fullHeight * seatedFraction
+        let artHeight = opensWide ? fullHeight : seatedHeight
 
         return VStack(spacing: 0) {
             Group {
@@ -233,7 +246,7 @@ struct PrayerPaintingStage: View {
                 // The frost exists to seat the title and controls; with the
                 // chrome tapped away it has nothing to seat, so it lifts and
                 // the painting shows sharp edge to edge.
-                .opacity(chromeHidden ? 0 : 1)
+                .opacity(opensWide ? 0 : 1)
                 .allowsHitTesting(false),
                 alignment: .top
             )
@@ -255,7 +268,7 @@ struct PrayerPaintingStage: View {
             .overlay(
                 LinearGradient(
                     stops: [
-                        .init(color: .clear, location: chromeHidden ? 0.86 : 0.70),
+                        .init(color: .clear, location: opensWide ? 0.86 : 0.70),
                         .init(color: AppColors.background, location: 0.95),
                         .init(color: AppColors.background, location: 1.0)
                     ],

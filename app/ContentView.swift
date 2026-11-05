@@ -369,7 +369,14 @@ struct ContentView: View {
     private func begin(_ shortcut: PrayerShortcut) {
         switch shortcut {
         case .todaysRosary:
-            startPrayer(category: ScheduleService.categoryForToday())
+            // The simple Rosary's learner begins on the beginner's path,
+            // whose page lets them say no before it starts
+            if SimpleRosary.offersBeginnerPath(UserSettings.shared) {
+                guard router.path.isEmpty else { return }
+                router.push(.beginnerRosary(ScheduleService.categoryForToday()))
+            } else {
+                startPrayer(category: ScheduleService.categoryForToday())
+            }
 
         case .sevenSorrows:
             startPrayer(category: .sevenSorrows)
@@ -602,6 +609,9 @@ struct ContentView: View {
 
         case .rosaryAloud(let category):
             ScripturalRosaryView(category: category, form: .plain)
+
+        case .beginnerRosary(let category):
+            BeginnerRosaryView(category: category)
 
         // A player, like the meditation's: it hides the bar and carries
         // its own way out

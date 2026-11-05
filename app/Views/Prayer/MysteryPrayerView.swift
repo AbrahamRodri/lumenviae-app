@@ -4,52 +4,23 @@
 //
 //  Created by Abraham Rodriguez on 2/11/26.
 //
-//  This view displays a single mystery during the prayer flow.
-//  Users progress through 5 mysteries, each with meditation content,
-//  scripture, and optional audio.
+//  The Rosary prayed with a meditation set: one player, the same for
+//  every form of the Rosary (`ScripturalRosaryPrayerView` is the other
+//  two's). Every prayer is said aloud from the moment PRAY is pressed,
+//  with play and pause between Back and Next, the beads of the whole
+//  Rosary at the right edge (tapped, never needing to be), a pill at the
+//  head to go to any part, and a speaker to mute the voice while the
+//  Rosary goes on at the recording's own pace. The words being said are
+//  lit only from a recording's real timings (`SimpleRosary`).
 //
-//  The screen is a player: the mystery's artwork above, and beneath it
-//  the name of what is playing, where it stands, and the controls. The
-//  meditation text is not a mode this screen switches into — it opens
-//  as a reader over the top (`MeditationReaderView`), so the narration
-//  never stops to change surfaces and the way back is always the same
-//  button.
+//  A set with no recording opens as text (`MeditationReaderView`), and
+//  over a set that is heard, READ THE MEDITATION opens the same reader
+//  on a mystery's Our Father. Completing the Rosary is always a
+//  deliberate tap on AMEN.
 //
-//  It is prayed one of two ways, chosen on the set's page, in Settings
-//  and in the playback sheet (Counting, `UserSettings.prayOnBeads`):
-//
-//  On the beads, the whole Rosary hangs as one strand at the right
-//  edge and the bead — not the mystery — is the unit the hand moves
-//  through. The meditation belongs to the Our Father bead: it is heard
-//  or read there, and the ten Hail Marys are prayed with only the
-//  count beside you — beside the bead itself, in the strand's margin,
-//  where the eye and the thumb are. Swipe down and the next bead comes
-//  to hand; the mystery turns on its own when the next Our Father
-//  arrives. There are no arrows between mysteries, because nothing but
-//  the beads moves the Rosary forward, and on the final bead AMEN hangs
-//  under the bead's name. The foot holds only the title, the
-//  narration's transport and the utility row, and nothing on it changes
-//  from bead to bead: a status row that once stood above the transport
-//  re-wrapped its cue on every swipe and shoved the controls with it.
-//
-//  Off the beads, the player moves a decade at a time, for a hand that
-//  keeps its own count on a rosary: swiping left/right moves between
-//  mysteries, and the arrows flanking the transport do the same thing a
-//  swipe does. That way is chosen only while the voice reads the
-//  meditation alone (Counting: On My Rosary); with the Whole Rosary said
-//  aloud the voice moves the beads on the screen.
-//
-//  Either way, prayed in silence the Rosary begins and ends on the
-//  pendant (`SilentPendant`, unless Settings skips it): the Sign of the
-//  Cross, the Creed, the Our Father, three Hail Marys and the Glory Be,
-//  then after the last mystery the Hail, Holy Queen, the closing prayer
-//  and the Sign of the Cross, a prayer a step with its words, the
-//  pendant drawn where the painting stands. On the beads a tap on the
-//  bead under the hand shows its prayer's words over the painting.
-//
-//  Either way, tapping the artwork clears the chrome for undistracted
-//  contemplation, and completing the Rosary is always a deliberate tap
-//  on AMEN, never a swipe.
+//  Abraham, Nov 2026: "Yes, only Rosary". The player it replaced (a
+//  strand to swipe, or a decade at a time, chosen by Audio and Counting)
+//  is gone.
 //
 
 import SwiftUI
@@ -66,42 +37,12 @@ struct MysteryPrayerView: View {
     /// dismissal drops the new presentation.
     @State private var pendingHandoff: (() -> Void)?
 
-    /// Where the first-Rosary swipe hint stands. One value rather than a
-    /// pair of booleans so "shown and already retired" cannot be reached:
-    /// the hint's own timer, a move between mysteries, and a tap on the
-    /// painting all race for it, and the race has to settle once.
-    ///
-    /// Both players teach their swipe once: left between mysteries off
-    /// the beads, down a bead on them. On the beads the hint floats over
-    /// the painting above the controls, so its coming and going never
-    /// moves them.
-    @State private var swipeHint: SwipeHintPhase = .pending
-
     /// The bead controls' measured height, so the hint can stand just
     /// above them
     @State private var controlsHeight: CGFloat = 0
 
-    enum SwipeHintPhase {
-        /// Waiting for the screen to settle
-        case pending
-        /// On screen
-        case showing
-        /// Had its turn; never comes back this session
-        case retired
-    }
-
     /// True while a tap on the artwork has cleared the chrome
     @State private var chromeHidden = false
-
-    /// How far a swipe under way has drawn the strand, in points. The
-    /// string follows the finger, so a move is felt before it is made.
-    @State private var strandDrag: CGFloat = 0
-
-    /// Whether the drag under way is the strand's. Decided once, from
-    /// the first movement past the threshold, and held for the rest of
-    /// the gesture: a drag that begins sideways is not a bead swipe and
-    /// never becomes one.
-    @State private var dragArmed: Bool?
 
     /// Which way the hand last moved, so the words arrive from the side
     /// the string came from: down the string for the next bead, up it
@@ -111,43 +52,39 @@ struct MysteryPrayerView: View {
     /// Bumped each time the decade turns; the strand's ripple answers
     @State private var turnPulse = 0
 
-    /// Whether the words of the bead's prayer stand over the painting,
-    /// opened by a tap on the bead under the hand and kept open from bead
-    /// to bead until it is tapped again
-    @State private var showsBeadWords = false
+    /// The one-time hint that the beads take a tap
+    @State private var tapHintShowing = false
+
+    /// Rings the next bead once as the hint shows
+    @State private var tapHintPulse = 0
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @Environment(\.scenePhase) private var scenePhase
-
-    /// True while the meditation text is open over the player.
-    ///
-    /// Read straight off `prayerImageMode`, the persisted memory of which
-    /// surface this person prays on: someone who left in the reader comes
-    /// back to the reader. Kept derived rather than mirrored in `@State`
-    /// so the setting and the screen cannot disagree.
-    private var readerOpen: Bool { !userSettings.prayerImageMode }
 
     /// The reader over the player. Not on the pendant: the opening and
     /// closing prayers have no meditation to read, and their words are
-    /// on the player itself. The reader comes back with the first mystery.
-    private var readerShown: Bool { readerOpen && viewModel.silentPendantPrayer == nil }
+    /// on the player itself. A set with no recording is read in the
+    /// reader; over a set that is heard, READ THE MEDITATION opens it
+    private var readerShown: Bool {
+        guard viewModel.silentPendantPrayer == nil else { return false }
+        return readerIsTheRosary || simpleReaderOpen
+    }
 
-    /// Whether the Rosary is prayed on the beads (see the header). With
-    /// the Whole Rosary said aloud the voice moves the beads on the
-    /// screen, whatever Counting says: Counting is offered only while the
-    /// voice reads the meditation alone, so a counter switched off before
-    /// then must not take the strand away from a Rosary said aloud, where
-    /// nothing is left to change it back. When the voice could not begin
-    /// (`spokenFailure`: no recordings to be had, offline) the meditation
-    /// is heard in its own narration and the Rosary is the reader's to
-    /// count again — as Counting says, not on a strand locked at every
-    /// Our Father that no voice will move.
-    private var onBeads: Bool {
-        RosaryForm.meditation.countsOnScreen(
-            aloud: userSettings.prayAloud && viewModel.spokenFailure == nil,
-            onBeads: userSettings.prayOnBeads
-        )
+    /// The meditation opened as text from READ THE MEDITATION over a set
+    /// that is heard. Not remembered: the next Rosary opens in the
+    /// player again
+    @State private var simpleReaderOpen = false
+
+    /// The reader is the whole Rosary for a set with no recording; over
+    /// a set that is heard, it is an aside that closes
+    private var readerIsTheRosary: Bool {
+        SimpleRosary.opensAsText(setHasRecording: meditationSet.hasAudio)
+    }
+
+    /// Whether every prayer is said aloud: always, for a set with a
+    /// recording
+    private var aloudWanted: Bool {
+        SimpleRosary.praysAloud(form: .meditation, setHasRecording: meditationSet.hasAudio)
     }
 
     let meditationSet: MeditationSet
@@ -155,15 +92,6 @@ struct MysteryPrayerView: View {
     /// When the devotion originally began (carried through resumes for
     /// snapshot continuity; never used for duration)
     private let sessionStartedAt: Date
-
-    /// The room the outer transport arrows are given on each side. Fixed
-    /// and equal so the play button sits dead center.
-    private static let transportSlotWidth: CGFloat = 52
-
-    /// How far left of centre the pendant hangs while the strand hangs
-    /// beside it: its cross's arms end clear of the AMEN, the leftmost
-    /// thing the strand lays out
-    private static let pendantShiftBesideStrand: CGFloat = 60
 
     /// Where the pendant hangs from, and how much of the glass it may
     /// take when the foot leaves it the room
@@ -181,8 +109,13 @@ struct MysteryPrayerView: View {
         return min(Self.pendantHeightFraction, max(room, 0) / fullHeight)
     }
 
+    /// The simple Rosary's beginner's path: one plain line on each step
+    /// saying what to pray (`RosaryHelps`)
+    let showsHelps: Bool
+
     init(launch: PrayerLaunch) {
         self.meditationSet = launch.meditationSet
+        self.showsHelps = launch.showsHelps
         self.sessionStartedAt = launch.startedAt
         self._viewModel = State(initialValue: PrayerSessionViewModel(
             meditationSet: launch.meditationSet,
@@ -210,7 +143,7 @@ struct MysteryPrayerView: View {
                 // of the painting, and animating its geometry re-rasterizes
                 // both on every frame of the transition. The reader's own
                 // slide carries the movement; the player just waits.
-                playerLayer
+                oneRosaryLayer
                     .allowsHitTesting(!readerShown)
 
                 if readerShown, let meditation = viewModel.currentMeditation {
@@ -220,11 +153,20 @@ struct MysteryPrayerView: View {
                         painting: painting,
                         viewModel: viewModel,
                         actions: trackActions,
-                        showsBeadRow: onBeads,
+                        showsBeadRow: true,
                         beadCue: readerBeadCue(for: meditation),
                         beadCountsDown: travel == .back,
                         onFinish: finishRosary,
-                        onClose: { setReaderOpen(false) }
+                        // Read as text, the reader is the Rosary: closing
+                        // it leaves the Rosary. Opened over a set that is
+                        // heard, it closes back to the player
+                        onClose: {
+                            if readerIsTheRosary {
+                                router.popToRoot()
+                            } else {
+                                withAnimation(Motion.panel) { simpleReaderOpen = false }
+                            }
+                        }
                     )
                     .transition(.offset(y: screenHeight))
                     .zIndex(1)
@@ -238,7 +180,6 @@ struct MysteryPrayerView: View {
         // sit above the home indicator
         .background(AppColors.background.ignoresSafeArea())
         .navigationBarHidden(true)
-        .simultaneousGesture(prayerSwipeGesture)
         // One haptic for one move, keyed on the mystery and the bead
         // together: stepping across a decade's end changes both at once,
         // and two modifiers would tick twice in one frame — a stumble on
@@ -246,7 +187,7 @@ struct MysteryPrayerView: View {
         // than a bead; a bead is the lightest tick there is.
         .sensoryFeedback(trigger: viewModel.beadPosition) { old, new in
             if new.mystery != old.mystery {
-                return .impact(weight: onBeads ? .medium : .light)
+                return .impact(weight: .medium)
             }
             return .selection
         }
@@ -274,8 +215,8 @@ struct MysteryPrayerView: View {
         }
         // The whole Rosary said aloud, or not: on arrival, and whenever
         // the playback sheet or Settings turns it on or off mid-Rosary
-        .task(id: userSettings.prayAloud) {
-            await viewModel.setPrayAloud(userSettings.prayAloud)
+        .task(id: aloudWanted) {
+            await viewModel.setPrayAloud(aloudWanted)
         }
         // The last Amen said aloud: felt in the pocket, as the glowing
         // AMEN is seen on the screen
@@ -293,70 +234,30 @@ struct MysteryPrayerView: View {
         .onChange(of: viewModel.isLastBeadOfRosary) { _, last in
             if last { showChrome() }
         }
-        // Off the beads the bead never moves, so the last bead never
-        // comes: the last mystery is where AMEN waits
-        .onChange(of: !onBeads && viewModel.isLastMystery) { _, last in
-            if last { showChrome() }
-        }
         // The voice changed under the Rosary - from the playback sheet,
         // or Settings on another screen - so the mystery under the hand
         // is heard again in the new one, carrying on if it was playing
         .onChange(of: userSettings.narrationVoiceSlug) {
             Task { await viewModel.narrationVoiceChanged() }
         }
-        // A bead prayed is a place to come back to, the same as a decade;
-        // and a bead moved means the hint has done its work
+        // A bead prayed is a place to come back to, the same as a decade
         .onChange(of: viewModel.currentBeadIndex) {
             saveResumePosition()
-            dismissSwipeHint()
         }
-        // Off the beads the bead never moves, so nothing says the first
-        // mystery has begun: a minute on it does, and it is kept then —
-        // and again as the phone locks or the Rosary is left, should
-        // either come first. Opened and backed out of, it pins nothing,
-        // as on the beads. Said aloud the voice moves the beads on the
-        // screen, so this never waits on the voice.
-        // The opening prayers are not the first mystery: the minute starts
-        // over when they give way to it, rather than running out unseen
-        .task(id: !onBeads && viewModel.currentMysteryIndex == 0 && viewModel.currentPendantStep == nil) {
-            guard !onBeads, viewModel.currentMysteryIndex == 0, viewModel.currentPendantStep == nil else { return }
-            let left = PrayerResumeService.firstMysteryBegunAfter - viewModel.sessionDuration
-            if left > 0 { try? await Task.sleep(for: .seconds(left)) }
+        // Once, when the beads can first be tapped, that they can
+        .task(id: beadTapHintMayShow && viewModel.pendant == nil) {
+            guard beadTapHintMayShow, viewModel.pendant == nil,
+                  !userSettings.hasSeenBeadTapHint else { return }
+            try? await Task.sleep(for: .seconds(1.2))
             guard !Task.isCancelled else { return }
-            keepFirstMysteryIfBegun()
+            userSettings.hasSeenBeadTapHint = true
+            withAnimation(.easeInOut(duration: 0.5)) { tapHintShowing = true }
+            tapHintPulse += 1
+            try? await Task.sleep(for: .seconds(4))
+            withAnimation(.easeInOut(duration: 0.6)) { tapHintShowing = false }
         }
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .background { keepFirstMysteryIfBegun() }
-        }
-        .task(id: swipeHintMayShow) {
-            // A first Rosary only, and only once there is something to
-            // swipe and it has had a moment to settle — arriving with the
-            // screen, or over a meditation still being heard, would read
-            // as chrome
-            guard swipeHintMayShow, !userSettings.hasSeenPrayerSwipeHint else { return }
-            try? await Task.sleep(for: .seconds(onBeads ? 0.8 : 1.6))
-            guard !Task.isCancelled, swipeHint == .pending else { return }
-            // Spent the moment it is shown, not when it is dismissed:
-            // this is the first Rosary a person ever prays, and leaving
-            // the flow early should not earn them a second showing
-            userSettings.hasSeenPrayerSwipeHint = true
-            withAnimation(.easeInOut(duration: 0.5)) { swipeHint = .showing }
-        }
-        // The hint's own life, owned by a task that exists only while it is
-        // on screen. Counting it down inside the task that raised it meant
-        // one cancellation — a sheet, a re-render — could leave the hint up
-        // for the rest of the Rosary.
-        .task(id: swipeHint) {
-            guard swipeHint == .showing else { return }
-            try? await Task.sleep(for: .seconds(5))
-            guard !Task.isCancelled else { return }
-            dismissSwipeHint()
-        }
-        // Any move between mysteries — by swipe or by arrow — means the
-        // hint has done its work; on the beads it is the decade turning,
-        // which the strand marks with a ripple
+        // The decade turning, which the rail marks with a ripple
         .onChange(of: viewModel.currentMysteryIndex) {
-            dismissSwipeHint()
             turnPulse += 1
         }
         // The meditation heard, the locked strand comes alive where it
@@ -369,7 +270,6 @@ struct MysteryPrayerView: View {
             celebratesUnlock(from: wasUnlocked, to: isUnlocked) ? .impact(weight: .light) : nil
         }
         .onDisappear {
-            keepFirstMysteryIfBegun()
             // Leaving the prayer flow (close, completion, or back) must not
             // leave meditation audio playing over other screens.
             viewModel.stopAudio()
@@ -409,6 +309,39 @@ struct MysteryPrayerView: View {
                 .presentationBackground(AppColors.background)
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
+            case .text:
+                ReaderTextOptionsSheet(
+                    showsNarrationOptions: false,
+                    showsPartsToggle: true
+                )
+                    .presentationDetents([
+                        .height(ReaderTextOptionsSheet.height(
+                            showsNarrationOptions: false,
+                            showsPartsToggle: true))
+                    ])
+                    .presentationDragIndicator(.visible)
+                    .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+
+            case .stops:
+                RosaryStopsSheet(
+                    title: meditationSet.name,
+                    stops: viewModel.stops,
+                    current: viewModel.currentStop,
+                    mysteryNames: (0..<viewModel.totalMysteries).map { index in
+                        let meditations = meditationSet.meditations ?? []
+                        let fallback = MysteryData.mysteries(for: meditationSet.mysteryCategory ?? .joyful)
+                        return (meditations.indices.contains(index) ? meditations[index].mystery?.name : nil)
+                            ?? (fallback.indices.contains(index) ? fallback[index].name : "")
+                    },
+                    meditationTitles: (meditationSet.meditations ?? []).map(\.displayTitle),
+                    isChaplet: meditationSet.mysteryCategory == .sevenSorrows
+                ) { stop in
+                    travel = .forward
+                    viewModel.jump(to: stop)
+                }
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+
             case .tray:
                 PrayerTrackTray(
                     actions: trackActions,
@@ -430,25 +363,15 @@ struct MysteryPrayerView: View {
     /// nothing was heard, and the error beside them is no occasion for a
     /// flourish.
     private func celebratesUnlock(from wasUnlocked: Bool, to isUnlocked: Bool) -> Bool {
-        onBeads && isUnlocked && !wasUnlocked && viewModel.audioErrorMessage == nil
+        isUnlocked && !wasUnlocked && viewModel.audioErrorMessage == nil
     }
 
-    /// Whether the swipe hint has anything to teach yet: off the beads the
-    /// page is swiped at once; on them, once the beads unlock. Never while
-    /// the voice holds the hand: said aloud, the beads count as unlocked
-    /// from the first word, and the one showing was spent over the Sign of
-    /// the Cross, across the pendant's foot, where a swipe does nothing.
-    private var swipeHintMayShow: Bool {
-        (!onBeads || viewModel.beadsUnlocked) && !voiceHoldsStrand
+    /// Whether the hint that the beads take a tap has anything to teach
+    /// yet: once the beads unlock, and never while the voice holds the
+    /// hand on the pendant, where a tap on a bead does nothing.
+    private var beadTapHintMayShow: Bool {
+        viewModel.beadsUnlocked && !voiceHoldsStrand
             && viewModel.silentPendantPrayer == nil
-    }
-
-    /// Takes the hint off screen. Safe to call more than once — its own
-    /// timer, a move between mysteries, and a tap on the painting all
-    /// race for it.
-    private func dismissSwipeHint() {
-        guard swipeHint != .retired else { return }
-        withAnimation(.easeInOut(duration: 0.4)) { swipeHint = .retired }
     }
 
     // MARK: - The Chrome
@@ -465,15 +388,6 @@ struct MysteryPrayerView: View {
     }
 
     // MARK: - Reader
-
-    /// Opens or closes the reader, remembering which surface this person
-    /// prays on for next time.
-    private func setReaderOpen(_ open: Bool) {
-        withAnimation(Motion.panel) {
-            userSettings.prayerImageMode = !open
-            chromeHidden = false
-        }
-    }
 
     // MARK: - Track Context
 
@@ -589,109 +503,6 @@ struct MysteryPrayerView: View {
 
     // MARK: - Gestures
 
-    /// One drag, read two ways.
-    ///
-    /// On the beads a vertical swipe walks the strand — down for the
-    /// next bead, up for the one before — and stands aside while the
-    /// reader is open, where a vertical drag is the page scrolling.
-    /// Off the beads a horizontal swipe moves between mysteries, in the
-    /// reader too, since the reader has no arrows of its own.
-    ///
-    /// A gesture is a shortcut, never the only way: every move it makes
-    /// is also a tap — the bead row, the arrows — since VoiceOver and
-    /// Switch Control cannot deliver a drag.
-    private var prayerSwipeGesture: some Gesture {
-        DragGesture(minimumDistance: 30)
-            .onChanged { value in
-                guard onBeads, !readerShown else { return }
-                let t = value.translation
-                if dragArmed == nil {
-                    dragArmed = abs(t.height) > abs(t.width) * 1.2
-                }
-                guard dragArmed == true else { return }
-                // At either end of the Rosary the string gives only a
-                // little, and comes back
-                // Locked until the meditation is heard, the string gives the
-                // same little it gives at either end of the Rosary
-                let resisted = beadsLocked || voiceHoldsStrand
-                    || (t.height > 0 ? viewModel.isLastBeadOfRosary : viewModel.isFirstBeadOfRosary)
-                strandDrag = RosaryStrandView.follow(t.height, resisted: resisted)
-            }
-            .onEnded { value in
-                defer { dragArmed = nil }
-                // While the voice says the opening prayers, or waits on its
-                // recordings, the hand has nowhere to go: a stray swipe
-                // skipped the Creed for good, or was undone a moment later
-                // when the voice began where it had meant to
-                if voiceHoldsStrand {
-                    if onBeads { settleStrand() }
-                    return
-                }
-                if onBeads {
-                    guard !readerShown else { return }
-                    handleBeadSwipe(value)
-                } else {
-                    handleMysterySwipe(value)
-                }
-            }
-    }
-
-    /// Down for the next bead, up for the one before: mostly vertical,
-    /// and either far enough or flicked. Short of that the string comes
-    /// back to rest. A forward swipe on the final bead does nothing —
-    /// the Rosary is completed only by AMEN.
-    private func handleBeadSwipe(_ value: DragGesture.Value) {
-        let dx = value.translation.width
-        let dy = value.translation.height
-        let flung = value.predictedEndTranslation.height
-        guard abs(dy) > abs(dx) * 1.2,
-              abs(dy) >= 60 || abs(flung) >= 120 else {
-            settleStrand()
-            return
-        }
-
-        if dy > 0 {
-            prayForward()
-        } else {
-            prayBack()
-        }
-    }
-
-    /// The string let go short of a bead, or tugged at an end of the
-    /// Rosary, coming back to where it was.
-    private func settleStrand() {
-        withAnimation(Motion.beadSettle) { strandDrag = 0 }
-    }
-
-    /// Left for the next mystery, right for the one before. The angle
-    /// gate keeps vertical reading scrolls from ever counting, and a
-    /// forward swipe on the last mystery does nothing.
-    private func handleMysterySwipe(_ value: DragGesture.Value) {
-        let dx = value.translation.width
-        let dy = value.translation.height
-        guard abs(dx) > 60, abs(dx) > abs(dy) * 1.5 else { return }
-
-        if dx < 0 {
-            // A swipe never finishes the Rosary
-            guard !(viewModel.isLastMystery && viewModel.lastMysteryEndsRosary),
-                  !viewModel.isLastBeadOfRosary else { return }
-            travel = .forward
-            withAnimation(Motion.decadeTurn) {
-                _ = viewModel.advanceOffTheBeads()
-            }
-        } else {
-            // A drag begun on the left bezel is the navigation
-            // stack's interactive pop. Stepping back a mystery on
-            // the way out of the flow resets audio mid-transition
-            // and lands the user somewhere they didn't ask for.
-            guard value.startLocation.x > 40 else { return }
-            travel = .back
-            withAnimation(Motion.decadeTurn) {
-                viewModel.retreatOffTheBeads()
-            }
-        }
-    }
-
     /// One bead forward along the strand. The swipe, the bead row and
     /// the reader's row all come here. On the final bead there is
     /// nowhere to go — the string settles, and only AMEN finishes.
@@ -700,7 +511,7 @@ struct MysteryPrayerView: View {
     /// actions leave it where it is. The reader's bead row, which moves the
     /// view model directly, is never locked.
     private var beadsLocked: Bool {
-        onBeads && !viewModel.beadsUnlocked
+        !viewModel.beadsUnlocked
     }
 
     /// The spoken Rosary has the hand: the opening prayers are being
@@ -711,14 +522,10 @@ struct MysteryPrayerView: View {
     }
 
     private func prayForward() {
-        guard !viewModel.isLastBeadOfRosary, !beadsLocked, !voiceHoldsStrand else {
-            settleStrand()
-            return
-        }
+        guard !viewModel.isLastBeadOfRosary, !beadsLocked, !voiceHoldsStrand else { return }
         travel = .forward
         withAnimation(Motion.beadSlide) {
             _ = viewModel.prayForward()
-            strandDrag = 0
         }
     }
 
@@ -730,637 +537,17 @@ struct MysteryPrayerView: View {
         // holds the beads ahead, not the prayers behind
         let intoOpening = viewModel.isFirstMystery && viewModel.currentBeadIndex == 0
             && viewModel.currentPendantStep == nil && viewModel.pendantShown
-        guard !viewModel.isFirstBeadOfRosary, !beadsLocked || intoOpening, !voiceHoldsStrand else {
-            settleStrand()
-            return
-        }
+        guard !viewModel.isFirstBeadOfRosary, !beadsLocked || intoOpening, !voiceHoldsStrand else { return }
         travel = .back
         withAnimation(Motion.beadSlide) {
             viewModel.prayBack()
-            strandDrag = 0
         }
     }
 
-    // MARK: - Player
-
-    private var playerLayer: some View {
-        GeometryReader { geometry in
-            let fullHeight = geometry.size.height
-                + geometry.safeAreaInsets.top
-                + geometry.safeAreaInsets.bottom
-
-            VStack(spacing: 0) {
-                playerHeader
-                    .padding(.top, 12)
-
-                Spacer()
-
-                if let pendant = viewModel.silentPendantPrayer {
-                    silentPendantControls(pendant, fullHeight: fullHeight)
-                        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { controlsHeight = $0 }
-                } else if let meditation = viewModel.currentMeditation {
-                    if onBeads {
-                        beadControls(meditation: meditation)
-                            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { controlsHeight = $0 }
-                    } else {
-                        decadeControls(meditation: meditation)
-                            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { controlsHeight = $0 }
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .overlay(alignment: .bottom) {
-                // The beads' one-time hint floats over the painting just
-                // above the controls, so the controls never move for it
-                if onBeads, showsBeadWords, viewModel.silentPendantPrayer == nil,
-                   !viewModel.isPrayingAloud {
-                    beadWordsPanel(fullHeight: fullHeight)
-                        .padding(.bottom, controlsHeight + 14)
-                        .transition(.opacity)
-                } else if onBeads, swipeHint == .showing {
-                    PrayerSwipeHint(onBeads: true)
-                        // Clear of the frost's darkest band, where a
-                        // capsule set right against the controls was
-                        // lost against the ground
-                        .padding(.bottom, controlsHeight + 36)
-                        .transition(.opacity)
-                }
-            }
-            .overlay {
-                // The Rosary's one strand, hung at the right edge, sliding
-                // a bead at a time under the hand, with the bead's name
-                // beside it and AMEN under that on the final bead. Inside
-                // the chrome layer so it goes with the chrome when the
-                // painting is tapped. The strand takes no touches of its
-                // own; only the AMEN does.
-                //
-                // On a mystery whose meditation has not yet been heard it
-                // hangs greyed and locked (`beadsUnlocked`), named for when
-                // it opens, and does not move under the finger; the
-                // narration's end brings it to life where it hangs.
-                //
-                // Not while the opening prayers are said aloud: they are
-                // prayed on the pendant, drawn on the stage, and the
-                // decade's strand comes in with the first mystery.
-                if onBeads, !isOnOpeningPendant, viewModel.silentPendantPrayer == nil {
-                    Color.clear
-                        .rosaryStrand(
-                            viewModel.strand,
-                            activeIndex: viewModel.strandIndex,
-                            fullHeight: fullHeight,
-                            topInset: geometry.safeAreaInsets.top,
-                            dragOffset: strandDrag,
-                            turnPulse: turnPulse,
-                            activeLabel: viewModel.beadLabelLines,
-                            locked: !viewModel.beadsUnlocked,
-                            onAmen: viewModel.isLastBeadOfRosary ? { finishRosary() } : nil,
-                            amenBeckons: viewModel.isSpokenFinished,
-                            onLabelTap: viewModel.isPrayingAloud || !viewModel.beadsUnlocked
-                                ? nil
-                                : { withAnimation(Motion.crossfade) { showsBeadWords.toggle() } }
-                        )
-                }
-            }
-            .opacity(chromeHidden ? 0 : 1)
-            .allowsHitTesting(!chromeHidden)
-            .background {
-                // The painting, its frost and its scrim — the ground the
-                // Scriptural Rosary prays on too, so it lives apart. The
-                // controls sit inside the safe area, so the proxy reports
-                // the inset height; the stage is handed the glass.
-                //
-                // While the opening or closing prayers are said aloud the
-                // pendant stands there instead: those prayers are not the
-                // mystery's, and its painting arrives with its decade.
-                ZStack {
-                    if let pendant = viewModel.pendant {
-                        // The closing prayers are said with the strand
-                        // still hung, for the AMEN at its final bead, and
-                        // centred the cross's arms ran under the bead's
-                        // name and the AMEN. The stage is drawn wider and
-                        // moved left, so the cross hangs in the column the
-                        // strand leaves and its glow runs unbroken to the
-                        // glass's edge.
-                        let shift = onBeads && pendant.phase == .closing && viewModel.isPrayingAloud
-                            ? Self.pendantShiftBesideStrand : 0
-                        PendantStage(
-                            pendant: pendant,
-                            width: geometry.size.width + shift * 2,
-                            fullHeight: fullHeight,
-                            heightFraction: pendantHeightFraction(
-                                fullHeight: fullHeight,
-                                controlsTop: geometry.safeAreaInsets.top + geometry.size.height - controlsHeight
-                            ),
-                            topFraction: Self.pendantTopFraction,
-                            chromeHidden: chromeHidden,
-                            // As the painting's tap: the hint goes with
-                            // the controls rather than coming back with them
-                            onTap: {
-                                dismissSwipeHint()
-                                toggleChrome()
-                            }
-                        )
-                        .offset(x: -shift)
-                        .transition(.opacity)
-                    } else {
-                        PrayerPaintingStage(
-                            painting: painting,
-                            paintingID: viewModel.currentMysteryIndex,
-                            chromeHidden: chromeHidden,
-                            width: geometry.size.width,
-                            fullHeight: fullHeight
-                        ) {
-                            dismissSwipeHint()
-                            toggleChrome()
-                        }
-                        .transition(.opacity)
-                    }
-                }
-                .animation(Motion.decadeTurn, value: viewModel.pendant == nil)
-            }
-        }
-    }
-
-    /// The way out on the left. On the beads, the set's name stands in
-    /// the centre — the strand at the edge already says where the
-    /// Rosary is; off them, the Rosary's own strand of mysteries stands
-    /// there instead. Everything else this screen can do lives with the
-    /// controls at the foot, where the hand already is.
-    private var playerHeader: some View {
-        ZStack {
-            if onBeads {
-                Text(meditationSet.name.uppercased())
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.goldLight)
-                    .shadow(color: .black.opacity(0.6), radius: 6, y: 1)
-                    .lineLimit(1)
-                    .padding(.horizontal, 60)
-                    .transition(.opacity)
-            } else {
-                RosaryBeadProgress(
-                    total: viewModel.totalMysteries,
-                    completed: viewModel.currentMysteryIndex,
-                    activeIndex: viewModel.currentMysteryIndex,
-                    beadSize: 8
-                )
-                .frame(width: 150)
-                .transition(.opacity)
-            }
-
-            HStack {
-                PrayerHeaderButton(
-                    icon: "ph-x",
-                    size: 18,
-                    label: String(localized: "End prayer", comment: "Prayer screen: VoiceOver name of the close button that leaves the Rosary")
-                ) {
-                    router.popToRoot()
-                }
-                Spacer()
-            }
-        }
-        .padding(.horizontal, 16)
-    }
-
-    // MARK: - Controls, on the Beads
-
-    /// The foot of the player prayed on the beads: the name of what is
-    /// playing, the narration's transport, and the utility row — and
-    /// nothing that changes from bead to bead. The bead itself is named
-    /// beside the strand. No arrows — the beads are the only way
-    /// forward; a hand that cannot swipe prays them through the title's
-    /// rotor actions.
-    private func beadControls(meditation: Meditation) -> some View {
-        VStack(spacing: 0) {
-            spokenOrMysteryTitle(meditation: meditation, showsMysteryName: true)
-                // Clear of the strand at the right edge, which is not
-                // hung while the opening prayers are said
-                .padding(.trailing, isOnOpeningPendant ? 0 : 100)
-                .padding(.horizontal, 22)
-                .accessibilityElement(children: .combine)
-                .accessibilityValue(viewModel.beadLabel)
-                .accessibilityHint(
-                    beadsLocked
-                        ? Text("The beads unlock when the meditation ends")
-                        : (viewModel.isLastBeadOfRosary
-                            ? Text(verbatim: "")
-                            : Text("Swipe down, or use the actions, for the next bead"))
-                )
-                .accessibilityAction(named: "Next bead", prayForward)
-                .accessibilityAction(named: "Previous bead", prayBack)
-                .accessibilityAction(named: showsBeadWords ? Text("Hide the prayer's words") : Text("Show the prayer's words")) {
-                    showsBeadWords.toggle()
-                }
-
-            if let errorMessage = viewModel.audioErrorMessage {
-                Text(errorMessage)
-                    .font(AppFonts.bodyFont(12))
-                    .foregroundColor(AppColors.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 30)
-                    .padding(.top, 8)
-            }
-
-            spokenLine
-
-            // The narration can be replayed from any bead, so the
-            // transport stands at full strength on every one; a mystery
-            // with nothing to play shows no transport at all
-            if meditation.hasAudio || viewModel.isPrayingAloud {
-                narrationTransport
-                    .padding(.top, 18)
-                    .transition(.opacity)
-            }
-
-            utilityRow
-                .padding(.top, meditation.hasAudio || viewModel.isPrayingAloud ? 18 : 12)
-                .padding(.bottom, 16)
-        }
-        .padding(.top, 6)
-        .animation(Motion.decadeTurn, value: meditation.hasAudio)
-    }
-
-    /// The ±10s flanking the play button, and nothing else — or, while
-    /// the whole Rosary is said aloud, the prayer before and the prayer
-    /// after, since ten seconds is most of a Hail Mary.
-    private var narrationTransport: some View {
-        HStack(spacing: 22) {
-            backTransportButton(size: 24)
-            playControl
-            forwardTransportButton(size: 24)
-        }
-    }
-
-    /// Back ten seconds, or back a prayer when said aloud
-    private func backTransportButton(size: CGFloat) -> some View {
-        let aloud = viewModel.isPrayingAloud
-        let ready = aloud ? viewModel.spokenStatus == nil : transportReady
-        return TransportButton(
-            icon: .symbol(aloud ? "backward.end" : "gobackward.10"),
-            size: aloud ? size - 4 : size,
-            label: aloud ? String(
-                localized: "Previous prayer",
-                comment: "Prayer screen, said aloud: VoiceOver name of the button that goes back a prayer"
-            ) : String(
-                localized: "Back 10 seconds",
-                comment: "Prayer screen: VoiceOver name of the button that skips the narration back ten seconds"
-            )
-        ) {
-            if aloud { viewModel.stepSpokenPrayer(forward: false) } else { viewModel.skipBackward() }
-        }
-        .disabled(!ready)
-        .opacity(ready ? 1 : 0.35)
-    }
-
-    /// Forward ten seconds, or on a prayer when said aloud — and after
-    /// the last Amen, where there is no prayer left to go on to, faded
-    private func forwardTransportButton(size: CGFloat) -> some View {
-        let aloud = viewModel.isPrayingAloud
-        let ready = aloud
-            ? viewModel.spokenStatus == nil && !viewModel.isSpokenFinished
-            : transportReady
-        return TransportButton(
-            icon: .symbol(aloud ? "forward.end" : "goforward.10"),
-            size: aloud ? size - 4 : size,
-            label: aloud ? String(
-                localized: "Next prayer",
-                comment: "Prayer screen, said aloud: VoiceOver name of the button that goes on a prayer"
-            ) : String(
-                localized: "Forward 10 seconds",
-                comment: "Prayer screen: VoiceOver name of the button that skips the narration forward ten seconds"
-            )
-        ) {
-            if aloud { viewModel.stepSpokenPrayer(forward: true) } else { viewModel.skipForward() }
-        }
-        .disabled(!ready)
-        .opacity(ready ? 1 : 0.35)
-    }
+    // MARK: - Controls
 
     private var transportReady: Bool {
         !viewModel.isLoadingAudio && viewModel.totalDuration > 0
-    }
-
-    /// The play button, dimmed and still while the recordings are being
-    /// fetched: pressed then, it did nothing
-    private var playControl: some View {
-        let preparing = viewModel.spokenStatus != nil
-        return NarrationPlayControl(viewModel: viewModel, diameter: 56)
-            .disabled(preparing)
-            .opacity(preparing ? 0.45 : 1)
-    }
-
-    // MARK: - Controls, a Decade at a Time
-
-    /// The foot of the player prayed off the beads: the name of what is
-    /// playing, the transport with the mystery arrows on its outside,
-    /// and the utility row.
-    private func decadeControls(meditation: Meditation) -> some View {
-        VStack(spacing: 0) {
-            spokenOrMysteryTitle(meditation: meditation, showsMysteryName: false)
-                .padding(.horizontal, 22)
-
-            if let errorMessage = viewModel.audioErrorMessage {
-                Text(errorMessage)
-                    .font(AppFonts.bodyFont(12))
-                    .foregroundColor(AppColors.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 30)
-                    .padding(.top, 8)
-            }
-
-            spokenLine
-
-            if swipeHint == .showing {
-                PrayerSwipeHint()
-                    .padding(.top, 14)
-                    .transition(.opacity)
-            }
-
-            decadeTransportRow(meditation: meditation)
-                .padding(.horizontal, 18)
-                .padding(.top, swipeHint == .showing ? 20 : 30)
-
-            utilityRow
-                .padding(.top, 22)
-                .padding(.bottom, 16)
-        }
-    }
-
-    /// The decade on the outside, the narration on the inside: bare
-    /// arrows step between mysteries, the ±10s flank the play button, and
-    /// on the last mystery the right-hand arrow gives way to AMEN.
-    private func decadeTransportRow(meditation: Meditation) -> some View {
-        HStack(spacing: 0) {
-            // Present on the first mystery too, just faded: a control that
-            // vanishes and reappears makes the row rearrange itself under
-            // the thumb, and the arrow is half of how this screen reads
-            TransportButton(
-                icon: .asset("ph-arrow-left"),
-                size: 20,
-                label: String(
-                    localized: "Previous mystery",
-                    comment: "Prayer screen, counted on one's own rosary: VoiceOver name of the arrow back to the previous mystery"
-                )
-            ) {
-                travel = .back
-                withAnimation(Motion.decadeTurn) { viewModel.retreatOffTheBeads() }
-            }
-            // Faded too while the voice holds the hand, as the swipe
-            // stands still then (`voiceHoldsStrand`). With the opening
-            // prayers shown, the first mystery steps back into them.
-            .disabled(isBackClosed || voiceHoldsStrand)
-            .opacity(isBackClosed || voiceHoldsStrand ? 0.25 : 1)
-            .accessibilityHidden(isBackClosed)
-            .frame(width: Self.transportSlotWidth)
-
-            Spacer(minLength: 0)
-
-            if meditation.hasAudio || viewModel.isPrayingAloud {
-                backTransportButton(size: 22)
-
-                Spacer(minLength: 10)
-
-                playControl
-
-                Spacer(minLength: 10)
-
-                forwardTransportButton(size: 22)
-            }
-
-            Spacer(minLength: 0)
-
-            // The last decade's forward move is the one that ends the
-            // Rosary, so the arrow becomes a check
-            TransportButton(
-                icon: .asset(finishesHere ? "ph-check" : "ph-arrow-right"),
-                size: finishesHere ? 21 : 20,
-                label: finishesHere
-                    ? String(
-                        localized: "Amen — finish the Rosary",
-                        comment: "Prayer screen: VoiceOver name of the check on the last mystery that finishes the Rosary"
-                    )
-                    : (viewModel.isLastMystery ? String(
-                        localized: "The closing prayers",
-                        comment: "Prayer screen: VoiceOver name of the arrow on the last mystery, which goes on to the closing prayers"
-                    ) : String(
-                        localized: "Next mystery",
-                        comment: "Prayer screen, counted on one's own rosary: VoiceOver name of the arrow on to the next mystery"
-                    )),
-                action: handleNextMystery
-            )
-            // During the opening prayers said aloud the next mystery was
-            // the second: the arrow skipped the first decade whole
-            .disabled(voiceHoldsStrand)
-            .opacity(voiceHoldsStrand ? 0.25 : 1)
-            // The last Amen said aloud: the check is the one thing left,
-            // and it glows for it rather than a line saying so
-            .beckoning(viewModel.isSpokenFinished)
-            .frame(width: Self.transportSlotWidth)
-        }
-    }
-
-    /// Whether the arrow back has nowhere to go: the first mystery, with
-    /// no opening prayers shown before it
-    private var isBackClosed: Bool {
-        viewModel.isFirstMystery && !(viewModel.pendantShown && viewModel.silentPendant.lastOpening != nil)
-    }
-
-    /// Whether the arrow forward finishes the Rosary: the last mystery,
-    /// with no closing prayers shown after it
-    private var finishesHere: Bool {
-        viewModel.isLastMystery && viewModel.lastMysteryEndsRosary
-    }
-
-    // MARK: - The Pendant, Prayed in Silence
-
-    /// The foot while an opening or closing prayer is prayed in silence:
-    /// where it stands ("The Opening Prayers · 2 of 7"), its name, its
-    /// words, and a prayer back and on — the swipe does the same, a
-    /// prayer at a time. On the first prayer a line says what the opening
-    /// holds; on the last of the close, AMEN finishes the Rosary.
-    ///
-    /// The words come down as far as they must to stand whole (the Creed
-    /// at the largest sizes): the vertical swipe is the Rosary's, so they
-    /// cannot scroll. The pendant above gives up height to them
-    /// (`pendantHeightFraction`).
-    private func silentPendantControls(_ pendant: SpokenPendant, fullHeight: CGFloat) -> some View {
-        let lines = viewModel.silentPendantLines ?? []
-        // The long prayers — the Creed, the Hail, Holy Queen, the closing
-        // prayer — a size down, so the pendant keeps room above them
-        let wordsSize: CGFloat = lines.joined().count > 280 ? 15 : 17
-        let words = Rubric.paragraph(lines, size: wordsSize)
-        let isFirst = viewModel.isFirstBeadOfRosary
-        let isLast = viewModel.isLastBeadOfRosary
-        let isLastOpening = viewModel.currentPendantStep == viewModel.silentPendant.lastOpening
-        let chaplet = pendant.isChaplet
-
-        return VStack(alignment: .leading, spacing: 0) {
-            VStack(alignment: .leading, spacing: 6) {
-                Text("\(pendant.heading) · \(viewModel.silentPendantCount ?? "")".uppercased())
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold)
-                    .contentTransition(.opacity)
-
-                Text(pendant.title)
-                    .font(AppFonts.headlineFont(24))
-                    .foregroundColor(AppColors.cream)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.8)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .contentTransition(.opacity)
-
-                // Whole at its size where it fits; where it does not — the
-                // Creed at the largest text sizes on a small phone — it
-                // comes down until it does
-                ViewThatFits(in: .vertical) {
-                    pendantWordsText(words, size: wordsSize)
-                        .fixedSize(horizontal: false, vertical: true)
-                    pendantWordsText(words, size: wordsSize)
-                        .minimumScaleFactor(0.5)
-                }
-                .frame(maxHeight: fullHeight * 0.38, alignment: .topLeading)
-                .padding(.top, 6)
-                    .contentTransition(.opacity)
-
-                AITranslationNote(prayerID: pendant.prayerID)
-
-                if isFirst {
-                    Text(SilentPendant.openingSummary(isChaplet: chaplet))
-                        .font(AppFonts.italicFont(15))
-                        .foregroundColor(AppColors.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 4)
-                        .transition(.opacity)
-                }
-            }
-            .animation(Motion.words, value: pendant)
-            .accessibilityElement(children: .combine)
-            .accessibilityAddTraits(.isHeader)
-
-            HStack(spacing: 12) {
-                QuietGoldButton(
-                    title: String(
-                        localized: "Back",
-                        comment: "Prayer screen, the opening and closing prayers: the quiet button back to the prayer before"
-                    ),
-                    leadingIcon: "ph-caret-left",
-                    leadingIconSize: 10,
-                    horizontalPadding: 0
-                ) { prayBack() }
-                .disabled(isFirst)
-                .opacity(isFirst ? 0.3 : 1)
-                .accessibilityLabel("Previous prayer")
-
-                Spacer(minLength: 8)
-
-                if isLast {
-                    GoldCTAButton(
-                        title: String(
-                            localized: "Amen",
-                            comment: "Prayer screen, last closing prayer: the gold button that finishes the Rosary"
-                        ),
-                        prominence: .inline,
-                        trailingIcon: "ph-check",
-                        fullWidth: false,
-                        action: finishRosary
-                    )
-                    .accessibilityLabel("Amen — finish the Rosary")
-                    .transition(.opacity)
-                } else {
-                    QuietGoldButton(
-                        title: isLastOpening
-                            ? (chaplet
-                                ? String(
-                                    localized: "The first sorrow",
-                                    comment: "Prayer screen, last opening prayer of the Seven Sorrows chaplet: the button on to the first sorrow"
-                                )
-                                : String(
-                                    localized: "The first mystery",
-                                    comment: "Prayer screen, last opening prayer: the button on to the first mystery"
-                                ))
-                            : String(
-                                localized: "Next prayer",
-                                comment: "Prayer screen, the opening and closing prayers: the button on to the next prayer"
-                            ),
-                        trailingIcon: "ph-caret-right",
-                        horizontalPadding: 0
-                    ) {
-                        if onBeads { prayForward() } else { handleNextMystery() }
-                    }
-                }
-            }
-            .frame(minHeight: 44)
-            .padding(.top, 18)
-            .animation(Motion.settle, value: isLast)
-
-            utilityRow
-                .frame(maxWidth: .infinity)
-                .padding(.top, 14)
-                .padding(.bottom, 16)
-        }
-        .padding(.horizontal, 22)
-        .padding(.top, 6)
-    }
-
-    private func pendantWordsText(_ words: AttributedString, size: CGFloat) -> some View {
-        Text(words)
-            .font(AppFonts.readingFont(size))
-            .foregroundColor(AppColors.cream.opacity(0.92))
-            .lineSpacing(size > 15 ? 4 : 2)
-            .frame(maxWidth: .infinity, alignment: .topLeading)
-    }
-
-    /// The words of the bead under the hand, over the painting above the
-    /// foot, opened by a tap on the bead or its name: the Our Father, a
-    /// Hail Mary, or the Glory Be and the Fatima Prayer. Clear of the
-    /// strand's column, and floating, so the foot never moves for it.
-    private func beadWordsPanel(fullHeight: CGFloat) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(viewModel.beadLabel.uppercased())
-                .font(AppFonts.labelFont(10))
-                .tracking(2)
-                .foregroundColor(AppColors.gold)
-                .contentTransition(.opacity)
-
-            // The Glory Be with the Fatima Prayer runs long in a narrow
-            // column: on a small phone it comes down rather than rise
-            // past the header
-            ViewThatFits(in: .vertical) {
-                beadWordsText.fixedSize(horizontal: false, vertical: true)
-                beadWordsText.minimumScaleFactor(0.6)
-            }
-            .frame(maxHeight: fullHeight * 0.3, alignment: .topLeading)
-
-            Text("Tap the bead to hide the words.")
-                .font(AppFonts.italicFont(13))
-                .foregroundColor(AppColors.textSecondary)
-                .accessibilityHidden(true)
-        }
-        .animation(Motion.words, value: viewModel.beadPosition)
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(AppColors.background.opacity(0.78))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
-        )
-        .padding(.leading, 18)
-        // Clear of the strand and the bead's name beside it
-        .padding(.trailing, 132)
-        .accessibilityElement(children: .combine)
-    }
-
-    private var beadWordsText: some View {
-        Text(Rubric.paragraph(viewModel.beadLines, size: 16))
-            .font(AppFonts.readingFont(16))
-            .foregroundColor(AppColors.cream)
-            .lineSpacing(3)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentTransition(.opacity)
     }
 
     // MARK: - Shared Furniture
@@ -1384,11 +571,6 @@ struct MysteryPrayerView: View {
             .transition(.opacity)
         } else if let status = viewModel.spokenStatus {
             spokenLineText(status, lit: false)
-        } else if viewModel.isPrayingAloud, !onBeads {
-            // On the pendant the title already names the prayer
-            let caption = viewModel.spokenPendant == nil ? viewModel.spokenCaption : nil
-            spokenLineText(caption ?? " ", lit: true)
-                .accessibilityHidden(caption == nil)
         }
     }
 
@@ -1405,20 +587,6 @@ struct MysteryPrayerView: View {
             .contentTransition(.opacity)
             .animation(Motion.words, value: line)
             .accessibilityLabel(line)
-    }
-
-    /// What is playing, and where the Rosary stands. Left-aligned and
-    /// sitting directly on what follows, so the name and the act read as
-    /// one block. On the beads the mystery's own name rides beneath the
-    /// meditation's title — the strand names the decade by numeral only.
-    ///
-    /// The words crossfade in place rather than the block being torn
-    /// down and rebuilt: a re-identified block is laid out twice over
-    /// for the length of its transition, and the foot would stand
-    /// taller for half a second on every turn of the decade.
-    /// Whether the opening prayers are being said aloud right now
-    private var isOnOpeningPendant: Bool {
-        viewModel.spokenPendant?.phase == .opening
     }
 
     /// The mystery's title — or, while the opening and closing prayers
@@ -1483,55 +651,6 @@ struct MysteryPrayerView: View {
         .animation(Motion.decadeTurn, value: viewModel.currentMysteryIndex)
     }
 
-    /// Under the audio: how the narration plays, the way into the text,
-    /// and everything else this meditation can do.
-    private var utilityRow: some View {
-        HStack(spacing: 40) {
-            ReaderChromeButton(
-                icon: "ph-faders",
-                size: 21,
-                tint: Self.utilityTint,
-                label: String(
-                    localized: "Playback settings",
-                    comment: "Prayer screen: VoiceOver name of the button that opens the voice, speed and Rosary choices"
-                )
-            ) {
-                activeSheet = .playback
-            }
-
-            // The pendant's prayers have no meditation to read
-            if viewModel.silentPendantPrayer == nil {
-                ReaderChromeButton(
-                    icon: "ph-book-open",
-                    size: 21,
-                    tint: Self.utilityTint,
-                    label: String(
-                        localized: "Read the meditation",
-                        comment: "Prayer screen: VoiceOver name of the button that opens the meditation as text"
-                    )
-                ) {
-                    setReaderOpen(true)
-                }
-            }
-
-            ReaderChromeButton(
-                icon: "ph-dots-three",
-                size: 23,
-                tint: Self.utilityTint,
-                label: String(
-                    localized: "More",
-                    comment: "Prayer screen: VoiceOver name of the button that opens the menu of more actions"
-                )
-            ) {
-                activeSheet = .tray
-            }
-        }
-    }
-
-    /// Quieter than the reader's chrome: these sit over the painting,
-    /// which is already carrying the eye.
-    private static let utilityTint = AppColors.cream.opacity(0.7)
-
     // MARK: - Helper Functions
 
     /// Runs whatever the tray handed over, exactly once.
@@ -1545,8 +664,6 @@ struct MysteryPrayerView: View {
     /// Only once the user has actually advanced — a decade or a bead —
     /// glancing at a set's first mystery and backing out must neither
     /// pin a resume card nor overwrite a genuinely interrupted session.
-    /// Off the beads, where no bead moves, the first mystery is kept by
-    /// `keepFirstMysteryIfBegun` instead.
     private func saveResumePosition(evenAtTheStart: Bool = false) {
         let mystery = viewModel.currentMysteryIndex
         let bead = viewModel.currentBeadIndex
@@ -1560,28 +677,6 @@ struct MysteryPrayerView: View {
             startedAt: sessionStartedAt,
             accumulatedSeconds: viewModel.sessionDuration
         )
-    }
-
-    /// Keeps the first mystery as the place to resume, when the Rosary is
-    /// prayed off the beads and has been prayed there a while
-    /// (`PrayerResumeService.firstMysteryBegunAfter`)
-    private func keepFirstMysteryIfBegun() {
-        guard !onBeads,
-              viewModel.currentPendantStep == nil,
-              viewModel.currentMysteryIndex == 0,
-              viewModel.sessionDuration >= PrayerResumeService.firstMysteryBegunAfter else { return }
-        saveResumePosition(evenAtTheStart: true)
-    }
-
-    /// The arrow's move off the beads: the next mystery, or from the
-    /// last one the end of the Rosary.
-    private func handleNextMystery() {
-        travel = .forward
-        let advanced = withAnimation(Motion.decadeTurn) {
-            viewModel.advanceOffTheBeads()
-        }
-        guard !advanced else { return }
-        finishRosary()
     }
 
     /// Completed all mysteries — records the Rosary and moves to the
@@ -1599,6 +694,379 @@ struct MysteryPrayerView: View {
     }
 }
 
+// MARK: - The Player
+
+/// The meditation's player is the one
+/// player both players become (`OneRosaryViews`): the rail of the whole
+/// Rosary at the edge, the prayer under the hand in one column that never
+/// moves, and Back and Next at the foot on every step. Off, nothing here
+/// is drawn.
+extension MysteryPrayerView {
+
+    /// The rail: the pendant with the decades, while the opening and
+    /// closing prayers are prayed (shown, or said by the voice)
+    fileprivate var rail: OneRosaryRail {
+        OneRosaryRail(
+            strand: viewModel.strand,
+            pendant: viewModel.silentPendant,
+            showsPendant: userSettings.showsOpeningPrayers || viewModel.isPrayingAloud
+        )
+    }
+
+    fileprivate func railIndex(_ rail: OneRosaryRail) -> Int {
+        if let step = viewModel.currentPendantStep { return rail.index(of: step) }
+        if let pendant = viewModel.spokenPendant { return rail.index(of: pendant) }
+        return rail.index(strandIndex: viewModel.strandIndex)
+    }
+
+    /// The beads a tap may reach: on the decades, near the hand, as
+    /// `RosaryStrand.canTap` allows, and never ahead while the meditation
+    /// is still to be heard or while the voice holds the hand
+    fileprivate func tappableBeads(_ rail: OneRosaryRail) -> Set<Int> {
+        guard viewModel.pendant == nil, !voiceHoldsStrand else { return [] }
+        let strand = viewModel.strand
+        let active = viewModel.strandIndex
+        let near = max(active - 4, 0)...min(active + 4, strand.count - 1)
+        return Set(
+            near.filter {
+                strand.canTap($0, from: active, onGloryBe: viewModel.isDecadePrayed)
+                    && (!beadsLocked || $0 < active)
+            }
+            .map { rail.index(strandIndex: $0) })
+    }
+
+    /// The hand on the closing prayers, back at the medal or the cross
+    fileprivate var oneRosaryOnClose: Bool {
+        if case .closing = viewModel.currentPendantStep { return true }
+        return viewModel.spokenPendant?.phase == .closing
+    }
+
+    /// The last step, the whole Rosary prayed: AMEN stands, and the rail
+    /// shows every bead gold
+    fileprivate var oneRosaryComplete: Bool {
+        viewModel.isPrayingAloud && viewModel.spokenFailure == nil
+            ? viewModel.isSpokenFinished
+            : viewModel.isLastBeadOfRosary
+    }
+
+    /// The words at one size for every prayer, the Creed as the Glory Be
+    /// Whether the prayer's words and the beads are shown (the player's
+    /// Aa); the pill and the prayer's name always are
+    fileprivate var showsWordsAndBeads: Bool { userSettings.rosaryShowsWordsAndBeads }
+
+    fileprivate var wordsSize: CGFloat { SimpleRosary.wordsSize(scale: userSettings.textSizeScale) }
+
+    /// The beginner's path: the line for the hand's place, from the
+    /// guide; never on the chaplet, which has none
+    fileprivate var oneRosaryHelp: RosaryHelps.Line? {
+        guard showsHelps, viewModel.spokenPendant == nil || viewModel.helpsPendantStep != nil,
+              let category = meditationSet.mysteryCategory
+        else { return nil }
+        return RosaryHelps.line(
+            for: category,
+            pendantStep: viewModel.helpsPendantStep,
+            mystery: viewModel.currentMysteryIndex,
+            bead: viewModel.currentBeadIndex
+        )
+    }
+
+    /// The timed lines of what the voice is saying, where it is the words
+    /// the column sets: never an announcement's, which the column leaves
+    /// on the Our Father
+    fileprivate var shownTimings: [TimedLine]? {
+        guard let segment = viewModel.spoken?.currentSegment, segment.kind != .announcement else { return nil }
+        // The recordings are English: in Spanish a prayer, or a
+        // meditation translated into Spanish, is shown in its Spanish
+        // words, unlit, never swapped for the English lines
+        if SimpleRosary.keepsOwnWords(
+            segment.kind, spanish: SpanishContent.isActive,
+            meditationIsSpanish: viewModel.currentMeditation?.isSpanish ?? false
+        ) { return nil }
+        return viewModel.spokenTimings
+    }
+
+    fileprivate var oneRosaryLayer: some View {
+        GeometryReader { geometry in
+            let fullHeight = geometry.size.height
+                + geometry.safeAreaInsets.top
+                + geometry.safeAreaInsets.bottom
+            let rail = rail
+            // The words' first line at one height on every step; the head
+            // stands in its room above them
+            let columnTop = max(
+                OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight)
+                    - OneRosaryColumn<EmptyView>.headHeight
+                    - geometry.safeAreaInsets.top,
+                12 + 44 + 14
+            )
+
+            VStack(spacing: 0) {
+                let placed = OneRosaryColumn<EmptyView>.layout(
+                    showsWords: showsWordsAndBeads, columnTop: columnTop, headerFoot: 12 + 44 + 14)
+                oneRosaryColumn
+                    .padding(.leading, 28)
+                    .padding(.trailing, 104)
+                    .padding(.top, placed.top)
+                    .padding(.bottom, placed.bottom)
+                    .frame(maxHeight: .infinity, alignment: placed.alignment)
+                    .animation(Motion.crossfade, value: showsWordsAndBeads)
+
+                oneRosaryFoot
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { controlsHeight = $0 }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay(alignment: .top) {
+                OneRosaryHeader(onClose: { router.popToRoot() }) {
+                    RosaryStopsPill(
+                        stops: viewModel.stops,
+                        current: viewModel.currentStop,
+                        isChaplet: meditationSet.mysteryCategory == .sevenSorrows
+                    ) { activeSheet = .stops }
+                } trailing: {
+                    if viewModel.isPrayingAloud, viewModel.spokenFailure == nil {
+                        SimpleRosaryMuteButton(isMuted: viewModel.isMuted) { viewModel.toggleMuted() }
+                    }
+                }
+                .padding(.top, 12)
+            }
+            .oneRosaryRail(
+                rail,
+                activeIndex: railIndex(rail),
+                fullHeight: fullHeight,
+                topInset: geometry.safeAreaInsets.top,
+                turnPulse: turnPulse,
+                locked: viewModel.pendant == nil && !viewModel.beadsUnlocked,
+                tappable: tappableBeads(rail),
+                hintPulse: tapHintPulse,
+                complete: oneRosaryComplete,
+                closing: oneRosaryOnClose,
+                hidden: !showsWordsAndBeads
+            ) { index in
+                if case .strand(let bead) = rail.target(at: index) { oneRosaryGoToBead(bead) }
+            }
+            .opacity(chromeHidden ? 0 : 1)
+            .allowsHitTesting(!chromeHidden)
+            .background {
+                ZStack {
+                    // One stage on every step: the mystery's painting. On
+                    // the opening and closing prayers it is the first (or
+                    // last) mystery's, veiled deeper, and the pendant they
+                    // are said on is the rail's alone, at its head: one
+                    // cross, drawn once
+                    PrayerPaintingStage(
+                        painting: painting,
+                        seatedFraction: OneRosaryColumn<EmptyView>.paintingFraction,
+                        paintingID: viewModel.currentMysteryIndex,
+                        chromeHidden: chromeHidden,
+                        quiet: !showsWordsAndBeads,
+                        width: geometry.size.width,
+                        fullHeight: fullHeight
+                    ) {
+                        toggleChrome()
+                    }
+                    .transition(.opacity)
+
+                    OneRosaryPendantVeil()
+                        .opacity(viewModel.pendant != nil && !chromeHidden ? (showsWordsAndBeads ? 1 : 0.45) : 0)
+
+                    // The words put away, the painting shows: a light
+                    // shade for what remains in place of the column's
+                    OneRosaryColumnScrim()
+                        .opacity(chromeHidden || !showsWordsAndBeads ? 0 : 1)
+                    OneRosaryQuietScrim()
+                        .opacity(!chromeHidden && !showsWordsAndBeads ? 1 : 0)
+                }
+                .animation(Motion.decadeTurn, value: viewModel.pendant == nil)
+                .animation(Motion.crossfade, value: showsWordsAndBeads)
+            }
+        }
+    }
+
+    /// The column: where on the Rosary, the title, the bead, the words
+    @ViewBuilder
+    fileprivate var oneRosaryColumn: some View {
+        if let pendant = viewModel.pendant {
+            let lines = SilentPendant.lines(of: pendant.prayerID, in: userSettings.prayerLanguage)
+            OneRosaryColumn(
+                title: pendant.heading,
+                place: OneRosaryColumn<EmptyView>.place(mystery: nil, of: viewModel.strand.decades, phase: pendant.phase),
+                bead: OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount),
+                help: oneRosaryHelp,
+                wordsKey: "\(pendant.heading)|\(pendant.title)|\(viewModel.silentPendantCount ?? "")",
+                showsWords: showsWordsAndBeads
+            ) {
+                VStack(alignment: .leading, spacing: 8) {
+                    SimpleRosaryWords(
+                        lines: SimpleRosary.displayedLines(timings: shownTimings, fallback: lines),
+                        highlighted: shownTimings == nil ? nil : viewModel.spokenHighlightedLine,
+                        lineProgress: shownTimings == nil ? nil : viewModel.spokenLineProgress,
+                        size: wordsSize
+                    )
+                    AITranslationNote(prayerID: pendant.prayerID)
+                }
+            }
+            .accessibilityElement(children: .combine)
+        } else {
+            let locked = beadsLocked
+            OneRosaryColumn(
+                title: viewModel.currentMystery?.name ?? viewModel.currentMeditation?.displayTitle ?? "",
+                place: OneRosaryColumn<EmptyView>.place(mystery: viewModel.currentMysteryIndex, of: viewModel.strand.decades),
+                // The step line names the bead even while it waits; the
+                // words under it say why
+                bead: viewModel.beadLabel,
+                help: oneRosaryHelp,
+                tapHint: tapHintShowing && showsWordsAndBeads,
+                wordsKey: "\(viewModel.beadPosition.mystery).\(viewModel.beadPosition.bead).\(locked).\(viewModel.isSpeakingMeditation)",
+                showsWords: showsWordsAndBeads
+            ) {
+                if locked {
+                    Text(
+                        "The meditation is read first. The beads open when it ends.",
+                        comment: "One Rosary beta, the player on a mystery's Our Father before its meditation has been heard: why the beads wait"
+                    )
+                    .font(AppFonts.italicFont(16))
+                    .foregroundColor(AppColors.cream.opacity(0.75))
+                    .fixedSize(horizontal: false, vertical: true)
+                } else if viewModel.isSpeakingMeditation, let meditation = viewModel.currentMeditation {
+                    // The meditation as it is read: its recording's own
+                    // lines where it is timed, lit as they are said
+                    SimpleRosaryWords(
+                        lines: SimpleRosary.displayedLines(
+                            timings: shownTimings,
+                            fallback: ReadingText.paragraphs(of: meditation.content)),
+                        highlighted: shownTimings == nil ? nil : viewModel.spokenHighlightedLine,
+                        lineProgress: shownTimings == nil ? nil : viewModel.spokenLineProgress,
+                        size: wordsSize
+                    )
+                } else {
+                    SimpleRosaryWords(
+                        lines: SimpleRosary.displayedLines(timings: shownTimings, fallback: viewModel.beadLines),
+                        highlighted: shownTimings == nil ? nil : viewModel.spokenHighlightedLine,
+                        lineProgress: shownTimings == nil ? nil : viewModel.spokenLineProgress,
+                        size: wordsSize
+                    )
+                }
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityAction(named: "Next bead", prayForward)
+            .accessibilityAction(named: "Previous bead", prayBack)
+        }
+    }
+
+    /// The foot: what is narrated, the narration's transport, Back and
+    /// Next, and the utility row — the same on every step
+    fileprivate var oneRosaryFoot: some View {
+        let aloud = viewModel.isPrayingAloud
+        let meditation = viewModel.pendant == nil ? viewModel.currentMeditation : nil
+
+        return VStack(spacing: 0) {
+            // The meditation's door, on the step it belongs to: the
+            // mystery's Our Father, where it is heard
+            if meditation != nil, viewModel.currentBeadIndex == 0 {
+                OneRosaryReadLink { withAnimation(Motion.panel) { simpleReaderOpen = true } }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 22)
+                    .padding(.bottom, 6)
+                    .transition(.opacity)
+            }
+
+            if let errorMessage = viewModel.audioErrorMessage, viewModel.pendant == nil {
+                Text(errorMessage)
+                    .font(AppFonts.bodyFont(12))
+                    .foregroundColor(AppColors.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 30)
+                    .padding(.top, 4)
+            }
+
+            spokenLine
+
+            // The voice's play and pause stands between Back and Next,
+            // in one place on every step
+            OneRosaryFooter(
+                canGoBack: aloud ? viewModel.spokenStatus == nil : !viewModel.isFirstBeadOfRosary,
+                canGoOn: aloud
+                    ? viewModel.spokenStatus == nil && !viewModel.isSpokenFinished
+                    : !beadsLocked && !voiceHoldsStrand,
+                // Said aloud, AMEN once the voice has said the last Amen;
+                // until then Next steps the closing prayers
+                isLast: oneRosaryComplete,
+                amenBeckons: viewModel.isSpokenFinished,
+                play: oneRosaryPlay(meditation: meditation),
+                onBack: { oneRosaryStep(forward: false) },
+                onNext: { oneRosaryStep(forward: true) },
+                onAmen: finishRosary
+            )
+            .padding(.horizontal, 22)
+            .padding(.top, 16)
+
+            // The same three on every step and on both players
+            OneRosaryUtilityRow(items: [
+                OneRosaryUtilityRow.voice { activeSheet = .playback },
+                OneRosaryUtilityRow.text { activeSheet = .text },
+                OneRosaryUtilityRow.more { activeSheet = .tray },
+            ])
+            .padding(.top, 10)
+            .padding(.bottom, 8)
+        }
+        .animation(Motion.crossfade, value: meditation?.hasAudio)
+        .animation(Motion.crossfade, value: viewModel.currentBeadIndex == 0)
+    }
+
+    /// The voice's play and pause in the footer: said aloud, the voice's,
+    /// on every step; otherwise the meditation's, on its Our Father, where
+    /// it is heard, and on any bead while it still sounds. Heard to its
+    /// end, it offers to hear the meditation again from its start.
+    fileprivate func oneRosaryPlay(meditation: Meditation?) -> OneRosaryPlayDisc? {
+        if viewModel.isPrayingAloud {
+            guard viewModel.spokenFailure == nil else { return nil }
+            return OneRosaryPlayDisc(
+                glyph: viewModel.isPlaying ? .pause : .play,
+                isLoading: viewModel.spokenStatus != nil,
+                isEnabled: !viewModel.isSpokenFinished
+            ) {
+                viewModel.isPlaying.toggle()
+            }
+        }
+        guard meditation?.hasAudio == true,
+            viewModel.currentBeadIndex == 0 || viewModel.isPlaying
+        else { return nil }
+        let total = viewModel.totalDuration
+        let ended = !viewModel.isPlaying && total > 0 && viewModel.currentTime >= total - 0.75
+        return OneRosaryPlayDisc(
+            glyph: viewModel.isPlaying ? .pause : (ended ? .replay : .play),
+            isLoading: viewModel.isLoadingAudio,
+            isEnabled: transportReady
+        ) {
+            if ended { viewModel.currentTime = 0 }
+            viewModel.isPlaying.toggle()
+        }
+    }
+
+    /// Back and Next: a bead (or a prayer of the pendant) at a time, and
+    /// said aloud, a prayer of the voice at a time
+    fileprivate func oneRosaryStep(forward: Bool) {
+        if viewModel.isPrayingAloud {
+            travel = forward ? .forward : .back
+            viewModel.stepSpokenPrayer(forward: forward)
+        } else if forward {
+            prayForward()
+        } else {
+            prayBack()
+        }
+    }
+
+    /// A tap on a bead of the rail: the hand taken there
+    fileprivate func oneRosaryGoToBead(_ index: Int) {
+        guard !voiceHoldsStrand else { return }
+        if beadsLocked, index > viewModel.strandIndex { return }
+        travel = index > viewModel.strandIndex ? .forward : .back
+        withAnimation(Motion.beadSlide) {
+            viewModel.goToBead(at: index)
+        }
+    }
+}
+
 // MARK: - PlayerSheet
 
 /// What the player can put over itself. One case at a time, by design.
@@ -1607,6 +1075,10 @@ private enum PlayerSheet: String, Identifiable {
     case playback
     case tray
     case feedback
+    /// The text's size, as the Scriptural player has it
+    case text
+    /// The simple Rosary: every part of the Rosary, to go to
+    case stops
 
     var id: String { rawValue }
 }
