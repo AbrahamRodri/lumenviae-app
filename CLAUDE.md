@@ -2026,8 +2026,8 @@ write concurrent code here:
   prayer where the Scriptural Rosary's carries the verse, the pendant's
   prayers included; a rubric line ("[Let us pray.]") is set as a
   rubric, red and italic and out of its brackets, since the voice does
-  not say it. The header names the form (THE SCRIPTURAL ROSARY, THE
-  AUDIO ROSARY); there is no meditation and no reader.
+  not say it. The form is named on its own page, the Lock Screen and the
+  ⋯ tray; there is no meditation and no reader.
 
   On the last bead the cue gives way to AMEN; completion records locally
   through `CompletedPrayer` (the completion screen takes that value now,
