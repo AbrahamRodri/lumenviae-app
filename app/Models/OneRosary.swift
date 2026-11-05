@@ -129,7 +129,7 @@ extension RosaryStrand {
     /// over a mystery's meditation unheard. On a decade's Glory Be
     /// (`onGloryBe`) the hand already stands on the next Our Father's
     /// bead, so nothing ahead is reached by a tap: the next mystery's
-    /// meditation comes first, by the swipe or Next.
+    /// meditation comes first, by Next.
     func canTap(_ index: Int, from active: Int, onGloryBe: Bool = false) -> Bool {
         guard index != active, index >= 0, index < count else { return false }
         if index < active { return true }

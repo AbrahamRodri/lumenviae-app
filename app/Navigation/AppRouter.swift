@@ -217,8 +217,8 @@ struct ScripturalRosaryLaunch: Hashable {
 /// a title page, a player, the strand and the spoken Rosary beneath
 /// it, and differ in what a Hail Mary bead holds.
 enum SpokenForm: String, Hashable, Codable {
-    /// A verse of Scripture for every Hail Mary, the Rosary said aloud
-    /// only if `UserSettings.prayAloud` is on
+    /// A verse of Scripture for every Hail Mary, each read by the voice
+    /// before its Hail Mary
     case scriptural
 
     /// The Rosary Aloud: every prayer said by the voice, the beads

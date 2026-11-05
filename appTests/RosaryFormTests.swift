@@ -38,7 +38,7 @@ struct RosaryFormTests {
         #expect(RosaryInfoRow.mysteriesValue(.joyful, today: .joyful) == "Joyful · today")
         #expect(RosaryInfoRow.mysteriesValue(.sevenSorrows, today: .joyful) == "Seven Sorrows")
         #expect(RosaryInfoRow.voiceValue(voice: "Female", rate: "1×") == "Female · 1×")
-        #expect(RosaryInfoRow.holyAudioValue == "Whole Rosary · pause anytime")
+        #expect(RosaryInfoRow.holyAudioValue == "Every prayer aloud · pause anytime")
     }
 
     // MARK: - A Set's Subtitle

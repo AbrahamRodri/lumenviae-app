@@ -173,10 +173,4 @@ enum OpeningPrayersChoice {
             ? String(localized: "The Rosary begins with the Sign of the Cross and the Creed and ends with the Hail, Holy Queen, each with its words.", comment: "Settings, Opening and Closing Prayers: the line under the chosen option")
             : String(localized: "The Rosary begins at the first mystery and ends at the last Glory Be.", comment: "Settings, Opening and Closing Prayers: the line under the chosen option")
     }
-
-    /// Said aloud, the voice says them whatever is chosen
-    static let unavailableNote = String(
-        localized: "With the Whole Rosary, the voice says them.",
-        comment: "Settings, Opening and Closing Prayers: why the choice is dimmed while the Whole Rosary is chosen"
-    )
 }

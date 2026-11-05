@@ -22,8 +22,8 @@ Home Screen
             ▼
 The mysteries' page (SelectMeditationView) — one Rosary, three forms
     │
-    ├── WAYS TO PRAY: The Scriptural Rosary · The Audio Rosary, each
-    │   opening its own page with these mysteries chosen
+    ├── WAYS TO PRAY: The Scriptural Rosary · No Meditation (the Audio
+    │   Rosary), each opening its own page with these mysteries chosen
     ├── MEDITATIONS ("a short reading on each mystery"): gallery of tiles
     │   (default) or ruled list (remembered), pinned sets on top, the
     │   funnel → "Kind of meditation" tray
@@ -35,14 +35,11 @@ Rosary's and the Audio Rosary's are the same page)
     │
     ├── The painting dissolving into the page, Back over it
     ├── Kicker, name in Cinzel, one italic line
-    ├── YOUR ROSARY TODAY
-    │   ├── Audio: Meditation Only | Whole Rosary (Read in Silence in the
-    │   │   Scriptural Rosary; none in the Audio Rosary, always aloud)
-    │   ├── Counting: On My Rosary | On the Screen — only while the Whole
-    │   │   Rosary is not chosen
-    │   └── Rows: Mysteries (not for a set), Voice & speed (not while
-    │       the Scriptural Rosary is read in silence)
-    ├── Past the choices, a ledger for whoever scrolls (a set's meditations,
+    ├── YOUR ROSARY TODAY: rows only, no choices — Mysteries (not for a
+    │   set), Voice & speed (the prayers' speed; meditations stay at 1×)
+    ├── On the beginner's path, a line before PRAY saying it begins on
+    │   St. Alphonsus with the helps on, and a plain way to say no
+    ├── Past the rows, a ledger for whoever scrolls (a set's meditations,
     │   source, offline copy, first meditation)
     └── "PRAY" (the screen's one gold act) — nothing set beneath it,
         and never an estimated duration
@@ -53,10 +50,11 @@ Prayer Flow (5 Mysteries/Decades)
     ├── 1st Mystery → 2nd Mystery → 3rd Mystery → 4th Mystery → 5th Mystery
     │   (Each mystery: Meditation + 10 Hail Marys + Glory Be; the Seven
     │   Sorrows chaplet is seven sorrows of seven Hail Marys each)
-    │   On the Screen (Counting's default): one strand at the right edge,
-    │   swipe down a bead at a time, the mystery turns on its own. On My
-    │   Rosary: arrows and a swipe between mysteries, no strand. With the
-    │   Whole Rosary the voice moves the beads on the screen.
+    │   One player for every form: every prayer said aloud from PRAY, the
+    │   voice moving the beads; Back, play and Next at the foot; the
+    │   Rosary's parts in a pill at the top; a speaker to mute the voice;
+    │   the beads of the whole Rosary at the right edge, a tap away. A set
+    │   with no recording opens as text to read.
     │
     ▼
 Completion Screen
@@ -202,9 +200,11 @@ every Hail Mary, no meditation — or as **the Audio Rosary**, every
 prayer said aloud with no readings between (it was the Rosary Aloud,
 then the Holy Rosary, which a newcomer could not tell from the Rosary,
 then the Rosary Said Aloud, whose "said aloud" a regular reader found
-confusing (Oct 2026);
-the mysteries' page lists it as "The Audio Rosary · Listen and pray
-along", under WAYS TO PRAY). Every page reads its name from
+confusing (Oct 2026); the mysteries' page lists it under WAYS TO PRAY
+as **No Meditation** · "Every prayer said aloud, nothing read between",
+since every Rosary is now said aloud and this one only leaves the
+meditation out — Abraham, 5 Nov 2026: "audio rosary should just be say
+no meditation on the select screen"). Every page reads its name from
 `ScripturalRosaryViewModel.displayName` (`holyRosaryName`). The forms are
 `RosaryForm` (`Models/RosaryForm.swift`); the Scriptural Rosary is not a
 kind of meditation, and the filter's "Scriptural" label reads as
@@ -846,28 +846,16 @@ the page they serve):
   narration voice (`NarrationVoiceRow`, the server's list; the same
   choice stands in the player's playback sheet): how every page that
   prays looks and who reads it
-- **The Rosary** — the Rosary's own choices (the clarity pass, Oct
-  2026, which split them out of Prayer Experience, where the Rosary's
-  Audio and the Prayers tab's stood side by side and neither said
-  which it set). Audio and Counting, each a pill of its two named
-  options over a line saying what the chosen one does
-  (`RosaryChoiceSettingsRow`, the same pill as a Rosary's own page).
-  They keep the rows the Bead counter and Pray aloud switches stood
-  in; a switch could say only on or off, not which of two ways. Audio
-  comes first, as on the Rosary's own page, since it decides whether
-  Counting is offered at all. Counting stands dimmed under the Whole
-  Rosary, saying why: the voice moves the beads on the screen then.
-  Then **Opening and Closing Prayers**, Skip | Show
+- **The Rosary** — two rows, since every Rosary is said aloud and the
+  beads always hang (the Audio and Counting pills went with the One
+  Rosary switch, Nov 2026). **Opening and Closing Prayers**, Skip | Show
   (`OpeningPrayersChoice`, `userSettings.showsOpeningPrayers`, Show by
-  default), whether a Rosary prayed in silence begins and ends on the
-  pendant (see the player, below), dimmed under the Whole Rosary, whose
-  voice says them. Then **After the Rosary**, a small heading inside
-  the section over the prayers after the Rosary (For the Pope's
-  intentions, Memorare, Saint Michael) and the Voice & speed sheet's
-  note: they are said aloud after the closing prayer, and only when
-  every prayer is — nothing else reads them. Set as three more
-  switches among the ways of praying, they read as prayers added to
-  every Rosary, and a silent Rosary never said them
+  default, a pill over a line saying what the chosen one does,
+  `RosaryChoiceSettingsRow`): whether a set read as text begins and ends
+  on the pendant; said aloud, the voice says them whatever is chosen.
+  Then **After the Rosary**, one row ("None chosen", or the chosen
+  names) opening the prayers said after the closing prayer (For the
+  Pope's intentions, Memorare, Saint Michael), never in the chaplet
 - **Prayers Tab** — the Prayer Book's one choice, its **Audio**, In
   Silence | With a Voice, in the same row and pill (`PrayerBookAudio`), which
   sets `PrayerBookStore.praysAloud`. It is kept apart from the
@@ -960,8 +948,8 @@ app/
 │   │                         # PrayButtonEditorSheet, PrayShortcutTray
 │   ├── Meditation/           # SelectMeditationView (the mysteries' page), MeditationSetDetailView,
 │   │                         # RosaryConfirmPage (the Rosary's own page:
-│   │                         # YOUR ROSARY TODAY, the choices, the rows),
-│   │                         # BeadSwitch (+ SetupTogglePill)
+│   │                         # YOUR ROSARY TODAY, its rows), BeadSwitch,
+│   │                         # BeginnerRosaryView (the beginner's path)
 │   ├── Consecration/         # 33-day preparation (own NavigationStack)
 │   ├── TrueDevotionView      # True Devotion's title page (at the Views/ root)
 │   ├── TrueDevotion/         # Its contents page and chapter reader
@@ -977,14 +965,15 @@ app/
 │   │                         # LibraryReadingView, the Missal and the Office
 │   │                         # (+ LiturgicalMonthGrid, the month grid both
 │   │                         # calendars draw)
-│   ├── Onboarding/           # 9-slide first run (8 said aloud) + RosaryMethodsView
+│   ├── Onboarding/           # 7-slide first run + RosaryMethodsView
 │   ├── WhatsNew/ FirstUseTour/ # the two first looks, once each
 │   └── Launch/
 ├── Components/               # CustomTabBar, HeaderView, MysteryCard, QuoteSection,
 │                             # MeditationSetTile (+Row), StreakWidget,
 │                             # TodaysPrayerSection + TodayInChurch, SetArtworkView,
 │                             # BookCover, QuotedPassageText, PrayerPainting(Stage)
-│                             # (the player's ground), RosaryStrandView,
+│                             # (the player's ground), OneRosaryViews (the
+│                             # simple Rosary's player), RosaryStrandView,
 │                             # BeadStatusRow (the reader's), RosaryDiagram,
 │                             # PendantCrossView, OrdoMasthead, ThumbnailImage
 │                             # (a painting drawn small from a copy made off the
@@ -1083,182 +1072,127 @@ write concurrent code here:
 - **Core prayer flow** — day-based mysteries, the mysteries' page (the
   Rosary's other two forms over the meditation sets: gallery or list, a
   filter tray of API labels, pinned sets on top), the Rosary's own page
-  before prayer, decade-by-decade prayer screen with bead tracking,
-  completion screen, and a resume card for an unfinished Rosary.
+  before prayer, one player for every form, completion screen, and a
+  resume card for an unfinished Rosary.
 
-  **The bead is the unit** (the "Bead-First Rosary Prayer Flow" handoff).
-  The whole Rosary hangs as one strand at the right edge of the player
-  (`RosaryStrandView`, hung by `.rosaryStrand(_:)` at the same place on
-  both players): prayed beads run off below the hand, the bead under the
-  hand rests at the window's middle, and the beads to come descend from
-  above, Our Father beads larger and carrying their number (1 to 5,
-  1 to 7 in the chaplet; they were Roman numerals) so the next
-  decade is seen approaching. It is a readout, never tappable. Swipe
-  **down** for the next bead, up for the one before; the decade turns
-  on its own when the next Our Father arrives (medium haptic; a bead is
-  `.selection`), and there are no arrows between mysteries and no
-  horizontal swipe — nothing but the beads moves the Rosary forward.
-  The meditation belongs to the Our Father bead (heard or read there);
-  the ten Hail Marys (seven in a sorrow of the chaplet) are prayed with only the count beside you — beside
-  the bead itself. The strand names the bead under the hand in its own
-  margin at the window's middle (`RosaryStrandView.activeLabel`: OUR
-  FATHER · HAIL MARY / 4 OF 10 · GLORY BE & / FATIMA PRAYER, the count
-  rolling as one fixed view while the rows slide beneath it, and
-  growing no larger than `xLarge`, since the window is a fixed 150
-  points and clips — at the app's `xxLarge` THE MEDITATION lost its T),
-  and the Our Father beads carry only their numeral — the words "OUR FATHER"
-  beside every one of them ran a hundred points into whatever stood to
-  the strand's left. The player's foot — title, transport, utility row —
-  changes nothing from bead to bead: a `BeadStatusRow` once stood there
-  above the transport and re-wrapped its cue on every swipe, shoving the
-  controls, and now the row is the reader's alone, which has no strand.
-  **The beads unlock once the meditation has been heard.** The strand
-  always hangs at the edge, but on a mystery's Our Father it is greyed,
-  still and locked — a small drawn lock on the bead under the hand, and
-  SWIPE AFTER / THE MEDITATION in place of the bead's name
-  (`RosaryStrandView.locked`) — until the narration plays to its end
-  (`PrayerSessionViewModel.beadsUnlocked`, fed by AudioService's
-  end-of-track callback, which in the prayer flow only ever notes this
-  and never moves the Rosary on). Locked, a swipe only tugs the string
-  and lets it back, and the rotor's bead actions do nothing; unlocking
-  colours it where it hangs, with the decade ripple and a light tick. It
-  unlocks at once where there is nothing to wait for — a meditation with
-  no narration, narration that would not load, or a Rosary said aloud,
-  whose voice moves the beads itself — and stays unlocked
-  for the mystery once the hand has moved past the Our Father. The
-  reader's bead row is never locked: reading the meditation is the other
-  way of praying it. An earlier cut hid the strand until the meditation
-  was heard, and switching the counter on mid-meditation then seemed to
-  do nothing. The setting has one name and one explanation wherever it
-  is offered — Counting, On My Rosary or On the Screen: on a Rosary's
-  own page, in the playback sheet and in Settings from
-  `RosaryChoice.counting`, and in onboarding's "Where Will You Count?"
-  from its own copy of the same words; it had three names ("Pray on the
-  Beads", "Bead counter" and the pill's ON THE BEADS) and none said what
-  would appear. It is offered
-  only while the voice reads the meditation alone: with the Whole Rosary
-  the voice moves the beads on the screen whatever Counting says
-  (`RosaryForm.countsOnScreen`, which both players read), so a counter
-  switched off earlier cannot take the strand from a Rosary said aloud,
-  where nothing would be left to change it back. When the voice cannot
-  begin (`spokenFailure`: no recordings to be had, offline), the
-  meditation's player counts as Counting says again (`aloud: prayAloud
-  && viewModel.spokenFailure == nil`): the meditation is heard in its
-  own narration, and a Rosary counted on one's own rosary is not handed a
-  strand locked at every Our Father that no voice will move.
-  `ToggleRow` answers a tap anywhere on the row, not only on its
-  switch. The one-time `PrayerSwipeHint` ("Swipe down for the next
-  bead") waits for the beads to unlock and for the voice to let go of
-  the hand (`voiceHoldsHand`) — said aloud the beads count as unlocked
-  from the first word, and the one showing was spent over the Sign of the
-  Cross, across the pendant's foot, where a swipe does nothing — floating
-  over the painting above
-  the controls so its coming and going moves nothing. The Glory Be has no bead of its own: it is drawn
-  on the next decade's Our Father bead, and after the last decade on one
-  final bead labelled AMEN, where the AMEN button hangs under the bead's
-  name beside the strand (`rosaryStrand(onAmen:)`) — the one thing at
-  the strand that takes a touch; the strand itself never does. A swipe
-  never finishes a Rosary. A decade closes on the Glory Be and the
-  Fatima Prayer together, as Our Lady asked, so the closing bead is
-  named for both — except in the Seven Sorrows chaplet, whose sorrows
-  close on the Glory Be alone (`RosaryStrand.saysFatimaPrayer`), and
-  its bead says so. The strand's window keeps `trailingRoom` past the bead
-  column for the ring's halo and the decade ripple, which the window's
-  edge once cut in half. The arithmetic — decade length, a bead's linear
-  index, labels, numerals — is `Models/RosaryStrand.swift`, used by both
-  view models; `BeadPosition` (mystery + bead) is what the one haptic
-  keys on, so a step across a decade's end ticks once.
+  **The simple Rosary** (Abraham, Nov 2026: "Yes, only Rosary"). It was
+  the One Rosary beta behind a switch in Settings; the switch and the
+  Rosary it replaced (a strand to swipe or a decade at a time, chosen by
+  two pills called Audio and Counting, with `prayAloud` and `prayOnBeads`
+  behind them) are gone, and nothing in the app chooses between ways of
+  praying any more. Its pure rules are `Models/SimpleRosary.swift`
+  (`SimpleRosary`, `TimedLine`, `RosaryStop`) and the rail's
+  `Models/OneRosary.swift`; what the player draws is
+  `Components/OneRosaryViews.swift`. Both players draw it the same way:
+  `MysteryPrayerView` for a meditation set, `ScripturalRosaryPrayerView`
+  for the Scriptural Rosary and the Audio Rosary.
 
-  **The beads are optional on both players** (`userSettings.prayOnBeads`,
-  on by default: Counting, On the Screen).
+  **Every prayer is said aloud from the moment PRAY is pressed**
+  (`SimpleRosary.praysAloud`), the voice moving the hand along the beads:
+  the opening prayers, each mystery's announcement and meditation, the
+  Our Father, the Hail Marys, the Glory Be, the closing prayers. The one
+  exception is a meditation set with no recording, which opens as text to
+  read (`SimpleRosary.opensAsText`, the reader below); the beads are then
+  moved by Back and Next.
 
-  **Prayed in silence, the Rosary begins and ends on the pendant**
-  (`Models/SilentPendant.swift`, the clarity pass, Oct 2026). It once
-  began on the first mystery's Our Father and ended on the last Glory
-  Be, and a newcomer was never shown the Sign of the Cross, the Creed,
-  the three Hail Marys or the Hail, Holy Queen, nor the words of any
-  prayer they were told to say. Now, unless Settings → The Rosary skips
-  them, both players open on the cross: the spoken script's own opening
-  and closing segments (`SpokenRosaryScript.build`, so the order and
-  captions are the voice's; the prayers after the Rosary are left to
-  the voice), a prayer a step, the pendant drawn where the painting
-  stands (`PendantStage`, fed `PrayerSessionViewModel.pendant`, the
-  spoken pendant or the silent one). On the meditation's player the
-  foot gives way to the step: THE OPENING PRAYERS · 2 OF 7, the
-  prayer's name, its words in full (a size down for the Creed and the
-  long closing prayers, so the pendant keeps room; they never scroll,
-  since the vertical swipe is the Rosary's), on the first step a line
-  naming what follows, and BACK and NEXT PRAYER (THE FIRST MYSTERY on
-  the last opening prayer), with AMEN on the last Sign of the Cross;
-  the swipe, the reader's bead row and the decade arrows walk the
-  pendant too (`advanceOffTheBeads`, `retreatOffTheBeads`). The strand,
-  the reader and the reader's book glyph stand aside on the pendant,
-  which has no meditation. The Scriptural Rosary's screen sets the
-  prayer in its column with the pendant beside it, as the Audio
-  Rosary does (`setsPendantWords`). The last Glory Be is then no longer
-  the end (`isLastBeadOfRosary` is the last closing prayer), so a
-  swipe on it goes on to the Hail, Holy Queen. A Rosary begun from its
-  start begins on the cross; one taken up again begins where it was
-  left. On the beads a tap on the bead under the hand (or its name)
-  opens its prayer's words over the painting — the Our Father, a Hail
-  Mary, or the Glory Be with the Fatima Prayer (`SilentPendant.lines(ofBead:)`)
-  — and they stay open bead to bead until tapped again; the strand is
-  otherwise still a readout.
+  - **The foot** is one row the same from the first Sign of the Cross to
+    the AMEN (`OneRosaryFooter`): Back, the voice's play and pause on an
+    outlined disc between them (`OneRosaryPlayDisc`; on a meditation heard
+    to its end it offers to hear it again), and Next, Back and Next
+    sharing one width (`wayWidth`) so the play stands at the centre. Back
+    and Next move a whole prayer, or a bead. On the last step AMEN, the
+    screen's one filled gold act, takes Next's place: a Rosary is only
+    ever finished by a tap on it.
+  - **The pill at the top** (`RosaryStopsPill`) names the part of the
+    Rosary the hand is in, and opens `RosaryStopsSheet`, which goes to any
+    part: the opening prayers, a mystery (with its meditation, named with
+    the meditation's title where it differs), the closing prayers
+    (`RosaryStop`, seven mysteries in the chaplet). Beside it, the speaker
+    (`SimpleRosaryMuteButton`): muted, the voice is silent and the Rosary
+    goes on at the recording's own pace, every recording still playing
+    under the mute (`SpokenRosaryPlayer.setMuted`), so the hand and the lit
+    words keep time.
+  - **The words** of the prayer being said stand in one column at one
+    size (`SimpleRosaryWords`, 15 to 22 points by the reader's Aa,
+    `SimpleRosary.wordsSize`): a long prayer and a short one are set alike,
+    the Creed scrolling where it must. Where the recording is timed, the
+    line being said is lit (`SimpleRosary.highlightedLine`), from the
+    server's real `lines` (`TimedLine`: a narration's from
+    `POST /api/v2/meditations/audio`, a prayer's from `/api/rosary/audio`
+    once served); a recording with no lines is never lit, since its pace
+    is never guessed. A lit line is kept near the top of the column
+    (`litLineAnchor`). A timed line can run 39 seconds and several lines
+    of text: it wraps and scrolls with the column, and is lit whole.
+  - **The rail** (`OneRosaryRailView`, built from `OneRosaryRail`) is the
+    whole Rosary as one string at the right edge: the cross at its foot,
+    the pendant, the medal, the decades, the medal again. Prayed beads run
+    below the hand, beads to come above, the place under the hand at the
+    window's middle in a plain halo. The beads near the hand take a tap
+    (`RosaryStrand.canTap`): any bead behind, and ahead only as far as the
+    next Our Father, so a tap never passes over a meditation unheard.
+    Nothing needs a tap; the voice and Next do it all. The first time a
+    bead can be tapped, a one-time line under the prayer says so
+    (`OneRosaryTapHint`). There is no swipe anywhere on the player.
+  - **Show Words and Beads** (`userSettings.rosaryShowsWordsAndBeads`, on
+    by default) is a switch in the player's Aa sheet: off, the prayer's
+    words and the rail stand down, and the pill and the mystery's name
+    stay, for someone who prays with the voice and the painting alone.
+  - **On a mystery's Our Father**, READ THE MEDITATION (`OneRosaryReadLink`,
+    with the meditation's title) opens it as text in `MeditationReaderView`
+    over the player, the voice going on beneath. The reader follows the
+    voice by its real timed lines alone, the paragraph holding the line
+    being said kept in view (`SimpleRosary.paragraph(of:in:)`, matching its
+    first words); untimed, it stays where the reader leaves it. A set read
+    as text opens on that same reader as the Rosary itself.
+  - **Speeds.** The prayers are said at one of six steps, 0.8× to 1.3×
+    (`PlaybackSpeedChoice`, "Prayer Speed", in the playback sheet and the
+    Voice & speed sheet), and **a meditation is always read at 1×**: the
+    spoken Rosary borrows 1× for its meditation segments
+    (`SpokenRosaryPlayer.playsAtNaturalPace`, `setPace(for:)`) and gives
+    the prayers' speed back after, and a set's own narration claim borrows
+    1× too. Both sheets say so beneath the speeds ("Meditations are always
+    read at 1×.").
+  - **The opening and closing prayers** are said by the voice. A set read
+    as text begins and ends on the pendant unless Settings → The Rosary
+    skips them (`userSettings.showsOpeningPrayers`, `SilentPendant`): the
+    spoken script's own opening and closing segments
+    (`SpokenRosaryScript.build`), a prayer a step, the pendant drawn where
+    the painting stands.
+  - **The Seven Sorrows** pray on the same player: seven sorrows on the
+    pill and the rail, seven Hail Marys to a sorrow, a Glory Be with no
+    Fatima Prayer (`RosaryStrand.saysFatimaPrayer`).
 
-  **The two choices that change the prayer are shown before PRAY; the
-  rest are rows.** Every form of the Rosary is confirmed on one page
-  (`RosaryConfirmPage`, the "Rosary ways to pray" handoff): the painting
-  dissolving into the page, the name, then YOUR ROSARY TODAY — Audio
-  (Meditation Only | Whole Rosary; Read in Silence in the Scriptural
-  Rosary) and, while the voice reads the meditation alone, Counting (On My
-  Rosary | On the Screen), each a pill of two named options
-  (`RosaryChoicePill`, a segmented picker to VoiceOver) with a line
-  beneath saying what the chosen one does, and under them ruled rows for
-  what else is set: Mysteries (not for a set, which belongs to its
-  mysteries; "Joyful · today", to a sheet of the five sets and the
-  chaplet, where a tap chooses and closes) and Voice & speed ("Male · 1×",
-  to a sheet holding the voice, the speed and, but for the chaplet, the
-  prayers after the Rosary). The Scriptural Rosary read in silence has
-  no Voice & speed row (`RosaryInfoRow.rows(for:aloud:)`): nothing is
-  spoken, and the prayers after the Rosary are said only aloud. It comes
-  back with the Whole Rosary. A set's page keeps the row in either mode,
-  since its meditation is always read aloud, and so does the Audio
-  Rosary's. The Audio Rosary offers no choice: its audio
-  is a plain row, "Whole Rosary · pause anytime". The words for every
-  option and note are `RosaryChoice`'s, read by the pages, Settings and
-  the playback sheet; onboarding sets the same names and notes from its
-  own copy (`OnboardingView`, the notes joined by a semicolon), so change
-  the two together.
+  **The beginner's path.** Someone who said in onboarding that they came
+  to learn the Rosary (the learning intention) begins, from Home's
+  card or the Pray button's Today's Rosary, on St. Alphonsus Liguori's meditations for the day's mysteries
+  with the helps on (`BeginnerRosaryView`, `SimpleRosary.beginnerSet`):
+  one plain line on each step saying what to pray and which bead the hand
+  is on (`RosaryHelps`, from the Guided Rosary's steps, never a toggle;
+  the chaplet has none). The set's own page says so over PRAY
+  (`RosaryConfirmPrompt`), with a plain way to say no, which opens the
+  day's mysteries' page and is remembered
+  (`userSettings.declinedBeginnerRosary`,
+  `SimpleRosary.offersBeginnerPath`): the path is not offered again.
+  Abraham, 5 Nov 2026: "the default for new is st alphonsus meditations
+  with the helps".
 
-  This reverses a recorded decision. The choices once stood behind one
-  quiet line — HOW YOU'LL PRAY over "Female voice · 1× · Every prayer
-  aloud · On the beads" and a caret to a sheet — because open on the page
-  they had been a filled card of capsules and switches, three of them
-  gold, and the title page read as a settings form; the rule was "keep
-  them in the sheet". What changed is how few there are: two choices,
-  each a single pill, the rest in rows. The two change what praying is
-  like, so they are seen where they apply rather than found after PRAY.
-  What holds now is the reverse: the two choices stand on the page,
-  everything else stays a row. A choice made here is the setting itself,
-  and carries to the next Rosary and to every other place it is offered.
-
-  A choice's arrival and departure are timed apart
-  (`RosaryChoiceGroup.comingAndGoing`): Counting, leaving, is gone before
-  the rows beneath close over its place, and arriving waits for them to
-  make room; the Scriptural Rosary's Voice & speed row comes and goes on
-  the same timing. As one plain fade on the rows' own 0.25s the rows slid
-  through it while it was still half there. The pill itself passes its lit
-  segment on `Motion.choice` (`ease(0.25)`, the design system's ease-out),
-  with no spring, and a segment presses with `SacredCardButtonStyle`, a
-  row's settle: as a bare glyph (`QuietGlyphButtonStyle`) half the pill
-  dipped to 0.9 and faded, and read as a jolt under the thumb.
+  **The Rosary's own page has rows, not choices.** Every form is confirmed
+  on one page (`RosaryConfirmPage`): the painting dissolving into the
+  page, the name, then YOUR ROSARY TODAY as ruled rows — Mysteries (not
+  for a set, which belongs to its mysteries; "Joyful · today", to a sheet
+  of the five sets and the chaplet, where a tap chooses and closes) and
+  Voice & speed ("Male · 1×", to a sheet holding the voice, the prayers'
+  speed and, but for the chaplet, the prayers after the Rosary). The
+  Audio Rosary's audio is a plain row, "Every prayer aloud · pause
+  anytime". The Audio and Counting pills that stood on this page went
+  with the switch.
 
   A set's page puts its subtitle under the name only when its description
   opens on a sentence short enough to stand there
   (`MeditationSetDetailViewModel.subtitle(from:)` — its own splitter, since
   the system's sentence tokenizer ends sentences at "St." and "Fulton J.");
-  the descriptions run to six lines, and six there pushed the choices
-  under PRAY. The full description stands in the ledger below, unless the
+  the descriptions run to six lines, and six there pushed the rows under
+  PRAY. The full description stands in the ledger below, unless the
   subtitle said all of it. The page's pin went with the design: sets are
   pinned on the shelf's tiles and rows. PRAY's foot turns solid faster
   than `PrayFootScrim`, the long scrim these pages once stood on, which
@@ -1266,46 +1200,11 @@ write concurrent code here:
   scrolls under this foot, and at that scrim's pace its lines read
   through beneath the button.
 
-  The player's playback sheet (the faders) holds the same two choices
-  beneath the voice and the speed, in the same order and words. At the
-  accessibility text sizes it opens the whole glass high and scrolls
-  (`PlaybackSettingsSheet.detents(for:)`) — at 530 points its rows stood
-  crushed, one switch's name over the other's — and the voice capsules
-  and the speed stop growing at `accessibility1` and shrink their words
-  a little rather than cut "0.75×" to "0….".
-
-  Counted on one's own rosary, the meditation's player is the
-  decade-at-a-time screen it was for a hand that keeps its own count:
-  the mystery strand in the header, arrows flanking the transport (→
-  becomes the AMEN check on the last mystery), a horizontal swipe
-  between mysteries (live in the reader too, which has no arrows), the
-  one-time `PrayerSwipeHint`, and no strand or bead row. The bead never
-  moves there, so the last bead, which brings back controls put away,
-  never comes: they come back by themselves at the last mystery, where
-  AMEN waits (on the Scriptural Rosary's screen too). The Scriptural
-  Rosary is counted by hand too (below). Resume keeps `(mysteryIndex, beadIndex)`
-  (`InProgressPrayer.beadIndex`, optional for older snapshots), once a
-  bead or a decade has moved; counted by hand no bead moves on the first
-  mystery to say the Rosary has begun, so it is kept for Home's card
-  once it has been prayed a minute
-  (`PrayerResumeService.firstMysteryBegunAfter`, which the Scriptural
-  Rosary shares), and again when the phone locks or the Rosary is left
-  after that. Opened and backed out of, it pins nothing, as on the beads.
-  Said aloud the voice moves the beads on the screen, so this never
-  applies while the voice holds the hand. It once could not be taken up
-  again before the second mystery.
-  The painting, its frost and its scrim are `PrayerPaintingStage`,
-  shared with the Scriptural Rosary, which uses its `.veiled` style.
-  A tap on the painting — or on the pendant, while the opening and
-  closing prayers are said — puts the controls away and brings them
-  back (on the meditation's player the pendant's tap, like the
-  painting's, puts the one-time swipe hint away with them). To VoiceOver
-  each is one button (`StageTapAccessibility`) whose double-tap runs that
-  same tap: left to fall at the element's centre, it landed mid-glass,
-  where the Scriptural Rosary's column moves the bead and the pendant's
-  steps the prayer. The pendant's label says where the voice is on it
-  ("The cross and first beads. The large bead"; the centrepiece is "The
-  medal", since a newcomer knows neither "pendant" nor "centrepiece").
+  Resume keeps `(mysteryIndex, beadIndex)` (`InProgressPrayer.beadIndex`,
+  optional for older snapshots) and the spoken script's step, once the
+  hand has moved; opened and backed out of, the Rosary pins nothing. The
+  painting, its frost and its scrim are `PrayerPaintingStage`, shared by
+  both players.
 - **Audio** — narration for meditations, and chant from the Chant
   Library (below).
 
@@ -1400,27 +1299,18 @@ write concurrent code here:
   does. The Angelus bell and the reminder sounds are sound effects and
   stay off the Lock Screen.
 
-  **The narration's speed is a slider** (`PlaybackSpeedChoice`, in the
-  playback sheet and the Voice & speed sheet): 0.7× to 1.7×
-  (`AudioService.rateRange` — slower the voice drags, faster the
-  prayers run together) in twentieths, its value beside it
-  ("1.15×"), a soft catch at 1× felt as a tick, and an outlined 1× at
-  its far end as the way back, faded but never gone, so the track keeps
-  its length under the thumb. The slider shows and sets the app's own
-  speed (`AudioService.appRate`, `setAppRate`), never a speed a chant or
-  a book borrowed, and the Voice & speed row on the Rosary's own page
-  names the same speed: a drag is heard as it goes when something is playing at the
-  app's speed (`previewAppRate`), and stored only when the finger lifts
-  (`userSettings.narrationRate`); under a borrowed speed it is stored and
-  not heard, and the loan plays on until it ends — a drag once retuned a
-  slowed chant and cleared its loan, and the sheet named the chant's
-  0.75× as the app's. What the slider sets once the finger
-  is off it, as the thumb settles, is stored at once — taken as a drag,
-  it was never kept, and the sheet named a speed the voice was not
-  saying, with the 1× beside it seeming to do nothing; VoiceOver adjusts it a quarter at a
-  step and reads "1.25 times". Five capsules stood there once, and a
-  voice a little slow at 1× and a little quick at 1.25× had nothing
-  between. `AudioService.resolvedRate` brings any speed into range and
+  **The prayers' speed is six steps** (`PlaybackSpeedChoice`, "Prayer
+  Speed", in the playback sheet and the Voice & speed sheet): 0.8×, 0.9×,
+  1×, 1.1×, 1.2× and 1.3× as capsules, the chosen one lit
+  (`PlaybackSpeedChoice.isChosen`, which lights the nearest step for a
+  speed stored between them). A tap sets the app's own speed
+  (`AudioService.appRate`, `setAppRate`), never a speed a chant or a book
+  borrowed, and the Voice & speed row on the Rosary's own page names the
+  same speed. A meditation is always read at 1×, whatever is chosen, and
+  both sheets say so beneath the steps (see The simple Rosary). A slider
+  of 0.7× to 1.7× in twentieths stood here until the simple Rosary
+  (Nov 2026).
+  `AudioService.resolvedRate` brings any speed into range and
   onto the twentieths wherever one is read or set — it used to turn
   anything off the preset list into 1× — and the remembered speed keeps
   to 0.7×–1.7×, while a speed borrowed with `remember: false` (a book on
@@ -1670,7 +1560,7 @@ write concurrent code here:
   voice. A set saved from its own page takes the spoken prayers of its
   mysteries too, every prayer after the Rosary included
   (`OfflineContentService.spokenClips(for:)`): it once said "Saved on
-  this device" and then, with the Whole Rosary chosen, would not begin on a plane.
+  this device" and then, said aloud, would not begin on a plane.
   It fetches every chant's recording and score as well, on any network
   (the chants otherwise come down by themselves on Wi-Fi; see The Prayer
   Book's and the Chant Library's content).
@@ -1682,35 +1572,24 @@ write concurrent code here:
   What brings the user to the Rosary is chosen in onboarding and Settings
   → Devotion. (The app-icon picker is built but switched off; see
   Settings.)
-- **Onboarding** — nine slides (eight when the whole Rosary is said
-  aloud), skippable, re-runnable from About in debug builds
-  (`Views/Onboarding/OnboardingView.swift`). The order asks before it
-  shows and gives before it asks: welcome → what brings you to the
-  Rosary → **what you'll hear** (Meditation Only, the default, or Whole
-  Rosary — `userSettings.prayAloud` — over a decade's four parts marked
-  VOICE or YOU) → **where you'll count** (On the Screen, the default, or
-  On My Rosary — `userSettings.prayOnBeads`, the choice Settings and the
-  Rosary's pages call Counting), each shown working in one fixed slot: the players' own
-  `RosaryStrandView` to swipe, or arrows stepping a mystery at a time →
-  what the app holds for the reasons chosen → colors → language → a
+- **Onboarding** — seven slides, skippable, re-runnable from About in
+  debug builds (`Views/Onboarding/OnboardingView.swift`). The order asks
+  before it shows and gives before it asks: welcome → what brings you to
+  the Rosary (someone who comes to learn it is given the beginner's path,
+  above) → what the app holds for the reasons chosen → colors → language → a
   reminder with evening already chosen ("Remind Me at 8 PM"), which says
   before it is pressed that the iPhone will then ask → the Sign of the
   Cross, whose button takes the first step it names (today's Rosary, or
   How to Pray for someone learning) through `OnboardingFirstStep`. The
-  two MAKE IT YOURS slides are the "Rosary ways to pray" handoff's, in
-  its words, which the Rosary's pages and Settings share. The beads
-  slide stands only with Meditation Only: with the whole Rosary aloud
-  the voice moves the beads, so there is nothing to choose, and the
-  first slide's kicker drops its "1 of 2". Every
-  position — the strand of progress, the paintings, the ground under the
-  words — is a place in `OnboardingStage.sequence`, never a slide's own
-  number, and a painting is known by its slide, so the beads slide can
-  come and go while the voice slide is read without a painting or a
-  ground belonging to the wrong page. Every choice sits on one card
+  slides that asked what you would hear (Meditation Only or Whole
+  Rosary) and where you would count (On the Screen or On My Rosary) went
+  with the One Rosary switch, Nov 2026: every Rosary is said aloud and
+  the beads always hang. Every position — the strand of progress, the
+  paintings, the ground under the words — is a place in
+  `OnboardingStage.sequence`, never a slide's own number, and a painting
+  is known by its slide. Every choice sits on one card
   (`OnboardingChoiceCard`: a radio where one choice excludes the
-  others, a check for the reasons), and a lead whose words change with a
-  choice holds the height of its longest sentence (`OnboardingLeadSlot`)
-  so nothing beneath it moves. A reminder never asked about is left
+  others, a check for the reasons). A reminder never asked about is left
   off: a first run that skips or swipes past the reminder slide turns
   `remindersEnabled` off while notifications are still undetermined, so
   Settings never shows a reminder switched on that cannot ring. The
@@ -1738,7 +1617,7 @@ write concurrent code here:
   `ViewThatFits`'s scrolling last resort takes
   `.scrollBounceBehavior(.basedOnSize)`: a scroll view with nothing to
   scroll still swallows the sideways drag that turns the page, and the
-  beads slide, the tallest of them, could not be swiped off. The head
+  tallest slide could not be swiped off. The head
   keeps Skip's height after Skip has gone, or the strand rose as the
   last slide arrived. Slide titles are headings, and a slide a button
   turns to takes VoiceOver to its title (`focusRequest`); a turn made by
@@ -2119,7 +1998,7 @@ write concurrent code here:
   name and one
   line, the chosen mysteries' painting crossfading as the Mysteries row
   changes them (nothing remembered: tomorrow's page opens on tomorrow's
-  mysteries), the choices, and past them a ledger — About, The first
+  mysteries), the rows, and past them a ledger — About, The first
   mystery (The first sorrow in the chaplet: the Scriptural Rosary's
   first mystery and its first verse), From. The Mysteries row opens a
   sheet of the five sets and the chaplet (`MysteriesChoiceSheet`,
@@ -2133,115 +2012,22 @@ write concurrent code here:
   before the push covers the page cannot open the Rosary twice. `SetSection`
   is shared with the set's page.
 
-  **`ScripturalRosaryPrayerView`** is the handoff's 3a: the mystery's
-  painting edge to edge under a veil (`PrayerPaintingStage(style:
-  .veiled)` — 55% opacity, a gradient darkest at head and foot, lifted
-  with the chrome), the reading as a column on the left, and the same
-  strand the meditation's player hangs at the right edge
-  (`RosaryStrandView`). **The column is anchored, and only its words
-  change.** It hangs level with the first bead of the strand's window
-  (`readingTop`, from `RosaryStrandView.windowTop`) and never moves: a
-  head of the bead's name in small capitals (rolling) over the
-  mystery's name in the display face with two lines' room kept whether
-  it needs them or not, then one slot for the bead's words — the verse
-  in the Medium face at the reading size + 1 (the italic thinned to
-  hairlines over the painting), its citation, the fruit on an Our
-  Father (ASK FOR · HUMILITY, as In Scripture names it), a cue only
-  where it is news — which is one view identified by
-  the bead and **crossfades whole** over the one leaving, in a ZStack
-  with nothing beneath it. An earlier draft centred the column on the
-  glass and let each Text change under its own `contentTransition`: a
-  longer verse pushed the whole column up, the lines re-wrapped
-  mid-fade, and the words were unreadable for as long as the animation
-  lasted. Where the Rosary stands is said once, under the mysteries'
-  beads at the foot (THE FIRST JOYFUL MYSTERY), and the cue speaks only on the
-  first bead of the Rosary and the decade prayed, where the next mystery
-  is named so the turn is expected — a cue repeated fifty times is
-  chrome. Positions run Our Father → ten Hail Marys (seven in a sorrow)
-  → Glory Be: the Our
-  Father bead announces the mystery (its description, passage and
-  fruit), each Hail Mary carries its verse, and the decade prayed the
-  column reads the doxology and then, except in the Seven Sorrows
-  chaplet, the Fatima Prayer (Latin when Latin
-  alone is the prayer language; `BeadReading.closingPrayer`) under GLORY
-  BE & FATIMA PRAYER. **Swipe down for the next bead, up for the one
-  before; the decade turns on its own** — on the beads there are no
-  arrows and no swipe between mysteries (counted on one's own rosary,
-  below, the mysteries have them). An earlier draft walked the beads with two
-  arrows, and before that a gold disc stood between them; both are
-  gone, and must not come back: nothing but the beads moves the Rosary
-  forward. The column still taps forward and long-presses back
-  (VoiceOver cannot swipe), and the one haptic keys on `beadPosition`.
-  The header is × · SCRIPTURAL ROSARY · Aa (`ReaderTextOptionsSheet`
-  without its narration section); the Audio Rosary's header reads
-  THE AUDIO ROSARY. The foot is the still mystery strand over the mystery's
-  ordinal name, a Whole Rosary switch (`SetupTogglePill`,
-  `UserSettings.prayAloud`, named as the Audio choice names it; this
-  screen has no playback sheet to put it in, and the Audio Rosary,
-  which has no such choice, has no switch) and the ⋯ tray with no download row.
-  There is no meditation narration and no reader; said aloud, the spoken
-  Rosary (see API Endpoints below) reads each verse before its Hail Mary,
-  and a play disc and caption stand above the strand while it does.
-
-  **Counted on one's own rosary** (Counting: On My Rosary, offered while
-  the verses are read in silence), the strand is taken down and the
-  screen moves a mystery at a time, as the meditation's player does off
-  the beads. The column's head names what the hand counts — OUR FATHER ·
-  TEN HAIL MARYS · GLORY BE (seven in a sorrow) — over the mystery's
-  name, and beneath it the whole decade is set at once
-  (`ScripturalRosaryViewModel.reading(bead:)`): the Our Father's
-  announcement, a verse for each Hail Mary under the bead's own name,
-  and the Glory Be with, but in the chaplet, the Fatima Prayer. It
-  scrolls, dissolving at the foot, and crossfades whole when the mystery
-  turns. Arrows flank the mysteries' beads at the foot, laid over them
-  so the readout keeps its place (the last becomes AMEN's check), and a
-  swipe left or right does what they do; a vertical drag is the decade's
-  scroll. To VoiceOver the column carries Next mystery and Previous
-  mystery, and on the last mystery the forward action is named "Amen —
-  finish the Rosary": an action called Next mystery must not finish it.
-  Counted by hand, no bead moves on the first mystery to say the Rosary
-  has begun, so it is kept for Home's card once it has been prayed a
-  minute (`PrayerResumeService.firstMysteryBegunAfter`, shared with the
-  meditation's player), and again when the phone locks or
-  the Rosary is left after that; opened and backed out of, it pins
-  nothing, as on the screen. It once could not be taken up again before
-  the second mystery. The Scriptural Rosary once counted only on the
-  screen; its verses are as much for the hand that keeps its own count.
-
-  **On the pendant a move is a prayer.** While the opening and closing
-  prayers are said aloud there is no bead of the strand to move to, so
-  the swipe, the column's tap and hold, and the rotor step the voice a
-  prayer on or back (`ScripturalRosaryViewModel.stepSpokenPrayer`); a
-  move back from the first bead goes into the opening prayers, and a
-  move on from the last bead, while its Glory Be or Fatima Prayer is
-  still being said, into the closing ones. The beads were once held
-  still there, and the Creed — two minutes of every Rosary said aloud —
-  could be neither passed over by someone who prays it daily nor said
-  again after a knock at the door. The pendant hangs clear of the foot
-  (`PendantStage(bottomLimit:)`, measured from the foot's top): placed
-  by fractions of the glass alone, the cross's foot stood on the play
-  disc. Through the closing prayers AMEN stands under the prayer's name,
-  as it stood on the last bead; it once vanished for the Hail, Holy Queen
-  and came back only after the last Amen.
-
-  **The Audio Rosary sets every prayer as it is said, the
-  pendant's too.** It is this screen (`SpokenForm.plain`), and its column carries
-  the prayer where the Scriptural Rosary's carries the verse. The Creed,
-  the Hail, Holy Queen, the closing prayer and the prayers after the
-  Rosary once showed only their names — the prayers someone learning by
-  ear knows least. Now each is set like the decades' Our Father (where
-  it stands, what it is, the words), with the pendant hung beside it in
-  the strand's own place and at the strand's scale
-  (`PendantStage(trailingColumn:)`); laid under the words, even dimmed,
-  the cross ran through the Creed's lines. A rubric line ("[Let us
-  pray.]") is set as a rubric, red and italic and out of its brackets,
-  since the voice does not say it. The Audio Rosary's prayers come down
-  as far as they must to be on the page whole (`prayerMinimumScale`) —
-  at 0.7 the Our Father was cut off at "who trespass a…" at the largest
-  sizes — and the Creed closes its lines up as well once it cannot fit
-  at the decades' leading. At the system's accessibility sizes the
-  longest are still cut short: the column has fixed room and the swipe
-  owns the vertical drag, so it cannot scroll.
+  **`ScripturalRosaryPrayerView`** is the simple Rosary's player (see
+  The simple Rosary under Core prayer flow), the same as a set's: the
+  mystery's painting under a veil (`PrayerPaintingStage(style:
+  .veiled)`), the words in the column, the rail at the right edge, the
+  pill and the speaker at the head, Back, play and Next at the foot.
+  Every prayer is said aloud; the Scriptural Rosary's voice reads each
+  bead's verse before its Hail Mary, its citation beneath it and the
+  fruit on an Our Father (ASK FOR · HUMILITY, as In Scripture names it),
+  and the decade prayed reads the doxology and then, except in the
+  chaplet, the Fatima Prayer (`BeadReading.closingPrayer`). **The Audio
+  Rosary** is this screen (`SpokenForm.plain`), its column carrying the
+  prayer where the Scriptural Rosary's carries the verse, the pendant's
+  prayers included; a rubric line ("[Let us pray.]") is set as a
+  rubric, red and italic and out of its brackets, since the voice does
+  not say it. The header names the form (THE SCRIPTURAL ROSARY, THE
+  AUDIO ROSARY); there is no meditation and no reader.
 
   On the last bead the cue gives way to AMEN; completion records locally
   through `CompletedPrayer` (the completion screen takes that value now,
@@ -3681,9 +3467,8 @@ subtitle) — the banner on a Wednesday, the star on a Monday. The row
 names those mysteries and opens their page. It wore `ph-book-open`, as
 the "Rosary ways to pray" handoff specified, which Spiritual Reading's
 door and the Journal also wear; a new fixed glyph, a triptych, was
-drawn and passed over (`Tools/IconAudit/candidates/`). The Rosary's two
-choices wear `ph-speaker-high` (Audio) and `lv-rosary` (Counting), from
-`RosaryChoice`.
+drawn and passed over (`Tools/IconAudit/candidates/`). The player's
+speaker is `ph-speaker-high`, and `ph-speaker-slash` while muted.
 
 ### Motion
 
@@ -3697,9 +3482,8 @@ curves, as about a hundred call sites do. The named motions:
 name, verse or cue changing), `decadeTurn` (painting, kicker and title
 crossfading to the next mystery), `chrome`, `panel` (a reader or tray
 arriving), `settle` (a press or toggle landing), `crossfade` (content
-changing in place), `choice` (one of the Rosary's two choices changing —
-the pill's lit segment, its note, a choice arriving or leaving beneath
-another — `ease(0.25)`), `pageFadeOut`/`pageFadeIn` (a page put down
+changing in place), `choice` (a choice pill's lit segment and its note
+changing — `ease(0.25)`), `pageFadeOut`/`pageFadeIn` (a page put down
 and taken up in place — a prayer in the pray-along, a topic, a prayer
 card under Reduce Motion — with `pageFadeGap` between), and
 `ease(_:)`/`travel(_:)` — the design system's
@@ -3746,27 +3530,19 @@ Four rules, learned the hard way:
   the Consecration tab arrives whole under a veil of the gradient that
   lifts (`consecrationArrivals`) instead.
 - **Reduce Motion is honoured** at every scripted sequence (the completion
-  seal, the strand's descent) and every drift: scale, blur and offset
-  fall away, timings shorten, crossfades remain. Direct manipulation —
-  the strand following a finger — is not motion and stays. (The
+  seal, the rail's descent, a lit line's crossfade) and every drift: scale, blur and offset
+  fall away, timings shorten, crossfades remain. (The
   completion screen's `MilestoneCelebrationCard` still ignores Reduce
   Motion; it is the one to fix.)
 
-The player's motion: the strand **follows the finger** while a swipe is
-under way (`RosaryStrandView.follow`, a tanh curve reaching about one
-bead's length, a third of that at either end of the Rosary), the Scriptural
-Rosary's words dim as it goes, and on release the string slides the rest of
-the way on `Motion.beadSlide` while the ring passes from the bead
-leaving the hand to the one arriving — `RosaryBead` is one view whose
-parts light and dim, never three views swapped. Let go short of a bead,
-the string comes back on `beadSettle`. At a decade's turn the mystery's
-name arrives from the side the string came from (`beadWordsArrival`, a keyframe nudge
-rather than a transition, so old and new words move the same way
-whichever way the last move went). The decade turning — the one move
-where the strand itself stays put, since the Glory Be is said on the
-next decade's Our Father bead — sends a ripple out from the bead under
-the hand (`DecadeTurnRipple`), and the strand is let down from above
-when the screen opens.
+The player's motion: the rail slides a bead at a time on
+`Motion.beadSlide` as the voice, Back, Next or a tap moves the hand, the
+ring passing from the bead leaving the hand to the one arriving. The
+decade turning — the one move where the rail itself stays put, since the
+Glory Be is said on the next decade's Our Father bead — sends a ripple out
+from the bead under the hand (`DecadeTurnRipple`). The prayer's words
+change on `Motion.words`, and a lit line passes on `Motion.crossfade`
+(none under Reduce Motion).
 
 **Verify motion with a recording, not screenshots**: `Tools/MotionSheet`
 lays a simulator recording out as a contact sheet of timestamped frames.
@@ -4074,8 +3850,9 @@ GET /v2/chant-library                   # JSON:API; bare: version, updated_at; ?
 ```
 **The completion is the app's one write, and it is not nothing.** When a
 meditation set's Rosary is finished, `recordCompletion` posts the set id
-and whether it was prayed as the Whole Rosary (`prayed_aloud`; the
-Privacy Policy says "whether you listened to the Whole Rosary"). The server stores it with the time, a
+and whether it was said aloud (`prayed_aloud`, true unless a set with no
+recording was read as text; the Privacy Policy says "whether it was said
+aloud"). The server stores it with the time, a
 city/region/country looked up from the request's IP through a third-party
 service, and the IP truncated to /24 — no account, device or install
 identifier (the backend's `docs/COMPLETION_ANALYTICS.md`). The Scriptural
@@ -4086,10 +3863,9 @@ linked, not tracking, for Analytics) and the in-app Privacy Policy
 (`PrivacyPolicySheet` in `Views/Account/AccountView.swift`, "What Reaches
 Us") say so, and App Store Connect's App Privacy answers must match them —
 keep the three in step with any change to what is sent.
-The spoken Rosary (`UserSettings.prayAloud` — Audio: Whole Rosary — off
-by default, and always in the Audio Rosary) says every prayer aloud and
-moves the beads with the voice, in both the meditation's player and the
-Scriptural Rosary's screen. `SpokenRosaryScript` (Models/SpokenRosary)
+The spoken Rosary (`SimpleRosary.praysAloud`: every Rosary, but for a set
+with no recording) says every prayer aloud and moves the beads with the
+voice, in both players. `SpokenRosaryScript` (Models/SpokenRosary)
 builds the script, pure; `SpokenRosaryPlayer` walks it and takes track
 navigation while it runs, so the screens' own narration loading stands
 aside; `RosaryAudioPack` saves each voice's clips under
@@ -4098,54 +3874,27 @@ reworded prayer is a new file and the pack prays offline once fetched.
 The words must stay the server's: the prayer text in `RosaryPrayers` is
 copied in `LumenViae.Rosary.PrayerAudio`, and the verses reach the server
 as `Tools/ScripturalRosary/scriptural_rosary.json` - change both together.
-While the opening and closing prayers are said aloud, neither player borrows
-the first mystery: `PendantStage` (Components/PendantCrossView) draws the
-pendant in place of the painting - a worked budded cross, the large bead,
-three small beads, the chain and the centrepiece, lit as the voice climbs
-(`PendantPlace` on each script segment) - `PendantTitleBlock` names the
-prayer in place of the mystery's title, and the decade strand comes in
-with the first mystery. The Lock Screen shows the cross, rendered once.
-On the meditation's player prayed on the beads, the closing prayers are
-said with the strand still hung, for its AMEN, so the stage is drawn wider
-and moved left (`pendantShiftBesideStrand`) and the cross hangs in the
-column the strand leaves - centred, its arms ran under the bead's name and
-the AMEN - and the final bead is named CLOSING PRAYERS
-(`PrayerSessionViewModel.spokenBeadLines`), where the Glory Be's name went
-on through the Hail, Holy Queen. After the last Amen the pendant stays
-(`SpokenRosaryPlayer.pendant` shows the script's last segment once
-finished), so the Rosary ends on the cross it began on, AMEN beckoning and
-the next-prayer button faded; the last mystery's painting once came back
-under it. Until then the play button is ready whenever the Rosary is said
-aloud (`NarrationPlayControl`): a prayer stepped to while paused, or the
-Whole Rosary chosen mid-Rosary, has no recording loaded until play is pressed,
-and gated on a track's length the button stood lit and did nothing. Under
-VoiceOver the button reads the prayer being said, and a swipe up or down
-on it steps a prayer, as the buttons beside it do; its fifteen seconds ran
-a Hail Mary off its end while it played, and did nothing to be heard while
-it was paused. The pendant is fitted above the foot, and gives up height at the
-largest text sizes, where the prayer's name stood across the cross.
-While the voice says the opening prayers, or waits on its recordings, it
-holds the hand (`PrayerSessionViewModel.voiceHoldsHand`): the strand, the
-reader's bead row, the rotor's bead actions and the decade arrows stand
-still, and only the player's previous and next prayer buttons move the
-Rosary - one tap on the reader's row once skipped the Creed, the first
-mystery's announcement and its meditation, and the → arrow the whole first
-decade. On arrival PRAY is the word to begin, and the voice begins;
-chosen mid-Rosary from the playback sheet, the Whole Rosary carries on
-only if the meditation was playing, and otherwise waits at the hand's
-place for play, as a new voice does. The reader follows the voice only while it is on the
-meditation (`isHearingMeditation`) - its page once ran top to bottom under
-every Hail Mary, and back - and its bead row names what is said (OPENING
-PRAYERS · The Apostles' Creed, THE MYSTERY, MEDITATION) with no cue to tap,
-since the voice moves the beads.
+The manifest's clips may carry timed `lines` (`TimedLine`), decoded
+leniently so a malformed list leaves the clip untimed rather than failing
+the manifest; a meditation's timings come from
+`POST /api/v2/meditations/audio`, fetched beside the voice and handed to
+the player (`refreshMeditationTimings`). While the opening and closing
+prayers are said, the mystery's painting steps back under a deeper veil
+(`OneRosaryPendantVeil`) and the pendant is drawn at the rail's head;
+`PendantPlace` on each script segment says where on it the voice is, and
+the Lock Screen shows the cross, rendered once. After the last Amen the
+Rosary ends on the closing prayers, AMEN beckoning. While the voice says
+the opening prayers, or waits on its recordings, it holds the hand
+(`voiceHoldsHand`): only Back and Next, the pill and the Lock Screen move
+the Rosary. On arrival PRAY is the word to begin, and the voice begins.
 The script's order is the server's (`PrayerAudio.script/3`), and the
 recorded prayer ids are twelve: the Rosary's eight plus
 `act_of_contrition`, `sorrows_closing_prayer`, `memorare` and
 `st_michael_prayer`. The Seven Sorrows are the Servite chaplet: Sign of
 the Cross and Act of Contrition; per sorrow the announcement ("The First
 Sorrow of Mary: The Prophecy of Simeon"), meditation or verses, Our
-Father, seven Hail Marys and a Glory Be with no Fatima Prayer (the strand's
-Glory Be bead and the Scriptural Rosary say so on screen too); then three
+Father, seven Hail Marys and a Glory Be with no Fatima Prayer (the rail's
+Glory Be bead and the words say so on screen too); then three
 Hail Marys "in honor of her tears", `sorrows_closing_prayer` and the Sign
 of the Cross. The four Rosaries may add `RosaryClosingExtra`s after
 `rosary_closing_prayer`, off by default and chosen in Settings (After the
@@ -4184,8 +3933,7 @@ the announcement before it ended. Resume keeps the script step (`SpokenStep` on 
 kept current through `SpokenRosaryHost.spokenRosaryReached`), used only if
 the rebuilt script still has that prayer at that place, and only while
 the hand still stands on the mystery and bead the snapshot was saved at:
-taken up after the hand had moved on (the Whole Rosary chosen later in
-the Rosary), the voice would carry it back there. Completions post
+taken up after the hand had moved on, the voice would carry it back there. Completions post
 `prayed_aloud` (`POST /completions`).
 A debug build takes `LUMEN_VIAE_API_BASE_URL` to try an undeployed server;
 it redirects `APIService` only, since `OfficeAPIService` hard-codes

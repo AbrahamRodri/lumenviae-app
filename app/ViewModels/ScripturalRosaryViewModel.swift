@@ -8,8 +8,8 @@
 //  The devotion is bundled whole — the mysteries from MysteryData, the
 //  verses from ScripturalRosaryData — so it prays with no network. What
 //  it shares with the meditation's player is the shape of a decade, the
-//  timing of a session, and — when the Rosary is said aloud
-//  (`UserSettings.prayAloud`) — the spoken Rosary, which reads each
+//  timing of a session, and — when the Rosary is said aloud,
+//  as it always is now — the spoken Rosary, which reads each
 //  bead's verse before its Hail Mary from recordings kept on the device.
 //
 //  The same model prays the Rosary Aloud (`SpokenForm.plain`): no verses,
@@ -548,7 +548,7 @@ final class ScripturalRosaryViewModel {
         isPlain || setting
     }
 
-    /// The whole Rosary said aloud, while `UserSettings.prayAloud` is on
+    /// The whole Rosary said aloud
     private(set) var spoken: SpokenRosaryPlayer?
 
     /// The step of the spoken script an interrupted Rosary stopped on,

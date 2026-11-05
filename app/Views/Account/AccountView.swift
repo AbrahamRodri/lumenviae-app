@@ -22,7 +22,7 @@ struct AccountView: View {
     private var afterTheRosarySummary: String {
         let chosen = RosaryClosingExtra.allCases.filter { userSettings.isChosen($0) }
         return chosen.isEmpty
-            ? String(localized: "None chosen · said with the Whole Rosary", comment: "One Rosary beta, Settings: the line under After the Rosary when no prayer is chosen")
+            ? String(localized: "None chosen", comment: "Settings, The Rosary: the line under After the Rosary when no prayer is chosen")
             : chosen.map(\.title).joined(separator: " · ")
     }
 
@@ -1326,7 +1326,7 @@ struct PrivacyPolicySheet: View {
 
                     InfoBlock(
                         title: String(localized: "What Reaches Us", comment: "Privacy Policy: a heading, or the date the policy was last changed"),
-                        text: String(localized: "One short note, when you finish a Rosary prayed with meditations: which meditations they were, and whether you listened to the Whole Rosary. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary, the Audio Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us.", comment: "Privacy Policy: a section's text; keep it as plain and exact as the English")
+                        text: String(localized: "One short note, when you finish a Rosary prayed with meditations: which meditations they were, and whether it was said aloud. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary, the Audio Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us.", comment: "Privacy Policy: a section's text; keep it as plain and exact as the English")
                     )
 
                     InfoBlock(
@@ -1384,7 +1384,7 @@ struct HelpSupportSheet: View {
 
                     InfoBlock(
                         title: String(localized: "How does audio work?", comment: "Help & Support: a question, or a button"),
-                        text: String(localized: "Choose it on the Rosary's own page before you pray, or in Settings under The Rosary: with Meditation Only you hear the meditation and say the prayers yourself, and with Whole Rosary you hear every prayer, the beads moving with the voice. During the prayer, the play button starts and pauses the voice, and the buttons beside it move 10 seconds, or a whole prayer with Whole Rosary.", comment: "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words")
+                        text: String(localized: "Every Rosary is said aloud: the voice says each prayer, and the beads move with it. During the prayer, the play button starts and pauses the voice, Back and Next move a whole prayer, and the speaker at the top mutes the voice so you can pray at your own pace with the words. Voice & speed sets the voice and how fast the prayers are said; meditations are always read at 1×.", comment: "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words")
                     )
 
                     InfoBlock(

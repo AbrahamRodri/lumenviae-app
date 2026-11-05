@@ -7,8 +7,7 @@
 //  The Rosary's own page (`RosaryConfirmPage`), shared with the
 //  Scriptural Rosary and the Holy Rosary: the set's painting dissolving
 //  into the page, its mysteries as the kicker, its name in Cinzel and a
-//  line from its description, then YOUR ROSARY TODAY — Audio, Counting
-//  while the voice reads the meditation alone, and the voice and its
+//  line from its description, then YOUR ROSARY TODAY — the voice and its
 //  speed — over PRAY.
 //
 //  Past the choices, a ruled ledger of short sections named in gold

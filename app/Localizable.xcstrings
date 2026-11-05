@@ -6765,17 +6765,6 @@
         }
       }
     },
-    "Choose it on the Rosary's own page before you pray, or in Settings under The Rosary: with Meditation Only you hear the meditation and say the prayers yourself, and with Whole Rosary you hear every prayer, the beads moving with the voice. During the prayer, the play button starts and pauses the voice, and the buttons beside it move 10 seconds, or a whole prayer with Whole Rosary." : {
-      "comment" : "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elígelo en la página del Rosario antes de rezar, o en Configuración, en El Rosario: con Solo la meditación escuchas la meditación y tú rezas las oraciones, y con el Rosario completo escuchas cada oración, y las cuentas avanzan con la voz. Durante la oración, el botón de reproducir inicia y pausa la voz, y los botones a su lado avanzan o retroceden 10 segundos, o una oración entera con el Rosario completo."
-          }
-        }
-      }
-    },
     "Choose my consecration day" : {
       "comment" : "Consecration introduction, page 4: button to the feast chooser",
       "localizations" : {
@@ -8390,12 +8379,13 @@
         }
       }
     },
-    "Downloads the recordings for the Whole Rosary" : {
+    "Downloads the recordings for the Rosary" : {
+      "comment" : "Prayer screen notice: VoiceOver hint of the button that tries the download again",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descarga las grabaciones del Rosario completo"
+            "value" : "Descarga las grabaciones del Rosario"
           }
         }
       }
@@ -9002,6 +8992,17 @@
         }
       }
     },
+    "Every Rosary is said aloud: the voice says each prayer, and the beads move with it. During the prayer, the play button starts and pauses the voice, Back and Next move a whole prayer, and the speaker at the top mutes the voice so you can pray at your own pace with the words. Voice & speed sets the voice and how fast the prayers are said; meditations are always read at 1×." : {
+      "comment" : "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada Rosario se reza en voz alta: la voz dice cada oración y las cuentas avanzan con ella. Durante la oración, el botón de reproducir inicia y pausa la voz, Atrás y Siguiente pasan una oración entera, y el altavoz de arriba silencia la voz para que reces a tu ritmo con las palabras. En Voz y velocidad eliges la voz y la rapidez con que se dicen las oraciones; las meditaciones siempre se leen a 1×."
+          }
+        }
+      }
+    },
     "Every Rosary will begin this way. You can change it on any Rosary's page, or in Settings." : {
       "localizations" : {
         "es" : {
@@ -9029,6 +9030,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cada misterio del Rosario es una página del Evangelio. Lee su versículo antes de la decena (las diez avemarías que se rezan por él) y reza con la escena frente a ti."
+          }
+        }
+      }
+    },
+    "Every prayer aloud · pause anytime" : {
+      "comment" : "The Audio Rosary's own page: the Audio row's value, a fact rather than a choice: every prayer is said aloud and can be paused",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada oración en voz alta · pausa cuando quieras"
           }
         }
       }
@@ -14582,23 +14594,23 @@
         }
       }
     },
+    "None chosen" : {
+      "comment" : "Settings, The Rosary: the line under After the Rosary when no prayer is chosen",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguna elegida"
+          }
+        }
+      }
+    },
     "None chosen yet." : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aún no has elegido ninguna."
-          }
-        }
-      }
-    },
-    "None chosen · said with the Whole Rosary" : {
-      "comment" : "One Rosary beta, Settings: the line under After the Rosary when no prayer is chosen",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ninguna elegida · se rezan con el Rosario completo"
           }
         }
       }
@@ -15343,13 +15355,13 @@
         }
       }
     },
-    "One short note, when you finish a Rosary prayed with meditations: which meditations they were, and whether you listened to the Whole Rosary. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary, the Audio Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us." : {
+    "One short note, when you finish a Rosary prayed with meditations: which meditations they were, and whether it was said aloud. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary, the Audio Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us." : {
       "comment" : "Privacy Policy: a section's text; keep it as plain and exact as the English",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una breve nota, cuando terminas un Rosario rezado con meditaciones: cuáles meditaciones fueron, y si escuchaste el Rosario completo. Nuestro servidor la guarda con la hora y una ciudad, región y país aproximados, obtenidos mediante ipapi.co a partir de la dirección desde la que se conecta tu teléfono, y guarda esa dirección solo en forma abreviada. No va con ella ningún nombre, cuenta ni identificador del dispositivo, así que dos Rosarios rezados en un mismo teléfono parecen rezados por dos desconocidos. Usamos estas notas solo para saber qué meditaciones se rezan, y más o menos dónde. El Rosario bíblico, el Rosario en audio y el Rosario guiado no envían nada, y nada más nos llega a menos que nos escribas."
+            "value" : "Una breve nota, cuando terminas un Rosario rezado con meditaciones: cuáles meditaciones fueron, y si se rezó en voz alta. Nuestro servidor la guarda con la hora y una ciudad, región y país aproximados, obtenidos mediante ipapi.co a partir de la dirección desde la que se conecta tu teléfono, y guarda esa dirección solo en forma abreviada. No va con ella ningún nombre, cuenta ni identificador del dispositivo, así que dos Rosarios rezados en un mismo teléfono parecen rezados por dos desconocidos. Usamos estas notas solo para saber qué meditaciones se rezan, y más o menos dónde. El Rosario bíblico, el Rosario en audio y el Rosario guiado no envían nada, y nada más nos llega a menos que nos escribas."
           }
         }
       }
@@ -16652,17 +16664,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Se dicen después de la oración final, cuando eliges el Rosario completo."
-          }
-        }
-      }
-    },
-    "Played after the closing prayer, with the Whole Rosary." : {
-      "comment" : "Voice & speed sheet: note under the prayers after the Rosary, which are said only when every prayer is said aloud",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se dicen después de la oración final, con el Rosario completo."
           }
         }
       }
@@ -22759,6 +22760,17 @@
         }
       }
     },
+    "The Rosary isn't recorded in this voice yet. Choose another voice." : {
+      "comment" : "Prayer screen notice when the Rosary cannot be said aloud: no recordings in the chosen narration voice",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El Rosario aún no está grabado con esta voz. Elige otra voz."
+          }
+        }
+      }
+    },
     "The Rosary's own month" : {
       "comment" : "Daily prayer reminder notification in October, the month of the Rosary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters",
       "localizations" : {
@@ -22909,17 +22921,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Los Misterios Dolorosos"
-          }
-        }
-      }
-    },
-    "The Whole Rosary isn't recorded in this voice yet. Choose another voice." : {
-      "comment" : "Prayer screen notice when the Rosary cannot be said aloud: no recordings in the chosen narration voice",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El Rosario completo aún no está grabado en esta voz. Elige otra voz."
           }
         }
       }
@@ -26424,17 +26425,6 @@
         }
       }
     },
-    "Whole Rosary · pause anytime" : {
-      "comment" : "The Audio Rosary's own page: the Audio row's value, a fact rather than a choice: every prayer is said aloud and can be paused",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rosario completo · pausa cuando quieras"
-          }
-        }
-      }
-    },
     "Whom did you meet on the way to Calvary this week?" : {
       "comment" : "Journal, empty page: a starter question on today's mysteries; tapped, it begins a reflection with the question as its title",
       "localizations" : {
@@ -26507,28 +26497,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "¿Con voz o en silencio?"
-          }
-        }
-      }
-    },
-    "With the Whole Rosary, the voice moves the beads on the screen." : {
-      "comment" : "A Rosary's own page and Settings: why the Counting choice is dimmed while the Whole Rosary is chosen",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con el Rosario completo, la voz mueve las cuentas en la pantalla."
-          }
-        }
-      }
-    },
-    "With the Whole Rosary, the voice says them." : {
-      "comment" : "Settings, Opening and Closing Prayers: why the choice is dimmed while the Whole Rosary is chosen",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con el Rosario completo, la voz las dice."
           }
         }
       }
@@ -26943,13 +26911,13 @@
         }
       }
     },
-    "You're offline. The Whole Rosary needs the internet the first time." : {
+    "You're offline. The Rosary's voice needs the internet the first time." : {
       "comment" : "Prayer screen notice when the Rosary cannot be said aloud: no connection and the recordings were never downloaded",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No tienes conexión. El Rosario completo necesita internet la primera vez."
+            "value" : "No tienes conexión. La voz del Rosario necesita internet la primera vez."
           }
         }
       }

@@ -232,8 +232,7 @@ final class APIService {
 
     /// Records a prayer completion to the server when the user finishes all 5 mysteries.
     /// `prayedAloud` says whether the Rosary was said aloud by the spoken
-    /// Rosary (`UserSettings.prayAloud`) rather than prayed along with the
-    /// meditation alone.
+    /// Rosary rather than read as text (a set with no recording).
     @discardableResult
     func recordCompletion(meditationSetId: Int, prayedAloud: Bool = false) async throws -> CompletionResponse {
         let urlString = "\(baseURL)/completions"

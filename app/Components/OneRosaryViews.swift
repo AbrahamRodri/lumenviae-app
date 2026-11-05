@@ -908,7 +908,7 @@ struct OneRosaryFooter: View {
 
 /// The voice's play and pause, between Back and Next while a voice
 /// speaks: on a mystery's Our Father the meditation's (heard to its end,
-/// it offers to hear it again), and with the Whole Rosary the voice's.
+/// it offers to hear it again), and on every other step the voice's.
 /// Outlined in gold, so the step's one filled gold act stays AMEN's.
 struct OneRosaryPlayDisc: View, Equatable {
     enum Glyph: Equatable { case play, pause, replay }

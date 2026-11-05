@@ -70,7 +70,7 @@ enum OnboardingFirstStep: Equatable {
 
 // MARK: - OnboardingPage
 
-/// The nine slides, in order. At file scope because the slide layout and
+/// The seven slides, in order. At file scope because the slide layout and
 /// the stage behind it are each told which slide they are drawing.
 private enum OnboardingPage: Int, CaseIterable {
     case welcome, intention, forYou, colors, language, reminder, threshold
@@ -107,9 +107,8 @@ private nonisolated struct WordsExtent: Equatable {
 private final class OnboardingStage {
 
     /// The slides as they stand side by side. Every position below is a
-    /// place in this, never a slide's own number: the beads slide comes
-    /// and goes with the voice slide's answer, and the slides after it
-    /// move up a place.
+    /// place in this, never a slide's own number, so a slide can come or
+    /// go without a painting or a ground belonging to the wrong page.
     var sequence: [OnboardingPage]
 
     /// The pages' position in page units: 2.4 means the third slide is

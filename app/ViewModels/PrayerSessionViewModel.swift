@@ -39,9 +39,7 @@ final class PrayerSessionViewModel {
     /// because the Rosary is prayed on two surfaces, and the count must
     /// be the same on both.
     ///
-    /// Only walked when the player is prayed on the beads
-    /// (`UserSettings.prayOnBeads`); with the beads off it rests on the
-    /// Our Father and the mystery alone is moved.
+    /// Walked by the voice, by Back and Next, and by a tap on the rail.
     var currentBeadIndex: Int = 0 {
         // A hand that has moved past the Our Father — the reader's bead
         // row is never locked — has its beads for good: stepping back
@@ -49,7 +47,7 @@ final class PrayerSessionViewModel {
         didSet {
             if currentBeadIndex > 0 { unlockedMysteries.insert(currentMysteryIndex) }
             // The voice moving the hand along the decades leaves the
-            // opening behind for good, so the Whole Rosary turned off
+            // opening behind for good, so a voice put down
             // later never brings the Sign of the Cross back. The pendant's
             // own walk sets the bead before its step.
             if currentBeadIndex > 0, case .opening = pendantStep { pendantStep = nil }
@@ -357,7 +355,8 @@ final class PrayerSessionViewModel {
 
     // MARK: - The Rosary Said Aloud
 
-    /// The whole Rosary said aloud, while `UserSettings.prayAloud` is on.
+    /// The whole Rosary said aloud (`SimpleRosary.praysAloud`: always,
+    /// but for a set with no recording, which opens as text).
     /// While it runs it owns the audio: the mystery's own narration stands
     /// aside, and the hand moves with the voice.
     private(set) var spoken: SpokenRosaryPlayer?
@@ -899,7 +898,7 @@ final class PrayerSessionViewModel {
     /// we awaited, and resetting then would kill *its* audio. The claim
     /// sees to that.
     private func tearDownIfStillOwner() {
-        // Disowned by the Whole Rosary, whose voice takes the entry kept
+        // Disowned by the spoken Rosary, whose voice takes the entry kept
         // for its first prayer: released, it would clear it
         guard spoken == nil else { return }
         narrationClaim?.release()
@@ -918,7 +917,7 @@ final class PrayerSessionViewModel {
     @discardableResult
     private func takePlayer() -> AudioClaim {
         if let claim = narrationClaim, claim.isCurrent {
-            // Taken off while the Whole Rosary was on its way, and the
+            // Taken off while the spoken Rosary was on its way, and the
             // voice failed or was put down before it took the player
             if claim.onTransport == nil {
                 claim.onTransport = { [weak self] request in self?.narrationTransport(request) }
@@ -1143,14 +1142,13 @@ final class PrayerSessionViewModel {
 extension PrayerSessionViewModel: SpokenRosaryHost {
 
     /// Turns the spoken Rosary on or off for this session: every prayer
-    /// said aloud around the meditations (`UserSettings.prayAloud`).
-    /// Turning it off hands the mystery back to its own narration.
+    /// said aloud around the meditations, as `SimpleRosary.praysAloud`
+    /// decides. Turning it off hands the mystery back to its own narration.
     ///
     /// On arrival, PRAY was the word to begin, and the voice begins. Turned
-    /// on mid-Rosary — from the playback sheet — it carries on only if
-    /// the meditation was playing, and otherwise waits at the hand's
-    /// place for play, the way a new voice does: it once began the Sign
-    /// of the Cross behind the sheet the moment the switch was touched.
+    /// on later it carries on only if the meditation was playing, and
+    /// otherwise waits at the hand's place for play, the way a new voice
+    /// does.
     @MainActor
     func setPrayAloud(_ on: Bool) async {
         let arriving = !prayAloudSettled

@@ -90,7 +90,7 @@ enum RosaryInfoRow: Hashable {
 
     /// The Holy Rosary's audio, said as a fact rather than offered
     static let holyAudioValue = String(
-        localized: "Whole Rosary · pause anytime",
+        localized: "Every prayer aloud · pause anytime",
         comment: "The Audio Rosary's own page: the Audio row's value, a fact rather than a choice: every prayer is said aloud and can be paused"
     )
 

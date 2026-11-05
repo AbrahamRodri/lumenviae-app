@@ -385,7 +385,7 @@ struct RosaryChoicesSection: View {
         .sheet(item: $sheet) { sheet in
             switch sheet {
             case .voice:
-                VoiceAndSpeedSheet(form: form, category: chosenCategory)
+                VoiceAndSpeedSheet(category: chosenCategory)
                     .presentationDetents([.large])
                     .sheetGround()
                     .dynamicTypeSize(...DynamicTypeSize.appMaximum)
@@ -571,10 +571,6 @@ struct RosaryChoicePill: View {
 /// what the chosen one does. A switch could say only on or off; the pill
 /// says which of two ways, in the words every other place uses.
 ///
-/// Counting holds only while the voice reads the meditation alone, so
-/// with the Whole Rosary its row stands dimmed and says why, rather than
-/// leaving a choice that changes nothing.
-///
 /// The Prayer Book's Aloud or In Silence stands beneath them as the same
 /// row, in its own words (`PrayerBookAudio`), so the two read as one
 /// family and never as one setting.
@@ -588,15 +584,6 @@ struct RosaryChoiceSettingsRow: View {
     /// What the chosen option does
     let note: (Bool) -> String
 
-    /// False while another choice makes this one moot
-    var isAvailable: Bool = true
-
-    /// What the row says while it is not available
-    var unavailableNote: String = String(
-        localized: "With the Whole Rosary, the voice moves the beads on the screen.",
-        comment: "A Rosary's own page and Settings: why the Counting choice is dimmed while the Whole Rosary is chosen"
-    )
-
     /// False while the setting stands at a default nobody chose
     /// (`RosaryChoicePill.isAnswered`)
     var isAnswered: Bool = true
@@ -606,18 +593,14 @@ struct RosaryChoiceSettingsRow: View {
         title: String,
         options: [RosaryChoice.Option],
         value: Binding<Bool>,
-        isAvailable: Bool = true,
         isAnswered: Bool = true,
-        unavailableNote: String? = nil,
         note: @escaping (Bool) -> String
     ) {
         self.icon = icon
         self.title = title
         self.options = options
         self._value = value
-        self.isAvailable = isAvailable
         self.isAnswered = isAnswered
-        if let unavailableNote { self.unavailableNote = unavailableNote }
         self.note = note
     }
 
@@ -641,10 +624,8 @@ struct RosaryChoiceSettingsRow: View {
                     value: $value,
                     isAnswered: isAnswered
                 )
-                .disabled(!isAvailable)
-                .opacity(isAvailable ? 1 : 0.4)
 
-                Text(isAvailable ? note(value) : unavailableNote)
+                Text(note(value))
                     .font(AppFonts.bodyFont(12))
                     .foregroundColor(AppColors.textSecondary)
                     .multilineTextAlignment(.leading)
@@ -655,7 +636,6 @@ struct RosaryChoiceSettingsRow: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .animation(Motion.choice, value: value)
-        .animation(Motion.choice, value: isAvailable)
         .animation(Motion.choice, value: isAnswered)
     }
 }
@@ -724,11 +704,10 @@ struct RosaryInfoRowView: View {
 
 /// Who reads and how fast — and, for the four sets of the Rosary, the
 /// prayers some add after it, which only a voice saying every prayer
-/// says. In the sheet grammar: the voices as capsules, the speed on its
-/// slider, then ruled rows each with its own switch.
+/// says. In the sheet grammar: the voices as capsules, the speed in its
+/// six steps, then ruled rows each with its own switch.
 private struct VoiceAndSpeedSheet: View {
 
-    let form: RosaryForm
     let category: MysteryCategory?
 
     @Environment(UserSettings.self) private var settings
@@ -784,15 +763,10 @@ private struct VoiceAndSpeedSheet: View {
                             )
                         )
                     }
-                    SheetNote(form == .holy
-                        ? String(
-                            localized: "Played after the closing prayer.",
-                            comment: "Voice & speed sheet, Audio Rosary: note under the prayers after the Rosary"
-                        )
-                        : String(
-                            localized: "Played after the closing prayer, with the Whole Rosary.",
-                            comment: "Voice & speed sheet: note under the prayers after the Rosary, which are said only when every prayer is said aloud"
-                        ))
+                    SheetNote(String(
+                        localized: "Played after the closing prayer.",
+                        comment: "Voice & speed sheet, Audio Rosary: note under the prayers after the Rosary"
+                    ))
                 }
             }
             .padding(.bottom, 24)
