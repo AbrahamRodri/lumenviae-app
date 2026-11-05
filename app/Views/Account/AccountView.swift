@@ -933,13 +933,13 @@ struct AppLanguageRow: View {
             ActionRow(
                 icon: "ph-globe",
                 title: String(localized: "App Language", comment: "Settings: row naming the language the app's words are shown in; a tap opens the iPhone's settings page for this app, where the language is chosen"),
-                subtitle: AppLanguage.name,
+                subtitle: AppLanguage.rowName,
                 action: AppLanguage.openLanguageSettings
             )
             .accessibilityHint(Text("Opens this app's page in the iPhone's Settings, where its language is chosen", comment: "VoiceOver hint, Settings: what a tap on the App Language row does"))
 
             if AppLanguage.isSpanish {
-                Text(AppLanguage.translationNotice)
+                Text(AppLanguage.noticeWithBeta)
                     .font(AppFonts.italicFont(13))
                     .foregroundColor(AppColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)

@@ -42,6 +42,27 @@ enum AppLanguage {
         )
     }
 
+    /// What the App Language row names: the language, and in Spanish that
+    /// it is a beta ("Español (beta)", Abraham, 5 Nov 2026)
+    static var rowName: String {
+        guard isSpanish else { return name }
+        return String(
+            localized: "Spanish (beta)",
+            comment: "Settings, App Language row, shown only in Spanish: the language's own name with beta after it")
+    }
+
+    /// Said in Spanish only, after the AI notice: Spanish is a beta, and
+    /// what is still in English
+    static var betaNotice: String {
+        String(
+            localized: "Spanish is in beta: the recordings and some meditations are still in English.",
+            comment:
+                "Shown only in Spanish, after the AI translation notice, at first launch and under the language row in Settings: Spanish is a beta, the narration recordings and some meditations are still English")
+    }
+
+    /// The AI notice as it is shown: the approved sentence, then the beta's
+    static var noticeWithBeta: String { translationNotice + "\n\n" + betaNotice }
+
     // MARK: - The one-time notice
 
     private static let noticeShownKey = "appLanguage.translationNoticeShown"
@@ -100,7 +121,7 @@ extension View {
                 onDismiss()
             }
         } message: {
-            Text(AppLanguage.translationNotice)
+            Text(AppLanguage.noticeWithBeta)
         }
     }
 }
