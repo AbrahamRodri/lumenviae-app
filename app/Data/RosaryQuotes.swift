@@ -24,8 +24,10 @@
 //  Newman's Meditations and Devotions (Longmans, 1893); Longfellow's
 //  Dante (1867) and his rendering of St. Teresa's bookmark (1877). The
 //  copyrighted lines that stood here until October 2026 — Escrivá,
-//  Sr. Lucia, Fr. Peyton — were taken out; Sheen's line stays, his work
-//  having been checked and found out of copyright (Oct 2026).
+//  Sr. Lucia, Fr. Peyton — were taken out. Sheen's line stays though
+//  his book is in copyright (The World's First Love, 1952, to 2047): it
+//  is one short quotation, used briefly and credited in About > Sources
+//  & Credits alone, not under the line (`creditedInSourcesOnly`).
 //  Tools/ContentSourcing/MANIFEST.md records the sources.
 //
 //  The Spanish is the api's (priv/rosary_content/es/quotes.json, api
