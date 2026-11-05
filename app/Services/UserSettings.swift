@@ -274,6 +274,14 @@ final class UserSettings {
         comment: "Heading over the choice of recorded voice that reads the meditations, in Settings and the player"
     )
 
+    /// Said under every choice of voice: the voice reads the spoken
+    /// prayers and the meditations, and a chant has one recording, so
+    /// choosing another voice during a chant changes nothing
+    static let narrationVoiceCaption = String(
+        localized: "For spoken prayers and meditations. Chants have one singer.",
+        comment: "Caption under every choice of narration voice (Settings, the player's sheet, a Rosary's Voice & speed): the voice does not change chants, which each have one recording"
+    )
+
     // MARK: - Reader
 
     /// Whether the reader keeps pace with the narration on its own,

@@ -18,9 +18,9 @@ enum SevenSorrowsLiguoriMeditationData {
     /// with a server-assigned meditation set ID.
     static let setID = -5
 
-    static let name = "St. Alphonsus Liguori"
+    static let name = String(localized: "St. Alphonsus Liguori", comment: "The name of the bundled Seven Sorrows meditation set, the saint who wrote it, shown on the mysteries' page and over the player")
     static let category = "seven_sorrows"
-    static let description = "St. Alphonsus Liguori's reflections on each of the seven sorrows of Mary, from The Glories of Mary, in the 1852 English translation."
+    static let description = String(localized: "St. Alphonsus Liguori's reflections on each of the seven sorrows of Mary, from The Glories of Mary, in the 1852 English translation.", comment: "Shown on a bundled meditation set's page, in place of its English description; it names the edition its text is taken from")
     static let labels = ["Considerations"]
 
     /// Summary row for the meditation picker.

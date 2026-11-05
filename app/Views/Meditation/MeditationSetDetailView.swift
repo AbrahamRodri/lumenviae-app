@@ -389,6 +389,8 @@ struct MeditationSetDetailView: View {
                         ReadingText(text: previewText, size: 17)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
+                        MeditationLanguageNote(meditation: viewModel.firstMeditation)
+
                         QuietGoldButton(
                             title: String(
                                 localized: "Close",

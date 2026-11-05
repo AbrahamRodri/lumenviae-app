@@ -166,6 +166,7 @@ struct PlaybackSettingsSheet: View {
 
                 NarrationVoiceChoice()
                     .padding(.horizontal, SheetMetrics.gutter)
+                SheetNote(UserSettings.narrationVoiceCaption)
 
                 SheetSectionLabel(String(
                     localized: "Prayer Speed",

@@ -19,21 +19,24 @@ enum LuminousMeditationData {
     /// with a server-assigned meditation set ID.
     static let setID = -1
 
+    static let name = String(localized: "Traditional Meditations", comment: "The name of the bundled Luminous meditation set, shown on the mysteries' page and over the player")
+    static let description = String(localized: "Classic meditations on the Mysteries of Light.", comment: "Shown on the bundled Luminous meditation set's page")
+
     /// Summary row for the meditation picker.
     static let summary = MeditationSetSummary(
         id: setID,
-        name: "Traditional Meditations",
+        name: name,
         category: "luminous",
-        description: "Classic meditations on the Mysteries of Light.",
+        description: description,
         labels: ["Contemplative"]
     )
 
     /// The full set used by the prayer flow.
     static let set = MeditationSet(
         id: setID,
-        name: "Traditional Meditations",
+        name: name,
         category: "luminous",
-        description: "Classic meditations on the Mysteries of Light.",
+        description: description,
         labels: ["Contemplative"],
         meditations: meditations
     )

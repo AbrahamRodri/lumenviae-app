@@ -113,15 +113,26 @@ nonisolated enum DayRank {
     /// day, or Ash Wednesday itself — ranked I to III class in Lent and
     /// Holy Week, but weekdays, never feasts. The days of an octave and
     /// of the Triduum are named by weekday too, and are not weekdays.
-    private static func isWeekday(_ title: String?) -> Bool {
+    static func isWeekday(_ title: String?) -> Bool {
         let t = (title ?? "").lowercased()
-        let notWeekdays = ["octave", "supper", "good friday", "holy saturday", "vigil"]
+        // The breviary's Latin too: the Triduum's "Feria Quinta in Cena
+        // Domini" and "Feria Sexta in Parasceve" (a week's "post Octavam
+        // Pentecostes" is still a weekday, so no Latin "octava" here)
+        let notWeekdays = ["octave", "supper", "good friday", "holy saturday", "vigil",
+                           "cena domini", "parasceve"]
         if notWeekdays.contains(where: { t.contains($0) }) { return false }
         return t.contains("feria")
             || t.contains("ember ")
             || t.hasPrefix("ash wednesday")
             || t.range(of: "^(monday|tuesday|wednesday|thursday|friday|saturday)\\b",
                        options: .regularExpression) != nil
+    }
+
+    /// A Sunday by its title, in the Missal's English or the breviary's
+    /// Latin ("Dominica V Post Epiphaniam")
+    static func isSunday(_ title: String?) -> Bool {
+        let t = (title ?? "").lowercased()
+        return t.contains("sunday") || t.hasPrefix("dominica")
     }
 
     private static func weekday(in words: String) -> String {

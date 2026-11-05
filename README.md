@@ -249,7 +249,7 @@ app/
 
 ### Where the data lives
 
-**The Lumen Viae API** (`https://lumenviae.fly.dev/api`) is a companion Phoenix
+**The Lumen Viae API** (`https://www.lumenviae.org/api`) is a companion Phoenix
 app that owns the meditation content, so it can change without an app release:
 
 | Endpoint | For |

@@ -3,7 +3,7 @@
 //  Lumen Viae
 //
 //  The Divine Office as the Lumen Viae API serves it
-//  (https://lumenviae.fly.dev/api/office/*), assembled from the Divinum
+//  (https://www.lumenviae.org/api/office/*), assembled from the Divinum
 //  Officium engine behind the Phoenix API:
 //  - GET /office/:date        → OfficeDay (the day's place in the calendar)
 //  - GET /office/:date/:hour  → OfficeHour (one canonical hour, in full)

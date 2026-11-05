@@ -1003,7 +1003,7 @@ app/
 │   └── MarianLibraryData, CarloAcutisData, HowToPrayData,
 │       MysteriesInScriptureData   # The resource pages' content
 ├── Services/
-│   ├── APIService            # HTTP client (https://lumenviae.fly.dev/api)
+│   ├── APIService            # HTTP client (https://www.lumenviae.org/api)
 │   ├── AudioService          # Narration and chant playback
 │   ├── AudioClaim            # Who holds the player: one claim at a time
 │   ├── ChantPlayer           # The Chant Library's hold on it, above the views
@@ -3685,7 +3685,7 @@ transition entirely.
 
 ### Data Architecture
 
-**From the API** (`https://lumenviae.fly.dev/api`):
+**From the API** (`https://www.lumenviae.org/api`):
 - Meditation sets and their meditation text
 - Set artwork: each set carries a flat `image_*` block — unsigned, immutable
   URL, a normalized focal point, pixel size, alt text, attribution — all null
@@ -3696,6 +3696,20 @@ transition entirely.
   die in `audio_expires_at`, and `GET /meditations/:id/audio` re-signs one)
 - The spoken Rosary's and the Prayer Book's recordings, per voice (`GET /rosary/audio`)
 - The narration voices, the server's default first (`GET /voices`)
+- In a Spanish app, the meditations' and the Consecration's Spanish:
+  a set is fetched with `?lang=es` and keeps its English
+  (`englishMeditations`) beside its `translations`, and `meditations`
+  lays the Spanish over by id (`MeditationTranslation.overlay`), title
+  and text together, with the AI line and "the voice reads it in English"
+  under it (`MeditationLanguageNote`). The Consecration's Spanish
+  (`GET /api/v2/consecration?lang=es`) is kept as the Prayer Book's is
+  (`LibraryContent.consecrationSpanishStore`) and laid over the bundled
+  days and prayers by key at launch (`ConsecrationSpanish`). The five
+  bundled sets carry their reviewed Spanish in the app
+  (`Resources/Spanish/es_bundled_meditations.json`, copied byte for
+  byte from reports/rig-es/bundled-meditations-es.json;
+  `MeditationTranslation.bundled`). Sheen's sets, anything not
+  translated, and every recording stay English.
 
 **From other sources** (each through its own client, so their outages
 never look like ours): the Missal from Missale Meum, the Office from our

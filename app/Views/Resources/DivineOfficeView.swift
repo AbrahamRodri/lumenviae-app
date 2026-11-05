@@ -350,7 +350,7 @@ struct DivineOfficeView: View {
     /// they can be reached.
     private func dayClassLine(_ rank: String?) -> String? {
         let parts = [
-            OfficeRank(rank).plainLabel(title: viewModel.feastTitle),
+            OfficeRank(rank).plainLabel(title: viewModel.rankTitle),
             viewModel.vestment?.plainName
         ].compactMap { $0 }
 
