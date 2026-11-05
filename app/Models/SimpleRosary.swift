@@ -116,8 +116,26 @@ enum SimpleRosary {
     /// Liguori's meditations with the helps on, after a page that lets
     /// them say no: with the beta on, whoever said in onboarding (or
     /// Settings) that they came to learn the Rosary
-    static func beginnerPath(beta: Bool, intentions: [PrayerIntention]) -> Bool {
-        beta && intentions.contains(.learning)
+    ///
+    /// Once they say no ("No thanks, I'll choose") it is not offered
+    /// again (`declined`). To ask every time again, set
+    /// `remembersDecline` false: that is the one place it is read.
+    static func beginnerPath(beta: Bool, intentions: [PrayerIntention], declined: Bool = false) -> Bool {
+        beta && intentions.contains(.learning) && !(remembersDecline && declined)
+    }
+
+    /// Whether a "No thanks" on the beginner's page is kept, so the page
+    /// is not offered again
+    static let remembersDecline = true
+
+    /// The beginner's path as the doors to today's Rosary ask it, from
+    /// the settings
+    static func offersBeginnerPath(_ settings: UserSettings) -> Bool {
+        beginnerPath(
+            beta: settings.oneRosaryBeta,
+            intentions: settings.intentions,
+            declined: settings.declinedBeginnerRosary
+        )
     }
 
     /// The set the beginner's path opens: St. Alphonsus Liguori's for the
@@ -128,6 +146,17 @@ enum SimpleRosary {
             ($0.author ?? "").localizedCaseInsensitiveContains("Liguori")
                 || $0.name.localizedCaseInsensitiveContains("Liguori")
         } ?? summaries.first
+    }
+
+    /// The one size every prayer's words are set at on the players, the
+    /// Creed as the Glory Be: the text-size slider (0 to 1) across 15 to
+    /// 22 points. Capped there, since the column stands beside the beads
+    /// and a larger size left a few words to a line
+    static let wordsSizeRange: ClosedRange<CGFloat> = 15...22
+
+    static func wordsSize(scale: Double) -> CGFloat {
+        let clamped = CGFloat(min(max(scale, 0), 1))
+        return wordsSizeRange.lowerBound + clamped * (wordsSizeRange.upperBound - wordsSizeRange.lowerBound)
     }
 
     /// The words the column sets for a prayer: the recording's own lines

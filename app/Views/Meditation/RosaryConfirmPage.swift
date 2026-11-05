@@ -865,11 +865,15 @@ private struct VoiceAndSpeedSheet: View {
                     .padding(.horizontal, SheetMetrics.gutter)
 
                 SheetSectionLabel(String(
-                    localized: "Speed",
-                    comment: "Voice & speed sheet: section label over the narration speed slider"
+                    localized: "Prayer Speed",
+                    comment: "Voice & speed sheet: section label over the steps that set how fast the prayers are said"
                 ))
                 PlaybackSpeedChoice()
                     .padding(.horizontal, SheetMetrics.gutter)
+                SheetNote(String(
+                    localized: "Meditations are always read at 1×.",
+                    comment: "Voice & speed sheet: the note under the prayers' speed: it does not change the meditations"
+                ))
 
                 if category != .sevenSorrows {
                     SheetSectionLabel(String(

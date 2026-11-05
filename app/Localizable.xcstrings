@@ -13277,6 +13277,17 @@
         }
       }
     },
+    "Meditations are always read at 1×." : {
+      "comment" : "Playback settings and Voice & speed sheets: the note under the prayers' speed: it does not change the meditations",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las meditaciones siempre se leen a 1×."
+          }
+        }
+      }
+    },
     "Meditations come from our server. If you're offline, or they haven't been added yet, some meditations may not be available. Check your internet connection and try again." : {
       "comment" : "Help & Support: the answer to the question above it; names of buttons and settings must match the app's own words",
       "localizations" : {
@@ -14013,7 +14024,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Eres nuevo en el Rosario? Rézalo con las meditaciones de san Alfonso; en cada paso, una línea te dice qué rezar y en qué cuenta estás."
+            "value" : "¿Empiezas a rezar el Rosario? Rézalo con las meditaciones de san Alfonso; en cada paso, una línea te dice qué rezar y en qué cuenta estás."
           }
         }
       }
@@ -17102,6 +17113,17 @@
         }
       }
     },
+    "Prayer Speed" : {
+      "comment" : "Playback settings and Voice & speed sheets: section label over the steps that set how fast the prayers are said",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Velocidad de las oraciones"
+          }
+        }
+      }
+    },
     "Prayer Streak" : {
       "comment" : "The Chapel: name of a section (tile) of the page, on its title line, its folded row while arranging and its chip in the hidden-sections tray",
       "localizations" : {
@@ -19924,6 +19946,17 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Show the Rosary's Parts" : {
+      "comment" : "The Rosary's player, text sheet: switch that shows the beads, the parts and where the Rosary stands",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar las partes del Rosario"
           }
         }
       }
@@ -22996,6 +23029,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Las cuentas se hicieron para días como este."
+          }
+        }
+      }
+    },
+    "The beads, the parts and where you are" : {
+      "comment" : "The Rosary's player, text sheet: the line under Show the Rosary's Parts",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las cuentas, las partes y dónde vas"
           }
         }
       }

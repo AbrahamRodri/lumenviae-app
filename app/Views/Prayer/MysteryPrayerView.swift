@@ -145,8 +145,20 @@ struct MysteryPrayerView: View {
         guard viewModel.silentPendantPrayer == nil else { return false }
         if userSettings.oneRosaryBeta {
             return SimpleRosary.opensAsText(beta: true, setHasRecording: meditationSet.hasAudio)
+                || simpleReaderOpen
         }
         return readerOpen
+    }
+
+    /// The simple Rosary: the meditation opened as text from READ THE
+    /// MEDITATION over a set that is heard. Not remembered: the next
+    /// Rosary opens in the player again
+    @State private var simpleReaderOpen = false
+
+    /// The simple Rosary's reader is the whole Rosary for a set with no
+    /// recording; over a set that is heard, it is an aside that closes
+    private var readerIsTheRosary: Bool {
+        SimpleRosary.opensAsText(beta: true, setHasRecording: meditationSet.hasAudio)
     }
 
     /// Whether every prayer is said aloud: as the Audio choice says, or
@@ -266,7 +278,13 @@ struct MysteryPrayerView: View {
                         // Read as text, the reader is the Rosary: closing
                         // it leaves the Rosary
                         onClose: {
-                            if userSettings.oneRosaryBeta { router.popToRoot() } else { setReaderOpen(false) }
+                            if !userSettings.oneRosaryBeta {
+                                setReaderOpen(false)
+                            } else if readerIsTheRosary {
+                                router.popToRoot()
+                            } else {
+                                withAnimation(Motion.panel) { simpleReaderOpen = false }
+                            }
                         }
                     )
                     .transition(.offset(y: screenHeight))
@@ -468,9 +486,14 @@ struct MysteryPrayerView: View {
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .text:
-                ReaderTextOptionsSheet(showsNarrationOptions: false)
+                ReaderTextOptionsSheet(
+                    showsNarrationOptions: false,
+                    showsPartsToggle: userSettings.oneRosaryBeta
+                )
                     .presentationDetents([
-                        .height(ReaderTextOptionsSheet.height(showsNarrationOptions: false))
+                        .height(ReaderTextOptionsSheet.height(
+                            showsNarrationOptions: false,
+                            showsPartsToggle: userSettings.oneRosaryBeta))
                     ])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
@@ -1745,7 +1768,11 @@ extension MysteryPrayerView {
     }
 
     /// The words at one size for every prayer, the Creed as the Glory Be
-    fileprivate var wordsSize: CGFloat { userSettings.meditationFontSize - 1 }
+    /// Whether the Rosary's parts stand around the prayer: the beads,
+    /// the pill of the parts, where the Rosary stands (the player's Aa)
+    fileprivate var showsParts: Bool { userSettings.simpleRosaryShowsParts }
+
+    fileprivate var wordsSize: CGFloat { SimpleRosary.wordsSize(scale: userSettings.textSizeScale) }
 
     /// The beginner's path: the line for the hand's place, from the
     /// guide; never on the chaplet, which has none
@@ -1787,7 +1814,7 @@ extension MysteryPrayerView {
             VStack(spacing: 0) {
                 oneRosaryColumn
                     .padding(.leading, 28)
-                    .padding(.trailing, 104)
+                    .padding(.trailing, showsParts ? 104 : 28)
                     .padding(.top, columnTop)
                     .frame(maxHeight: .infinity, alignment: .top)
 
@@ -1797,11 +1824,13 @@ extension MysteryPrayerView {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .overlay(alignment: .top) {
                 OneRosaryHeader(onClose: { router.popToRoot() }) {
-                    RosaryStopsPill(
-                        stops: viewModel.stops,
-                        current: viewModel.currentStop,
-                        isChaplet: meditationSet.mysteryCategory == .sevenSorrows
-                    ) { activeSheet = .stops }
+                    if showsParts {
+                        RosaryStopsPill(
+                            stops: viewModel.stops,
+                            current: viewModel.currentStop,
+                            isChaplet: meditationSet.mysteryCategory == .sevenSorrows
+                        ) { activeSheet = .stops }
+                    }
                 } trailing: {
                     if viewModel.isPrayingAloud, viewModel.spokenFailure == nil {
                         SimpleRosaryMuteButton(isMuted: viewModel.isMuted) { viewModel.toggleMuted() }
@@ -1820,7 +1849,8 @@ extension MysteryPrayerView {
                 tappable: tappableBeads(rail),
                 hintPulse: tapHintPulse,
                 complete: oneRosaryComplete,
-                closing: oneRosaryOnClose
+                closing: oneRosaryOnClose,
+                hidden: !showsParts
             ) { index in
                 if case .strand(let bead) = rail.target(at: index) { oneRosaryGoToBead(bead) }
             }
@@ -1867,7 +1897,8 @@ extension MysteryPrayerView {
                 place: OneRosaryColumn<EmptyView>.place(mystery: nil, of: viewModel.strand.decades, phase: pendant.phase),
                 bead: OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount),
                 help: oneRosaryHelp,
-                wordsKey: "\(pendant.heading)|\(pendant.title)|\(viewModel.silentPendantCount ?? "")"
+                wordsKey: "\(pendant.heading)|\(pendant.title)|\(viewModel.silentPendantCount ?? "")",
+                showsParts: showsParts
             ) {
                 VStack(alignment: .leading, spacing: 8) {
                     SimpleRosaryWords(
@@ -1888,8 +1919,9 @@ extension MysteryPrayerView {
                 // words under it say why
                 bead: viewModel.beadLabel,
                 help: oneRosaryHelp,
-                tapHint: tapHintShowing,
-                wordsKey: "\(viewModel.beadPosition.mystery).\(viewModel.beadPosition.bead).\(locked).\(viewModel.isSpeakingMeditation)"
+                tapHint: tapHintShowing && showsParts,
+                wordsKey: "\(viewModel.beadPosition.mystery).\(viewModel.beadPosition.bead).\(locked).\(viewModel.isSpeakingMeditation)",
+                showsParts: showsParts
             ) {
                 if locked {
                     Text(
@@ -1930,6 +1962,16 @@ extension MysteryPrayerView {
         let meditation = viewModel.pendant == nil ? viewModel.currentMeditation : nil
 
         return VStack(spacing: 0) {
+            // The meditation's door, on the step it belongs to: the
+            // mystery's Our Father, where it is heard
+            if meditation != nil, viewModel.currentBeadIndex == 0 {
+                OneRosaryReadLink { withAnimation(Motion.panel) { simpleReaderOpen = true } }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 22)
+                    .padding(.bottom, 6)
+                    .transition(.opacity)
+            }
+
             if let errorMessage = viewModel.audioErrorMessage, viewModel.pendant == nil {
                 Text(errorMessage)
                     .font(AppFonts.bodyFont(12))
@@ -1970,6 +2012,7 @@ extension MysteryPrayerView {
             .padding(.bottom, 8)
         }
         .animation(Motion.crossfade, value: meditation?.hasAudio)
+        .animation(Motion.crossfade, value: viewModel.currentBeadIndex == 0)
     }
 
     /// The voice's play and pause in the footer: said aloud, the voice's,

@@ -5,7 +5,8 @@
 //  The simple Rosary (the One Rosary beta): where the pill's parts go in
 //  a spoken Rosary, that nothing is lit without a recording's real
 //  timings, muted or not, that a set with no recording opens as text,
-//  who is offered the Audio Rosary first, and that with the switch off
+//  who begins on the beginner's path (and that a no is kept), the
+//  speed steps and the one text size, and that with the switch off
 //  every rule is the app's as it was.
 //
 
@@ -89,6 +90,31 @@ struct SimpleRosaryTests {
         #expect(try JSONDecoder().decode(RosaryAudioClip.self, from: Data(clip.utf8)).lines == nil)
     }
 
+    @Test func timingsInAShapeTheAppDoesNotExpectNeverBreakTheManifest() throws {
+        // Lines as a string, lines with a field missing, lines as an
+        // object: each clip still decodes, with no timings, and so does
+        // the whole manifest it stands in
+        let odd = [
+            #""lines":"soon""#,
+            #""lines":[{"text":"Hail Mary","start":0}]"#,
+            #""lines":{"text":"Hail Mary"}"#,
+            #""lines":[{"text":"Hail Mary","start":"0","end":2.5}]"#,
+        ]
+        for lines in odd {
+            let clip = #"{"file":"hail_mary-1.mp3","audio_url":"https://x/h.mp3",\#(lines)}"#
+            let decoded = try JSONDecoder().decode(RosaryAudioClip.self, from: Data(clip.utf8))
+            #expect(decoded.lines == nil)
+            #expect(decoded.file == "hail_mary-1.mp3")
+
+            let manifest = #"{"voice":"frederick","version":"v1","prayers":{"hail_mary":\#(clip)}}"#
+            let read = try JSONDecoder().decode(RosaryAudioManifest.self, from: Data(manifest.utf8))
+            #expect(read.prayers?["hail_mary"]?.audioUrl == "https://x/h.mp3")
+        }
+        // Lines in the shape served still read
+        let good = #"{"file":"f.mp3","audio_url":"https://x/f.mp3","lines":[{"text":"Hail Mary","start":0,"end":2.5}]}"#
+        #expect(try JSONDecoder().decode(RosaryAudioClip.self, from: Data(good.utf8)).lines?.count == 1)
+    }
+
     // MARK: - Every Prayer Aloud, or Read
 
     @Test func withTheBetaEveryFormIsSaidAloud() {
@@ -124,6 +150,26 @@ struct SimpleRosaryTests {
         #expect(!SimpleRosary.beginnerPath(beta: false, intentions: [.learning]))
     }
 
+    @Test func aNoOnTheBeginnersPageIsKept() {
+        #expect(SimpleRosary.remembersDecline)
+        #expect(!SimpleRosary.beginnerPath(beta: true, intentions: [.learning], declined: true))
+        #expect(SimpleRosary.beginnerPath(beta: true, intentions: [.learning], declined: false))
+
+        let settings = UserSettings.shared
+        let (beta, intentions, declined) = (settings.oneRosaryBeta, settings.onboardingIntentions, settings.declinedBeginnerRosary)
+        defer {
+            settings.oneRosaryBeta = beta
+            settings.onboardingIntentions = intentions
+            settings.declinedBeginnerRosary = declined
+        }
+        settings.oneRosaryBeta = true
+        settings.onboardingIntentions = [PrayerIntention.learning.rawValue]
+        settings.declinedBeginnerRosary = false
+        #expect(SimpleRosary.offersBeginnerPath(settings))
+        settings.declinedBeginnerRosary = true
+        #expect(!SimpleRosary.offersBeginnerPath(settings))
+    }
+
     @Test func theBeginnersSetIsStAlphonsus() throws {
         let json = #"[{"id":26,"name":"Blessed Fulton J. Sheen","category":"joyful","author":"Archbishop Fulton J. Sheen"},{"id":29,"name":"St. Alphonsus Liguori","category":"joyful","author":"St. Alphonsus Liguori"}]"#
         let joyful = try JSONDecoder().decode([MeditationSetSummary].self, from: Data(json.utf8))
@@ -131,5 +177,35 @@ struct SimpleRosaryTests {
         // Where he wrote none, the first set offered
         #expect(SimpleRosary.beginnerSet(from: [joyful[0]])?.id == 26)
         #expect(SimpleRosary.beginnerSet(from: []) == nil)
+    }
+
+    // MARK: - Speed and Size
+
+    @Test func meditationsAreHeardAtTheirOwnPaceAndPrayersAtTheChosenOne() {
+        #expect(SpokenRosaryPlayer.playsAtNaturalPace(.meditation))
+        #expect(!SpokenRosaryPlayer.playsAtNaturalPace(.prayer("hail_mary")))
+        #expect(!SpokenRosaryPlayer.playsAtNaturalPace(.announcement))
+        #expect(!SpokenRosaryPlayer.playsAtNaturalPace(.verse(3)))
+    }
+
+    @Test func theSpeedStepsRunFromPointEightToOnePointThree() {
+        #expect(PlaybackSpeedChoice.steps == [0.8, 0.9, 1.0, 1.1, 1.2, 1.3])
+        // Every step is a speed the service keeps as it is
+        for step in PlaybackSpeedChoice.steps {
+            #expect(AudioService.resolvedRate(step) == step)
+        }
+        #expect(PlaybackSpeedChoice.isChosen(1.1, appRate: AudioService.resolvedRate(1.1)))
+        // A speed kept from the slider that is no step lights none
+        #expect(!PlaybackSpeedChoice.steps.contains { PlaybackSpeedChoice.isChosen($0, appRate: 1.5) })
+    }
+
+    @Test func everyPrayerIsSetAtOneSizeThatNeverOutgrowsTheColumn() {
+        #expect(SimpleRosary.wordsSize(scale: 0) == 15)
+        #expect(SimpleRosary.wordsSize(scale: 1) == 22)
+        #expect(SimpleRosary.wordsSize(scale: 0.5) == 18.5)
+        // The slider's whole travel changes the size, and nothing past it
+        #expect(SimpleRosary.wordsSize(scale: 0.2) < SimpleRosary.wordsSize(scale: 0.8))
+        #expect(SimpleRosary.wordsSize(scale: 4) == 22)
+        #expect(SimpleRosary.wordsSize(scale: -1) == 15)
     }
 }

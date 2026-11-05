@@ -222,13 +222,31 @@ final class UserSettings {
         didSet { UserDefaults.standard.set(showsOpeningPrayers, forKey: "userSettings.showsOpeningPrayers") }
     }
 
+    /// The simple Rosary's players: whether the Rosary's parts are shown
+    /// around the prayer — the beads at the edge, the pill of the parts at
+    /// the head, and where the Rosary stands under the title. Off, the
+    /// player is the prayer's name, its words and the voice's controls.
+    /// The reader (a set with no recording) shows them whatever this says,
+    /// since there the hand keeps its own place. On by default.
+    var simpleRosaryShowsParts: Bool = true {
+        didSet { UserDefaults.standard.set(simpleRosaryShowsParts, forKey: "userSettings.simpleRosaryShowsParts") }
+    }
+
+    /// Whether a learner said "No thanks, I'll choose" on the beginner's
+    /// page (`BeginnerRosaryView`): then today's Rosary opens as for anyone
+    /// else (`SimpleRosary.offersBeginnerPath`)
+    var declinedBeginnerRosary: Bool = false {
+        didSet { UserDefaults.standard.set(declinedBeginnerRosary, forKey: "userSettings.declinedBeginnerRosary") }
+    }
+
     // MARK: - One Rosary (beta)
 
     /// The One Rosary beta, off by default, now the simple Rosary
     /// (`SimpleRosary`): no Audio or Counting choice, every Rosary said
     /// aloud from PRAY on one player with a pill to go to any part and a
     /// speaker to mute, the beads always hanging, a set with no recording
-    /// opening as text, and a learner offered the Audio Rosary first.
+    /// opening as text, and a learner begun on St. Alphonsus Liguori's
+    /// meditations with the helps, after a page that lets them say no.
     /// Off, the app is as it was.
     var oneRosaryBeta: Bool = false {
         didSet { UserDefaults.standard.set(oneRosaryBeta, forKey: Self.oneRosaryBetaKey) }
@@ -711,6 +729,10 @@ final class UserSettings {
         prayAloud = d.bool(forKey: "userSettings.prayAloud")
         if d.object(forKey: "userSettings.showsOpeningPrayers") != nil {
             showsOpeningPrayers = d.bool(forKey: "userSettings.showsOpeningPrayers")
+        }
+        declinedBeginnerRosary = d.bool(forKey: "userSettings.declinedBeginnerRosary")
+        if d.object(forKey: "userSettings.simpleRosaryShowsParts") != nil {
+            simpleRosaryShowsParts = d.bool(forKey: "userSettings.simpleRosaryShowsParts")
         }
         oneRosaryBeta = Self.storedOneRosaryBeta(in: d)
         hasSeenBeadTapHint = d.bool(forKey: "userSettings.hasSeenBeadTapHint")

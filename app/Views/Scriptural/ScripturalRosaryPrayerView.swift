@@ -244,9 +244,14 @@ struct ScripturalRosaryPrayerView: View {
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .text:
-                ReaderTextOptionsSheet(showsNarrationOptions: false)
+                ReaderTextOptionsSheet(
+                    showsNarrationOptions: false,
+                    showsPartsToggle: userSettings.oneRosaryBeta
+                )
                     .presentationDetents([
-                        .height(ReaderTextOptionsSheet.height(showsNarrationOptions: false))
+                        .height(ReaderTextOptionsSheet.height(
+                            showsNarrationOptions: false,
+                            showsPartsToggle: userSettings.oneRosaryBeta))
                     ])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
@@ -1562,7 +1567,11 @@ extension ScripturalRosaryPrayerView {
     }
 
     /// The words at one size for every prayer, the Creed as the Glory Be
-    fileprivate var simpleWordsSize: CGFloat { userSettings.meditationFontSize - 1 }
+    /// Whether the Rosary's parts stand around the prayer: the beads,
+    /// the pill of the parts, where the Rosary stands (the player's Aa)
+    fileprivate var showsParts: Bool { userSettings.simpleRosaryShowsParts }
+
+    fileprivate var simpleWordsSize: CGFloat { SimpleRosary.wordsSize(scale: userSettings.textSizeScale) }
 
     /// The timed lines of what the voice is saying, where it is the words
     /// the column sets: never an announcement's
@@ -1589,7 +1598,7 @@ extension ScripturalRosaryPrayerView {
             VStack(spacing: 0) {
                 oneRosaryColumn
                     .padding(.leading, 28)
-                    .padding(.trailing, Self.readingTrailingInset)
+                    .padding(.trailing, showsParts ? Self.readingTrailingInset : 28)
                     .padding(.top, columnTop)
                     .frame(maxHeight: .infinity, alignment: .top)
 
@@ -1609,7 +1618,8 @@ extension ScripturalRosaryPrayerView {
                 turnPulse: turnPulse,
                 tappable: tappableBeads(rail),
                 complete: oneRosaryComplete,
-                closing: oneRosaryOnClose
+                closing: oneRosaryOnClose,
+                hidden: !showsParts
             ) { index in
                 if case .strand(let bead) = rail.target(at: index) { goToBead(bead) }
             }
@@ -1646,11 +1656,13 @@ extension ScripturalRosaryPrayerView {
     /// The way out
     fileprivate var oneRosaryHeader: some View {
         OneRosaryHeader(onClose: { router.popToRoot() }) {
-            RosaryStopsPill(
-                stops: viewModel.stops,
-                current: viewModel.currentStop,
-                isChaplet: viewModel.category == .sevenSorrows
-            ) { activeSheet = .stops }
+            if showsParts {
+                RosaryStopsPill(
+                    stops: viewModel.stops,
+                    current: viewModel.currentStop,
+                    isChaplet: viewModel.category == .sevenSorrows
+                ) { activeSheet = .stops }
+            }
         } trailing: {
             if viewModel.isPrayingAloud, viewModel.spokenFailure == nil {
                 SimpleRosaryMuteButton(isMuted: viewModel.isMuted) { viewModel.toggleMuted() }
@@ -1679,7 +1691,8 @@ extension ScripturalRosaryPrayerView {
                 title: pendant.heading,
                 place: OneRosaryColumn<EmptyView>.place(mystery: nil, of: viewModel.strand.decades, phase: pendant.phase),
                 bead: OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount),
-                wordsKey: Self.pendantKey(pendant) + (viewModel.silentPendantCount ?? "")
+                wordsKey: Self.pendantKey(pendant) + (viewModel.silentPendantCount ?? ""),
+                showsParts: showsParts
             ) {
                 VStack(alignment: .leading, spacing: 8) {
                     SimpleRosaryWords(
@@ -1697,7 +1710,8 @@ extension ScripturalRosaryPrayerView {
                 title: viewModel.currentMystery?.name ?? "",
                 place: OneRosaryColumn<EmptyView>.place(mystery: viewModel.currentMysteryIndex, of: viewModel.strand.decades),
                 bead: viewModel.beadLabel,
-                wordsKey: "\(viewModel.beadPosition.mystery).\(viewModel.beadPosition.bead)"
+                wordsKey: "\(viewModel.beadPosition.mystery).\(viewModel.beadPosition.bead)",
+                showsParts: showsParts
             ) {
                 VStack(alignment: .leading, spacing: 10) {
                     SimpleRosaryWords(

@@ -201,7 +201,7 @@ struct HomeView: View {
             onBeginPrayer: {
                 // The simple Rosary's learner begins on the beginner's
                 // path, whose page lets them say no
-                if SimpleRosary.beginnerPath(beta: UserSettings.shared.oneRosaryBeta, intentions: UserSettings.shared.intentions) {
+                if SimpleRosary.offersBeginnerPath(UserSettings.shared) {
                     router.push(.beginnerRosary(viewModel.todaysCategory))
                 } else {
                     router.navigateToMeditationSelection(category: viewModel.todaysCategory)

@@ -371,7 +371,7 @@ struct ContentView: View {
         case .todaysRosary:
             // The simple Rosary's learner begins on the beginner's path,
             // whose page lets them say no before it starts
-            if SimpleRosary.beginnerPath(beta: UserSettings.shared.oneRosaryBeta, intentions: UserSettings.shared.intentions) {
+            if SimpleRosary.offersBeginnerPath(UserSettings.shared) {
                 guard router.path.isEmpty else { return }
                 router.push(.beginnerRosary(ScheduleService.categoryForToday()))
             } else {

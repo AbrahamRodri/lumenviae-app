@@ -27,7 +27,9 @@ struct BeginnerRosaryView: View {
             AppColors.appGradient.ignoresSafeArea()
             if let summary {
                 MeditationSetDetailView(summary: summary, beginner: true) {
-                    // No: the day's mysteries' page, to choose another way
+                    // No: the day's mysteries' page, to choose another way,
+                    // and the beginner's page is not offered again
+                    UserSettings.shared.declinedBeginnerRosary = true
                     router.pop()
                     router.navigateToMeditationSelection(category: category)
                 }

@@ -1314,8 +1314,12 @@ extension PrayerSessionViewModel: SpokenRosaryHost {
         let player = SpokenRosaryPlayer(script: script, host: self, audio: audioService)
         spoken = player
         isPrayedAloud = true
-        if UserSettings.shared.oneRosaryBeta { await fetchTimedNarrations() }
-        guard spoken === player else { return }
+        // The meditations' timings are fetched beside the voice, never
+        // before its first word: the opening prayers are said while they
+        // arrive, and a meditation reached without them is simply unlit
+        if UserSettings.shared.oneRosaryBeta {
+            Task { [weak self] in await self?.fetchTimedNarrations() }
+        }
         // The step an interrupted Rosary stopped on, only while the hand
         // still stands where it stopped: turned on after the hand has
         // moved on, the voice would take it back there
@@ -1483,6 +1487,7 @@ extension PrayerSessionViewModel {
         let voice = NarrationVoiceCatalog.shared.chosenSlug
         guard let answer = try? await APIService.shared.fetchTimedNarrations(meditationIds: ids, voice: voice) else { return }
         timedNarrations = Dictionary(answer.map { ($0.meditationId, $0) }, uniquingKeysWith: { first, _ in first })
+        spoken?.refreshMeditationTimings()
     }
 
     func spokenMeditationTimings(decade: Int, url: String) -> [TimedLine]? {

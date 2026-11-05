@@ -79,3 +79,17 @@ struct RosaryAudioClip: Codable, Equatable {
         case audioUrl = "audio_url"
     }
 }
+
+extension RosaryAudioClip {
+    /// The timings are read leniently: a `lines` the app does not expect
+    /// is read as none, never a manifest that fails for everyone. The
+    /// recordings are what the Rosary needs; the timings only light it.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        file = try container.decode(String.self, forKey: .file)
+        audioUrl = try container.decode(String.self, forKey: .audioUrl)
+        text = try container.decodeIfPresent(String.self, forKey: .text)
+        reference = try container.decodeIfPresent(String.self, forKey: .reference)
+        lines = (try? container.decodeIfPresent([TimedLine].self, forKey: .lines)) ?? nil
+    }
+}

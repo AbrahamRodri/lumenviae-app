@@ -474,6 +474,7 @@ extension View {
         hintPulse: Int = 0,
         complete: Bool = false,
         closing: Bool = false,
+        hidden: Bool = false,
         onTap: @escaping (Int) -> Void
     ) -> some View {
         let windowTop = max(OneRosaryRailView.windowTop(fullHeight: fullHeight) - topInset, 0)
@@ -519,6 +520,12 @@ extension View {
                     .accessibilityHidden(true)
                 }
             }
+            // The simple Rosary with its parts put away: the beads stand
+            // aside, and take no tap
+            .opacity(hidden ? 0 : 1)
+            .allowsHitTesting(!hidden)
+            .accessibilityHidden(hidden)
+            .animation(Motion.crossfade, value: hidden)
         }
     }
 }
@@ -553,6 +560,11 @@ struct OneRosaryColumn<Words: View>: View {
     /// What the column's words are keyed by, so a new bead's words
     /// crossfade whole in their slot
     let wordsKey: String
+
+    /// The simple Rosary's parts (`simpleRosaryShowsParts`): off, where
+    /// the Rosary stands and the step line stand aside, in their room,
+    /// so the words never move
+    var showsParts: Bool = true
 
     @ViewBuilder let words: () -> Words
 
@@ -595,9 +607,12 @@ struct OneRosaryColumn<Words: View>: View {
                     .minimumScaleFactor(0.85)
                     .contentTransition(.opacity)
                     .padding(.top, 2)
+                    .opacity(showsParts ? 1 : 0)
+                    .accessibilityHidden(!showsParts)
 
                 OneRosaryStepLabel(text: bead ?? " ")
-                    .opacity(bead == nil ? 0 : 1)
+                    .opacity(bead == nil || !showsParts ? 0 : 1)
+                    .accessibilityHidden(bead == nil || !showsParts)
                     .padding(.top, 12)
             }
             .fixedSize(horizontal: false, vertical: true)
@@ -633,6 +648,7 @@ struct OneRosaryColumn<Words: View>: View {
         .animation(Motion.words, value: bead)
         .animation(Motion.crossfade, value: help)
         .animation(Motion.crossfade, value: tapHint)
+        .animation(Motion.crossfade, value: showsParts)
     }
 
     /// Where the Rosary stands, in plain words, under the title: a
@@ -799,8 +815,12 @@ struct OneRosaryFooter: View {
     let onNext: () -> Void
     let onAmen: () -> Void
 
+    /// Back and Next (and AMEN in Next's place) share one width, so the
+    /// play between them stands at the row's centre on every step
+    static let wayWidth: CGFloat = 128
+
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 0) {
             button(
                 title: String(localized: "Back", comment: "One Rosary beta, the player's footer: the button back to the bead or prayer before"),
                 leading: "ph-caret-left",
@@ -812,43 +832,45 @@ struct OneRosaryFooter: View {
             .opacity(canGoBack ? 1 : 0)
             .accessibilityHidden(!canGoBack)
             .accessibilityLabel(Text("Back", comment: "One Rosary beta, the player's footer: VoiceOver name of the button back to the bead or prayer before"))
+            .frame(maxWidth: .infinity, alignment: .leading)
 
-            Spacer(minLength: 8)
+            // In a slot of its own width whether or not a voice speaks,
+            // so Back and Next never move
+            ZStack {
+                if let play {
+                    play.transition(.opacity)
+                }
+            }
+            .frame(width: OneRosaryPlayDisc.diameter, height: 44)
 
-            if let play {
-                // In a slot of the row's own height, so Back and Next stand
-                // in one place whether or not a voice speaks
-                play
-                    .frame(width: OneRosaryPlayDisc.diameter, height: 44)
+            Group {
+                if isLast {
+                    GoldCTAButton(
+                        title: String(localized: "Amen", comment: "Prayer screen, last closing prayer: the gold button that finishes the Rosary"),
+                        fill: .solid,
+                        prominence: .inline,
+                        trailingIcon: "ph-check",
+                        action: onAmen
+                    )
+                    // Next's width, at Next's place
+                    .frame(width: Self.wayWidth)
+                    .beckoning(amenBeckons)
+                    .accessibilityLabel("Amen — finish the Rosary")
                     .transition(.opacity)
-                Spacer(minLength: 8)
+                } else {
+                    button(
+                        title: String(localized: "Next", comment: "One Rosary beta, the player's footer: the button on to the next bead or prayer"),
+                        leading: nil,
+                        trailing: "ph-caret-right",
+                        isWayOn: true,
+                        action: onNext
+                    )
+                    .disabled(!canGoOn)
+                    .opacity(canGoOn ? 1 : 0.35)
+                    .transition(.opacity)
+                }
             }
-
-            if isLast {
-                GoldCTAButton(
-                    title: String(localized: "Amen", comment: "Prayer screen, last closing prayer: the gold button that finishes the Rosary"),
-                    fill: .solid,
-                    prominence: .inline,
-                    trailingIcon: "ph-check",
-                    action: onAmen
-                )
-                // Next's width, at Next's place
-                .frame(width: 132)
-                .beckoning(amenBeckons)
-                .accessibilityLabel("Amen — finish the Rosary")
-                .transition(.opacity)
-            } else {
-                button(
-                    title: String(localized: "Next", comment: "One Rosary beta, the player's footer: the button on to the next bead or prayer"),
-                    leading: nil,
-                    trailing: "ph-caret-right",
-                    isWayOn: true,
-                    action: onNext
-                )
-                .disabled(!canGoOn)
-                .opacity(canGoOn ? 1 : 0.35)
-                .transition(.opacity)
-            }
+            .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .frame(minHeight: 44)
         .animation(Motion.settle, value: isLast)
@@ -862,15 +884,18 @@ struct OneRosaryFooter: View {
             HStack(spacing: 8) {
                 if let leading { AppIcon(leading, size: 10) }
                 Text(title.uppercased())
-                    .font(AppFonts.labelFont(isWayOn ? 12 : 11))
+                    .font(AppFonts.labelFont(12))
                     .tracking(2)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
                 if let trailing { AppIcon(trailing, size: 10) }
             }
             // Back in cream on a cream edge, plainly there; Next in gold,
             // with the firmer edge, still the way on
             .foregroundColor(isWayOn ? AppColors.goldLight : AppColors.cream.opacity(0.88))
-            .padding(.horizontal, 18)
-            .frame(minWidth: isWayOn ? 132 : 104, minHeight: 44)
+            .padding(.horizontal, 12)
+            .frame(width: Self.wayWidth)
+            .frame(minHeight: 44)
             .background(Capsule().fill(AppColors.background.opacity(isWayOn ? 0.7 : 0.55)))
             .overlay(
                 Capsule().strokeBorder(

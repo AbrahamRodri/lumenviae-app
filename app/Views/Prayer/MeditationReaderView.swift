@@ -599,10 +599,17 @@ struct ReaderTextOptionsSheet: View {
     /// would be a promise the screen can't keep.
     var showsNarrationOptions = true
 
+    /// The simple Rosary's players: the switch that shows or hides the
+    /// Rosary's parts around the prayer (`simpleRosaryShowsParts`). The
+    /// player's own small settings, beside the text's size, so it is
+    /// found where the screen is changed, not in More
+    var showsPartsToggle = false
+
     /// The sheet's height, for its detent — the header and the size
-    /// slider alone, or those and the narration row under its label.
-    static func height(showsNarrationOptions: Bool) -> CGFloat {
-        showsNarrationOptions ? 306 : 196
+    /// slider alone, or those and the narration row under its label, or
+    /// the parts' switch.
+    static func height(showsNarrationOptions: Bool, showsPartsToggle: Bool = false) -> CGFloat {
+        (showsNarrationOptions ? 306 : 196) + (showsPartsToggle ? 92 : 0)
     }
 
     var body: some View {
@@ -620,6 +627,28 @@ struct ReaderTextOptionsSheet: View {
                 localized: "Size",
                 comment: "Meditation reader, text options sheet: the text size slider's name"
             ), scale: $settings.textSizeScale)
+
+            if showsPartsToggle {
+                SheetSectionLabel(String(
+                    localized: "On the Screen",
+                    comment: "The Rosary's player, text sheet: section label over what the screen shows around the prayer"
+                ))
+
+                SheetToggleRow(
+                    title: String(
+                        localized: "Show the Rosary's Parts",
+                        comment: "The Rosary's player, text sheet: switch that shows the beads, the parts and where the Rosary stands"
+                    ),
+                    detail: String(
+                        localized: "The beads, the parts and where you are",
+                        comment: "The Rosary's player, text sheet: the line under Show the Rosary's Parts"
+                    ),
+                    icon: "lv-rosary",
+                    isOn: $settings.simpleRosaryShowsParts,
+                    showsDivider: false,
+                    detailLineLimit: 1
+                )
+            }
 
             if showsNarrationOptions {
                 SheetSectionLabel(String(
