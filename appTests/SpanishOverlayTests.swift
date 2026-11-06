@@ -62,9 +62,9 @@ struct MeditationSpanishTests {
     }
 
     /// The tests run in English: a set is asked for exactly as before
-    @Test func anEnglishAppAsksForNoLanguage() {
-        #expect(!MeditationTranslation.isActive)
-        #expect(MeditationTranslation.requestLanguage == nil)
+    /// Asks for Spanish only in a Spanish app, so it holds on a simulator set to either language.
+    @Test func theAppAsksForSpanishOnlyWhenItIsSpanish() {
+        #expect(MeditationTranslation.requestLanguage == (MeditationTranslation.isActive ? "es" : nil))
     }
 
     @Test func aMeditationWithNoSpanishStaysEnglish() throws {
