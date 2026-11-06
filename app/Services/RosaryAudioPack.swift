@@ -252,8 +252,7 @@ final class RosaryAudioPack {
         clips: Set<ClipID>
     ) async throws -> (RosaryAudioManifest, offline: Bool) {
         let saved = await savedManifest(voice: voice)
-        if let saved, Self.covers(saved, kinds: kinds), !Self.linksExpiring(saved),
-           clips.allSatisfy({ Self.clip($0, in: saved) != nil }) {
+        if let saved, Self.answers(saved, kinds: kinds, clips: clips) {
             return (saved, false)
         }
         do {
@@ -340,6 +339,33 @@ final class RosaryAudioPack {
     static func linksExpiring(_ manifest: RosaryAudioManifest, now: Date = Date()) -> Bool {
         guard let expiry = manifest.expiry else { return true }
         return expiry <= now.addingTimeInterval(5 * 60)
+    }
+
+    /// Whether a saved manifest can answer with no round trip: it holds
+    /// every recording asked for, its links still live, and it is not
+    /// one saved before the server timed the spoken Rosary's lines.
+    ///
+    /// The server added `lines` without changing the catalogue's
+    /// `version`, so a manifest saved before then names the same files
+    /// and carries no timings; used as it is for the rest of its day, the
+    /// simple Rosary lit no line. Asked for any of the Rosary's own
+    /// recordings, a saved manifest in which none of them is timed is
+    /// fetched again: once, for a server that times them, and on each
+    /// Rosary begun online for a voice it has not timed yet, at the cost
+    /// of one request. The Prayer Book's recordings are never timed and
+    /// never ask for this.
+    static func answers(
+        _ saved: RosaryAudioManifest,
+        kinds: [String],
+        clips: Set<ClipID>,
+        now: Date = Date()
+    ) -> Bool {
+        guard covers(saved, kinds: kinds), !linksExpiring(saved, now: now),
+              clips.allSatisfy({ clip($0, in: saved) != nil })
+        else { return false }
+        let rosaryClips = clips.filter { if case .book = $0 { return false } else { return true } }
+        guard !rosaryClips.isEmpty else { return true }
+        return rosaryClips.contains { clip($0, in: saved)?.lines?.isEmpty == false }
     }
 
     /// Whether a manifest holds every kind of recording asked for
