@@ -168,7 +168,7 @@ struct MysteryPrayerView: View {
                             }
                         }
                     )
-                    .transition(.offset(y: screenHeight))
+                    .transition(reduceMotion ? .opacity : .offset(y: screenHeight))
                     .zIndex(1)
                 }
             }
@@ -524,7 +524,7 @@ struct MysteryPrayerView: View {
     private func prayForward() {
         guard !viewModel.isLastBeadOfRosary, !beadsLocked, !voiceHoldsStrand else { return }
         travel = .forward
-        withAnimation(Motion.beadSlide) {
+        withAnimation(reduceMotion ? nil : Motion.beadSlide) {
             _ = viewModel.prayForward()
         }
     }
@@ -539,7 +539,7 @@ struct MysteryPrayerView: View {
             && viewModel.currentPendantStep == nil && viewModel.pendantShown
         guard !viewModel.isFirstBeadOfRosary, !beadsLocked || intoOpening, !voiceHoldsStrand else { return }
         travel = .back
-        withAnimation(Motion.beadSlide) {
+        withAnimation(reduceMotion ? nil : Motion.beadSlide) {
             viewModel.prayBack()
         }
     }
@@ -804,6 +804,7 @@ extension MysteryPrayerView {
                 let placed = OneRosaryColumn<EmptyView>.layout(
                     showsWords: showsWordsAndBeads, columnTop: columnTop, headerFoot: 12 + 44 + 14)
                 oneRosaryColumn
+                    .announcesRosaryPlace(spokenPlace)
                     .padding(.leading, 28)
                     .padding(.trailing, 104)
                     .padding(.top, placed.top)
@@ -882,6 +883,16 @@ extension MysteryPrayerView {
         }
     }
 
+    /// Where the hand is, as VoiceOver is told when the voice moves it on
+    private var spokenPlace: String {
+        if let pendant = viewModel.pendant {
+            return "\(pendant.heading), "
+                + OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount)
+        }
+        let title = viewModel.currentMystery?.name ?? viewModel.currentMeditation?.displayTitle ?? ""
+        return "\(title), \(viewModel.beadLabel)"
+    }
+
     /// The column: where on the Rosary, the title, the bead, the words
     @ViewBuilder
     fileprivate var oneRosaryColumn: some View {
@@ -948,8 +959,10 @@ extension MysteryPrayerView {
                 }
             }
             .accessibilityElement(children: .combine)
-            .accessibilityAction(named: "Next bead", prayForward)
-            .accessibilityAction(named: "Previous bead", prayBack)
+            // The footer's Next and Back: said aloud, they step the
+            // voice a prayer, where prayForward moved the bead alone
+            .accessibilityAction(named: "Next bead") { oneRosaryStep(forward: true) }
+            .accessibilityAction(named: "Previous bead") { oneRosaryStep(forward: false) }
         }
     }
 
@@ -1061,7 +1074,7 @@ extension MysteryPrayerView {
         guard !voiceHoldsStrand else { return }
         if beadsLocked, index > viewModel.strandIndex { return }
         travel = index > viewModel.strandIndex ? .forward : .back
-        withAnimation(Motion.beadSlide) {
+        withAnimation(reduceMotion ? nil : Motion.beadSlide) {
             viewModel.goToBead(at: index)
         }
     }

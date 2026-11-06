@@ -545,7 +545,11 @@ struct MiniPlayerPill: View {
                         }
                     }
                     .frame(width: 40, height: 40)
+                    // Answers to 44 points, drawn at 40: the pill's size
+                    // stays as designed
+                    .padding(2)
                     .contentShape(Rectangle())
+                    .padding(-2)
                 }
                 .accessibilityLabel(viewModel.isPlaying ? Text("Pause") : Text("Play"))
             }
@@ -554,7 +558,9 @@ struct MiniPlayerPill: View {
                 AppIcon("ph-dots-three", size: 20)
                     .foregroundColor(AppColors.cream.opacity(0.85))
                     .frame(width: 40, height: 40)
+                    .padding(2)
                     .contentShape(Rectangle())
+                    .padding(-2)
             }
             .accessibilityLabel("More")
         }
