@@ -768,6 +768,8 @@ final class SpokenRosaryPlayer {
         inPause = false
         heldInPause = false
         restartOnResume = false
+        // The lines timed for the prayer left behind are not the next one's
+        currentTimings = nil
 
         let lastDecade = script.last?.mystery ?? 0
         if target > lastDecade {
