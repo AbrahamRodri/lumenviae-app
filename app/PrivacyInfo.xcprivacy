@@ -13,7 +13,8 @@
 	     the request's address, which it stores only truncated (the
 	     backend's docs/COMPLETION_ANALYTICS.md). No account, device or
 	     install identifier goes with it, so neither type is linked to the
-	     person. The Scriptural Rosary and the Guided Rosary never post.
+	     person. The Scriptural Rosary, the Audio Rosary and the Guided
+	     Rosary never post.
 	     Keep this, the in-app Privacy Policy (PrivacyPolicySheet) and App
 	     Store Connect's App Privacy answers in step. -->
 	<key>NSPrivacyTracking</key>
@@ -70,8 +71,10 @@
 		</dict>
 		<dict>
 			<!-- LibraryService reads a cached parse's modification date to
-			     age it out, and LibraryAudioDownloads reads a saved
-			     recording's size. Both are files in the app's own
+			     age it out; LibraryAudioDownloads reads a saved recording's
+			     size, OfflineContentService the sizes of the files it saved
+			     or retires, and ChantAssetStore a downloaded chant file's
+			     size before keeping it. All are files in the app's own
 			     Application Support directory. -->
 			<key>NSPrivacyAccessedAPIType</key>
 			<string>NSPrivacyAccessedAPICategoryFileTimestamp</string>

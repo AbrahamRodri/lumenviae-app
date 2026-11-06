@@ -15388,17 +15388,6 @@
         }
       }
     },
-    "One Rosary (beta)" : {
-      "comment" : "Settings, The Rosary: the switch for the One Rosary beta, a new way to pray the Rosary",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un solo Rosario (beta)"
-          }
-        }
-      }
-    },
     "One bead at a time" : {
       "comment" : "Daily prayer reminder notification for readers drawn by peace and stillness: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters",
       "localizations" : {
