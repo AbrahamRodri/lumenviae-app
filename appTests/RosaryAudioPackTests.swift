@@ -116,6 +116,70 @@ struct RosaryAudioPackTests {
         #expect(onDisk(root) == kept)
     }
 
+    // MARK: - A saved manifest from before the timings
+
+    private let now = Date(timeIntervalSince1970: 2_000_000_000)
+
+    /// Links that live another hour past `now`
+    private var liveExpiry: String {
+        ISO8601DateFormatter().string(from: now.addingTimeInterval(3600))
+    }
+
+    private func saved(prayersTimed: Bool, bookTimed: Bool = false) -> RosaryAudioManifest {
+        let line = [TimedLine(text: "Hail Mary, full of grace,", start: 0, end: 2)]
+        return RosaryAudioManifest(
+            voice: "test_voice",
+            version: "1",
+            expiresAt: liveExpiry,
+            prayers: [
+                "hail_mary": RosaryAudioClip(
+                    file: "hail_mary-1.mp3", audioUrl: "https://example.com/a.mp3", text: nil, reference: nil,
+                    lines: prayersTimed ? line : nil),
+                "glory_be": RosaryAudioClip(
+                    file: "glory_be-1.mp3", audioUrl: "https://example.com/g.mp3", text: nil, reference: nil)
+            ],
+            announcements: nil,
+            verses: nil,
+            book: [
+                "memorare": RosaryAudioClip(
+                    file: "memorare-1.mp3", audioUrl: "https://example.com/b.mp3", text: nil, reference: nil,
+                    lines: bookTimed ? line : nil)
+            ]
+        )
+    }
+
+    /// Saved before the server timed the prayers: fetched again, though
+    /// its links still live
+    @Test func aSavedManifestWithNoTimingsIsFetchedAgain() {
+        let clips: Set<RosaryAudioPack.ClipID> = [.prayer("hail_mary"), .prayer("glory_be")]
+        #expect(!RosaryAudioPack.answers(saved(prayersTimed: false), kinds: ["prayers"], clips: clips, now: now))
+    }
+
+    /// One timed prayer is enough: a recording the server could not time
+    /// (the Glory Be here) never sends it back to the server
+    @Test func aSavedManifestWithTimingsAnswers() {
+        let clips: Set<RosaryAudioPack.ClipID> = [.prayer("hail_mary"), .prayer("glory_be")]
+        #expect(RosaryAudioPack.answers(saved(prayersTimed: true), kinds: ["prayers"], clips: clips, now: now))
+    }
+
+    /// The Prayer Book's recordings are not timed: asking for them alone
+    /// never fetches again for want of timings
+    @Test func thePrayerBookAloneNeverWaitsOnTimings() {
+        let clips: Set<RosaryAudioPack.ClipID> = [.book("memorare")]
+        #expect(RosaryAudioPack.answers(saved(prayersTimed: false), kinds: ["book"], clips: clips, now: now))
+    }
+
+    /// Timed or not, links about to die are fetched again, as before
+    @Test func expiringLinksAreStillFetchedAgain() {
+        let timed = saved(prayersTimed: true)
+        let stale = RosaryAudioManifest(
+            voice: timed.voice, version: timed.version,
+            expiresAt: ISO8601DateFormatter().string(from: now.addingTimeInterval(60)),
+            prayers: timed.prayers, announcements: nil, verses: nil, book: timed.book)
+        let clips: Set<RosaryAudioPack.ClipID> = [.prayer("hail_mary")]
+        #expect(!RosaryAudioPack.answers(stale, kinds: ["prayers"], clips: clips, now: now))
+    }
+
     /// A kept manifest whose write has not landed yet is still the one
     @Test func aKeptManifestStandsWhileItsWriteIsOnItsWay() async {
         let writer = SlowFirstWriter()
