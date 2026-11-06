@@ -52,6 +52,21 @@ struct MeditationSpanishTests {
         #expect(laid[0].author == "St. Alphonsus")
     }
 
+    /// A translation that arrived with no text is no translation: the
+    /// English stays, title and all
+    @Test func anEmptySpanishTextKeepsTheEnglish() throws {
+        let empty = [MeditationTranslation(id: 1, title: "La Anunciación", content: "", aiTranslated: true)]
+        let laid = try #require(MeditationTranslation.overlay([meditation(1)], with: empty, spanish: true))
+        #expect(laid == [meditation(1)])
+        #expect(laid[0].isSpanish == false)
+    }
+
+    /// The tests run in English: a set is asked for exactly as before
+    @Test func anEnglishAppAsksForNoLanguage() {
+        #expect(!MeditationTranslation.isActive)
+        #expect(MeditationTranslation.requestLanguage == nil)
+    }
+
     @Test func aMeditationWithNoSpanishStaysEnglish() throws {
         let laid = try #require(MeditationTranslation.overlay([meditation(3)], with: spanish, spanish: true))
         #expect(laid[0] == meditation(3))
@@ -206,6 +221,26 @@ struct ConsecrationSpanishTests {
             #expect(day.readings[1] == english.readings[1])
         }
         #expect(day.readings.count == english.readings.count)
+    }
+
+    /// Empty Spanish fields fall back to the English, field by field: a
+    /// day's title and question, a reading, a prayer
+    @Test func emptySpanishFallsBackToTheEnglish() throws {
+        let json = """
+            {"version": "e", "translations": {"phases": [], "feasts": [],
+             "days": [{"number": 1, "title": "", "journal_prompt": "",
+                       "readings": [{"order": 1, "title": "Mateo 5", "text": "", "source": "Torres Amat"}]}],
+             "prayers": [{"id": "veni_creator", "title": "Ven, Espíritu Creador", "text": ""}]}}
+            """
+        let es = try JSONDecoder().decode(ConsecrationTranslations.self, from: Data(json.utf8))
+        let english = try #require(ConsecrationData.day(1))
+        let day = ConsecrationSpanish.vernacular(english, from: es)
+        #expect(day.title == english.title)
+        #expect(day.journalPrompt == english.journalPrompt)
+        #expect(day.readings == english.readings)
+
+        let prayer = ConsecrationPrayer(id: "veni_creator", title: "Come, Holy Ghost", latinTitle: "Veni Creator", content: "Come, Holy Ghost")
+        #expect(ConsecrationSpanish.vernacular(prayer, from: es) == prayer)
     }
 
     @Test func aDayWithNoSpanishIsUnchanged() throws {

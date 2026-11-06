@@ -80,6 +80,18 @@ struct OneRosaryTests {
         #expect(!strand.canTap(strand.count, from: active))
     }
 
+    /// On a decade's Glory Be the hand already stands on the next Our
+    /// Father's bead: a tap reaches back, never ahead, so the next
+    /// mystery's meditation is not passed over
+    @Test func onTheGloryBeATapReachesOnlyBack() {
+        let strand = RosaryStrand(decades: 5, hailMarys: 10)
+        let active = strand.index(mystery: 1, bead: 0)
+        #expect(!strand.canTap(active + 1, from: active, onGloryBe: true))
+        #expect(!strand.canTap(active + 2, from: active, onGloryBe: true))
+        #expect(strand.canTap(active - 1, from: active, onGloryBe: true))
+        #expect(strand.canTap(active + 1, from: active, onGloryBe: false), "off the Glory Be, the next bead is a tap away")
+    }
+
     @Test func aPositionOnTheStringIsAMysteryAndABead() {
         let strand = RosaryStrand(decades: 5, hailMarys: 10)
         #expect(strand.position(at: strand.index(mystery: 3, bead: 7)) == BeadPosition(mystery: 3, bead: 7))
