@@ -426,6 +426,8 @@ final class SpokenRosaryPlayer {
         inPause = false
         heldInPause = false
         index = SpokenRosaryScript.startIndex(in: script, mystery: mystery, bead: bead, includingOpening: false)
+        // The lines timed for the prayer left behind are not this one's
+        currentTimings = nil
         reportStep()
 
         if wasPlaying {
@@ -456,6 +458,10 @@ final class SpokenRosaryPlayer {
         inPause = false
         heldInPause = false
         index = target
+        // The lines timed for the prayer left behind are not this one's:
+        // kept while paused, Back from the Creed named the Sign of the
+        // Cross over the Creed's words, its first line still lit
+        currentTimings = nil
         if let segment = currentSegment {
             host?.spokenRosaryMoved(mystery: segment.mystery, bead: segment.bead)
         }
@@ -762,6 +768,8 @@ final class SpokenRosaryPlayer {
         inPause = false
         heldInPause = false
         restartOnResume = false
+        // The lines timed for the prayer left behind are not the next one's
+        currentTimings = nil
 
         let lastDecade = script.last?.mystery ?? 0
         if target > lastDecade {
