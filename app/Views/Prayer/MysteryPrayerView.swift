@@ -886,11 +886,12 @@ extension MysteryPrayerView {
     /// Where the hand is, as VoiceOver is told when the voice moves it on
     private var spokenPlace: String {
         if let pendant = viewModel.pendant {
-            return "\(pendant.heading), "
-                + OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount)
+            return RosaryPlace.spoken(
+                title: pendant.heading,
+                bead: OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount))
         }
         let title = viewModel.currentMystery?.name ?? viewModel.currentMeditation?.displayTitle ?? ""
-        return "\(title), \(viewModel.beadLabel)"
+        return RosaryPlace.spoken(title: title, bead: viewModel.beadLabel)
     }
 
     /// The column: where on the Rosary, the title, the bead, the words

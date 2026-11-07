@@ -570,10 +570,11 @@ extension ScripturalRosaryPrayerView {
     /// Where the hand is, as VoiceOver is told when the voice moves it on
     private var spokenPlace: String {
         if let pendant = viewModel.spokenPendant {
-            return "\(pendant.heading), "
-                + OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount)
+            return RosaryPlace.spoken(
+                title: pendant.heading,
+                bead: OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount))
         }
-        return "\(viewModel.currentMystery?.name ?? ""), \(viewModel.beadLabel)"
+        return RosaryPlace.spoken(title: viewModel.currentMystery?.name ?? "", bead: viewModel.beadLabel)
     }
 
     @ViewBuilder
