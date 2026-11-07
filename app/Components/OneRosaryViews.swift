@@ -623,7 +623,7 @@ struct OneRosaryColumn<Words: View>: View {
 
                 Text(place)
                     .font(AppFonts.italicFont(15))
-                    .foregroundColor(AppColors.cream.opacity(0.74))
+                    .foregroundColor(AppColors.cream.opacity(0.9))  // Held over the brightest paintings
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
                     .contentTransition(.opacity)
