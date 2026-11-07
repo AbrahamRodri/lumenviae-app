@@ -671,7 +671,9 @@ struct ExploreView: View {
                             router.push(door.route)
                         } label: {
                             VStack(alignment: .leading, spacing: 3) {
-                                CachedAssetImage(door.painting.resolvedAsset, focal: door.painting.focal)
+                                ThumbnailImage(
+                                    name: door.painting.resolvedAsset, focal: door.painting.focal,
+                                    size: CGSize(width: 128, height: 128))
                                     .frame(width: 128, height: 128)
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                                     .overlay(

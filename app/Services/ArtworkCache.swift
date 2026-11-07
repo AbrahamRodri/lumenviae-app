@@ -25,8 +25,16 @@ final class ArtworkCache {
 
     /// Decoded paintings by URL. Read synchronously from view bodies so a
     /// revisited page shows its plate on the first frame rather than
-    /// after a task.
-    private var images: [String: UIImage] = [:]
+    /// after a task. Held to about 120 MB decoded, the least used let go
+    /// first and all of it under memory pressure: a painting is up to
+    /// 2400 px, some 23 MB, and kept without a limit every set opened in
+    /// a session stayed in memory. One let go is read again from the
+    /// disk cache or the offline copy.
+    private let images: NSCache<NSString, UIImage> = {
+        let cache = NSCache<NSString, UIImage>()
+        cache.totalCostLimit = 120 * 1024 * 1024
+        return cache
+    }()
 
     /// The one load in flight per URL, shared by every view asking for it
     private var inFlight: [String: Task<UIImage?, Never>] = [:]
@@ -51,7 +59,7 @@ final class ArtworkCache {
 
     /// The painting if it is already decoded this session
     func cached(_ url: String) -> UIImage? {
-        images[url]
+        images.object(forKey: url as NSString)
     }
 
     /// The painting, from memory, the offline copy, or the network — nil
@@ -60,7 +68,7 @@ final class ArtworkCache {
     /// memoized: the next page to ask tries again, which is how a set
     /// opened offline gets its plate once the connection is back.
     func image(for artwork: SetArtwork, setId: Int) async -> UIImage? {
-        if let hit = images[artwork.url] { return hit }
+        if let hit = cached(artwork.url) { return hit }
 
         if let running = inFlight[artwork.url] {
             return await running.value
@@ -77,8 +85,13 @@ final class ArtworkCache {
         defer { inFlight[url] = nil }
 
         let image = await task.value
-        if let image { images[url] = image }
+        if let image { images.setObject(image, forKey: url as NSString, cost: Self.decodedBytes(of: image)) }
         return image
+    }
+
+    /// What a decoded painting holds in memory: four bytes a pixel
+    private static func decodedBytes(of image: UIImage) -> Int {
+        Int(image.size.width * image.scale * image.size.height * image.scale) * 4
     }
 
     // MARK: - Off-Main Loading

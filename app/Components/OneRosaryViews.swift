@@ -1252,6 +1252,28 @@ struct OneRosaryUtilityRow: View {
 
 // MARK: - SimpleRosaryWords
 
+/// The words of a recording being said, lit as the voice goes. The lit
+/// line and its progress are read here, in this view's own body, so the
+/// player's clock, which ticks twice a second, redraws the words alone and
+/// not the whole player around them (the rail, the pill, the foot).
+struct SpokenRosaryWords: View {
+    let lines: [String]
+    /// Whether the recording is timed; untimed words are never lit
+    let timed: Bool
+    let highlighted: () -> Int?
+    let lineProgress: () -> Double?
+    let size: CGFloat
+
+    var body: some View {
+        SimpleRosaryWords(
+            lines: lines,
+            highlighted: timed ? highlighted() : nil,
+            lineProgress: timed ? lineProgress() : nil,
+            size: size
+        )
+    }
+}
+
 /// A prayer's words as the simple Rosary sets them: every prayer at one
 /// size, the Creed as the Glory Be, never shrunk to fit. A long prayer
 /// scrolls in the room it has; where the recording is timed, the line

@@ -594,10 +594,11 @@ extension ScripturalRosaryPrayerView {
                 showsWords: showsWordsAndBeads
             ) {
                 VStack(alignment: .leading, spacing: 8) {
-                    SimpleRosaryWords(
+                    SpokenRosaryWords(
                         lines: SimpleRosary.displayedLines(timings: shownTimings, fallback: lines),
-                        highlighted: shownTimings == nil ? nil : viewModel.spokenHighlightedLine,
-                        lineProgress: shownTimings == nil ? nil : viewModel.spokenLineProgress,
+                        timed: shownTimings != nil,
+                        highlighted: { viewModel.spokenHighlightedLine },
+                        lineProgress: { viewModel.spokenLineProgress },
                         size: simpleWordsSize
                     )
                     AITranslationNote(prayerID: pendant.prayerID)
@@ -614,7 +615,7 @@ extension ScripturalRosaryPrayerView {
                 showsWords: showsWordsAndBeads
             ) {
                 VStack(alignment: .leading, spacing: 10) {
-                    SimpleRosaryWords(
+                    SpokenRosaryWords(
                         lines: isAnnouncing
                             ? SimpleRosary.announcementLines(
                                 category: viewModel.category,
@@ -624,8 +625,9 @@ extension ScripturalRosaryPrayerView {
                                 timings: shownTimings,
                                 fallback: reading.text.components(separatedBy: "\n")
                                     + (reading.closingPrayer.map { [$0] } ?? [])),
-                        highlighted: shownTimings == nil ? nil : viewModel.spokenHighlightedLine,
-                        lineProgress: shownTimings == nil ? nil : viewModel.spokenLineProgress,
+                        timed: shownTimings != nil,
+                        highlighted: { viewModel.spokenHighlightedLine },
+                        lineProgress: { viewModel.spokenLineProgress },
                         size: simpleWordsSize
                     )
                     if !isAnnouncing, let reference = reading.reference {
