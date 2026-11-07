@@ -51,6 +51,7 @@ struct RosaryHelpLine: View {
 /// ground of its own so it reads over any painting. A readout; the beads
 /// near the hand take a tap (`oneRosaryRail(onTap:)`).
 struct OneRosaryRailView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let rail: OneRosaryRail
     let activeIndex: Int
@@ -150,7 +151,7 @@ struct OneRosaryRailView: View {
             .padding(.trailing, Self.trailingRoom)
             .saturation(locked ? 0 : 1)
             .opacity(locked ? 0.8 : 1)
-            .animation(Motion.beadSlide, value: activeIndex)
+            .animation(reduceMotion ? nil : Motion.beadSlide, value: activeIndex)
 
             DecadeTurnRipple(trigger: turnPulse)
                 .frame(width: Self.beadColumn, height: Self.rowHeight)
@@ -1086,7 +1087,33 @@ struct OneRosaryTapHint: View {
                 .foregroundColor(AppColors.cream.opacity(0.7))
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .accessibilityElement(children: .combine)
+        // The rail is hidden from VoiceOver, which moves by the column's
+        // Next and Previous bead actions instead
+        .accessibilityHidden(true)
+    }
+}
+
+// MARK: - The place, told to VoiceOver
+
+extension View {
+    /// VoiceOver is told where the hand has come to whenever it moves: the
+    /// voice moves it with no tap, and the column VoiceOver had in focus is
+    /// rebuilt under it. Only the title and the bead, since the app's own
+    /// voice is speaking too.
+    func announcesRosaryPlace(_ place: String) -> some View {
+        modifier(RosaryPlaceAnnouncer(place: place))
+    }
+}
+
+private struct RosaryPlaceAnnouncer: ViewModifier {
+    let place: String
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverEnabled
+
+    func body(content: Content) -> some View {
+        content.onChange(of: place) { _, place in
+            guard voiceOverEnabled, !place.isEmpty else { return }
+            AccessibilityNotification.Announcement(place).post()
+        }
     }
 }
 
@@ -1452,7 +1479,10 @@ struct RosaryStopsSheet: View {
             )
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel(name)
+        // The detail is what tells one mystery from another, and the lit
+        // row is the one the hand is in
+        .accessibilityLabel(detail.map { "\(name), \($0)" } ?? name)
+        .accessibilityAddTraits(isCurrent ? .isSelected : [])
     }
 
     private func describe(_ stop: RosaryStop) -> (String, String?, String) {

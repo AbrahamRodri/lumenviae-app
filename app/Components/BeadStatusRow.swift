@@ -94,7 +94,11 @@ struct BeadStatusRow: View {
         .contentShape(Rectangle())
         .onTapGesture(perform: onAdvance)
         .onLongPressGesture(perform: onRetreat)
-        .accessibilityElement(children: .contain)
+        // One button while the row moves the bead, so VoiceOver reaches
+        // its label and actions; on the last step AMEN inside it stays a
+        // button of its own
+        .accessibilityElement(children: onAmen == nil ? .ignore : .contain)
+        .accessibilityAddTraits(onAmen == nil ? .isButton : [])
         .accessibilityLabel(accessibilityText)
         .accessibilityHint(onAmen == nil ? Text("Tap for the next bead") : Text(verbatim: ""))
         .accessibilityAction(named: "Next bead", onAdvance)

@@ -27,6 +27,7 @@ struct ScripturalRosaryPrayerView: View {
     @Environment(AppRouter.self) private var router
     @Environment(UserSettings.self) private var userSettings
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var viewModel: ScripturalRosaryViewModel
 
     /// The one sheet this screen presents at a time.
@@ -323,7 +324,7 @@ struct ScripturalRosaryPrayerView: View {
         }
         guard !viewModel.isLastBeadOfRosary else { return }
         travel = .forward
-        withAnimation(Motion.beadSlide) {
+        withAnimation(reduceMotion ? nil : Motion.beadSlide) {
             _ = viewModel.prayForward()
         }
     }
@@ -340,7 +341,7 @@ struct ScripturalRosaryPrayerView: View {
         }
         guard !viewModel.isFirstBeadOfRosary else { return }
         travel = .back
-        withAnimation(Motion.beadSlide) {
+        withAnimation(reduceMotion ? nil : Motion.beadSlide) {
             viewModel.prayBack()
         }
     }
@@ -474,6 +475,7 @@ extension ScripturalRosaryPrayerView {
                 let placed = OneRosaryColumn<EmptyView>.layout(
                     showsWords: showsWordsAndBeads, columnTop: columnTop, headerFoot: 12 + 44 + 14)
                 oneRosaryColumn
+                    .announcesRosaryPlace(spokenPlace)
                     .padding(.leading, 28)
                     .padding(.trailing, Self.readingTrailingInset)
                     .padding(.top, placed.top)
@@ -563,6 +565,15 @@ extension ScripturalRosaryPrayerView {
         viewModel.isPrayingAloud && viewModel.spokenFailure == nil
             ? viewModel.isSpokenFinished
             : viewModel.isLastBeadOfRosary
+    }
+
+    /// Where the hand is, as VoiceOver is told when the voice moves it on
+    private var spokenPlace: String {
+        if let pendant = viewModel.spokenPendant {
+            return "\(pendant.heading), "
+                + OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount)
+        }
+        return "\(viewModel.currentMystery?.name ?? ""), \(viewModel.beadLabel)"
     }
 
     @ViewBuilder
@@ -688,7 +699,7 @@ extension ScripturalRosaryPrayerView {
     fileprivate func goToBead(_ index: Int) {
         guard !beadsHeld, !movesByPrayer else { return }
         travel = index > viewModel.strandIndex ? .forward : .back
-        withAnimation(Motion.beadSlide) {
+        withAnimation(reduceMotion ? nil : Motion.beadSlide) {
             viewModel.goToBead(at: index)
         }
     }
