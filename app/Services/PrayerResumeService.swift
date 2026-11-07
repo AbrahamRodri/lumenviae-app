@@ -238,8 +238,7 @@ final class PrayerResumeService {
     }
 
     /// The step a resumed Rosary said aloud stopped on: only for the same
-    /// prayer, on the very mystery and bead being resumed, the rule both
-    /// players apply when they take it up.
+    /// prayer, in the decade being resumed, and no earlier than its bead.
     func spokenStep(
         kind: InProgressPrayer.Kind,
         setId: Int,
@@ -253,7 +252,7 @@ final class PrayerResumeService {
               current.category == category,
               let step = current.spokenStep,
               step.mystery == mysteryIndex,
-              step.bead == beadIndex else { return nil }
+              step.bead >= beadIndex else { return nil }
         return step
     }
 
