@@ -98,6 +98,9 @@ struct PrayerResumeServiceTests {
                                   mysteryIndex: 3, beadIndex: 0) == nil)
         #expect(resume.spokenStep(kind: .meditationSet, setId: 12, category: "joyful",
                                   mysteryIndex: 2, beadIndex: 6) == nil)
+        // Nor ahead of the bead: the players take a step only on its own bead
+        #expect(resume.spokenStep(kind: .meditationSet, setId: 12, category: "joyful",
+                                  mysteryIndex: 2, beadIndex: 3) == nil)
         #expect(resume.spokenStep(kind: .scripturalRosary, setId: 12, category: "joyful",
                                   mysteryIndex: 2, beadIndex: 4) == nil)
     }
