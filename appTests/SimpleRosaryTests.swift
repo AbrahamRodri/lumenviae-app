@@ -284,3 +284,22 @@ struct SimpleRosaryTests {
         #expect(hidden.top == 0 && hidden.alignment == .bottom)
     }
 }
+
+@Suite struct AnnouncementWordsTests {
+    @Test func theAnnouncementIsTheMysteryByItsPlaceAndName() {
+        let lines = SimpleRosary.announcementLines(category: .sorrowful, ordinal: 1, name: "The Agony in the Garden")
+        #expect(lines == ["\(MysteryCategory.sorrowful.mysteryLabel(ordinal: 1)): The Agony in the Garden"])
+    }
+
+    @Test func withoutANameTheAnnouncementIsItsPlace() {
+        #expect(SimpleRosary.announcementLines(category: .joyful, ordinal: 3, name: nil)
+            == [MysteryCategory.joyful.mysteryLabel(ordinal: 3)])
+        #expect(SimpleRosary.announcementLines(category: .joyful, ordinal: 3, name: "")
+            == [MysteryCategory.joyful.mysteryLabel(ordinal: 3)])
+    }
+
+    @Test func withoutACategoryTheAnnouncementIsTheName() {
+        #expect(SimpleRosary.announcementLines(category: nil, ordinal: 2, name: "The Visitation") == ["The Visitation"])
+        #expect(SimpleRosary.announcementLines(category: nil, ordinal: 2, name: nil).isEmpty)
+    }
+}
