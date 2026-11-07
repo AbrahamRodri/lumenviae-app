@@ -15388,17 +15388,6 @@
         }
       }
     },
-    "One Rosary (beta)" : {
-      "comment" : "Settings, The Rosary: the switch for the One Rosary beta, a new way to pray the Rosary",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un solo Rosario (beta)"
-          }
-        }
-      }
-    },
     "One bead at a time" : {
       "comment" : "Daily prayer reminder notification for readers drawn by peace and stillness: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters",
       "localizations" : {
@@ -25549,27 +25538,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Intentar de nuevo"
-          }
-        }
-      }
-    },
-    "Try it here. Swipe down on the beads." : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pruébalo aquí. Desliza hacia abajo sobre las cuentas."
-          }
-        }
-      }
-    },
-    "Try the new way to pray the Rosary" : {
-      "comment" : "Settings, The Rosary: the line under the One Rosary (beta) switch",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prueba la nueva forma de rezar el Rosario"
           }
         }
       }
