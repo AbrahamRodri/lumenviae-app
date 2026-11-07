@@ -1105,6 +1105,14 @@ extension View {
     }
 }
 
+enum RosaryPlace {
+    /// The title and the bead as one line, leaving out an empty part, so a
+    /// mystery with no name is never heard as ", Hail Mary 4 of 10"
+    static func spoken(title: String, bead: String) -> String {
+        [title, bead].filter { !$0.isEmpty }.joined(separator: ", ")
+    }
+}
+
 private struct RosaryPlaceAnnouncer: ViewModifier {
     let place: String
     @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverEnabled

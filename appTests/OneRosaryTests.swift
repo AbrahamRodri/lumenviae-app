@@ -355,3 +355,16 @@ struct OneRosaryTests {
         #expect(middle < fullHeight * 0.75)
     }
 }
+
+@Suite struct RosaryPlaceTests {
+    @Test func thePlaceIsTheTitleAndTheBead() {
+        #expect(RosaryPlace.spoken(title: "The Agony in the Garden", bead: "Hail Mary · 4 of 10")
+            == "The Agony in the Garden, Hail Mary · 4 of 10")
+    }
+
+    @Test func anEmptyPartIsLeftOut() {
+        #expect(RosaryPlace.spoken(title: "", bead: "Hail Mary · 4 of 10") == "Hail Mary · 4 of 10")
+        #expect(RosaryPlace.spoken(title: "The Creed", bead: "") == "The Creed")
+        #expect(RosaryPlace.spoken(title: "", bead: "") == "")
+    }
+}
