@@ -125,7 +125,8 @@ struct MeditationReaderView: View {
                             },
                             onRetreat: {
                                 withAnimation(Motion.beadSlide) { viewModel.prayBack() }
-                            }
+                            },
+                            canRetreat: !viewModel.isFirstBeadOfRosary
                         )
                         .padding(.horizontal, 22)
                         .padding(.bottom, 6)
