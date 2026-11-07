@@ -4263,7 +4263,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AÑADIR ORACIONES"
+            "value" : "AGREGAR ORACIONES"
           }
         }
       }
@@ -4273,7 +4273,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AÑADIR LA PAUSA"
+            "value" : "AGREGAR LA PAUSA"
           }
         }
       }
@@ -4283,7 +4283,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AÑADIDA"
+            "value" : "AGREGADA"
           }
         }
       }
@@ -4293,7 +4293,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AÑADIDA ×%lld"
+            "value" : "AGREGADA ×%lld"
           }
         }
       }
@@ -4993,7 +4993,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "También es lo que hace un toque en el botón Rezar"
+            "value" : "También es lo que pasa al tocar el botón Rezar"
           }
         }
       }
@@ -5566,7 +5566,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atrás un paso"
+            "value" : "Un paso atrás"
           }
         }
       }
@@ -6741,7 +6741,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige los que te describan. Redactaremos tus recordatorios en consecuencia."
+            "value" : "Elige los que te describan y adaptaremos tus recordatorios."
           }
         }
       }
@@ -9194,7 +9194,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo lo que en la app no es escrito nuestro, y las personas y lugares de donde viene. Cada pintura es de un pintor que murió hace más de cien años, y cada texto es de dominio público o se usa bajo una licencia abierta, salvo una breve cita, que se reconoce abajo."
+            "value" : "Todo lo que en la app no escribimos nosotros, y las personas y lugares de donde viene. Cada pintura es de un pintor que murió hace más de cien años, y cada texto es de dominio público o se usa bajo una licencia abierta, salvo una breve cita, que se reconoce abajo."
           }
         }
       }
@@ -9915,7 +9915,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Libera espacio; con conexión el audio se sigue reproduciendo en línea"
+            "value" : "Libera espacio; con conexión, el audio se sigue escuchando"
           }
         }
       }
@@ -10560,7 +10560,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avemaría"
+            "value" : "Ave María"
           }
         }
       }
@@ -10577,7 +10577,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avemaría · %1$lld de %2$lld"
+            "value" : "Ave María · %1$lld de %2$lld"
           }
         }
       }
@@ -11491,7 +11491,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En la serie se leerá: %@"
+            "value" : "En la serie se lee: %@"
           }
         }
       }
@@ -11858,7 +11858,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guardado en Tus cantos, en «De memoria»."
+            "value" : "Guardado en Tus cantos, en “De memoria”."
           }
         }
       }
@@ -12267,7 +12267,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conoce cómo funciona"
+            "value" : "Mira cómo funciona"
           }
         }
       }
@@ -13001,7 +13001,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hacer de ancho completo"
+            "value" : "Usar ancho completo"
           }
         }
       }
@@ -13011,7 +13011,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hacer de medio ancho"
+            "value" : "Usar medio ancho"
           }
         }
       }
@@ -13416,7 +13416,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las meditaciones, la narración, las Horas de oración (el Oficio Divino), las palabras de las oraciones, y las grabaciones y partituras de los cantos vienen de nuestro propio servidor; los textos de la Misa, de Missale Meum; los libros y grabaciones de Lectura espiritual, de Project Gutenberg y LibriVox. Cada uno recibe la solicitud en sí, como cualquier sitio web, y nada más. La app no lleva código de análisis ni de publicidad de nadie más, y nada se usa para rastrearte."
+            "value" : "Las meditaciones, la narración, las Horas de oración (el Oficio Divino), las palabras de las oraciones, y las grabaciones y partituras de los cantos vienen de nuestro propio servidor; los textos de la Misa, de Missale Meum; los libros y grabaciones de Lectura espiritual, de Project Gutenberg y LibriVox. Cada uno recibe solo la solicitud, como cualquier sitio web, y nada más. La app no lleva código de análisis ni de publicidad de nadie más, y nada se usa para rastrearte."
           }
         }
       }
@@ -14102,7 +14102,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nuevo en el Rosario, o volviendo después de un tiempo"
+            "value" : "Si empiezas, o si vuelves después de un tiempo"
           }
         }
       }
@@ -14954,7 +14954,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las notificaciones de Lumen Viae están desactivadas. Actívalas en la app Configuración de tu iPhone y luego elige una hora en los Configuración de Lumen Viae, en Devoción."
+            "value" : "Las notificaciones de Lumen Viae están desactivadas. Actívalas en la app Configuración de tu iPhone y luego elige una hora en la Configuración de Lumen Viae, en Devoción."
           }
         }
       }
@@ -17112,7 +17112,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Orad, hermanos"
+            "value" : "Oren, hermanos"
           }
         }
       }
@@ -17307,7 +17307,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oración a San Miguel"
+            "value" : "Oración a san Miguel"
           }
         }
       }
@@ -18565,7 +18565,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quitar la marca «De memoria»"
+            "value" : "Quitar la marca “De memoria”"
           }
         }
       }
@@ -19037,7 +19037,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oración a San Miguel"
+            "value" : "Oración a san Miguel"
           }
         }
       }
@@ -22550,7 +22550,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los Misterios Gozosos van con el tiempo"
+            "value" : "Misterios Gozosos para el Adviento"
           }
         }
       }
@@ -22638,7 +22638,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El Memorare"
+            "value" : "El Acordaos"
           }
         }
       }
@@ -22790,7 +22790,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La Oración a San Miguel después del Rosario."
+            "value" : "La oración a san Miguel después del Rosario."
           }
         }
       }
@@ -24364,7 +24364,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El calendario tradicional asigna una serie de misterios a cada día de la semana: Gozosos el lunes y el jueves; Dolorosos el martes y el viernes; Gloriosos el miércoles y el sábado. El domingo sigue el tiempo litúrgico — Gozosos en Adviento, Dolorosos en Cuaresma y Gloriosos el resto del año. El calendario moderno, el de san Juan Pablo II, da el jueves a los Luminosos y el sábado a los Gozosos; elígelo en Configuración, en Devoción."
+            "value" : "El calendario tradicional asigna una serie de misterios a cada día de la semana: Gozosos el lunes y el jueves; Dolorosos el martes y el viernes; Gloriosos el miércoles y el sábado. El domingo sigue el tiempo litúrgico: Gozosos en Adviento, Dolorosos en Cuaresma y Gloriosos el resto del año. El calendario moderno, el de san Juan Pablo II, da el jueves a los Luminosos y el sábado a los Gozosos; elígelo en Configuración, en Devoción."
           }
         }
       }
@@ -26705,7 +26705,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las pantallas, el Rosario, las oraciones, las meditaciones, la Consagración y el Oficio divino. La voz que lee sigue en inglés"
+            "value" : "Las pantallas, el Rosario, las oraciones, las meditaciones, la Consagración y el Oficio Divino. La voz que lee sigue en inglés"
           }
         }
       }
@@ -27242,7 +27242,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La versión de la app y el dispositivo se agregan al final para que podamos encontrar el problema. Se envía como correo desde tu propia cuenta, directo a %@ — nada pasa por nuestro servidor."
+            "value" : "La versión de la app y el dispositivo se agregan al final para que podamos encontrar el problema. Se envía como correo desde tu propia cuenta, directo a %@; nada pasa por nuestro servidor."
           }
         }
       }
