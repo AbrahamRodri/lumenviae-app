@@ -153,8 +153,10 @@ struct SpanishCatalogTests {
                   let spanish = (entry["localizations"] as? [String: Any])?["es"] else { continue }
             let text = (try? JSONSerialization.data(withJSONObject: spanish))
                 .flatMap { String(data: $0, encoding: .utf8) } ?? ""
-            if text.contains("vosotros") || text.contains("Ajustes") || text.contains("añad")
-                || text.contains("Añad") || text.range(of: Self.masculineAvemaria, options: .regularExpression) != nil {
+            // Añadir in any case: the small-capital "AÑADIR" buttons got past a check for two spellings
+            if text.contains("vosotros") || text.contains("Ajustes")
+                || text.range(of: "añad", options: .caseInsensitive) != nil
+                || text.range(of: Self.masculineAvemaria, options: .regularExpression) != nil {
                 broken.append(key)
             }
         }
