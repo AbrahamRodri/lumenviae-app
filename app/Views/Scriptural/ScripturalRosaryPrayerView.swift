@@ -632,14 +632,14 @@ extension ScripturalRosaryPrayerView {
                     )
                     if !isAnnouncing, let reference = reading.reference {
                         Text(reference.uppercased())
-                            .font(AppFonts.labelFont(10.5))
+                            .font(AppFonts.labelFont(12))
                             .tracking(1.5)
                             .foregroundColor(AppColors.goldLight)
                             .lineLimit(1)
                     }
                     if !isAnnouncing, let footnote = reading.footnote {
                         Text(footnote.uppercased())
-                            .font(AppFonts.labelFont(9))
+                            .font(AppFonts.labelFont(12))
                             .tracking(1.5)
                             .foregroundColor(AppColors.cream.opacity(0.55))
                             .fixedSize(horizontal: false, vertical: true)
@@ -664,7 +664,7 @@ extension ScripturalRosaryPrayerView {
                 } else {
                     if let status = viewModel.spokenStatus {
                         Text(status.uppercased())
-                            .font(AppFonts.labelFont(9.5))
+                            .font(AppFonts.labelFont(12))
                             .tracking(2)
                             .foregroundColor(AppColors.textSecondary)
                             .padding(.bottom, 8)
