@@ -40,8 +40,29 @@ struct BeadStatusRow: View {
     let onAdvance: () -> Void
     let onRetreat: () -> Void
 
+    /// Whether there is a bead behind the hand: the small Back at the
+    /// row's head stands only then
+    var canRetreat: Bool = true
+
     var body: some View {
         HStack(spacing: 14) {
+            // Back in plain sight, so stepping back never depends on
+            // knowing to hold the row
+            Button(action: onRetreat) {
+                AppIcon("ph-caret-left", size: 12)
+                    .foregroundColor(AppColors.cream.opacity(0.8))
+                    .frame(width: 32, height: 32)
+                    .overlay(Circle().strokeBorder(AppColors.cream.opacity(0.4), lineWidth: AppLine.hairline))
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(QuietGlyphButtonStyle())
+            .opacity(canRetreat ? 1 : 0)
+            .disabled(!canRetreat)
+            .accessibilityHidden(true)
+            .padding(.leading, -6)
+            .padding(.trailing, -6)
+
             Text(label.uppercased())
                 .font(AppFonts.labelFont(12))
                 .tracking(1.5)
