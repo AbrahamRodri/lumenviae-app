@@ -25542,27 +25542,6 @@
         }
       }
     },
-    "Try it here. Swipe down on the beads." : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pruébalo aquí. Desliza hacia abajo sobre las cuentas."
-          }
-        }
-      }
-    },
-    "Try the new way to pray the Rosary" : {
-      "comment" : "Settings, The Rosary: the line under the One Rosary (beta) switch",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prueba la nueva forma de rezar el Rosario"
-          }
-        }
-      }
-    },
     "Tuesday" : {
       "comment" : "A day a set of mysteries is prayed, in a comma-separated list under its name, like Monday, Thursday; capitalized as a day name in English",
       "localizations" : {
