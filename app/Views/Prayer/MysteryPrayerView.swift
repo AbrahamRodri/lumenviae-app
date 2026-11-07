@@ -912,10 +912,11 @@ extension MysteryPrayerView {
                 showsWords: showsWordsAndBeads
             ) {
                 VStack(alignment: .leading, spacing: 8) {
-                    SimpleRosaryWords(
+                    SpokenRosaryWords(
                         lines: SimpleRosary.displayedLines(timings: shownTimings, fallback: lines),
-                        highlighted: shownTimings == nil ? nil : viewModel.spokenHighlightedLine,
-                        lineProgress: shownTimings == nil ? nil : viewModel.spokenLineProgress,
+                        timed: shownTimings != nil,
+                        highlighted: { viewModel.spokenHighlightedLine },
+                        lineProgress: { viewModel.spokenLineProgress },
                         size: wordsSize
                     )
                     AITranslationNote(prayerID: pendant.prayerID)
@@ -946,16 +947,17 @@ extension MysteryPrayerView {
                 } else if viewModel.isSpeakingMeditation, let meditation = viewModel.currentMeditation {
                     // The meditation as it is read: its recording's own
                     // lines where it is timed, lit as they are said
-                    SimpleRosaryWords(
+                    SpokenRosaryWords(
                         lines: SimpleRosary.displayedLines(
                             timings: shownTimings,
                             fallback: ReadingText.paragraphs(of: meditation.content)),
-                        highlighted: shownTimings == nil ? nil : viewModel.spokenHighlightedLine,
-                        lineProgress: shownTimings == nil ? nil : viewModel.spokenLineProgress,
+                        timed: shownTimings != nil,
+                        highlighted: { viewModel.spokenHighlightedLine },
+                        lineProgress: { viewModel.spokenLineProgress },
                         size: wordsSize
                     )
                 } else if isAnnouncing {
-                    SimpleRosaryWords(
+                    SpokenRosaryWords(
                         lines: SimpleRosary.announcementLines(
                             category: meditationSet.mysteryCategory,
                             ordinal: viewModel.currentMysteryIndex + 1,
@@ -967,8 +969,9 @@ extension MysteryPrayerView {
                 } else {
                     SimpleRosaryWords(
                         lines: SimpleRosary.displayedLines(timings: shownTimings, fallback: viewModel.beadLines),
-                        highlighted: shownTimings == nil ? nil : viewModel.spokenHighlightedLine,
-                        lineProgress: shownTimings == nil ? nil : viewModel.spokenLineProgress,
+                        timed: shownTimings != nil,
+                        highlighted: { viewModel.spokenHighlightedLine },
+                        lineProgress: { viewModel.spokenLineProgress },
                         size: wordsSize
                     )
                 }

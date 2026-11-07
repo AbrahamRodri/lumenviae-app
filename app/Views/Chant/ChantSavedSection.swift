@@ -625,7 +625,7 @@ struct ChantSavedEmpty: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            CachedAssetImage(painting, focal: ChantThumbnail.focalPoint(for: painting))
+            ThumbnailImage(name: painting, focal: ChantThumbnail.focalPoint(for: painting), size: CGSize(width: 132, height: 166))
                 .frame(width: 132, height: 166)
                 .clipShape(UnevenRoundedRectangle(topLeadingRadius: 66, bottomLeadingRadius: 12,
                                                   bottomTrailingRadius: 12, topTrailingRadius: 66))

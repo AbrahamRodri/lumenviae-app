@@ -422,7 +422,7 @@ struct TodaysPrayerRowView: View {
     /// The painting, cut square with a gold hairline edge, the check on
     /// its corner once prayed
     private var painting: some View {
-        CachedAssetImage(row.painting, focal: row.focal)
+        ThumbnailImage(name: row.painting, focal: row.focal, size: CGSize(width: 64, height: 64))
             .frame(width: 64, height: 64)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(
