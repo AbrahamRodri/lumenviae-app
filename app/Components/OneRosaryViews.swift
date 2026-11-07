@@ -762,10 +762,9 @@ struct OneRosaryStepLabel: View {
                 .tracking(1.8)
                 .monospacedDigit()
                 .foregroundColor(AppColors.cream.opacity(0.9))
-                // One line on every step: a long prayer's name comes down
-                // a little rather than wrap
+                // One line on every step, and never shrunk under the
+                // labels' 12-point floor
                 .lineLimit(1)
-                .minimumScaleFactor(0.7)
                 .id(text)
                 .transition(.opacity)
         }
@@ -949,7 +948,6 @@ struct OneRosaryFooter: View {
                     .font(AppFonts.labelFont(12))
                     .tracking(2)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.7)
                 if let trailing { AppIcon(trailing, size: 10) }
             }
             // Back in cream on a cream edge, plainly there; Next in gold,
@@ -1049,7 +1047,7 @@ struct OneRosaryReadLink: View {
                     "READ THE MEDITATION",
                     comment: "One Rosary beta, the player on a mystery's Our Father: the quiet door to the meditation as text"
                 )
-                .font(AppFonts.labelFont(10))
+                .font(AppFonts.labelFont(12))
                 .tracking(1.6)
                 if let title {
                     Text(verbatim: "·")
@@ -1194,10 +1192,9 @@ struct OneRosaryUtilityRow: View {
                     VStack(spacing: 4) {
                         AppIcon(item.icon, size: 20)
                         Text(item.title.uppercased())
-                            .font(AppFonts.labelFont(9.5))
+                            .font(AppFonts.labelFont(12))
                             .tracking(1.4)
                             .lineLimit(1)
-                            .minimumScaleFactor(0.8)
                     }
                     .foregroundColor(AppColors.cream.opacity(0.72))
                     .frame(width: 80, height: 50)
@@ -1380,11 +1377,10 @@ struct RosaryStopsPill: View {
             VStack(spacing: 7) {
                 HStack(spacing: 6) {
                     Text(RosaryStopsPill.label(current, of: stops, isChaplet: isChaplet).uppercased())
-                        .font(AppFonts.labelFont(10))
+                        .font(AppFonts.labelFont(12))
                         .tracking(2)
                         .foregroundColor(AppColors.cream.opacity(0.9))
                         .lineLimit(1)
-                        .minimumScaleFactor(0.8)
                     AppIcon("ph-caret-down", size: 9)
                         .foregroundColor(AppColors.gold)
                 }

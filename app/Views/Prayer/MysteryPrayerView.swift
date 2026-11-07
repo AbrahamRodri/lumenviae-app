@@ -576,12 +576,11 @@ struct MysteryPrayerView: View {
 
     private func spokenLineText(_ line: String, lit: Bool) -> some View {
         Text(line.uppercased())
-            .font(AppFonts.labelFont(10))
+            .font(AppFonts.labelFont(12))
             .tracking(2)
             .foregroundColor(lit ? AppColors.goldLight : AppColors.textSecondary)
             .multilineTextAlignment(.center)
             .lineLimit(1)
-            .minimumScaleFactor(0.8)
             .padding(.horizontal, 30)
             .padding(.top, 8)
             .contentTransition(.opacity)
