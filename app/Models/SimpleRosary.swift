@@ -68,6 +68,15 @@ enum RosaryStop: Hashable {
         }
     }
 
+    /// The stop of the spoken Rosary at `index` in its script. Once the last
+    /// Amen is said the index stands one past the end, and the Rosary is
+    /// still in the part it ended in: the closing prayers, never the last
+    /// mystery, which the hand's own place fell back to
+    static func spoken(at index: Int, in script: [SpokenSegment]) -> RosaryStop? {
+        let segment = script.indices.contains(index) ? script[index] : (index >= script.count ? script.last : nil)
+        return segment.map { current(phase: $0.phase, mystery: $0.mystery) }
+    }
+
     /// Where in a spoken Rosary's script a stop begins: the first opening
     /// prayer, a mystery's announcement (its meditation follows it), or
     /// the first closing prayer. Nil where the script has no such part.

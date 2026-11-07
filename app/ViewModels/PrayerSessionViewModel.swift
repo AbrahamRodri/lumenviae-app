@@ -1434,8 +1434,9 @@ extension PrayerSessionViewModel {
 
     /// The part the hand is on
     var currentStop: RosaryStop {
-        if let segment = spoken?.currentSegment, spoken?.phase == .running || spoken?.phase == .finished {
-            return RosaryStop.current(phase: segment.phase, mystery: segment.mystery)
+        if let spoken, spoken.phase == .running || spoken.phase == .finished,
+           let stop = RosaryStop.spoken(at: spoken.index, in: spoken.script) {
+            return stop
         }
         switch currentPendantStep {
         case .opening: return .opening
