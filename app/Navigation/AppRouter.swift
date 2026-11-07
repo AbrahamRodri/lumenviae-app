@@ -583,13 +583,6 @@ final class AppRouter {
     /// The scheme the app registers in Info.plist (`CFBundleURLTypes`)
     static let linkScheme = "lumenviae"
 
-    /// Opens a `lumenviae://` link, as an App Store In-App Event does with
-    /// `lumenviae://home`. Such a link goes to Home, the way a tap on its
-    /// tab does; no link opens a particular page yet, so an unknown path
-    /// is Home too. Over a prayer (`isPrayerUnderWay`) it only brings the
-    /// app forward where it is, as the Angelus bell's notification does;
-    /// ContentView holds it back over a sheet or a consecration day. A
-    /// link of any other scheme is left alone.
     /// Whether the Angelus bell's tap may open the Angelus over these
     /// pages: never over a prayer being prayed or its closing screen, as a
     /// link never is. The bell has been heard; the prayer under way is kept.
@@ -597,6 +590,13 @@ final class AppRouter {
         !routes.contains { $0?.isPrayerUnderWay == true }
     }
 
+    /// Opens a `lumenviae://` link, as an App Store In-App Event does with
+    /// `lumenviae://home`. Such a link goes to Home, the way a tap on its
+    /// tab does; no link opens a particular page yet, so an unknown path
+    /// is Home too. Over a prayer (`isPrayerUnderWay`) it only brings the
+    /// app forward where it is, as the Angelus bell's notification does;
+    /// ContentView holds it back over a sheet or a consecration day. A
+    /// link of any other scheme is left alone.
     func open(_ url: URL) {
         guard url.scheme?.lowercased() == AppRouter.linkScheme,
               !routes.contains(where: { $0?.isPrayerUnderWay == true }) else { return }

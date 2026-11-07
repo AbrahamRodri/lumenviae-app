@@ -234,6 +234,8 @@ nonisolated enum UserPhotoStore {
     nonisolated(unsafe) private static let readPhotos: NSCache<NSString, UIImage> = {
         let cache = NSCache<NSString, UIImage>()
         cache.countLimit = 8
+        // Photos are kept at 1600 px at most, about 10 MB decoded each
+        cache.totalCostLimit = 40 * 1024 * 1024
         return cache
     }()
 
@@ -247,7 +249,8 @@ nonisolated enum UserPhotoStore {
         let key = "\(name)|\(modified.timeIntervalSince1970)" as NSString
         if let kept = readPhotos.object(forKey: key) { return kept }
         guard let image = UIImage(contentsOfFile: url.path) else { return nil }
-        readPhotos.setObject(image, forKey: key)
+        let pixels = Int(image.size.width * image.scale * image.size.height * image.scale)
+        readPhotos.setObject(image, forKey: key, cost: pixels * 4)
         return image
     }
 
