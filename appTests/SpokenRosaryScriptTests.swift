@@ -382,3 +382,30 @@ struct SpokenRosaryScriptTests {
         #expect(SpokenRosaryScript.startIndex(in: [], mystery: 2, bead: 3, includingOpening: false) == 0)
     }
 }
+
+@Suite struct SpokenRosaryStopTests {
+    private func script(_ category: MysteryCategory) -> [SpokenSegment] {
+        SpokenRosaryScript.build(
+            category: category,
+            mysteryKeys: MysteryData.mysteries(for: category).map { "\($0.category.lowercased())_\($0.order)" },
+            hailMarys: category == .sevenSorrows ? 7 : 10,
+            style: .meditation,
+            extras: []
+        )
+    }
+
+    @Test(arguments: [MysteryCategory.joyful, .sevenSorrows])
+    func afterTheLastAmenTheRosaryIsInTheClosingPrayers(category: MysteryCategory) {
+        let script = script(category)
+        #expect(RosaryStop.spoken(at: script.count, in: script) == .closing)
+        #expect(RosaryStop.spoken(at: script.count - 1, in: script) == .closing)
+    }
+
+    @Test func aSegmentNamesItsOwnPart() throws {
+        let script = script(.joyful)
+        #expect(RosaryStop.spoken(at: 0, in: script) == .opening)
+        let first = try #require(script.firstIndex { $0.phase == .decade })
+        #expect(RosaryStop.spoken(at: first, in: script) == .mystery(0))
+        #expect(RosaryStop.spoken(at: 0, in: []) == nil)
+    }
+}
