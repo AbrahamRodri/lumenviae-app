@@ -76,3 +76,15 @@ struct AppLinkTests {
         #expect(router.path.count == 1)
     }
 }
+
+@Suite struct AngelusTapTests {
+    @Test func theBellOpensTheAngelusOverOrdinaryPages() {
+        #expect(AppRouter.angelusTapOpens(over: []))
+        #expect(AppRouter.angelusTapOpens(over: [.explore, .missal, nil]))
+    }
+
+    @Test func theBellNeverTakesAPrayerUnderWay() {
+        #expect(!AppRouter.angelusTapOpens(over: [.guidedRosary(.joyful)]))
+        #expect(!AppRouter.angelusTapOpens(over: [.explore, .completion]))
+    }
+}

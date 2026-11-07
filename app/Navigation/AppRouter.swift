@@ -590,6 +590,13 @@ final class AppRouter {
     /// app forward where it is, as the Angelus bell's notification does;
     /// ContentView holds it back over a sheet or a consecration day. A
     /// link of any other scheme is left alone.
+    /// Whether the Angelus bell's tap may open the Angelus over these
+    /// pages: never over a prayer being prayed or its closing screen, as a
+    /// link never is. The bell has been heard; the prayer under way is kept.
+    static func angelusTapOpens(over routes: [AppRoute?]) -> Bool {
+        !routes.contains { $0?.isPrayerUnderWay == true }
+    }
+
     func open(_ url: URL) {
         guard url.scheme?.lowercased() == AppRouter.linkScheme,
               !routes.contains(where: { $0?.isPrayerUnderWay == true }) else { return }
