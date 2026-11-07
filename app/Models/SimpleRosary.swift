@@ -208,6 +208,16 @@ enum SimpleRosary {
         }
     }
 
+    /// The words while a mystery is announced: what the voice says, "The
+    /// First Sorrowful Mystery: The Agony in the Garden". The column once
+    /// showed the Our Father here, the bead's own prayer, still to come.
+    static func announcementLines(category: MysteryCategory?, ordinal: Int, name: String?) -> [String] {
+        let name = name?.isEmpty == false ? name : nil
+        guard let category else { return name.map { [$0] } ?? [] }
+        let label = category.mysteryLabel(ordinal: ordinal)
+        return [name.map { "\(label): \($0)" } ?? label]
+    }
+
     static func displayedLines(timings: [TimedLine]?, fallback: [String]) -> [String] {
         guard let timings, !timings.isEmpty else { return fallback }
         return timings.map(\.text)
