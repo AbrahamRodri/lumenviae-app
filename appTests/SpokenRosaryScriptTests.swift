@@ -362,4 +362,23 @@ struct SpokenRosaryScriptTests {
         #expect(chaplet.label(bead: 8) == "Glory Be")
         #expect(chaplet.labelLines(bead: 8) == ["Glory Be"])
     }
+
+    // MARK: - Where a Bead Begins
+
+    /// A Hail Mary begins on its own segment; a bead past the decade's end
+    /// falls to the closing prayers; an empty script to its start
+    @Test func aBeadBeginsOnItsOwnPrayer() throws {
+        let rosary = script(.sorrowful)
+        let at = SpokenRosaryScript.startIndex(in: rosary, mystery: 1, bead: 4, includingOpening: false)
+        let segment = rosary[at]
+        #expect(segment.phase == .decade)
+        #expect(segment.mystery == 1)
+        #expect(segment.bead == 4)
+        #expect(name(segment) == "hail_mary")
+
+        #expect(SpokenRosaryScript.startIndex(in: rosary, mystery: 0, bead: 0, includingOpening: true) == 0)
+        let past = SpokenRosaryScript.startIndex(in: rosary, mystery: 4, bead: 99, includingOpening: false)
+        #expect(rosary[past].phase == .closing)
+        #expect(SpokenRosaryScript.startIndex(in: [], mystery: 2, bead: 3, includingOpening: false) == 0)
+    }
 }
