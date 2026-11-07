@@ -753,9 +753,17 @@ struct OneRosaryColumn<Words: View>: View {
 struct OneRosaryStepLabel: View {
     let text: String
 
+    /// The step with its count held together: wrapped, it breaks before
+    /// "1 OF 3", never inside it, and the dot stays with the words
+    static func keepingCountTogether(_ text: String) -> String {
+        guard let dot = text.range(of: " · ", options: .backwards) else { return text }
+        let count = text[dot.upperBound...].replacingOccurrences(of: " ", with: "\u{00A0}")
+        return String(text[..<dot.lowerBound]) + "\u{00A0}· " + count
+    }
+
     var body: some View {
         ZStack(alignment: .leading) {
-            Text(text.uppercased())
+            Text(Self.keepingCountTogether(text.uppercased()))
                 .font(AppFonts.labelFont(12.5))
                 .tracking(1.8)
                 .monospacedDigit()
