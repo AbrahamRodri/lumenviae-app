@@ -769,9 +769,13 @@ extension MysteryPrayerView {
         )
     }
 
+    /// The voice is announcing the mystery, before its Our Father
+    private var isAnnouncing: Bool {
+        viewModel.spoken?.currentSegment?.kind == .announcement
+    }
+
     /// The timed lines of what the voice is saying, where it is the words
-    /// the column sets: never an announcement's, which the column leaves
-    /// on the Our Father
+    /// the column sets: never an announcement's
     fileprivate var shownTimings: [TimedLine]? {
         guard let segment = viewModel.spoken?.currentSegment, segment.kind != .announcement else { return nil }
         // The recordings are English: in Spanish a prayer, or a
@@ -885,11 +889,12 @@ extension MysteryPrayerView {
     /// Where the hand is, as VoiceOver is told when the voice moves it on
     private var spokenPlace: String {
         if let pendant = viewModel.pendant {
-            return "\(pendant.heading), "
-                + OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount)
+            return RosaryPlace.spoken(
+                title: pendant.heading,
+                bead: OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount))
         }
         let title = viewModel.currentMystery?.name ?? viewModel.currentMeditation?.displayTitle ?? ""
-        return "\(title), \(viewModel.beadLabel)"
+        return RosaryPlace.spoken(title: title, bead: viewModel.beadLabel)
     }
 
     /// The column: where on the Rosary, the title, the bead, the words
@@ -926,7 +931,7 @@ extension MysteryPrayerView {
                 bead: viewModel.beadLabel,
                 help: oneRosaryHelp,
                 tapHint: tapHintShowing && showsWordsAndBeads,
-                wordsKey: "\(viewModel.beadPosition.mystery).\(viewModel.beadPosition.bead).\(locked).\(viewModel.isSpeakingMeditation)",
+                wordsKey: "\(viewModel.beadPosition.mystery).\(viewModel.beadPosition.bead).\(locked).\(viewModel.isSpeakingMeditation).\(isAnnouncing)",
                 showsWords: showsWordsAndBeads
             ) {
                 if locked {
@@ -946,6 +951,16 @@ extension MysteryPrayerView {
                             fallback: ReadingText.paragraphs(of: meditation.content)),
                         highlighted: shownTimings == nil ? nil : viewModel.spokenHighlightedLine,
                         lineProgress: shownTimings == nil ? nil : viewModel.spokenLineProgress,
+                        size: wordsSize
+                    )
+                } else if isAnnouncing {
+                    SimpleRosaryWords(
+                        lines: SimpleRosary.announcementLines(
+                            category: meditationSet.mysteryCategory,
+                            ordinal: viewModel.currentMysteryIndex + 1,
+                            name: viewModel.currentMystery?.name),
+                        highlighted: nil,
+                        lineProgress: nil,
                         size: wordsSize
                     )
                 } else {

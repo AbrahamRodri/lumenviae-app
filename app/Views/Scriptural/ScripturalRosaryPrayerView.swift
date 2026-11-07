@@ -446,6 +446,11 @@ extension ScripturalRosaryPrayerView {
 
     fileprivate var simpleWordsSize: CGFloat { SimpleRosary.wordsSize(scale: userSettings.textSizeScale) }
 
+    /// The voice is announcing the mystery, before its Our Father
+    private var isAnnouncing: Bool {
+        viewModel.spoken?.currentSegment?.kind == .announcement
+    }
+
     /// The timed lines of what the voice is saying, where it is the words
     /// the column sets: never an announcement's
     fileprivate var shownTimings: [TimedLine]? {
@@ -570,10 +575,11 @@ extension ScripturalRosaryPrayerView {
     /// Where the hand is, as VoiceOver is told when the voice moves it on
     private var spokenPlace: String {
         if let pendant = viewModel.spokenPendant {
-            return "\(pendant.heading), "
-                + OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount)
+            return RosaryPlace.spoken(
+                title: pendant.heading,
+                bead: OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount))
         }
-        return "\(viewModel.currentMystery?.name ?? ""), \(viewModel.beadLabel)"
+        return RosaryPlace.spoken(title: viewModel.currentMystery?.name ?? "", bead: viewModel.beadLabel)
     }
 
     @ViewBuilder
@@ -604,27 +610,32 @@ extension ScripturalRosaryPrayerView {
                 title: viewModel.currentMystery?.name ?? "",
                 place: OneRosaryColumn<EmptyView>.place(mystery: viewModel.currentMysteryIndex, of: viewModel.strand.decades),
                 bead: viewModel.beadLabel,
-                wordsKey: "\(viewModel.beadPosition.mystery).\(viewModel.beadPosition.bead)",
+                wordsKey: "\(viewModel.beadPosition.mystery).\(viewModel.beadPosition.bead).\(isAnnouncing)",
                 showsWords: showsWordsAndBeads
             ) {
                 VStack(alignment: .leading, spacing: 10) {
                     SimpleRosaryWords(
-                        lines: SimpleRosary.displayedLines(
-                            timings: shownTimings,
-                            fallback: reading.text.components(separatedBy: "\n")
-                                + (reading.closingPrayer.map { [$0] } ?? [])),
+                        lines: isAnnouncing
+                            ? SimpleRosary.announcementLines(
+                                category: viewModel.category,
+                                ordinal: viewModel.currentMysteryIndex + 1,
+                                name: viewModel.currentMystery?.name)
+                            : SimpleRosary.displayedLines(
+                                timings: shownTimings,
+                                fallback: reading.text.components(separatedBy: "\n")
+                                    + (reading.closingPrayer.map { [$0] } ?? [])),
                         highlighted: shownTimings == nil ? nil : viewModel.spokenHighlightedLine,
                         lineProgress: shownTimings == nil ? nil : viewModel.spokenLineProgress,
                         size: simpleWordsSize
                     )
-                    if let reference = reading.reference {
+                    if !isAnnouncing, let reference = reading.reference {
                         Text(reference.uppercased())
                             .font(AppFonts.labelFont(12))
                             .tracking(1.5)
                             .foregroundColor(AppColors.goldLight)
                             .lineLimit(1)
                     }
-                    if let footnote = reading.footnote {
+                    if !isAnnouncing, let footnote = reading.footnote {
                         Text(footnote.uppercased())
                             .font(AppFonts.labelFont(12))
                             .tracking(1.5)

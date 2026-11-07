@@ -68,6 +68,15 @@ enum RosaryStop: Hashable {
         }
     }
 
+    /// The stop of the spoken Rosary at `index` in its script. Once the last
+    /// Amen is said the index stands one past the end, and the Rosary is
+    /// still in the part it ended in: the closing prayers, never the last
+    /// mystery, which the hand's own place fell back to
+    static func spoken(at index: Int, in script: [SpokenSegment]) -> RosaryStop? {
+        let segment = script.indices.contains(index) ? script[index] : (index >= script.count ? script.last : nil)
+        return segment.map { current(phase: $0.phase, mystery: $0.mystery) }
+    }
+
     /// Where in a spoken Rosary's script a stop begins: the first opening
     /// prayer, a mystery's announcement (its meditation follows it), or
     /// the first closing prayer. Nil where the script has no such part.
@@ -197,6 +206,16 @@ enum SimpleRosary {
         case .meditation: return meditationIsSpanish
         default: return false
         }
+    }
+
+    /// The words while a mystery is announced: what the voice says, "The
+    /// First Sorrowful Mystery: The Agony in the Garden". The column once
+    /// showed the Our Father here, the bead's own prayer, still to come.
+    static func announcementLines(category: MysteryCategory?, ordinal: Int, name: String?) -> [String] {
+        let name = name?.isEmpty == false ? name : nil
+        guard let category else { return name.map { [$0] } ?? [] }
+        let label = category.mysteryLabel(ordinal: ordinal)
+        return [name.map { "\(label): \($0)" } ?? label]
     }
 
     static func displayedLines(timings: [TimedLine]?, fallback: [String]) -> [String] {
