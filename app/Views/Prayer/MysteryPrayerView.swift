@@ -957,7 +957,7 @@ extension MysteryPrayerView {
                         size: wordsSize
                     )
                 } else if isAnnouncing {
-                    SpokenRosaryWords(
+                    SimpleRosaryWords(
                         lines: SimpleRosary.announcementLines(
                             category: meditationSet.mysteryCategory,
                             ordinal: viewModel.currentMysteryIndex + 1,
@@ -967,7 +967,7 @@ extension MysteryPrayerView {
                         size: wordsSize
                     )
                 } else {
-                    SimpleRosaryWords(
+                    SpokenRosaryWords(
                         lines: SimpleRosary.displayedLines(timings: shownTimings, fallback: viewModel.beadLines),
                         timed: shownTimings != nil,
                         highlighted: { viewModel.spokenHighlightedLine },
