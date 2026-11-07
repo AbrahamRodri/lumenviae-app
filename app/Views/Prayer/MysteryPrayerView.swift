@@ -770,14 +770,13 @@ extension MysteryPrayerView {
         )
     }
 
-    /// The timed lines of what the voice is saying, where it is the words
-    /// the column sets: never an announcement's, which the column leaves
-    /// on the Our Father
     /// The voice is announcing the mystery, before its Our Father
     private var isAnnouncing: Bool {
         viewModel.spoken?.currentSegment?.kind == .announcement
     }
 
+    /// The timed lines of what the voice is saying, where it is the words
+    /// the column sets: never an announcement's
     fileprivate var shownTimings: [TimedLine]? {
         guard let segment = viewModel.spoken?.currentSegment, segment.kind != .announcement else { return nil }
         // The recordings are English: in Spanish a prayer, or a
