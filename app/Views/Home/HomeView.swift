@@ -40,9 +40,30 @@ struct HomeView: View {
                 // Scrollable content
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
+                        // An unfinished Rosary leads the page, below the
+                        // dissolve, and scrolls away with it: pinned over
+                        // the list, it cut the rows beneath it in half
+                        if let session = PrayerResumeService.shared.inProgress {
+                            ResumePrayerCard(
+                                session: session,
+                                isLoading: isResuming,
+                                errorMessage: resumeError,
+                                onContinue: resumeInterruptedPrayer,
+                                onDismiss: {
+                                    withAnimation(.easeOut(duration: 0.25)) {
+                                        PrayerResumeService.shared.clear()
+                                    }
+                                }
+                            )
+                            .padding(.horizontal, 20)
+                            .padding(.top, 30)
+                            .transition(.opacity)
+                            .devotionalEntrance(delay: 0.04, drift: -10)
+                        }
+
                         // Starts clear of the dissolve below the header
                         DayPrayerLabel(label: viewModel.dayLabel)
-                            .padding(.top, 30)
+                            .padding(.top, PrayerResumeService.shared.inProgress == nil ? 30 : 22)
                             .devotionalEntrance(delay: 0.04)
 
                     featuredMysterySection
@@ -98,11 +119,9 @@ struct HomeView: View {
                 }
                 // Content dissolves as it rises toward the header instead of
                 // stopping at a hard line. The ramp is weighted late so the
-                // sliver of page visible above the resume card holds only a
-                // few percent of the text underneath — a linear fade leaves
-                // it legibly ghosting. The foot needs no fade: the tab bar
-                // carries its own. Masked before the resume card is laid
-                // over it, so that card stays fully crisp.
+                // sliver of page under the header holds only a few percent
+                // of the text — a linear fade leaves it legibly ghosting.
+                // The foot needs no fade: the tab bar carries its own.
                 .mask(
                     VStack(spacing: 0) {
                         LinearGradient(
@@ -118,30 +137,6 @@ struct HomeView: View {
                         Rectangle().fill(.black)
                     }
                 )
-                // An unfinished Rosary floats over the content until the
-                // user continues or dismisses it. It holds the top of the
-                // page and keeps its shadow, but it no longer shouts:
-                // returning to a Rosary should feel like an invitation,
-                // not a summons.
-                .overlay(alignment: .top) {
-                    if let session = PrayerResumeService.shared.inProgress {
-                        ResumePrayerCard(
-                            session: session,
-                            isLoading: isResuming,
-                            errorMessage: resumeError,
-                            onContinue: resumeInterruptedPrayer,
-                            onDismiss: {
-                                withAnimation(.easeOut(duration: 0.25)) {
-                                    PrayerResumeService.shared.clear()
-                                }
-                            }
-                        )
-                        .padding(.horizontal, 20)
-                        .padding(.top, 10)
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                        .devotionalEntrance(delay: 0.04, drift: -10)
-                    }
-                }
             }
         }
         .task {
