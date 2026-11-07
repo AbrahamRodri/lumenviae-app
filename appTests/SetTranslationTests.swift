@@ -79,4 +79,23 @@ struct SetTranslationTests {
         #expect(copy.englishImageAlt == "Portrait of St. Alphonsus")
         #expect(copy.setTranslation == set.setTranslation)
     }
+
+    @Test("A bundled set takes the Spanish of its own meditations only")
+    func withTranslationsTakesItsOwn() throws {
+        let withMeditations = Data(
+            """
+            {"id": -1, "name": "Gospel", "category": "joyful", "description": null, "labels": [],
+             "meditations": [{"id": 1, "title": "One", "content": "A", "audio_url": null},
+                             {"id": 2, "title": "Two", "content": "B", "audio_url": null}],
+             "translations": [{"id": 9, "title": "Nueve", "content": "N"}]}
+            """.utf8)
+        let set = try JSONDecoder().decode(MeditationSet.self, from: withMeditations)
+        let all = [
+            MeditationTranslation(id: 1, title: "Uno", content: "a", aiTranslated: false),
+            MeditationTranslation(id: 3, title: "Tres", content: "c", aiTranslated: false),
+        ]
+        #expect(set.withTranslations(all).translations?.map(\.id) == [1])
+        // None of its own: the set keeps the Spanish it came with
+        #expect(set.withTranslations([all[1]]).translations?.map(\.id) == [9])
+    }
 }
