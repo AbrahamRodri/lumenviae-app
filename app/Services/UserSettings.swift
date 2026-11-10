@@ -897,6 +897,12 @@ final class UserSettings {
             notificationAuthorizationDenied = false
         }
 
+        // Turned off while the system was asked: the off wins, and the
+        // reminder it cancelled is not laid again
+        guard remindersEnabled else {
+            cancelDailyReminder()
+            return
+        }
         scheduleDailyReminder()
     }
 

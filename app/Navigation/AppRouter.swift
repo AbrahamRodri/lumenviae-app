@@ -583,6 +583,13 @@ final class AppRouter {
     /// The scheme the app registers in Info.plist (`CFBundleURLTypes`)
     static let linkScheme = "lumenviae"
 
+    /// Whether the Angelus bell's tap may open the Angelus over these
+    /// pages: never over a prayer being prayed or its closing screen, as a
+    /// link never is. The bell has been heard; the prayer under way is kept.
+    static func angelusTapOpens(over routes: [AppRoute?]) -> Bool {
+        !routes.contains { $0?.isPrayerUnderWay == true }
+    }
+
     /// Opens a `lumenviae://` link, as an App Store In-App Event does with
     /// `lumenviae://home`. Such a link goes to Home, the way a tap on its
     /// tab does; no link opens a particular page yet, so an unknown path

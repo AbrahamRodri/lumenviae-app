@@ -368,3 +368,14 @@ struct OneRosaryTests {
         #expect(RosaryPlace.spoken(title: "", bead: "") == "")
     }
 }
+
+@Suite struct StepLabelCountTests {
+    @Test func theCountStaysTogether() {
+        let held = OneRosaryStepLabel.keepingCountTogether("EN HONOR DE SUS LÁGRIMAS · 1 DE 3")
+        #expect(held == "EN HONOR DE SUS LÁGRIMAS\u{00A0}· 1\u{00A0}DE\u{00A0}3")
+    }
+
+    @Test func aStepWithNoCountIsUnchanged() {
+        #expect(OneRosaryStepLabel.keepingCountTogether("THE APOSTLES' CREED") == "THE APOSTLES' CREED")
+    }
+}

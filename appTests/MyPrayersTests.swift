@@ -139,12 +139,12 @@ struct MyPrayersTests {
         #expect(!isOnDisk(shared, in: book))
     }
 
-    @Test func aPhotoPickedAndNeverSavedIsSweptAway() throws {
+    @Test func aPhotoPickedAndNeverSavedIsSweptAway() async throws {
         let book = store()
         let kept = try photo(in: book)
         let abandoned = try photo(in: book)
         book.save(CustomPrayer(title: "T", text: "W", art: kept))
-        book.sweepUnusedPhotos()
+        await book.sweepUnusedPhotos()?.value
         #expect(isOnDisk(kept, in: book))
         #expect(!isOnDisk(abandoned, in: book))
     }
@@ -172,6 +172,17 @@ struct MyPrayersTests {
         let again = store()
         again.sweepUnusedPhotos()
         #expect(isOnDisk(kept, in: again))
+    }
+
+    @Test func aPhotoIsReadOnceUntilItsFileChanges() throws {
+        let book = store()
+        let name = try photo(in: book)
+        let url = try #require(UserPhotoStore.url(for: name, in: book.photosDirectory))
+        #expect(UserPhotoStore.image(named: name, at: url) != nil)
+        let first = UserPhotoStore.image(named: name, at: url)
+        #expect(first === UserPhotoStore.image(named: name, at: url))
+        try FileManager.default.setAttributes([.modificationDate: Date().addingTimeInterval(60)], ofItemAtPath: url.path)
+        #expect(first !== UserPhotoStore.image(named: name, at: url))
     }
 
     @Test func onlyANameTheStoreGaveNamesAFile() {

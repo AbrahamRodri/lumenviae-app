@@ -24,15 +24,13 @@ import SwiftUI
 struct RosaryHelpLine: View {
     let line: RosaryHelps.Line
 
-    static let lineLimit = 3
-
     var body: some View {
         Text(line.instruction)
             .font(AppFonts.italicFont(16.5))
             .foregroundColor(AppColors.goldLight.opacity(0.92))
             .lineSpacing(1)
-            .lineLimit(Self.lineLimit)
-            .minimumScaleFactor(0.8)
+            // Whole, at its size, however many lines it takes
+            .fixedSize(horizontal: false, vertical: true)
             .frame(maxWidth: .infinity, alignment: .topLeading)
         .contentTransition(.opacity)
         .animation(Motion.words, value: line)
@@ -625,7 +623,7 @@ struct OneRosaryColumn<Words: View>: View {
 
                 Text(place)
                     .font(AppFonts.italicFont(15))
-                    .foregroundColor(AppColors.cream.opacity(0.74))
+                    .foregroundColor(AppColors.cream.opacity(0.9))  // Held over the brightest paintings
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
                     .contentTransition(.opacity)
@@ -755,16 +753,25 @@ struct OneRosaryColumn<Words: View>: View {
 struct OneRosaryStepLabel: View {
     let text: String
 
+    /// The step with its count held together: wrapped, it breaks before
+    /// "1 OF 3", never inside it, and the dot stays with the words
+    static func keepingCountTogether(_ text: String) -> String {
+        guard let dot = text.range(of: " · ", options: .backwards) else { return text }
+        let count = text[dot.upperBound...].replacingOccurrences(of: " ", with: "\u{00A0}")
+        return String(text[..<dot.lowerBound]) + "\u{00A0}· " + count
+    }
+
     var body: some View {
         ZStack(alignment: .leading) {
-            Text(text.uppercased())
+            Text(Self.keepingCountTogether(text.uppercased()))
                 .font(AppFonts.labelFont(12.5))
                 .tracking(1.8)
                 .monospacedDigit()
                 .foregroundColor(AppColors.cream.opacity(0.9))
-                // One line on every step, and never shrunk under the
-                // labels' 12-point floor
-                .lineLimit(1)
+                // Never shrunk under the labels' 12-point floor: a long
+                // step wraps to a second line, growing up into the painting
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
                 .id(text)
                 .transition(.opacity)
         }
@@ -954,7 +961,9 @@ struct OneRosaryFooter: View {
             // with the firmer edge, still the way on
             .foregroundColor(isWayOn ? AppColors.goldLight : AppColors.cream.opacity(0.88))
             .padding(.horizontal, 12)
-            .frame(width: Self.wayWidth)
+            // At least the shared width, and wider for a longer word
+            .frame(minWidth: Self.wayWidth)
+            .fixedSize(horizontal: true, vertical: false)
             .frame(minHeight: 44)
             .background(Capsule().fill(AppColors.background.opacity(isWayOn ? 0.7 : 0.55)))
             .overlay(
