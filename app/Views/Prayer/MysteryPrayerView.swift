@@ -990,16 +990,6 @@ extension MysteryPrayerView {
         let meditation = viewModel.pendant == nil ? viewModel.currentMeditation : nil
 
         return VStack(spacing: 0) {
-            // The meditation's door, on the step it belongs to: the
-            // mystery's Our Father, where it is heard
-            if meditation != nil, viewModel.currentBeadIndex == 0 {
-                OneRosaryReadLink { withAnimation(Motion.panel) { simpleReaderOpen = true } }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 22)
-                    .padding(.bottom, 6)
-                    .transition(.opacity)
-            }
-
             if let errorMessage = viewModel.audioErrorMessage, viewModel.pendant == nil {
                 Text(errorMessage)
                     .font(AppFonts.bodyFont(12))
@@ -1030,13 +1020,27 @@ extension MysteryPrayerView {
             .padding(.horizontal, 22)
             .padding(.top, 16)
 
+            // The meditation's door, under Back and Next (Abraham, 10 Nov:
+            // "read the meditation button below the back"), shown on the
+            // step it belongs to: the mystery's Our Father, where it is
+            // heard. Its line is kept on every step, so Back, the play and
+            // Next never move under the thumb when it comes and goes.
+            let showsReadLink = meditation != nil && viewModel.currentBeadIndex == 0
+            OneRosaryReadLink { withAnimation(Motion.panel) { simpleReaderOpen = true } }
+                .opacity(showsReadLink ? 1 : 0)
+                .allowsHitTesting(showsReadLink)
+                .accessibilityHidden(!showsReadLink)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 22)
+                .padding(.top, 12)
+
             // The same three on every step and on both players
             OneRosaryUtilityRow(items: [
                 OneRosaryUtilityRow.voice { activeSheet = .playback },
                 OneRosaryUtilityRow.text { activeSheet = .text },
                 OneRosaryUtilityRow.more { activeSheet = .tray },
             ])
-            .padding(.top, 10)
+            .padding(.top, 2)
             .padding(.bottom, 8)
         }
         .animation(Motion.crossfade, value: meditation?.hasAudio)
