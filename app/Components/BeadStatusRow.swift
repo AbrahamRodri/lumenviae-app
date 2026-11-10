@@ -43,7 +43,7 @@ struct BeadStatusRow: View {
     var body: some View {
         HStack(spacing: 14) {
             Text(label.uppercased())
-                .font(AppFonts.labelFont(9))
+                .font(AppFonts.labelFont(12))
                 .tracking(1.5)
                 .foregroundColor(AppColors.gold.opacity(0.85))
                 .lineLimit(1)
