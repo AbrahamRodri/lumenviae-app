@@ -1025,14 +1025,15 @@ extension MysteryPrayerView {
             // step it belongs to: the mystery's Our Father, where it is
             // heard. Its line is kept on every step, so Back, the play and
             // Next never move under the thumb when it comes and goes.
-            let showsReadLink = meditation != nil && viewModel.currentBeadIndex == 0
-            OneRosaryReadLink { withAnimation(Motion.panel) { simpleReaderOpen = true } }
-                .opacity(showsReadLink ? 1 : 0)
-                .allowsHitTesting(showsReadLink)
-                .accessibilityHidden(!showsReadLink)
-                .frame(maxWidth: .infinity)
-                .padding(.horizontal, 22)
-                .padding(.top, 12)
+            ZStack {
+                if meditation != nil, viewModel.currentBeadIndex == 0 {
+                    OneRosaryReadLink { withAnimation(Motion.panel) { simpleReaderOpen = true } }
+                        .transition(.opacity)
+                }
+            }
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .padding(.horizontal, 22)
+            .padding(.top, 12)
 
             // The same three on every step and on both players
             OneRosaryUtilityRow(items: [
