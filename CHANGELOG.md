@@ -22,6 +22,8 @@ prayer screen easier to read.
   line readable over a bright painting (#129, #130, #131)
 - Let Home's Continue Your Rosary card scroll with the page instead of
   covering the rows beneath it (#134)
+- Put READ THE MEDITATION under Back, play and Next, on a line of its
+  own that keeps its place on every step (#135)
 - Reword 27 Spanish strings in natural Mexican Spanish (#122)
 
 ### Fixed
