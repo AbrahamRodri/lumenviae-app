@@ -178,11 +178,12 @@ final class PrayerHistoryService {
         var longestStreak = 1
         var currentStreak = 1
 
-        // Counted in calendar days between the days' midnights, so a day
-        // the clocks change on is still one day
+        // The day after, found as the current streak finds the day before
+        // (`PrayerDay.adding`), so a day the clocks change on — 23 hours
+        // where they change at midnight — is still the next day
         for i in 1..<sortedDates.count {
-            let daysBetween = calendar.dateComponents([.day], from: sortedDates[i-1], to: sortedDates[i]).day ?? 0
-            if daysBetween == 1 {
+            let next = PrayerDay.adding(days: 1, to: sortedDates[i-1], calendar: calendar)
+            if calendar.isDate(next, inSameDayAs: sortedDates[i]) {
                 currentStreak += 1
                 longestStreak = max(longestStreak, currentStreak)
             } else {

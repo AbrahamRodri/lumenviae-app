@@ -260,6 +260,8 @@ final class PrayerBookStore {
     @MainActor
     func setAngelusBell(_ on: Bool) async {
         let center = UNUserNotificationCenter.current()
+        angelusRequests += 1
+        let request = angelusRequests
         guard on else {
             angelusBell = false
             defaults.set(false, forKey: Key.angelusBell)
@@ -273,6 +275,9 @@ final class PrayerBookStore {
         if settings.authorizationStatus == .notDetermined {
             allowed = (try? await center.requestAuthorization(options: [.alert, .sound])) ?? false
         }
+        // A later choice made while the system was asked (the bell turned
+        // off again) stands: this one never turns it back on
+        guard request == angelusRequests else { return }
 
         angelusBellDenied = !allowed
         angelusBell = allowed
@@ -286,6 +291,10 @@ final class PrayerBookStore {
         guard angelusBell else { return }
         scheduleAngelus()
     }
+
+    /// Counts the bell's on and off choices, so the answer to an earlier
+    /// one never overrides a later
+    @ObservationIgnored private var angelusRequests = 0
 
     private static var angelusIdentifiers: [String] {
         angelusHours.map { "angelus.\($0)" }

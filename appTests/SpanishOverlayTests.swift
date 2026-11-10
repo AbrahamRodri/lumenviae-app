@@ -67,6 +67,25 @@ struct MeditationSpanishTests {
         #expect(MeditationTranslation.requestLanguage == (MeditationTranslation.isActive ? "es" : nil))
     }
 
+    @Test func theSpanishEditionStandsWhereTheEnglishNamesOne() throws {
+        var withEdition = MeditationTranslation(id: 1, title: "La Anunciación", content: "Texto", aiTranslated: false)
+        withEdition.source = "Las Glorias de María"
+        let plain = MeditationTranslation(id: 1, title: "La Anunciación", content: "Texto", aiTranslated: false)
+        let named = try #require(MeditationTranslation.overlay([meditation(1)], with: [withEdition], spanish: true))
+        #expect(named[0].source == "Las Glorias de María")
+        let unnamed = try #require(MeditationTranslation.overlay([meditation(1)], with: [plain], spanish: true))
+        #expect(unnamed[0].source == "The Glories of Mary")
+    }
+
+    @Test func theFirstOfTwoTranslationsForOneMeditationWins() throws {
+        let twice = [
+            MeditationTranslation(id: 1, title: "Primera", content: "Uno", aiTranslated: false),
+            MeditationTranslation(id: 1, title: "Segunda", content: "Dos", aiTranslated: false),
+        ]
+        let laid = try #require(MeditationTranslation.overlay([meditation(1)], with: twice, spanish: true))
+        #expect(laid[0].title == "Primera")
+    }
+
     @Test func aMeditationWithNoSpanishStaysEnglish() throws {
         let laid = try #require(MeditationTranslation.overlay([meditation(3)], with: spanish, spanish: true))
         #expect(laid[0] == meditation(3))
@@ -256,6 +275,19 @@ struct ConsecrationSpanishTests {
         #expect(!ConsecrationSpanish.dayIsAITranslated(2, in: es))
         #expect(!ConsecrationSpanish.readingIsAITranslated(day: 1, order: 1, in: es))
         #expect(ConsecrationSpanish.prayerIsAITranslated("veni_creator", in: es))
+    }
+
+    @Test func aReadingMarkedAsTheTeamsTranslationSaysSo() throws {
+        let json = """
+            {"version": "r", "translations": {"phases": [], "feasts": [], "prayers": [],
+             "days": [{"number": 3, "title": "Día", "journal_prompt": "Pregunta",
+                       "readings": [{"order": 2, "title": "Lectura", "text": "Texto", "source": "Montfort",
+                                     "ai_translated": true}]}]}}
+            """
+        let es = try JSONDecoder().decode(ConsecrationTranslations.self, from: Data(json.utf8))
+        #expect(ConsecrationSpanish.readingIsAITranslated(day: 3, order: 2, in: es))
+        #expect(!ConsecrationSpanish.readingIsAITranslated(day: 3, order: 9, in: es))
+        #expect(!ConsecrationSpanish.readingIsAITranslated(day: 4, order: 2, in: es))
     }
 
     @Test func aPrayerKeepsItsLatin() throws {
