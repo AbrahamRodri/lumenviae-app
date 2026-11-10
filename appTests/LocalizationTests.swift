@@ -139,10 +139,13 @@ struct SpanishCatalogTests {
         #expect(mismatched.isEmpty, "Spanish with other placeholders: \(mismatched.sorted().prefix(20))")
     }
 
-    /// Avemaría is feminine (DPD): "una sola avemaría", "la primera
-    /// avemaría", never "un solo avemaría", "el primer avemaría"
+    /// The prayer is feminine (DPD): "una sola Ave María", "la primera
+    /// Ave María", never "un solo Ave María", "el primer Ave María". The
+    /// name is two words and the count "Ave Marías", as most apps and the
+    /// Mexican bishops write it (Abraham, 10 Nov 2026: "Follow how other
+    /// apps do it"); the old one-word spelling is caught as well.
     static let masculineAvemaria =
-        #"(?i)\b(un|el|del|al|este|ese|otro|primer|último|solo|único)\s+((solo|primer|último|otro|único)\s+)?avemar"#
+        #"(?i)\b(un|el|del|al|este|ese|otro|primer|último|solo|único)\s+((solo|primer|último|otro|único)\s+)?(avemar|ave\s+mar[ií]a)"#
 
     /// The settled wording (Mexican usage, ustedes not vosotros), held:
     /// these slipped past five translators and a proofreader once
@@ -156,7 +159,8 @@ struct SpanishCatalogTests {
             // Añadir in any case: the small-capital "AÑADIR" buttons got past a check for two spellings
             if text.contains("vosotros") || text.contains("Ajustes")
                 || text.range(of: "añad", options: .caseInsensitive) != nil
-                || text.range(of: Self.masculineAvemaria, options: .regularExpression) != nil {
+                || text.range(of: Self.masculineAvemaria, options: .regularExpression) != nil
+                || text.range(of: "avemar", options: .caseInsensitive) != nil {
                 broken.append(key)
             }
         }
