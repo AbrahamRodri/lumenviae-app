@@ -140,12 +140,14 @@ struct SpanishCatalogTests {
     }
 
     /// The prayer is feminine (DPD): "una sola Ave María", "la primera
-    /// Ave María", never "un solo Ave María", "el primer Ave María". The
-    /// name is two words and the count "Ave Marías", as most apps and the
-    /// Mexican bishops write it (Abraham, 10 Nov 2026: "Follow how other
-    /// apps do it"); the old one-word spelling is caught as well.
+    /// Ave María", never "un solo Ave María", "el primer Ave María". Right
+    /// before its stressed "a" it takes "el", as "el ave" does: "el Ave
+    /// María", "del Ave María", never "la Ave María". The name is two words
+    /// and the count "Ave Marías", as most apps and the Mexican bishops
+    /// write it (Abraham, 10 Nov 2026: "Follow how other apps do it"); the
+    /// old one-word spelling is caught as well.
     static let masculineAvemaria =
-        #"(?i)\b(un|el|del|al|este|ese|otro|primer|último|solo|único)\s+((solo|primer|último|otro|único)\s+)?(avemar|ave\s+mar[ií]a)"#
+        #"(?i)\b((un|este|ese|otro|primer|último|solo|único)\s+((solo|primer|último|otro|único)\s+)?|la\s+)(avemar|ave\s+mar[ií]a)"#
 
     /// The settled wording (Mexican usage, ustedes not vosotros), held:
     /// these slipped past five translators and a proofreader once
