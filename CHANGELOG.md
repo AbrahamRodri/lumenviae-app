@@ -10,6 +10,38 @@ entries are written in the imperative and carry a commit reference, and a
 change that was made and then undone inside the same release is not listed
 at all — only the net difference from the version before it.
 
+## 4.3 - Unreleased
+
+Fixes after 4.2: the Rosary's words, more natural Spanish, and the
+prayer screen easier to read.
+
+### Changed
+
+- Set the Rosary player's small labels at 12 points at least, keep a
+  step's name and its count from being cut short, and keep the place
+  line readable over a bright painting (#129, #130, #131)
+- Let Home's Continue Your Rosary card scroll with the page instead of
+  covering the rows beneath it (#134)
+- Put READ THE MEDITATION under Back, play and Next, on a line of its
+  own that keeps its place on every step (#135)
+- Reword 27 Spanish strings in natural Mexican Spanish (#122)
+
+### Fixed
+
+- Show the words of the prayer and mystery the hand is on after Back,
+  Next or a tapped bead while the voice is paused (#119, #127)
+- Name the closing prayers on the pill after the last Amen (#126)
+- Keep a daily reminder or the Angelus bell off when it is turned off
+  while iOS is still asking for permission, never open the Angelus from
+  its bell over a Rosary under way, and count the longest streak across
+  a midnight clock change (#133)
+- Tell VoiceOver where the hand is as the voice moves, read each part
+  in the Go to sheet, and stop the rail's slides under Reduce Motion
+  (#124, #125)
+- Draw the player's words without redrawing the whole screen, keep
+  small paintings as thumbnails and cap the paintings kept on the phone
+  (#128)
+
 ## 4.2 - Unreleased
 
 The Rosary on one simple screen, and the app in Spanish, as a beta.
