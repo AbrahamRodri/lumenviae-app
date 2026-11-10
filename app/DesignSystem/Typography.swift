@@ -61,6 +61,56 @@ extension DynamicTypeSize {
     /// the same modifier. The readers' own Aa sizes are separate and
     /// stand on top of it.
     static let appMaximum: DynamicTypeSize = .xLarge
+
+    /// How far the Rosary's player follows the phone's Larger Text: one
+    /// step into the accessibility sizes, where the rest of the app stops
+    /// at `appMaximum` (Abraham's yes to the larger-text proposal, 10 Nov
+    /// 2026). The player reads the phone's own size through
+    /// `phoneTypeSize`, since the root has already clamped the one it
+    /// inherits, and its sheets carry this cap in place of `appMaximum`.
+    static let playerMaximum: DynamicTypeSize = .accessibility1
+}
+
+// MARK: - The phone's own text size
+
+private struct PhoneTypeSizeKey: EnvironmentKey {
+    static let defaultValue: DynamicTypeSize = .large
+}
+
+extension EnvironmentValues {
+    /// The phone's Larger Text setting before the app's cap, read at the
+    /// root above `.dynamicTypeSize(...appMaximum)`
+    var phoneTypeSize: DynamicTypeSize {
+        get { self[PhoneTypeSizeKey.self] }
+        set { self[PhoneTypeSizeKey.self] = newValue }
+    }
+}
+
+/// Reads the phone's text size above the app's cap and hands it down
+struct PhoneTypeSizeRoot<Content: View>: View {
+    @Environment(\.dynamicTypeSize) private var phoneSize
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        content.environment(\.phoneTypeSize, phoneSize)
+    }
+}
+
+extension View {
+    /// Lets a page follow the phone's Larger Text past `appMaximum`, up to
+    /// `maximum` (the Rosary's player, to `playerMaximum`)
+    func followsPhoneTypeSize(upTo maximum: DynamicTypeSize) -> some View {
+        modifier(PhoneTypeSizeFollower(maximum: maximum))
+    }
+}
+
+private struct PhoneTypeSizeFollower: ViewModifier {
+    @Environment(\.phoneTypeSize) private var phoneSize
+    let maximum: DynamicTypeSize
+
+    func body(content: Content) -> some View {
+        content.environment(\.dynamicTypeSize, min(phoneSize, maximum))
+    }
 }
 
 // MARK: - App Fonts
