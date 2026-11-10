@@ -1041,7 +1041,7 @@ extension MysteryPrayerView {
                 OneRosaryUtilityRow.text { activeSheet = .text },
                 OneRosaryUtilityRow.more { activeSheet = .tray },
             ])
-            .padding(.top, 2)
+            .padding(.top, 8)
             .padding(.bottom, 8)
         }
         .animation(Motion.crossfade, value: meditation?.hasAudio)
