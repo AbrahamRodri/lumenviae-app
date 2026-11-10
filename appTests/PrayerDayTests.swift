@@ -122,6 +122,20 @@ struct PrayerDayTests {
         ) == 3)
     }
 
+    @Test func aStreakCrossesAClockChangeAtMidnight() throws {
+        // Santiago springs forward at midnight (6 September 2026): that day
+        // begins at 1 AM and lasts 23 hours
+        var santiago = Calendar(identifier: .gregorian)
+        santiago.timeZone = try #require(TimeZone(identifier: "America/Santiago"))
+        santiago.firstWeekday = 1
+        let evenings = (5...8).map { day in
+            santiago.date(from: DateComponents(year: 2026, month: 9, day: day, hour: 21))!
+        }
+        let days = PrayerHistoryService.prayerDays(of: evenings, calendar: santiago)
+        #expect(days.count == 4)
+        #expect(PrayerHistoryService.longestStreak(in: days, calendar: santiago) == 4)
+    }
+
     // MARK: - Streaks from Late Nights
 
     @Test func lateNightRosariesBuildAStreak() {
