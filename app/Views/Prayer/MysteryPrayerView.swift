@@ -1023,17 +1023,16 @@ extension MysteryPrayerView {
             // The meditation's door, under Back and Next (Abraham, 10 Nov:
             // "read the meditation button below the back"), shown on the
             // step it belongs to: the mystery's Our Father, where it is
-            // heard. Its line is kept on every step, so Back, the play and
-            // Next never move under the thumb when it comes and goes.
-            ZStack {
-                if meditation != nil, viewModel.currentBeadIndex == 0 {
-                    OneRosaryReadLink { withAnimation(Motion.panel) { simpleReaderOpen = true } }
-                        .transition(.opacity)
-                }
+            // heard. Its line goes with it: kept empty on every step, it
+            // cut the Hail Mary's last line under the fade, about fifty
+            // steps a Rosary, to spare the controls a move on five.
+            if meditation != nil, viewModel.currentBeadIndex == 0 {
+                OneRosaryReadLink { withAnimation(Motion.panel) { simpleReaderOpen = true } }
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 22)
+                    .padding(.top, 12)
+                    .transition(.opacity)
             }
-            .frame(maxWidth: .infinity, minHeight: 44)
-            .padding(.horizontal, 22)
-            .padding(.top, 12)
 
             // The same three on every step and on both players
             OneRosaryUtilityRow(items: [
@@ -1041,7 +1040,7 @@ extension MysteryPrayerView {
                 OneRosaryUtilityRow.text { activeSheet = .text },
                 OneRosaryUtilityRow.more { activeSheet = .tray },
             ])
-            .padding(.top, 8)
+            .padding(.top, meditation != nil && viewModel.currentBeadIndex == 0 ? 8 : 10)
             .padding(.bottom, 8)
         }
         .animation(Motion.crossfade, value: meditation?.hasAudio)
