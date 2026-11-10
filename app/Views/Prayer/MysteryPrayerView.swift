@@ -1020,31 +1020,27 @@ extension MysteryPrayerView {
             .padding(.horizontal, 22)
             .padding(.top, 16)
 
-            // The meditation's door, under Back and Next (Abraham, 10 Nov:
-            // "read the meditation button below the back"), shown on the
-            // step it belongs to: the mystery's Our Father, where it is
-            // heard. Its line goes with it: kept empty on every step, it
-            // cut the Hail Mary's last line under the fade, about fifty
-            // steps a Rosary, to spare the controls a move on five.
-            if meditation != nil, viewModel.currentBeadIndex == 0 {
-                OneRosaryReadLink { withAnimation(Motion.panel) { simpleReaderOpen = true } }
-                    .frame(maxWidth: .infinity)
-                    .padding(.horizontal, 22)
-                    .padding(.top, 12)
-                    .transition(.opacity)
-            }
-
-            // The same three on every step and on both players
-            OneRosaryUtilityRow(items: [
-                OneRosaryUtilityRow.voice { activeSheet = .playback },
-                OneRosaryUtilityRow.text { activeSheet = .text },
-                OneRosaryUtilityRow.more { activeSheet = .tray },
-            ])
-            .padding(.top, meditation != nil && viewModel.currentBeadIndex == 0 ? 8 : 10)
+            // The same row on every step and on both players. On a
+            // mystery with a meditation, READ leads it (Abraham, 10 Nov:
+            // "the read the meditation should be apart of the bottom row
+            // of buttons not on its own row"), on every step of that
+            // mystery, since the reader opens from any of its beads; a line
+            // of its own cut the Hail Mary's last line or moved the controls
+            OneRosaryUtilityRow(
+                items: (meditation != nil
+                    ? [OneRosaryUtilityRow.read { withAnimation(Motion.panel) { simpleReaderOpen = true } }]
+                    : [])
+                    + [
+                        OneRosaryUtilityRow.voice { activeSheet = .playback },
+                        OneRosaryUtilityRow.text { activeSheet = .text },
+                        OneRosaryUtilityRow.more { activeSheet = .tray },
+                    ]
+            )
+            .padding(.top, 10)
             .padding(.bottom, 8)
         }
         .animation(Motion.crossfade, value: meditation?.hasAudio)
-        .animation(Motion.crossfade, value: viewModel.currentBeadIndex == 0)
+        .animation(Motion.crossfade, value: meditation == nil)
     }
 
     /// The voice's play and pause in the footer: said aloud, the voice's,

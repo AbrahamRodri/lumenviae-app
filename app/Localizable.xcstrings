@@ -17929,6 +17929,7 @@
     },
     "READ THE MEDITATION" : {
       "comment" : "One Rosary beta, the player on a mystery's Our Father: the quiet door to the meditation as text",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -27892,6 +27893,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "o vuelve a %@"
+          }
+        }
+      }
+    },
+    "player.read" : {
+      "comment" : "Prayer screen, the row of small buttons under Back and Next: the first, opening the mystery's meditation as text; one short word (Spanish: Leer)",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Read"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leer"
           }
         }
       }
