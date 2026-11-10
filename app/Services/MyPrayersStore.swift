@@ -127,16 +127,23 @@ final class MyPrayersStore {
     /// Deletes every photo nothing hangs: a photo is kept the moment it is
     /// picked, so one picked in an editor then cancelled, or picked over,
     /// is left behind. Run at launch, when no editor is open.
-    func sweepUnusedPhotos() {
+    /// Returns the removal under way, for a test to wait on.
+    @discardableResult
+    func sweepUnusedPhotos() -> Task<Void, Never>? {
         // A library set aside still names its photos: none is swept while
         // one is kept, nor while the library itself could not be read
         let folder = fileURL.deletingLastPathComponent()
         let names = (try? FileManager.default.contentsOfDirectory(atPath: folder.path)) ?? []
-        guard canWrite, !names.contains(where: { $0.hasPrefix("library.unreadable-") }) else { return }
-        guard let files = try? FileManager.default.contentsOfDirectory(atPath: photosDirectory.path) else { return }
+        guard canWrite, !names.contains(where: { $0.hasPrefix("library.unreadable-") }) else { return nil }
+        guard let files = try? FileManager.default.contentsOfDirectory(atPath: photosDirectory.path) else { return nil }
         let inUse = artInUse
-        for file in files where !inUse.contains(UserPhotoStore.prefix + file) {
-            try? FileManager.default.removeItem(at: photosDirectory.appendingPathComponent(file))
+        // Chosen now, removed off the launch path: only files listed here
+        // go, so a photo picked while they are removed is never one of them
+        let unused = files.filter { !inUse.contains(UserPhotoStore.prefix + $0) }
+            .map { photosDirectory.appendingPathComponent($0) }
+        guard !unused.isEmpty else { return nil }
+        return Task.detached(priority: .utility) {
+            for url in unused { try? FileManager.default.removeItem(at: url) }
         }
     }
 
@@ -221,8 +228,30 @@ nonisolated enum UserPhotoStore {
         return prefix + file
     }
 
+    /// A photo read once per version of its file: a page redrawn many
+    /// times reads it from disk once, and a file written again since
+    /// (a new modification date) is read afresh
+    nonisolated(unsafe) private static let readPhotos: NSCache<NSString, UIImage> = {
+        let cache = NSCache<NSString, UIImage>()
+        cache.countLimit = 8
+        // Photos are kept at 1600 px at most, about 10 MB decoded each
+        cache.totalCostLimit = 40 * 1024 * 1024
+        return cache
+    }()
+
     static func image(named name: String) -> UIImage? {
-        url(for: name).flatMap { UIImage(contentsOfFile: $0.path) }
+        url(for: name).flatMap { image(named: name, at: $0) }
+    }
+
+    static func image(named name: String, at url: URL) -> UIImage? {
+        guard let modified = (try? FileManager.default.attributesOfItem(atPath: url.path))?[.modificationDate] as? Date
+        else { return nil }
+        let key = "\(name)|\(modified.timeIntervalSince1970)" as NSString
+        if let kept = readPhotos.object(forKey: key) { return kept }
+        guard let image = UIImage(contentsOfFile: url.path) else { return nil }
+        let pixels = Int(image.size.width * image.scale * image.size.height * image.scale)
+        readPhotos.setObject(image, forKey: key, cost: pixels * 4)
+        return image
     }
 
     private static func scaledDown(_ image: UIImage) -> UIImage {
