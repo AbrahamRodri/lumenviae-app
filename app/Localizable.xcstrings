@@ -25992,13 +25992,13 @@
       }
     },
     "Undoer of Knots" : {
-      "comment" : "Undoer of Knots novena: its short name, under each step and in reminders (Spanish: Desatanudos)",
+      "comment" : "Undoer of Knots novena: its short name, under each step and in reminders (Spanish: Virgen Desatanudos)",
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desatanudos"
+            "value" : "Virgen Desatanudos"
           }
         }
       }
