@@ -567,6 +567,18 @@ final class ScripturalRosaryViewModel {
     /// Whether the hold is paused (the ring stands still)
     var isHoldPaused: Bool { spoken?.holdPausedRemaining != nil }
 
+    /// What the pill says in a novena day: the day on the opening
+    /// prayers, and the novena's own parts by name; nil elsewhere
+    var novenaPillTitle: String? {
+        guard let novena, let segment = spoken?.currentSegment else { return nil }
+        switch (segment.phase, segment.held != nil) {
+        case (.opening, _): return novena.dayLine
+        case (.decade, true): return SpokenNovenaDay.caption(forKind: "meditation")
+        case (.closing, true): return SpokenNovenaDay.caption(forKind: "closing")
+        default: return nil
+        }
+    }
+
     /// In a novena day, Next and Back step a prayer at a time around the
     /// novena's own parts, which sit on no bead: on held words, at a
     /// decade's end that words follow, at the start of the decade after

@@ -563,7 +563,8 @@ extension ScripturalRosaryPrayerView {
             RosaryStopsPill(
                 stops: viewModel.stops,
                 current: viewModel.currentStop,
-                isChaplet: viewModel.category == .sevenSorrows
+                isChaplet: viewModel.category == .sevenSorrows,
+                title: viewModel.novenaPillTitle
             ) { activeSheet = .stops }
         } trailing: {
             if viewModel.isPrayingAloud, viewModel.spokenFailure == nil {

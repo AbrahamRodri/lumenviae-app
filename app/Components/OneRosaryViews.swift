@@ -1417,6 +1417,9 @@ struct RosaryStopsPill: View {
     let stops: [RosaryStop]
     let current: RosaryStop
     let isChaplet: Bool
+    /// What the pill says in place of the part's own name (a novena day:
+    /// DAY 4 OF 9, TODAY'S MEDITATION, THE CLOSING PRAYER)
+    var title: String? = nil
     let action: () -> Void
 
     var body: some View {
@@ -1424,7 +1427,7 @@ struct RosaryStopsPill: View {
         Button(action: action) {
             VStack(spacing: 7) {
                 HStack(spacing: 6) {
-                    Text(RosaryStopsPill.label(current, of: stops, isChaplet: isChaplet).uppercased())
+                    Text((title ?? RosaryStopsPill.label(current, of: stops, isChaplet: isChaplet)).uppercased())
                         .font(AppFonts.labelFont(12))
                         .tracking(2)
                         .foregroundColor(AppColors.cream.opacity(0.9))
