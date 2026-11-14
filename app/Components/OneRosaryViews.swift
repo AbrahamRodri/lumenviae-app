@@ -989,12 +989,16 @@ struct OneRosaryPlayDisc: View, Equatable {
     let glyph: Glyph
     var isLoading: Bool = false
     var isEnabled: Bool = true
+    /// While the voice holds on words with no recording: how much of
+    /// their reading time has run, 0 to 1, drawn as a thin gold ring
+    var ring: (() -> Double?)? = nil
     let action: () -> Void
 
     static let diameter: CGFloat = 52
 
     static func == (a: Self, b: Self) -> Bool {
         a.glyph == b.glyph && a.isLoading == b.isLoading && a.isEnabled == b.isEnabled
+            && (a.ring == nil) == (b.ring == nil)
     }
 
     var body: some View {
@@ -1012,6 +1016,11 @@ struct OneRosaryPlayDisc: View, Equatable {
                 }
             }
             .frame(width: Self.diameter, height: Self.diameter)
+            .overlay {
+                if let ring {
+                    OneRosaryHoldRing(progress: ring)
+                }
+            }
             .contentShape(Circle())
         }
         .buttonStyle(GoldCTAButtonStyle())
@@ -1088,6 +1097,29 @@ private struct RosaryPlaceAnnouncer: ViewModifier {
             guard voiceOverEnabled, !place.isEmpty else { return }
             AccessibilityNotification.Announcement(place).post()
         }
+    }
+}
+
+// MARK: - OneRosaryHoldRing
+
+/// The ring that fills around play while the voice holds on words it has
+/// no recording of, so the reader sees it will go on by itself
+struct OneRosaryHoldRing: View {
+    let progress: () -> Double?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: reduceMotion ? 1 : 0.1)) { context in
+            let value = progress() ?? 0
+            Circle()
+                .trim(from: 0, to: value)
+                .stroke(AppColors.gold, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+                .padding(-5)
+                .animation(reduceMotion ? nil : .linear(duration: 0.1), value: context.date)
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }
 

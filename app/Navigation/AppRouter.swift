@@ -209,6 +209,10 @@ struct ScripturalRosaryLaunch: Hashable {
 
     /// When the devotion originally began (display/snapshot continuity)
     var startedAt: Date = Date()
+
+    /// A novena day prayed in this Rosary: the novena and the day
+    var novenaID: String? = nil
+    var novenaDay: Int? = nil
 }
 
 // MARK: - SpokenForm
@@ -375,6 +379,11 @@ final class AppRouter {
             let form: SpokenForm = name == "rosaryAloudPrayer" ? .plain : .scriptural
             return (.scripturalRosaryPrayer(ScripturalRosaryLaunch(
                 category: c, form: form, startIndex: mystery, startBead: bead)), nil)
+        case ("novenaDay", _) where parts.count > 2:
+            // `novenaDay:<novena id>:<day>`, on today's mysteries
+            return (.scripturalRosaryPrayer(ScripturalRosaryLaunch(
+                category: ScheduleService.categoryForToday(), form: .plain,
+                novenaID: parts[1], novenaDay: Int(parts[2]) ?? 1)), nil)
         case ("prayer", let c?):
             guard let set = BundledMeditationSets.all.first(where: { $0.category == c.rawValue }) else { return nil }
             return (.prayerSession(meditationSetId: set.id),

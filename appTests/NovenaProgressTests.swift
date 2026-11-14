@@ -253,9 +253,10 @@ struct NovenaRosaryDayTests {
         let meditation = try #require(s.firstIndex { $0.kind == .words("knots_meditation_4") })
         #expect(s[meditation - 1].kind == .prayer("fatima_prayer"))
         #expect(s[meditation - 1].mystery == 2)
-        #expect(s[meditation + 1].kind == .words("knots_invocation"))
-        #expect(s[meditation + 2].kind == .announcement)
-        #expect(s[meditation + 2].mystery == 3)
+        // The invocation stands under the meditation, on its step
+        #expect(s[meditation].held?.invocation == "Mary, Undoer of Knots, pray for me.")
+        #expect(s[meditation + 1].kind == .announcement)
+        #expect(s[meditation + 1].mystery == 3)
     }
 
     @Test func theClosingPrayerComesBeforeTheLastSignOfTheCross() {
@@ -272,6 +273,9 @@ struct NovenaRosaryDayTests {
     @Test func readingTimeIsWordsAtOneFiftyAndNeverUnderTwenty() {
         #expect(HeldWords(id: "a", text: "Mary, pray for me.").readingSeconds == 20)
         #expect(HeldWords(id: "b", text: String(repeating: "word ", count: 300)).readingSeconds == 125)
+        #expect(
+            HeldWords(id: "c", text: String(repeating: "word ", count: 300), invocation: String(repeating: "w ", count: 75))
+                .readingSeconds == 155)
     }
 
     @Test func anUnrecordedBookPrayerIsHeldNotSkipped() throws {

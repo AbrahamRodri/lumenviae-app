@@ -176,10 +176,13 @@ struct HeldWords: Hashable {
     var title: String?
     var text: String
     var source: String?
+    /// A short invocation said after the words, on the same step ("Mary,
+    /// Undoer of Knots, pray for me.")
+    var invocation: String? = nil
 
     /// Words at 150 a minute and five seconds more, never under twenty
     var readingSeconds: Double {
-        let words = text.split { $0.isWhitespace }.count
+        let words = (text + " " + (invocation ?? "")).split { $0.isWhitespace }.count
         return max(20, Double(words) / 150 * 60 + 5)
     }
 }
@@ -225,6 +228,24 @@ struct SpokenNovenaDay: Hashable {
                 continue
             }
             var inserts: [Insert] = []
+            // An invocation stands under the words before it, on their step
+            if part.kind == "invocation", part.prayerID == nil, let text = part.text {
+                func attach(_ list: inout [Insert]) -> Bool {
+                    guard case .words(let caption, var words)? = list.last, words.invocation == nil else { return false }
+                    words.invocation = text
+                    list[list.count - 1] = .words(caption: caption, words)
+                    return true
+                }
+                let attached: Bool
+                if let decade = lastDecade, decade >= 4 {
+                    attached = attach(&result.closing)
+                } else if let decade = lastDecade {
+                    attached = attach(&result.afterDecade[decade, default: []])
+                } else {
+                    attached = attach(&result.opening)
+                }
+                if attached { continue }
+            }
             if let id = part.prayerID {
                 let found = book(id)
                 let caption = part.title ?? found?.title ?? id

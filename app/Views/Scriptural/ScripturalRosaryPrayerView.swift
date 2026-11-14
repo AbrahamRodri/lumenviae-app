@@ -58,13 +58,18 @@ struct ScripturalRosaryPrayerView: View {
 
     init(launch: ScripturalRosaryLaunch) {
         self.sessionStartedAt = launch.startedAt
-        self._viewModel = State(initialValue: ScripturalRosaryViewModel(
+        let model = ScripturalRosaryViewModel(
             category: launch.category,
             form: launch.form,
             startAtIndex: launch.startIndex,
             startAtBead: launch.startBead,
             priorSeconds: launch.priorSeconds
-        ))
+        )
+        if let id = launch.novenaID, let day = launch.novenaDay {
+            model.novena = NovenaDayContext.resolve(
+                novenaID: id, day: day, intention: NovenaStore.shared.progress[id]?.intention)
+        }
+        self._viewModel = State(initialValue: model)
     }
 
     var body: some View {
@@ -318,7 +323,9 @@ struct ScripturalRosaryPrayerView: View {
     /// it is the next prayer instead.
     private func prayForward() {
         guard !beadsHeld else { return }
-        if movesByPrayer || viewModel.canStepOnIntoClosing {
+        if movesByPrayer || viewModel.canStepOnIntoClosing
+            || viewModel.novenaMovesByPrayer(forward: true)
+        {
             stepPrayer(forward: true)
             return
         }
@@ -335,7 +342,9 @@ struct ScripturalRosaryPrayerView: View {
     /// goes back into the opening prayers, one prayer at a time.
     private func prayBack() {
         guard !beadsHeld else { return }
-        if movesByPrayer || viewModel.canStepBackIntoOpening {
+        if movesByPrayer || viewModel.canStepBackIntoOpening
+            || viewModel.novenaMovesByPrayer(forward: false)
+        {
             stepPrayer(forward: false)
             return
         }
@@ -582,9 +591,62 @@ extension ScripturalRosaryPrayerView {
         return RosaryPlace.spoken(title: viewModel.currentMystery?.name ?? "", bead: viewModel.beadLabel)
     }
 
+    /// A novena day's words the voice is holding on: the day's meditation
+    /// (her intention over it), an invocation, the closing prayer, each
+    /// with its source, and one line saying the voice goes on by itself
+    @ViewBuilder
+    private func heldColumn(_ held: HeldWords, novena: NovenaDayContext) -> some View {
+        let caption = viewModel.spoken?.currentSegment?.caption ?? ""
+        OneRosaryColumn(
+            title: caption,
+            place: "\(novena.dayLine) · \(novena.shortName)",
+            bead: nil,
+            wordsKey: "held.\(held.id).\(viewModel.spoken?.index ?? 0)",
+            showsWords: true
+        ) {
+            VStack(alignment: .leading, spacing: 12) {
+                if held.id.contains("meditation"), let intention = novena.intention {
+                    Text(intention)
+                        .font(AppFonts.italicFont(16))
+                        .foregroundColor(AppColors.goldLight)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                SimpleRosaryWords(
+                    lines: ReadingText.paragraphs(of: held.text),
+                    highlighted: nil,
+                    lineProgress: nil,
+                    size: simpleWordsSize
+                )
+                if let invocation = held.invocation {
+                    Text(invocation)
+                        .font(AppFonts.italicFont(simpleWordsSize))
+                        .foregroundColor(AppColors.goldLight)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                if let source = held.source {
+                    Text(source)
+                        .font(AppFonts.italicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Text(
+                    viewModel.isHoldPaused
+                        ? String(localized: "Paused. Tap play to go on, or Next.", comment: "Novena day in the Rosary: under held words while paused")
+                        : String(localized: "Read at your pace. The voice goes on by itself.", comment: "Novena day in the Rosary: under words the voice has no recording of, which it waits on")
+                )
+                .font(AppFonts.italicFont(13))
+                .foregroundColor(AppColors.cream.opacity(0.7))
+                .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .accessibilityElement(children: .combine)
+    }
+
     @ViewBuilder
     fileprivate var oneRosaryColumn: some View {
-        if let pendant = viewModel.spokenPendant {
+        if let held = viewModel.heldWords, let novena = viewModel.novena {
+            heldColumn(held, novena: novena)
+        } else if let pendant = viewModel.spokenPendant {
             let lines = SilentPendant.lines(of: pendant.prayerID, in: userSettings.prayerLanguage)
             OneRosaryColumn(
                 title: pendant.heading,
@@ -685,7 +747,8 @@ extension ScripturalRosaryPrayerView {
                     ? OneRosaryPlayDisc(
                         glyph: viewModel.isSpeaking ? .pause : .play,
                         isLoading: viewModel.spokenStatus != nil,
-                        isEnabled: !viewModel.isSpokenFinished
+                        isEnabled: !viewModel.isSpokenFinished,
+                        ring: viewModel.heldWords == nil ? nil : { viewModel.holdProgress(at: Date()) }
                     ) { viewModel.toggleSpeaking() }
                     : nil,
                 onBack: prayBack,

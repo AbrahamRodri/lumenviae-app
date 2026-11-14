@@ -551,6 +551,38 @@ final class ScripturalRosaryViewModel {
     /// The whole Rosary said aloud
     private(set) var spoken: SpokenRosaryPlayer?
 
+    // MARK: A Novena Day
+
+    /// A novena day prayed in this Rosary (design plan, "The continuous
+    /// day"): its parts are laid into the spoken script. Set before the
+    /// Rosary begins.
+    var novena: NovenaDayContext?
+
+    /// The words being held while the voice waits on them, if any
+    var heldWords: HeldWords? { spoken?.currentSegment?.held }
+
+    /// How much of the hold has run, 0 to 1, for the ring around play
+    func holdProgress(at now: Date) -> Double? { spoken?.holdProgress(at: now) }
+
+    /// Whether the hold is paused (the ring stands still)
+    var isHoldPaused: Bool { spoken?.holdPausedRemaining != nil }
+
+    /// In a novena day, Next and Back step a prayer at a time around the
+    /// novena's own parts, which sit on no bead: on held words, at a
+    /// decade's end that words follow, at the start of the decade after
+    /// them, and on the pendant
+    func novenaMovesByPrayer(forward: Bool) -> Bool {
+        guard novena != nil, let spoken, let segment = spoken.currentSegment else { return false }
+        if segment.held != nil || segment.phase != .decade { return true }
+        let script = spoken.script
+        let heldAfter = { (decade: Int) in
+            script.contains { $0.held != nil && $0.phase == .decade && $0.mystery == decade }
+        }
+        return forward
+            ? segment.bead >= hailMarys && heldAfter(segment.mystery)
+            : segment.bead == 0 && segment.mystery > 0 && heldAfter(segment.mystery - 1)
+    }
+
     /// The step of the spoken script an interrupted Rosary stopped on,
     /// taken from the resume snapshot and used once, by the first start
     fileprivate var resumeStep: SpokenStep?
@@ -604,7 +636,8 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
                 mysteryKeys: keys,
                 hailMarys: hailMarys,
                 style: isPlain ? .plain : .scriptural,
-                extras: UserSettings.shared.closingExtras
+                extras: UserSettings.shared.closingExtras,
+                novena: novena?.day
             )
             let player = SpokenRosaryPlayer(script: script, host: self)
             spoken = player

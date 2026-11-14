@@ -135,3 +135,69 @@ nonisolated struct FinishedNovena: Codable, Equatable, Sendable {
     var finished: Date
     var intention: String?
 }
+
+/// What the Rosary player needs to pray a novena's day: the day laid out
+/// for the script, and the words the screen names it by
+struct NovenaDayContext {
+    var novenaID: String
+    /// "Undoer of Knots"
+    var shortName: String
+    var dayNumber: Int
+    var length: Int
+    var intention: String?
+    var day: SpokenNovenaDay
+
+    /// "Day 4 of 9"
+    var dayLine: String {
+        String(localized: "Day \(dayNumber) of \(length)", comment: "Novena: which day of how many, like Day 4 of 9")
+    }
+}
+
+extension NovenaDayContext {
+    /// A day of a novena the Prayer Book holds, laid out for the Rosary;
+    /// nil when the book has no such novena or day, or the day prays no
+    /// Rosary. In a debug build, `debug_knots` is a sample day made only of
+    /// texts already public (St Irenaeus, tr. 1885; the Sub tuum), for
+    /// trying the day before the server serves the real one.
+    static func resolve(novenaID: String, day number: Int, intention: String? = nil) -> NovenaDayContext? {
+        var novena = LibraryContent.prayerBook.novenas.first { $0.id == novenaID }
+        #if DEBUG
+            if novena == nil, novenaID == "debug_knots" { novena = debugKnots }
+        #endif
+        guard let novena, let day = novena.day(number),
+            let laid = SpokenNovenaDay.make(
+                from: day,
+                book: { id in PrayerBook.prayer(id).map { ($0.title, $0.english) } })
+        else { return nil }
+        return NovenaDayContext(
+            novenaID: novena.id, shortName: novena.listTitle ?? novena.title, dayNumber: number,
+            length: novena.length, intention: intention, day: laid)
+    }
+
+    #if DEBUG
+        static let debugKnots: PrayerBookDocument.Novena = {
+            let invocation = PrayerBookDocument.Part(
+                kind: "invocation", id: "debug_knots_invocation", text: "Mary, Undoer of Knots, pray for me.")
+            let days = (1...9).map { n in
+                PrayerBookDocument.Day(
+                    number: n, title: "Day \(n)",
+                    parts: [
+                        .init(kind: "opening", prayerID: "act_of_contrition"),
+                        .init(kind: "rosary", decades: [1, 2, 3]),
+                        .init(
+                            kind: "meditation", id: "debug_knots_meditation",
+                            text:
+                                "And thus also it was that the knot of Eve's disobedience was loosed by the obedience of Mary. For what the virgin Eve had bound fast through unbelief, this did the virgin Mary set free through faith.",
+                            source: "St Irenaeus, Against Heresies III.22.4 (tr. 1885)"),
+                        invocation,
+                        .init(kind: "rosary", decades: [4, 5]),
+                        .init(kind: "closing", prayerID: "sub_tuum"),
+                        invocation,
+                    ])
+            }
+            return PrayerBookDocument.Novena(
+                id: "debug_knots", title: "Our Lady, Undoer of Knots", listTitle: "Undoer of Knots",
+                detail: "", prayerID: "sub_tuum", chapterID: "our_lady", length: 9, days: days)
+        }()
+    #endif
+}
