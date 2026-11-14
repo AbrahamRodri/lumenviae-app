@@ -28166,6 +28166,12 @@
       "comment" : "Novena dashes, VoiceOver: one day prayed",
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "day %lld prayed"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28178,6 +28184,12 @@
       "comment" : "Novena reminder, day 1 of 9",
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your novena begins today. Come when you are ready."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28190,6 +28202,12 @@
       "comment" : "Novena reminder, day 2 of 9",
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Today's prayer is here for you."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28202,6 +28220,12 @@
       "comment" : "Novena reminder, day 3 of 9",
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "A quiet moment with Our Lady."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28214,6 +28238,12 @@
       "comment" : "Undoer of Knots novena reminder, day 4",
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Bring her the knot you carry today."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28226,6 +28256,12 @@
       "comment" : "Novena reminder, day 5 of 9",
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The middle day. Today's prayer is ready."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28238,6 +28274,12 @@
       "comment" : "Undoer of Knots novena reminder, day 6",
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Bring Mary what you cannot untie."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28250,6 +28292,12 @@
       "comment" : "Novena reminder, day 7 of 9",
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Come as you are. Day 7 is here."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28262,6 +28310,12 @@
       "comment" : "Novena reminder, the last day",
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Today is the last day of your novena."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28274,6 +28328,12 @@
       "comment" : "Novena reminder, the next-to-last day",
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "One more day after this one."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28286,6 +28346,12 @@
       "comment" : "Novena reminder the day after the last date, while days are open: its body",
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Pick it up where you left off, whenever you like."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28298,6 +28364,12 @@
       "comment" : "Novena reminder the day after the last date, while days are open: its title",
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your novena is still here"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
