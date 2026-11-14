@@ -58,9 +58,16 @@ struct SpokenRosaryNotice: View {
                     .frame(maxWidth: 260)
             }
         }
-        .padding(.horizontal, 30)
+        // Inset as far on each side as the bead rail stands from the
+        // trailing edge, so the centred line never runs under the beads,
+        // and kept off the line above it (the grace to ask for)
+        .padding(.horizontal, Self.railClearance)
+        .padding(.top, 12)
         .accessibilityElement(children: .contain)
     }
+
+    /// The rail's beads stand within about 60 points of the trailing edge
+    static let railClearance: CGFloat = 64
 
     private var icon: String {
         switch failure {
