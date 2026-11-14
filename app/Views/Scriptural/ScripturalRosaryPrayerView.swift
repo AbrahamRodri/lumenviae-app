@@ -291,10 +291,6 @@ struct ScripturalRosaryPrayerView: View {
 
     // MARK: - The Reading
 
-    /// The room the words are given at the right: the strand's beads
-    /// and their numerals take the edge, and the words stop short of
-    /// them. Measured from the glass, as the strand is.
-
     /// The words' size follows the Prayer Experience text size the Aa
     /// sets, a point above the reading size. Set in the Medium face:
     /// the italic thinned to hairlines over the painting, and a verse
