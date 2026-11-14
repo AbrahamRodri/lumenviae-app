@@ -245,6 +245,17 @@ struct CompletedPrayer {
 
     /// Seconds actually spent praying, or nil when not timed
     let durationSeconds: Int?
+
+    /// A novena day prayed in this Rosary: its AMEN ends on "Day 4
+    /// prayed" rather than the Rosary's own screen
+    var novena: NovenaPrayed? = nil
+}
+
+/// The novena day a Rosary's AMEN marked prayed
+struct NovenaPrayed: Hashable {
+    let novenaID: String
+    let dayNumber: Int
+    let length: Int
 }
 
 // MARK: - PrayerLaunch
@@ -380,7 +391,20 @@ final class AppRouter {
             return (.scripturalRosaryPrayer(ScripturalRosaryLaunch(
                 category: c, form: form, startIndex: mystery, startBead: bead)), nil)
         case ("novenaDay", _) where parts.count > 2:
-            // `novenaDay:<novena id>:<day>`, on today's mysteries
+            // `novenaDay:<novena id>:<day>`, on today's mysteries;
+            // `...:<day>:begun` first begins it with the days before
+            // prayed and an 8 PM reminder, for the end screen's shots
+            if parts.count > 3, parts[3] == "begun", let day = Int(parts[2]),
+                let novena = NovenaDayContext.novena(parts[1])
+            {
+                // Noon of the first day: a prayer day's midnight name
+                // reads as the evening before
+                let start = PrayerDay.adding(days: 1 - day, to: PrayerDay.today()).addingTimeInterval(12 * 3600)
+                NovenaStore.shared.begin(
+                    novena, on: start, intention: "For my brother's new job",
+                    reminder: DateComponents(hour: 20, minute: 0))
+                for earlier in 1..<max(day, 1) { NovenaStore.shared.markPrayed(earlier, of: novena) }
+            }
             return (.scripturalRosaryPrayer(ScripturalRosaryLaunch(
                 category: ScheduleService.categoryForToday(), form: .plain,
                 novenaID: parts[1], novenaDay: Int(parts[2]) ?? 1)), nil)

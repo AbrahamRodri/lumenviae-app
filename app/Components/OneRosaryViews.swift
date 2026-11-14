@@ -245,7 +245,48 @@ struct OneRosaryRailView: View {
             RailBead(state: state, size: 22)
         case .smallBead, .hailMary:
             RailBead(state: state, size: 16)
+        case .novena:
+            RailDiamond(state: state)
         }
+    }
+}
+
+/// A novena day's own part on the rail: a small diamond between the
+/// decades, lit as a bead is when the hand is on it, so days and steps
+/// never share a mark
+private struct RailDiamond: View {
+    let state: RosaryBeadState
+
+    var body: some View {
+        let active = state == .active
+        let side: CGFloat = active ? 16 : 12
+        ZStack {
+            Rectangle()
+                .fill(
+                    RadialGradient(
+                        colors: [AppColors.goldLight.opacity(0.55), AppColors.goldLight.opacity(0)],
+                        center: .center, startRadius: 8, endRadius: 26)
+                )
+                .frame(width: 52, height: 52)
+                .opacity(active ? 1 : 0)
+            Group {
+                switch state {
+                case .ahead:
+                    Rectangle()
+                        .fill(AppColors.backgroundDeep.opacity(0.92))
+                        .overlay(Rectangle().strokeBorder(AppColors.cream.opacity(0.88), lineWidth: 1.5))
+                case .prayed:
+                    Rectangle()
+                        .fill(AppColors.gold)
+                        .overlay(Rectangle().strokeBorder(AppColors.backgroundDeep.opacity(0.55), lineWidth: 1))
+                case .active:
+                    Rectangle().fill(AppColors.goldLight)
+                }
+            }
+            .frame(width: side, height: side)
+            .rotationEffect(.degrees(45))
+        }
+        .animation(Motion.beadSlide, value: state)
     }
 }
 
@@ -1632,7 +1673,8 @@ struct RosaryStopsSheet: View {
                 accessory: isCurrent
                     ? .label(String(localized: "Here", comment: "Consecration day index sheet: small capitals at the end of the row the reader is on now"))
                     : .caret,
-                isLit: isCurrent
+                isLit: isCurrent,
+                detailLineLimit: 2
             )
         }
         .buttonStyle(SacredCardButtonStyle())

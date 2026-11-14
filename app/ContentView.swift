@@ -534,7 +534,9 @@ struct ContentView: View {
             }
 
         case .completion:
-            if let completed = router.completedPrayer {
+            if let completed = router.completedPrayer, let novena = completed.novena {
+                NovenaPrayedView(completed: completed, prayed: novena)
+            } else if let completed = router.completedPrayer {
                 PrayerCompletionView(completed: completed)
             } else {
                 ProgressView("Loading...")

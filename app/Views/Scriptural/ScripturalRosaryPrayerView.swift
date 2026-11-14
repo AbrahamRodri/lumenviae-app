@@ -74,6 +74,10 @@ struct ScripturalRosaryPrayerView: View {
         if let id = launch.novenaID, let day = launch.novenaDay {
             model.novena = NovenaDayContext.resolve(
                 novenaID: id, day: day, intention: NovenaStore.shared.progress[id]?.intention)
+            // Left earlier today: taken up at the step it was left on
+            if model.novena != nil, let step = NovenaStore.shared.keptStep(novenaID: id, day: day) {
+                model.resumeNovena(at: step)
+            }
         }
         self._viewModel = State(initialValue: model)
     }
@@ -110,7 +114,7 @@ struct ScripturalRosaryPrayerView: View {
             // as the place to resume. Value copies and a weak model: the
             // View's @State box holds the model that holds this closure.
             viewModel.onMysteryChanged = { [weak viewModel, sessionStartedAt] index in
-                guard let viewModel else { return }
+                guard let viewModel, viewModel.novena == nil else { return }
                 PrayerResumeService.shared.save(
                     kind: viewModel.resumeKind,
                     setId: 0,
@@ -395,6 +399,8 @@ struct ScripturalRosaryPrayerView: View {
     private func saveResumePosition(evenAtTheStart: Bool = false) {
         let mystery = viewModel.currentMysteryIndex
         let bead = viewModel.currentBeadIndex
+        // A novena day keeps its own place (NovenaStore.keep)
+        guard viewModel.novena == nil else { return }
         guard mystery > 0 || bead > 0 || evenAtTheStart else { return }
         PrayerResumeService.shared.save(
             kind: viewModel.resumeKind,
@@ -411,15 +417,22 @@ struct ScripturalRosaryPrayerView: View {
     /// Completed all mysteries — the record is local only; there is no
     /// set on the server to credit.
     private func finishRosary() {
-        PrayerResumeService.shared.clear()
+        if let day = viewModel.novena {
+            NovenaStore.shared.forgetKept(novenaID: day.novenaID)
+        } else {
+            PrayerResumeService.shared.clear()
+        }
         // A novena day prayed in this Rosary is marked at its AMEN
+        var prayed: NovenaPrayed?
         if let day = viewModel.novena, let novena = NovenaDayContext.novena(day.novenaID) {
             NovenaStore.shared.markPrayed(day.dayNumber, of: novena)
+            prayed = NovenaPrayed(novenaID: day.novenaID, dayNumber: day.dayNumber, length: day.length)
         }
         router.navigateToCompletion(CompletedPrayer(
             category: viewModel.category,
             devotionName: viewModel.devotionName,
-            durationSeconds: viewModel.sessionDuration
+            durationSeconds: viewModel.sessionDuration,
+            novena: prayed
         ))
     }
 }
@@ -434,14 +447,22 @@ struct ScripturalRosaryPrayerView: View {
 extension ScripturalRosaryPrayerView {
 
     fileprivate var rail: OneRosaryRail {
-        OneRosaryRail(
+        let script = viewModel.novena == nil ? [] : (viewModel.spoken?.script ?? [])
+        return OneRosaryRail(
             strand: viewModel.strand,
             pendant: viewModel.silentPendant,
-            showsPendant: userSettings.showsOpeningPrayers || viewModel.isPrayingAloud
+            showsPendant: userSettings.showsOpeningPrayers || viewModel.isPrayingAloud,
+            novenaAfter: Set(script.filter { $0.held != nil && $0.phase == .decade }.map(\.mystery)),
+            novenaCloses: script.contains { $0.held != nil && $0.phase == .closing }
         )
     }
 
     fileprivate func railIndex(_ rail: OneRosaryRail) -> Int {
+        // A novena day's words stand on their diamond
+        if let segment = viewModel.spoken?.currentSegment, segment.held != nil {
+            if segment.phase == .decade, let index = rail.novenaIndex(after: segment.mystery) { return index }
+            if segment.phase == .closing, let index = rail.novenaClosingIndex { return index }
+        }
         if let step = viewModel.currentPendantStep { return rail.index(of: step) }
         if let pendant = viewModel.spokenPendant { return rail.index(of: pendant) }
         return rail.index(strandIndex: viewModel.strandIndex)
@@ -651,7 +672,19 @@ extension ScripturalRosaryPrayerView {
                 .fixedSize(horizontal: false, vertical: true)
             }
         }
-        .accessibilityElement(children: .combine)
+        // The words themselves, which the column's own drawing does not
+        // give VoiceOver, with what stands round them
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(
+            [
+                caption,
+                held.id.contains("meditation") ? novena.intention : nil,
+                held.text,
+                held.invocation,
+                held.source,
+            ]
+            .compactMap { $0 }
+            .joined(separator: ". "))
     }
 
     @ViewBuilder

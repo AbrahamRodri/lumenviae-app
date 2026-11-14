@@ -292,3 +292,88 @@ struct NovenaRosaryDayTests {
         #expect(words.source == "Egyptian papyrus · 3rd century")
     }
 }
+
+@Suite("A novena day's dashes and end screen")
+struct NovenaDaysTests {
+    private let calendar: Calendar = {
+        var c = Calendar(identifier: .gregorian)
+        c.timeZone = TimeZone(identifier: "America/Chicago")!
+        return c
+    }()
+
+    private func noon(_ day: Int) -> Date {
+        calendar.date(from: DateComponents(year: 2026, month: 11, day: day, hour: 12))!
+    }
+
+    @Test func eachDayHasOneMark() {
+        let days = NovenaDays(length: 9, prayed: [1, 2], here: 4, open: [3])
+        #expect(days.mark(1) == .prayed)
+        #expect(days.mark(3) == .open)
+        #expect(days.mark(4) == .here)
+        #expect(days.mark(5) == .ahead)
+    }
+
+    @Test func voiceOverHearsOneSentence() {
+        #expect(NovenaDays(length: 9, prayed: [1, 2, 3], here: 4, open: []).spoken == "Days 1 to 3 prayed, day 4 today.")
+        #expect(NovenaDays(length: 9, prayed: [1, 2], here: 4, open: [3]).spoken == "Days 1 and 2 prayed, day 3 open, day 4 today.")
+        #expect(NovenaDays(length: 9, prayed: [1, 2, 3, 4], here: 4, open: []).spoken == "Days 1 to 4 prayed.")
+    }
+
+    @Test func theNextDayIsTomorrowWithItsMysteries() throws {
+        var p = NovenaProgress(novenaID: "n", length: 9, beginning: noon(10), calendar: calendar)
+        for d in 1...4 { p.markPrayed(d) }
+        let line = try #require(p.nextDayLine(after: 4, now: noon(13), calendar: calendar))
+        #expect(line.hasPrefix("Day 5 is tomorrow, with the "))
+        #expect(line.hasSuffix("Mysteries.") || line.hasSuffix("of Mary."))
+    }
+
+    @Test func anOpenDayIsSaidToBeOpen() throws {
+        var p = NovenaProgress(novenaID: "n", length: 9, beginning: noon(10), calendar: calendar)
+        p.markPrayed(1)
+        p.markPrayed(3)
+        // Day 3 prayed late on its own day; day 2 is still open
+        let line = try #require(p.nextDayLine(after: 3, now: noon(12), calendar: calendar))
+        #expect(line.hasPrefix("Day 4 is tomorrow"))
+        let back = try #require(p.nextDayLine(after: 9, now: noon(12), calendar: calendar))
+        #expect(back.hasPrefix("Day 2 is open"))
+    }
+
+    @Test func theReminderLineSaysItsTime() {
+        var p = NovenaProgress(novenaID: "n", length: 9, beginning: noon(10), calendar: calendar)
+        #expect(p.reminderLine == nil)
+        p.reminder = DateComponents(hour: 20, minute: 0)
+        #expect(p.reminderLine?.hasPrefix("Reminder at ") == true)
+    }
+}
+
+@Suite("A novena day's kept place")
+@MainActor
+struct NovenaKeptStepTests {
+    private func store() -> NovenaStore {
+        let defaults = UserDefaults(suiteName: "novena-kept-\(UUID().uuidString)")!
+        return NovenaStore(defaults: defaults, schedulesNotifications: false)
+    }
+
+    private let step = SpokenStep(index: 40, mystery: 2, bead: 11, caption: "Today's Meditation", kind: "words:m")
+
+    private func at(_ day: Int, _ hour: Int) -> Date {
+        Calendar.current.date(from: DateComponents(year: 2026, month: 11, day: day, hour: hour))!
+    }
+
+    @Test func aDayLeftIsTakenUpTheSameEvening() {
+        let s = store()
+        s.keep(step, novenaID: "knots", day: 4, now: at(13, 21))
+        #expect(s.keptStep(novenaID: "knots", day: 4, now: at(13, 23)) == step)
+        // Half past midnight is still the evening's prayer day
+        #expect(s.keptStep(novenaID: "knots", day: 4, now: at(14, 0).addingTimeInterval(1800)) == step)
+    }
+
+    @Test func itIsLetGoAtFourInTheMorningAndForAnotherDay() {
+        let s = store()
+        s.keep(step, novenaID: "knots", day: 4, now: at(13, 21))
+        #expect(s.keptStep(novenaID: "knots", day: 4, now: at(14, 5)) == nil)
+        #expect(s.keptStep(novenaID: "knots", day: 5, now: at(13, 22)) == nil)
+        s.forgetKept(novenaID: "knots")
+        #expect(s.keptStep(novenaID: "knots", day: 4, now: at(13, 22)) == nil)
+    }
+}

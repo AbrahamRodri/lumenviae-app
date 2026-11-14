@@ -35,7 +35,20 @@ final class NovenaStore {
     private enum Key {
         static let progress = "novenas.progress"
         static let history = "novenas.history"
+        static let kept = "novenas.kept"
     }
+
+    /// Where a novena day was left, by novena id: kept until the prayer
+    /// day turns at four in the morning (the Rosary's own rule), apart
+    /// from the Rosary's resume snapshot, so Home's card never takes up
+    /// a novena day as a plain Rosary
+    struct KeptStep: Codable, Equatable {
+        var day: Int
+        var step: SpokenStep
+        var prayerDay: Date
+    }
+
+    @ObservationIgnored private var kept: [String: KeptStep]
 
     nonisolated static let category = "LUMEN_NOVENA"
     nonisolated static let novenaKey = "novenaID"
@@ -48,6 +61,9 @@ final class NovenaStore {
         progress =
             defaults.data(forKey: Key.progress)
             .flatMap { try? decoder.decode([String: NovenaProgress].self, from: $0) } ?? [:]
+        kept =
+            defaults.data(forKey: Key.kept)
+            .flatMap { try? decoder.decode([String: KeptStep].self, from: $0) } ?? [:]
         history =
             defaults.data(forKey: Key.history)
             .flatMap { try? decoder.decode([FinishedNovena].self, from: $0) } ?? []
@@ -122,6 +138,27 @@ final class NovenaStore {
         progress[novena.id] = p
         save()
         reschedule(novena, now: now)
+    }
+
+    // MARK: - Where a day was left
+
+    /// Keeps the step a novena day's voice has reached
+    func keep(_ step: SpokenStep, novenaID: String, day: Int, now: Date = PrayerDay.now) {
+        kept[novenaID] = KeptStep(day: day, step: step, prayerDay: PrayerDay.day(of: now))
+        defaults.set(try? JSONEncoder().encode(kept), forKey: Key.kept)
+    }
+
+    /// The step day `day` was left at, on this prayer day only
+    func keptStep(novenaID: String, day: Int, now: Date = PrayerDay.now) -> SpokenStep? {
+        guard let k = kept[novenaID], k.day == day, PrayerDay.isSameDay(k.prayerDay, PrayerDay.day(of: now)) else {
+            return nil
+        }
+        return k.step
+    }
+
+    func forgetKept(novenaID: String) {
+        guard kept.removeValue(forKey: novenaID) != nil else { return }
+        defaults.set(try? JSONEncoder().encode(kept), forKey: Key.kept)
     }
 
     private func save() {

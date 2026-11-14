@@ -279,3 +279,34 @@ extension NovenaDayContext {
         String(localized: "Day \(dayNumber) of the Novena", comment: "Novena day, Go to sheet: its title")
     }
 }
+
+// MARK: - After a Novena Day
+
+extension NovenaProgress {
+    /// The line under "Day 4 prayed": when the next day falls and the
+    /// mysteries it prays ("Day 5 is tomorrow, with the Glorious
+    /// Mysteries."); nil once every day is prayed
+    func nextDayLine(after day: Int, now: Date = PrayerDay.now, calendar: Calendar = .current) -> String? {
+        guard let next = (1...length).first(where: { $0 > day && !prayed.contains($0) })
+            ?? (1...length).first(where: { !prayed.contains($0) }),
+            let date = date(ofDay: next, calendar: calendar)
+        else { return nil }
+        let today = PrayerDay.day(of: now, calendar: calendar)
+        let mysteries = ScheduleService.category(for: date, calendar: calendar).devotionTitle
+        if date <= today {
+            return String(localized: "Day \(next) is open, with the \(mysteries).", comment: "Novena, after a day is prayed: the next day can be prayed now; the second part names its mysteries, like the Glorious Mysteries")
+        }
+        if PrayerDay.isSameDay(date, PrayerDay.adding(days: 1, to: today, calendar: calendar), calendar: calendar) {
+            return String(localized: "Day \(next) is tomorrow, with the \(mysteries).", comment: "Novena, after a day is prayed: when the next day falls and its mysteries, like the Glorious Mysteries")
+        }
+        let weekday = date.formatted(.dateTime.weekday(.wide))
+        return String(localized: "Day \(next) is on \(weekday), with the \(mysteries).", comment: "Novena, after a day is prayed: the weekday the next day falls on and its mysteries")
+    }
+
+    /// "Reminder at 8:00 PM." while a reminder is set
+    var reminderLine: String? {
+        guard let reminder, let time = Calendar.current.date(from: reminder) else { return nil }
+        let clock = time.formatted(date: .omitted, time: .shortened)
+        return String(localized: "Reminder at \(clock).", comment: "Novena, after a day is prayed: the daily reminder's time")
+    }
+}

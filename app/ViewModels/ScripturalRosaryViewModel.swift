@@ -592,10 +592,17 @@ final class ScripturalRosaryViewModel {
     var novenaStopRows: [RosaryStop: (name: String, detail: String?, icon: String)] {
         guard let novena, let spoken else { return [:] }
         var rows: [RosaryStop: (name: String, detail: String?, icon: String)] = [:]
-        let opening = spoken.script.filter { $0.phase == .opening }.map(\.caption)
+        // The novena's own opening prayers, said after the Sign of the Cross
+        let own = novena.day.opening.map { insert -> String in
+            switch insert {
+            case .prayer(_, let caption), .words(let caption, _): return caption
+            }
+        }
         rows[.opening] = (
             String(localized: "The Opening", comment: "Novena day, Go to: the row going to the opening prayers"),
-            opening.formatted(.list(type: .and)),
+            String(
+                localized: "The Sign of the Cross, \(own.formatted(.list(type: .and))), then the Creed, an Our Father, three Hail Marys and a Glory Be",
+                comment: "Novena day, Go to: under The Opening; the middle names the novena's own opening prayers, such as The Act of Contrition"),
             "lv-rosary"
         )
         for stop in stops {
@@ -637,6 +644,16 @@ final class ScripturalRosaryViewModel {
     /// The step of the spoken script an interrupted Rosary stopped on,
     /// taken from the resume snapshot and used once, by the first start
     fileprivate var resumeStep: SpokenStep?
+
+    /// Takes a novena day up where it was left today: the hand on the
+    /// step's bead, and the voice at the step itself
+    func resumeNovena(at step: SpokenStep) {
+        currentMysteryIndex = step.mystery
+        currentBeadIndex = step.bead
+        // Off the pendant, the hand is on the decades
+        if step.mystery > 0 || step.bead > 0 { pendantStep = nil }
+        resumeStep = step
+    }
 
     /// Fires when the voice moves the mystery, so the resume snapshot
     /// follows it with the phone locked
@@ -709,7 +726,7 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
             spoken.stop()
             self.spoken = nil
             // The hand keeps the place from here
-            PrayerResumeService.shared.endSpokenSteps(forgettingStep: true)
+            if novena == nil { PrayerResumeService.shared.endSpokenSteps(forgettingStep: true) }
         }
     }
 
@@ -722,7 +739,7 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
         spoken.stop()
         self.spoken = nil
         // The step it reached stays on the snapshot to resume at
-        PrayerResumeService.shared.endSpokenSteps(forgettingStep: false)
+        if novena == nil { PrayerResumeService.shared.endSpokenSteps(forgettingStep: false) }
         AudioService.shared.deactivateSession()
     }
 
@@ -905,6 +922,11 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
     }
 
     func spokenRosaryReached(_ step: SpokenStep) {
+        // A novena day keeps its own place, never the Rosary's snapshot
+        if let novena {
+            NovenaStore.shared.keep(step, novenaID: novena.novenaID, day: novena.dayNumber)
+            return
+        }
         PrayerResumeService.shared.updateSpokenStep(
             step,
             kind: resumeKind,
