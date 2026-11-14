@@ -637,6 +637,10 @@ extension ScripturalRosaryPrayerView {
             wordsKey: "held.\(held.id).\(viewModel.spoken?.index ?? 0)",
             showsWords: true
         ) {
+            // One scroll for all of it, so every held word can be read
+            // whatever the intention, the language or the text size; its
+            // foot dissolves under Back and Next as the prayers' does
+            ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 12) {
                 if held.id.contains("meditation"), let intention = novena.intention {
                     Text(intention)
@@ -644,12 +648,14 @@ extension ScripturalRosaryPrayerView {
                         .foregroundColor(AppColors.goldLight)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                SimpleRosaryWords(
-                    lines: ReadingText.paragraphs(of: held.text),
-                    highlighted: nil,
-                    lineProgress: nil,
-                    size: simpleWordsSize
-                )
+                ForEach(Array(ReadingText.paragraphs(of: held.text).enumerated()), id: \.offset) { _, line in
+                    Text(Rubric.paragraph([line], size: simpleWordsSize))
+                        .font(AppFonts.readingFont(simpleWordsSize))
+                        .foregroundColor(AppColors.cream)
+                        .lineSpacing(5)
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
                 if let invocation = held.invocation {
                     Text(invocation)
                         .font(AppFonts.italicFont(simpleWordsSize))
@@ -671,6 +677,18 @@ extension ScripturalRosaryPrayerView {
                 .foregroundColor(AppColors.cream.opacity(0.7))
                 .fixedSize(horizontal: false, vertical: true)
             }
+            .padding(.bottom, 32)
+            }
+            .mask(
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear, location: 0),
+                        .init(color: .black, location: 0.04),
+                        .init(color: .black, location: 0.88),
+                        .init(color: .clear, location: 1),
+                    ],
+                    startPoint: .top, endPoint: .bottom)
+            )
         }
         // The words themselves, which the column's own drawing does not
         // give VoiceOver, with what stands round them

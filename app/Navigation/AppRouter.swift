@@ -404,6 +404,7 @@ final class AppRouter {
                     novena, on: start, intention: "For my brother's new job",
                     reminder: DateComponents(hour: 20, minute: 0))
                 for earlier in 1..<max(day, 1) { NovenaStore.shared.markPrayed(earlier, of: novena) }
+                NovenaStore.shared.forgetKept(novenaID: novena.id)
             }
             return (.scripturalRosaryPrayer(ScripturalRosaryLaunch(
                 category: ScheduleService.categoryForToday(), form: .plain,

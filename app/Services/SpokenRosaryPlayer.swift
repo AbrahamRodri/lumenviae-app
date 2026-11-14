@@ -484,6 +484,20 @@ final class SpokenRosaryPlayer {
         }
         guard phase == .running else { return }
         let target = index + (forward ? 1 : -1)
+        // Next on the last prayer says it is said: the Rosary ends there,
+        // as the voice ends it, and AMEN stands. Paused on the closing
+        // Sign of the Cross, Next did nothing, and only play could finish.
+        if forward, target == script.count {
+            generation &+= 1
+            advanceTask?.cancel()
+            inPause = false
+            heldInPause = false
+            clearHold()
+            if audio.isPlaying { audio.pause() }
+            index = target
+            finish()
+            return
+        }
         guard script.indices.contains(target) else { return }
         let wasPlaying = isPlaying
         generation &+= 1

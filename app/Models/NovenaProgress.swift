@@ -202,7 +202,8 @@ extension NovenaDayContext {
             }
             return PrayerBookDocument.Novena(
                 id: "debug_knots", title: "Our Lady, Undoer of Knots", listTitle: "Undoer of Knots",
-                detail: "", prayerID: "sub_tuum", chapterID: "our_lady", length: 9, days: days)
+                detail: "", prayerID: "sub_tuum", chapterID: "our_lady", length: 9,
+                painting: "novena_undoer_of_knots", days: days)
         }()
     #endif
 }
@@ -260,7 +261,9 @@ struct NovenaDays: Hashable {
         let list: String
         if days.count == 1 {
             return prayed
-                ? String(localized: "day \(days[0]) prayed", comment: "Novena dashes, VoiceOver: one day prayed")
+                ? String(
+                    localized: "novena.dashes.oneDayPrayed", defaultValue: "day \(days[0]) prayed",
+                    comment: "Novena dashes, VoiceOver: one day prayed")
                 : String(localized: "day \(days[0]) open", comment: "Novena dashes, VoiceOver: one past day not yet prayed")
         } else if run {
             list = String(localized: "\(days.first!) to \(days.last!)", comment: "Novena dashes, VoiceOver: a run of days, as in 1 to 3")
@@ -307,6 +310,8 @@ extension NovenaProgress {
     var reminderLine: String? {
         guard let reminder, let time = Calendar.current.date(from: reminder) else { return nil }
         let clock = time.formatted(date: .omitted, time: .shortened)
+        // Spanish's time ends on "p.m.", which takes no second period
         return String(localized: "Reminder at \(clock).", comment: "Novena, after a day is prayed: the daily reminder's time")
+            .replacingOccurrences(of: "..", with: ".")
     }
 }

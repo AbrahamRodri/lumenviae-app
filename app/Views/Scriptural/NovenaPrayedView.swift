@@ -44,8 +44,11 @@ struct NovenaPrayedView: View {
             : String(localized: "Day \(prayed.dayNumber) prayed", comment: "Novena, after a day is prayed in the Rosary: the title")
     }
 
+    /// The novena's own painting where the app has it, else the
+    /// mysteries just prayed
     private var painting: String {
-        completed.category?.cardImageName ?? "sorrowful_agony"
+        if let name = NovenaDayContext.novena(prayed.novenaID)?.painting, PaintingSource.exists(name) { return name }
+        return completed.category?.cardImageName ?? "sorrowful_agony"
     }
 
     var body: some View {

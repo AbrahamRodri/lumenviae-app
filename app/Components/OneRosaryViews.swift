@@ -1537,6 +1537,9 @@ struct RosaryStopsPill: View {
                         .tracking(2)
                         .foregroundColor(AppColors.cream.opacity(0.9))
                         .lineLimit(1)
+                        // A long part's name (MEDITACIÓN DE HOY at AX1)
+                        // shrinks rather than end on an ellipsis
+                        .minimumScaleFactor(0.75)
                     AppIcon("ph-caret-down", size: 9)
                         .foregroundColor(AppColors.gold)
                 }
