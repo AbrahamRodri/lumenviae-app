@@ -89,11 +89,17 @@ struct appApp: App {
             // meets it over the introduction; anyone past it, on the home
             // page, ahead of What's New (ContentView.presentFirstLook)
             .onChange(of: isLaunched) { _, launched in
-                if launched, !hasSeenOnboarding, AppLanguage.owesTranslationNotice() {
+                if launched, !hasSeenOnboarding, SpanishBeta.owesSheet() {
                     showsTranslationNotice = true
                 }
             }
-            .translationNotice(isPresented: $showsTranslationNotice)
+            // Seen however it leaves, a swipe included
+            .sheet(isPresented: $showsTranslationNotice, onDismiss: { SpanishBeta.markSheetSeen() }) {
+                SpanishBetaSheet {
+                    SpanishBeta.markSheetSeen()
+                    showsTranslationNotice = false
+                }
+            }
             // The phone's Larger Text is followed up to the app's cap and
             // no further. Sheets and covers don't inherit this; each one
             // carries the same modifier on its content.

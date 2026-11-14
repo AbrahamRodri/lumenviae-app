@@ -43,8 +43,14 @@ struct ContentView: View {
     /// A version's notes, owed to someone who knew the version before;
     /// and the door chosen in them, taken once the sheet has left
     @State private var whatsNewRelease: WhatsNewRelease?
-    /// The one-time AI translation notice, the first of the first looks
+    /// The Spanish beta notice, the first of the first looks, and opened
+    /// again from the strip
     @State private var showsTranslationNotice = false
+    /// The day the Spanish beta strip was last closed (`SpanishBeta`)
+    @AppStorage(SpanishBeta.closedOnKey) private var spanishStripClosedOn = ""
+    /// Read on coming to the front, so a strip closed yesterday returns
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var spanishStripDay = SpanishBeta.dayStamp(Date())
     @State private var pendingWhatsNewRoute: AppRoute?
 
     /// A new reader's first look at the home page (`FirstUseTour`).
@@ -90,6 +96,12 @@ struct ContentView: View {
 
                     tabContent
                 }
+                // Spanish only: the beta strip under the clock, over every
+                // tab's root; a prayer is pushed over it and leaves it behind
+                .spanishBetaStrip(
+                    isShown: showsSpanishStrip,
+                    onOpen: { showsTranslationNotice = true },
+                    onClose: closeSpanishStrip)
                 .modifier(ChantPlayerRoom(height: chantPlayerRoom))
                 .navigationDestination(for: AppRoute.self) { route in
                     destinationView(for: route)
@@ -121,6 +133,10 @@ struct ContentView: View {
                 ConsecrationTabView(onNavigationChange: { isNavigating in
                     isConsecrationNavigating = isNavigating
                 })
+                .spanishBetaStrip(
+                    isShown: showsSpanishStrip && !isConsecrationNavigating,
+                    onOpen: { showsTranslationNotice = true },
+                    onClose: closeSpanishStrip)
                 // Never faded: this view holds its own NavigationStack,
                 // whose system background is white, and fading the whole
                 // stack blended that white over the dark ground as a
@@ -286,8 +302,19 @@ struct ContentView: View {
         }
         // Once dismissed, the next first look owed (What's New, the tour)
         // follows
-        .translationNotice(isPresented: $showsTranslationNotice) {
+        .sheet(isPresented: $showsTranslationNotice, onDismiss: {
+            // Seen however it leaves, a swipe included: the daily strip
+            // goes on warning, and the sheet must not come straight back
+            SpanishBeta.markSheetSeen()
             Task { await presentFirstLook(after: .milliseconds(500)) }
+        }) {
+            SpanishBetaSheet {
+                SpanishBeta.markSheetSeen()
+                showsTranslationNotice = false
+            }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { spanishStripDay = SpanishBeta.dayStamp(Date()) }
         }
         .sheet(item: $whatsNewRelease, onDismiss: {
             guard let route = pendingWhatsNewRoute else { return }
@@ -314,13 +341,27 @@ struct ContentView: View {
               !isStartingPrayer, !firstUseTour.isRunning, !showsTranslationNotice else { return }
         // In Spanish, the AI notice comes first: an alert raised beside
         // What's New's sheet is the one SwiftUI drops
-        if AppLanguage.owesTranslationNotice() {
+        if SpanishBeta.owesSheet() {
             showsTranslationNotice = true
         } else if let release = WhatsNewStore.shared.due {
             WhatsNewStore.shared.markSeen()
             whatsNewRelease = release
         } else if firstUseTour.isDue {
             withAnimation(Motion.crossfade) { firstUseTour.begin() }
+        }
+    }
+
+    // MARK: - The Spanish beta strip
+
+    private var showsSpanishStrip: Bool {
+        // Read against the day last seen in front, so it redraws then
+        _ = spanishStripDay
+        return SpanishBeta.showsStrip(closedOn: spanishStripClosedOn)
+    }
+
+    private func closeSpanishStrip() {
+        withAnimation(Motion.crossfade) {
+            spanishStripClosedOn = SpanishBeta.dayStamp(Date())
         }
     }
 

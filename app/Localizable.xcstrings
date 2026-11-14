@@ -7069,6 +7069,16 @@
         }
       }
     },
+    "Close the notice" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerrar el aviso"
+          }
+        }
+      }
+    },
     "Close the reader" : {
       "comment" : "Meditation reader: VoiceOver name of the close button, back to the player",
       "localizations" : {
@@ -8599,6 +8609,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cada día que rezas suma uno a tu racha."
+          }
+        }
+      }
+    },
+    "Each day you will see a short notice at the top of the screen. You can close it." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada día verás un aviso breve arriba de la pantalla. Puedes cerrarlo."
           }
         }
       }
@@ -10382,6 +10402,16 @@
         }
       }
     },
+    "Got it" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entendido"
+          }
+        }
+      }
+    },
     "Grace before the meal, and thanks when it is done." : {
       "comment" : "Prayers tab: one sentence saying what an order of prayer is",
       "localizations" : {
@@ -11245,6 +11275,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ícono de san Carlo Acutis"
+          }
+        }
+      }
+    },
+    "If you find a mistake, tell us." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si encuentras un error, cuéntanos."
           }
         }
       }
@@ -12866,6 +12906,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lumen Viae te ayuda a rezar el Rosario cada día, con una breve lectura para cada misterio, y tiene a la mano las demás oraciones de la Iglesia. Los misterios son escenas de la vida de Jesús y de María: los Gozosos, Dolorosos, Gloriosos y Luminosos, y los Siete Dolores de María."
+          }
+        }
+      }
+    },
+    "Lumen Viae in Spanish" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lumen Viae en español"
           }
         }
       }
@@ -15799,6 +15849,16 @@
         }
       }
     },
+    "Opens the notice about Spanish" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre el aviso sobre el español"
+          }
+        }
+      }
+    },
     "Opens the parts of the Rosary, to go to any of them" : {
       "comment" : "Simple Rosary player: VoiceOver hint on the pill at the top",
       "localizations" : {
@@ -18654,6 +18714,16 @@
         }
       }
     },
+    "Report a mistake" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reportar un error"
+          }
+        }
+      }
+    },
     "Report a problem or share an idea" : {
       "comment" : "About: a row's name, a heading, or the line under it",
       "localizations" : {
@@ -20691,6 +20761,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Español con el latín debajo de cada línea"
+          }
+        }
+      }
+    },
+    "Spanish · beta" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Español · beta"
+          }
+        }
+      }
+    },
+    "Spanish, beta. Translated with artificial intelligence. It may have mistakes." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Español, beta. Traducido con inteligencia artificial. Puede tener errores."
           }
         }
       }
@@ -22944,6 +23034,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "El mes propio del Rosario"
+          }
+        }
+      }
+    },
+    "The Rosary's prayers and the prayers from Church sources were checked word for word. Texts translated with AI carry a small note that says so." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las oraciones del Rosario y las que vienen de fuentes de la Iglesia se revisaron palabra por palabra. Los textos traducidos con IA llevan una pequeña nota que lo indica."
           }
         }
       }
@@ -25437,6 +25537,16 @@
         }
       }
     },
+    "Translated with AI. It may have mistakes." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traducido con IA. Puede tener errores."
+          }
+        }
+      }
+    },
     "Translation" : {
       "comment" : "The Order of Mass text options: heading over the layout of the Latin and its English translation",
       "localizations" : {
@@ -25789,6 +25899,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Actualizar descarga"
+          }
+        }
+      }
+    },
+    "Use the app in English" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar la app en inglés"
           }
         }
       }
