@@ -60,6 +60,12 @@ struct MysteryPrayerView: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.phoneTypeSize) private var phoneTypeSize
+
+    /// The player follows the phone's Larger Text past the app's cap, to
+    /// `playerMaximum` (Abraham's yes, 10 Nov: "Yes, build it"); at the
+    /// accessibility sizes it makes room for the larger words
+    private var playerIsLarge: Bool { min(phoneTypeSize, .playerMaximum).isAccessibilitySize }
 
     /// The reader over the player. Not on the pendant: the opening and
     /// closing prayers have no meditation to read, and their words are
@@ -144,6 +150,7 @@ struct MysteryPrayerView: View {
                 // both on every frame of the transition. The reader's own
                 // slide carries the movement; the player just waits.
                 oneRosaryLayer
+                    .followsPhoneTypeSize(upTo: .playerMaximum)
                     .allowsHitTesting(!readerShown)
 
                 if readerShown, let meditation = viewModel.currentMeditation {
@@ -294,10 +301,10 @@ struct MysteryPrayerView: View {
 
             case .playback:
                 PlaybackSettingsSheet()
-                    .presentationDetents(PlaybackSettingsSheet.detents(for: dynamicTypeSize))
+                    .presentationDetents(PlaybackSettingsSheet.detents(for: min(phoneTypeSize, .playerMaximum)))
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
-                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+                    .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
 
             case .feedback:
                 FeedbackView(
@@ -314,14 +321,16 @@ struct MysteryPrayerView: View {
                     showsNarrationOptions: false,
                     showsPartsToggle: true
                 )
-                    .presentationDetents([
+                    // At the accessibility sizes its rows outgrow the
+                    // measured height, so it opens full
+                    .presentationDetents(playerIsLarge ? [.large] : [
                         .height(ReaderTextOptionsSheet.height(
                             showsNarrationOptions: false,
                             showsPartsToggle: true))
                     ])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
-                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+                    .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
 
             case .stops:
                 RosaryStopsSheet(
@@ -340,7 +349,7 @@ struct MysteryPrayerView: View {
                     travel = .forward
                     viewModel.jump(to: stop)
                 }
-                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+                .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
 
             case .tray:
                 PrayerTrackTray(
@@ -352,7 +361,7 @@ struct MysteryPrayerView: View {
                     // (`fittedSheetDetent`)
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
-                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+                    .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
             }
         }
     }
@@ -797,8 +806,8 @@ extension MysteryPrayerView {
             // The words' first line at one height on every step; the head
             // stands in its room above them
             let columnTop = max(
-                OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight)
-                    - OneRosaryColumn<EmptyView>.headHeight
+                OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight, large: playerIsLarge)
+                    - OneRosaryColumn<EmptyView>.headHeight(large: playerIsLarge)
                     - geometry.safeAreaInsets.top,
                 12 + 44 + 14
             )
@@ -809,7 +818,7 @@ extension MysteryPrayerView {
                 oneRosaryColumn
                     .announcesRosaryPlace(spokenPlace)
                     .padding(.leading, 28)
-                    .padding(.trailing, 104)
+                    .padding(.trailing, OneRosaryColumn<EmptyView>.trailingInset(large: playerIsLarge))
                     .padding(.top, placed.top)
                     .padding(.bottom, placed.bottom)
                     .frame(maxHeight: .infinity, alignment: placed.alignment)
@@ -844,7 +853,8 @@ extension MysteryPrayerView {
                 hintPulse: tapHintPulse,
                 complete: oneRosaryComplete,
                 closing: oneRosaryOnClose,
-                hidden: !showsWordsAndBeads
+                hidden: !showsWordsAndBeads,
+                large: playerIsLarge
             ) { index in
                 if case .strand(let bead) = rail.target(at: index) { oneRosaryGoToBead(bead) }
             }
@@ -859,7 +869,7 @@ extension MysteryPrayerView {
                     // cross, drawn once
                     PrayerPaintingStage(
                         painting: painting,
-                        seatedFraction: OneRosaryColumn<EmptyView>.paintingFraction,
+                        seatedFraction: OneRosaryColumn<EmptyView>.paintingFraction(large: playerIsLarge),
                         paintingID: viewModel.currentMysteryIndex,
                         chromeHidden: chromeHidden,
                         quiet: !showsWordsAndBeads,

@@ -27,6 +27,12 @@ struct ScripturalRosaryPrayerView: View {
     @Environment(AppRouter.self) private var router
     @Environment(UserSettings.self) private var userSettings
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.phoneTypeSize) private var phoneTypeSize
+
+    /// The player follows the phone's Larger Text past the app's cap, to
+    /// `playerMaximum` (Abraham's yes, 10 Nov: "Yes, build it"); at the
+    /// accessibility sizes it makes room for the larger words
+    private var playerIsLarge: Bool { min(phoneTypeSize, .playerMaximum).isAccessibilitySize }
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var viewModel: ScripturalRosaryViewModel
 
@@ -69,6 +75,7 @@ struct ScripturalRosaryPrayerView: View {
 
     var body: some View {
         oneRosaryLayer
+            .followsPhoneTypeSize(upTo: .playerMaximum)
         // A background rather than a bottom layer in the stack: a sibling
         // that ignores the safe area takes the safe area away from every
         // other sibling, and the chrome has to sit above the home indicator
@@ -160,21 +167,23 @@ struct ScripturalRosaryPrayerView: View {
                     showsNarrationOptions: false,
                     showsPartsToggle: true
                 )
-                    .presentationDetents([
+                    // At the accessibility sizes its rows outgrow the
+                    // measured height, so it opens full
+                    .presentationDetents(playerIsLarge ? [.large] : [
                         .height(ReaderTextOptionsSheet.height(
                             showsNarrationOptions: false,
                             showsPartsToggle: true))
                     ])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
-                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+                    .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
 
             case .playback:
                 PlaybackSettingsSheet()
-                    .presentationDetents(PlaybackSettingsSheet.detents(for: dynamicTypeSize))
+                    .presentationDetents(PlaybackSettingsSheet.detents(for: min(phoneTypeSize, .playerMaximum)))
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
-                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+                    .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
 
             case .feedback:
                 FeedbackView(
@@ -197,7 +206,7 @@ struct ScripturalRosaryPrayerView: View {
                     travel = .forward
                     viewModel.jump(to: stop)
                 }
-                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+                .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
 
             case .tray:
                 PrayerTrackTray(
@@ -208,7 +217,7 @@ struct ScripturalRosaryPrayerView: View {
                 // The tray opens as tall as it measures (`fittedSheetDetent`)
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
-                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+                .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
             }
         }
     }
@@ -285,7 +294,6 @@ struct ScripturalRosaryPrayerView: View {
     /// The room the words are given at the right: the strand's beads
     /// and their numerals take the edge, and the words stop short of
     /// them. Measured from the glass, as the strand is.
-    private static let readingTrailingInset: CGFloat = 104
 
     /// The words' size follows the Prayer Experience text size the Aa
     /// sets, a point above the reading size. Set in the Medium face:
@@ -470,8 +478,8 @@ extension ScripturalRosaryPrayerView {
             // The words' first line at one height on every step; the head
             // stands in its room above them
             let columnTop = max(
-                OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight)
-                    - OneRosaryColumn<EmptyView>.headHeight
+                OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight, large: playerIsLarge)
+                    - OneRosaryColumn<EmptyView>.headHeight(large: playerIsLarge)
                     - geometry.safeAreaInsets.top,
                 12 + 44 + 14
             )
@@ -482,7 +490,7 @@ extension ScripturalRosaryPrayerView {
                 oneRosaryColumn
                     .announcesRosaryPlace(spokenPlace)
                     .padding(.leading, 28)
-                    .padding(.trailing, Self.readingTrailingInset)
+                    .padding(.trailing, OneRosaryColumn<EmptyView>.trailingInset(large: playerIsLarge))
                     .padding(.top, placed.top)
                     .padding(.bottom, placed.bottom)
                     .frame(maxHeight: .infinity, alignment: placed.alignment)
@@ -504,7 +512,8 @@ extension ScripturalRosaryPrayerView {
                 tappable: tappableBeads(rail),
                 complete: oneRosaryComplete,
                 closing: oneRosaryOnClose,
-                hidden: !showsWordsAndBeads
+                hidden: !showsWordsAndBeads,
+                large: playerIsLarge
             ) { index in
                 if case .strand(let bead) = rail.target(at: index) { goToBead(bead) }
             }
@@ -517,7 +526,7 @@ extension ScripturalRosaryPrayerView {
                     // the rail's alone
                     PrayerPaintingStage(
                         painting: painting,
-                        seatedFraction: OneRosaryColumn<EmptyView>.paintingFraction,
+                        seatedFraction: OneRosaryColumn<EmptyView>.paintingFraction(large: playerIsLarge),
                         paintingID: viewModel.currentMysteryIndex,
                         chromeHidden: chromeHidden,
                         quiet: !showsWordsAndBeads,
