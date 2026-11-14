@@ -13356,7 +13356,7 @@
       }
     },
     "Mary, Undoer of Knots, pray for me." : {
-      "comment" : "Undoer of Knots novena: the invocation said after its meditation and its closing prayer (Spanish: Nuestra Señora Desatanudos, Abraham 14 Nov)",
+      "comment" : "Undoer of Knots novena: the invocation said after its meditation and its closing prayer (Spanish: María, Desatanudos, Abraham 14 Nov)",
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
@@ -16214,13 +16214,13 @@
       }
     },
     "Our Lady, Undoer of Knots" : {
-      "comment" : "Undoer of Knots novena: its name (Spanish: Nuestra Señora Desatanudos, Abraham 14 Nov)",
+      "comment" : "Undoer of Knots novena: its name (Spanish: Novena a la Virgen Desatanudos, Abraham 14 Nov)",
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nuestra Señora Desatanudos"
+            "value" : "Novena a la Virgen Desatanudos"
           }
         }
       }
