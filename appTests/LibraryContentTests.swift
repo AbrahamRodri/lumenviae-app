@@ -109,8 +109,12 @@ struct LibraryContentSeedTests {
         let library = try shippedLibrary()
         #expect(book.problem == nil)
         #expect(library.problem == nil)
-        #expect(book.prayers.count == 158)
-        #expect(book.novenas.map(\.id) == ["undoer_of_knots"])
+        #expect(book.prayers.count == 164)
+        #expect(
+            book.novenas.map(\.id) == [
+                "undoer_of_knots", "immaculate_conception", "our_lady_of_guadalupe", "st_andrew_christmas", "st_joseph",
+                "holy_spirit", "our_mother_of_perpetual_help", "sacred_heart", "st_jude", "st_therese",
+            ])
         #expect(book.chapters.count == 18)
         #expect(library.groups.count == 12)
         #expect(library.chants.count == 104)

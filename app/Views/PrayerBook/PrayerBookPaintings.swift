@@ -330,6 +330,17 @@ struct PrayerBookPainting: Equatable {
             "st_andrew_novena": p("joyful_nativity", 0.5, 0.35, "The Nativity"),
             "o_antiphons": p("feast_annunciation", 0.7, 0.5, "The Annunciation"),
             "undoer_of_knots_novena": mercy,
+            // The novenas' prayers the server added on 14 Nov 2026 (api #246, #247),
+            // each from a painting already in the book, none beside its twin
+            "holy_spirit_novena": pentecost,
+            "st_joseph_novena": carpenter,
+            // The icon of Perpetual Help holds the instruments of the Passion
+            "our_mother_of_perpetual_help_novena": sorrows,
+            // The woman clothed with the sun (Apoc 12:1), as Guadalupe shows her
+            "our_lady_of_guadalupe_novena": immaculate,
+            "st_jude_novena": allSaints,
+            // St Thérèse was a Carmelite
+            "st_therese_novena": carmel,
             "inviolata": immaculate,
             "salve_mater": mercy,
             "tota_pulchra": immaculate,

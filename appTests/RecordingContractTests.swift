@@ -61,6 +61,9 @@ struct RecordingContractTests {
         let awaitingRecording: Set<String> = [
             "st_bridget_twelve_years", "advent_wreath_collects", "immaculate_conception_novena",
             "st_andrew_novena", "o_antiphons", "undoer_of_knots_novena",
+            // api #246 and #247 (14 Nov 2026), the novenas' twins
+            "holy_spirit_novena", "st_joseph_novena", "our_mother_of_perpetual_help_novena",
+            "our_lady_of_guadalupe_novena", "st_jude_novena", "st_therese_novena",
         ]
         for id in PrayerBook.prayers.keys
         where !exported.contains(id) && !rosarys.contains(id) && !awaitingRecording.contains(id) {
