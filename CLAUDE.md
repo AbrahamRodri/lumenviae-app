@@ -3686,7 +3686,13 @@ transition entirely.
   on another runtime the suite is skipped. After a deliberate change,
   record again with `TEST_RUNNER_SNAPSHOT_TESTING_RECORD=failed
   xcodebuild test ...` (or `=all`), look at the new PNGs, and commit
-  them. Prefire is not used: the main screens have no `#Preview`, many
+  them. **The lock pins swift-custom-dump 1.7.0 and
+  xctest-dynamic-overlay 1.11.0 on purpose; don't update past them.**
+  Their later releases carry a second manifest for Swift tools 6.4 that
+  needs swift-issue-reporting, so Xcode Cloud's newer Swift and Xcode 26
+  here would resolve different packages, and Xcode Cloud, which never
+  resolves on its own, fails at its first step (every run 7-14 Nov 2026
+  did). Prefire is not used: the main screens have no `#Preview`, many
   previews read the clock or the network, and its build plugin needs
   `-skipPackagePluginValidation` on every `xcodebuild`.
 - **Formatting:** `.swift-format` (4-space indent, 120 columns) is the
