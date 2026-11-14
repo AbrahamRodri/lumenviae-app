@@ -87,7 +87,7 @@ struct OneRosaryRailView: View {
     static func windowTop(fullHeight: CGFloat, large: Bool = false) -> CGFloat {
         // At the accessibility sizes, three beads level with the words'
         // middle, under the larger head
-        large ? fullHeight * 0.5 : fullHeight * 0.38
+        large ? fullHeight * 0.5 - rowHeight : fullHeight * 0.38
     }
 
     /// The window's height: about half the glass, and never past the top
@@ -96,8 +96,9 @@ struct OneRosaryRailView: View {
     /// through one
     static func windowHeight(fullHeight: CGFloat, large: Bool = false) -> CGFloat {
         // At the accessibility sizes the rail is the bead under the hand
-        // and one either side; the step line keeps the count
-        if large { return rowHeight * 3 }
+        // and one either side; the step line keeps the count. Five rows,
+        // since the window's fade clears the outermost one at each end
+        if large { return rowHeight * 5 }
         let room = min(fullHeight * 0.52, fullHeight * 0.8 + rowHeight - windowTop(fullHeight: fullHeight))
         var rows = Int((room / rowHeight).rounded(.down))
         if rows % 2 == 0 { rows -= 1 }
@@ -584,7 +585,7 @@ struct OneRosaryColumn<Words: View>: View {
 
     /// The words' trailing inset, clear of the rail: at the accessibility
     /// sizes the rail is three beads at the edge and the words widen
-    static func trailingInset(large: Bool) -> CGFloat { large ? 60 : 104 }
+    static func trailingInset(large: Bool) -> CGFloat { large ? 80 : 104 }
 
     /// Where the first line of the words stands, from the top of the
     /// glass: low enough that the words sit near Back and Next, with the

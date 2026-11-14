@@ -3292,7 +3292,7 @@ default to Candlelit**:
   and the feedback form keep `appMaximum`). At an accessibility size the
   player makes room (`playerIsLarge`): the painting folds at 48 percent,
   the words begin at 38 percent under a taller head, the rail is three
-  beads, the words' trailing inset is 60 rather than 104, Back, play and
+  beads, the words' trailing inset is 80 rather than 104, clear of the decade's numeral, Back, play and
   Next stand 56 points tall, and the Text sheet opens full. Elsewhere:
   the `isAccessibilitySize` and `>= .accessibility1` branches that remain
   (the Chant Library, a set's ledger, the Prayer Book's grid and its
