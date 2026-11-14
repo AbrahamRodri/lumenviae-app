@@ -16606,7 +16606,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En pausa. Toca reproducir para seguir, o Siguiente."
+            "value" : "En pausa. Toca reproducir para seguir, o toca Siguiente."
           }
         }
       }
