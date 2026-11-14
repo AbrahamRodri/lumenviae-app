@@ -267,9 +267,12 @@ struct SpokenNovenaDay: Hashable {
                 }
             } else if let text = part.text, !text.isEmpty {
                 let id = part.id ?? "\(day.number).\(part.kind)"
+                // A day's meditation is always Today's Meditation, whatever
+                // the server titles it ("Meditation for Day 4"), as Android
                 inserts.append(
                     .words(
-                        caption: part.title ?? caption(forKind: part.kind),
+                        caption: part.kind == "meditation"
+                            ? caption(forKind: part.kind) : part.title ?? caption(forKind: part.kind),
                         HeldWords(id: id, title: part.title, text: text, source: part.source)))
             }
             if let decade = lastDecade {

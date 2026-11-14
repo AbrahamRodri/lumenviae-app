@@ -230,7 +230,10 @@ struct NovenaRosaryDayTests {
             .init(kind: "opening", prayerID: "sign_of_cross"),
             .init(kind: "opening", prayerID: "act_of_contrition"),
             .init(kind: "rosary", decades: [1, 2, 3]),
-            .init(kind: "meditation", id: "knots_meditation_4", text: String(repeating: "word ", count: 300)),
+            // As served, titled for its day
+            .init(
+                kind: "meditation", id: "knots_meditation_4", title: "Meditation for Day 4",
+                text: String(repeating: "word ", count: 300)),
             .init(kind: "invocation", id: "knots_invocation", text: "Mary, Undoer of Knots, pray for me."),
             .init(kind: "rosary", decades: [4, 5]),
             .init(kind: "closing", id: "knots_closing", title: "The Closing Prayer", text: "Holy Mary, ..."),
@@ -260,6 +263,8 @@ struct NovenaRosaryDayTests {
         let meditation = try #require(s.firstIndex { $0.kind == .words("knots_meditation_4") })
         #expect(s[meditation - 1].kind == .prayer("fatima_prayer"))
         #expect(s[meditation - 1].mystery == 2)
+        // Whatever the server titles it
+        #expect(s[meditation].caption == "Today's Meditation")
         // The invocation stands under the meditation, on its step
         #expect(s[meditation].held?.invocation == "Mary, Undoer of Knots, pray for me.")
         #expect(s[meditation + 1].kind == .announcement)
