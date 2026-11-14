@@ -25,6 +25,7 @@ struct SpokenRosaryScriptTests {
         case .announcement: return "announcement"
         case .meditation: return "meditation"
         case .verse(let number): return "verse:\(number)"
+        case .words(let id): return "words:\(id)"
         }
     }
 
