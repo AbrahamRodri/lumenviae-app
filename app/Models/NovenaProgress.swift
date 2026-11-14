@@ -203,7 +203,7 @@ extension NovenaDayContext {
             }
             return PrayerBookDocument.Novena(
                 id: "debug_knots",
-                title: String(localized: "Our Lady, Undoer of Knots", comment: "Undoer of Knots novena: its name (Spanish: Novena a la Virgen Desatanudos, Abraham 14 Nov)"),
+                title: String(localized: "Our Lady, Undoer of Knots", comment: "Undoer of Knots novena: its name (Spanish: La Virgen Desatanudos, Abraham 14 Nov)"),
                 listTitle: String(localized: "Undoer of Knots", comment: "Undoer of Knots novena: its short name, under each step and in reminders (Spanish: Virgen Desatanudos)"),
                 detail: "", prayerID: "sub_tuum", chapterID: "our_lady", length: 9,
                 painting: "novena_undoer_of_knots", days: days)

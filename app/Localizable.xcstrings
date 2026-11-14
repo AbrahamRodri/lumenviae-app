@@ -16214,13 +16214,13 @@
       }
     },
     "Our Lady, Undoer of Knots" : {
-      "comment" : "Undoer of Knots novena: its name (Spanish: Novena a la Virgen Desatanudos, Abraham 14 Nov)",
+      "comment" : "Undoer of Knots novena: its name (Spanish: La Virgen Desatanudos, Abraham 14 Nov)",
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Novena a la Virgen Desatanudos"
+            "value" : "La Virgen Desatanudos"
           }
         }
       }
