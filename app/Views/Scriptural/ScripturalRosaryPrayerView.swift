@@ -407,6 +407,10 @@ struct ScripturalRosaryPrayerView: View {
     /// set on the server to credit.
     private func finishRosary() {
         PrayerResumeService.shared.clear()
+        // A novena day prayed in this Rosary is marked at its AMEN
+        if let day = viewModel.novena, let novena = NovenaDayContext.novena(day.novenaID) {
+            NovenaStore.shared.markPrayed(day.dayNumber, of: novena)
+        }
         router.navigateToCompletion(CompletedPrayer(
             category: viewModel.category,
             devotionName: viewModel.devotionName,

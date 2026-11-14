@@ -160,11 +160,7 @@ extension NovenaDayContext {
     /// texts already public (St Irenaeus, tr. 1885; the Sub tuum), for
     /// trying the day before the server serves the real one.
     static func resolve(novenaID: String, day number: Int, intention: String? = nil) -> NovenaDayContext? {
-        var novena = LibraryContent.prayerBook.novenas.first { $0.id == novenaID }
-        #if DEBUG
-            if novena == nil, novenaID == "debug_knots" { novena = debugKnots }
-        #endif
-        guard let novena, let day = novena.day(number),
+        guard let novena = novena(novenaID), let day = novena.day(number),
             let laid = SpokenNovenaDay.make(
                 from: day,
                 book: { id in PrayerBook.prayer(id).map { ($0.title, $0.english) } })
@@ -172,6 +168,15 @@ extension NovenaDayContext {
         return NovenaDayContext(
             novenaID: novena.id, shortName: novena.listTitle ?? novena.title, dayNumber: number,
             length: novena.length, intention: intention, day: laid)
+    }
+
+    /// The novena the Prayer Book holds under `id`
+    static func novena(_ id: String) -> PrayerBookDocument.Novena? {
+        if let found = LibraryContent.prayerBook.novenas.first(where: { $0.id == id }) { return found }
+        #if DEBUG
+            if id == "debug_knots" { return debugKnots }
+        #endif
+        return nil
     }
 
     #if DEBUG
