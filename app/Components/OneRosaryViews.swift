@@ -583,6 +583,21 @@ struct OneRosaryColumn<Words: View>: View {
 
     static func headHeight(large: Bool) -> CGFloat { large ? largeHeadHeight : headHeight }
 
+    /// The least the words keep under the head: about two lines at the
+    /// largest size the player follows
+    static var minimumWordsHeight: CGFloat { 120 }
+
+    /// Where the column begins: at `preferred` (the words at one height on
+    /// every step), raised when the foot has grown (the offline notice and
+    /// its Try Again at the accessibility sizes on a small phone) so the
+    /// words keep `minimumWordsHeight`, but never above the header
+    static func columnTop(
+        preferred: CGFloat, height: CGFloat, footHeight: CGFloat, large: Bool, headerFoot: CGFloat
+    ) -> CGFloat {
+        let room = height - footHeight - headHeight(large: large) - minimumWordsHeight
+        return max(min(preferred, room), headerFoot)
+    }
+
     /// The words' trailing inset, clear of the rail: at the accessibility
     /// sizes the rail is three beads at the edge and the words widen
     static func trailingInset(large: Bool) -> CGFloat { large ? 80 : 104 }
