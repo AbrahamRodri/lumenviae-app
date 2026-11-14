@@ -377,3 +377,87 @@ struct NovenaKeptStepTests {
         #expect(s.keptStep(novenaID: "knots", day: 4, now: at(13, 22)) == nil)
     }
 }
+
+@Suite("A novena in Spanish")
+struct NovenaSpanishTests {
+    private typealias Doc = PrayerBookDocument
+
+    private let english = Doc.Novena(
+        id: "knots", title: "Our Lady, Undoer of Knots", listTitle: "Undoer of Knots", detail: "Nine days",
+        prayerID: "knots_novena", chapterID: "our_lady", length: 2,
+        days: (1...2).map { n in
+            Doc.Day(
+                number: n, title: "Day \(n)",
+                parts: [
+                    .init(kind: "opening", prayerID: "act_of_contrition"),
+                    .init(kind: "rosary", decades: [1, 2, 3, 4, 5]),
+                    .init(kind: "meditation", id: "knots_d\(n)_meditation", title: "Day \(n)", text: "English \(n)"),
+                    .init(kind: "invocation", id: "knots_invocation", text: "Mary, Undoer of Knots, pray for me."),
+                ])
+        })
+
+    private let spanish = PrayerBookTranslations.NovenaTranslation(
+        id: "knots", title: "La Virgen Desatanudos", listTitle: "Virgen Desatanudos", detail: "Nueve días",
+        dayTitles: ["Día 1", "Día 2"],
+        parts: [
+            .init(id: "knots_d1_meditation", title: "Día 1", text: "Español 1"),
+            .init(id: "knots_d2_meditation", title: nil, text: "Español 2"),
+            .init(id: "knots_invocation", text: "María, Desatanudos, ruega por mí."),
+        ])
+
+    private let saysSpanish: (String) -> Bool = { $0 == "act_of_contrition" }
+
+    @Test func theSpanishShapeDecodes() throws {
+        let json = """
+            {"version": "v", "translations": [], "novena_translations": [{"id": "knots",
+            "title": "La Virgen Desatanudos", "list_title": "Virgen Desatanudos", "detail": "Nueve días",
+            "note": null, "origin": null, "search_words": ["nudos"], "day_titles": ["Día 1", "Día 2"],
+            "parts": [{"id": "knots_invocation", "title": null, "text": "María, Desatanudos, ruega por mí."}]}]}
+            """
+        let decoded = try JSONDecoder().decode(PrayerBookTranslations.self, from: Data(json.utf8))
+        #expect(decoded.novenasByID["knots"]?.listTitle == "Virgen Desatanudos")
+        #expect(decoded.novenasByID["knots"]?.dayTitles == ["Día 1", "Día 2"])
+        #expect(decoded.problem == nil)
+        let bare = try JSONDecoder().decode(PrayerBookTranslations.self, from: Data(#"{"translations": []}"#.utf8))
+        #expect(bare.novenaTranslations.isEmpty)
+    }
+
+    /// A Spanish reader gets no English in the day: its names, its day
+    /// titles and every part's own words are the Spanish
+    @Test func aSpanishReaderGetsEveryDayInSpanish() throws {
+        let laid = try #require(
+            NovenaDayContext.novena(
+                "knots", spanish: true, translations: ["knots": spanish], book: [english],
+                prayerInSpanish: saysSpanish))
+        #expect(laid.title == "La Virgen Desatanudos")
+        #expect(laid.listTitle == "Virgen Desatanudos")
+        #expect(laid.detail == "Nueve días")
+        #expect(laid.days.map(\.title) == ["Día 1", "Día 2"])
+        let words = laid.days.flatMap(\.parts).compactMap(\.text)
+        #expect(words == ["Español 1", "María, Desatanudos, ruega por mí.", "Español 2", "María, Desatanudos, ruega por mí."])
+        // An English heading with no Spanish one stands down
+        #expect(laid.days[0].parts[2].title == "Día 1")
+        #expect(laid.days[1].parts[2].title == nil)
+    }
+
+    @Test func anEnglishReaderGetsTheEnglish() {
+        let found = NovenaDayContext.novena(
+            "knots", spanish: false, translations: ["knots": spanish], book: [english], prayerInSpanish: saysSpanish)
+        #expect(found == english)
+    }
+
+    /// Spanish missing a part, a day title, or a prayer's Spanish: the
+    /// novena is not there for a Spanish reader, rather than half English
+    @Test func incompleteSpanishIsNeverHalfEnglish() {
+        #expect(
+            NovenaDayContext.novena(
+                "knots", spanish: true, translations: [:], book: [english], prayerInSpanish: saysSpanish) == nil)
+        var lacking = spanish
+        lacking.parts.removeFirst()
+        #expect(english.inSpanish(lacking, prayerInSpanish: saysSpanish) == nil)
+        var short = spanish
+        short.dayTitles = ["Día 1"]
+        #expect(english.inSpanish(short, prayerInSpanish: saysSpanish) == nil)
+        #expect(english.inSpanish(spanish, prayerInSpanish: { _ in false }) == nil)
+    }
+}

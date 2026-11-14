@@ -163,16 +163,32 @@ extension NovenaDayContext {
         guard let novena = novena(novenaID), let day = novena.day(number),
             let laid = SpokenNovenaDay.make(
                 from: day,
-                book: { id in PrayerBook.prayer(id).map { ($0.title, $0.english, $0.origin) } })
+                book: { id in
+                    PrayerBook.prayer(id).map { PrayerBook.inSpanish($0) }.map { ($0.title, $0.english, $0.origin) }
+                })
         else { return nil }
         return NovenaDayContext(
             novenaID: novena.id, shortName: novena.listTitle ?? novena.title, dayNumber: number,
             length: novena.length, intention: intention, day: laid)
     }
 
-    /// The novena the Prayer Book holds under `id`
+    /// The novena the Prayer Book holds under `id`, as this launch prays it:
+    /// in a Spanish app, in Spanish, or not at all. A Spanish reader is
+    /// never given a novena day in English, so a novena whose Spanish is
+    /// missing or incomplete is not there for them.
     static func novena(_ id: String) -> PrayerBookDocument.Novena? {
-        if let found = LibraryContent.prayerBook.novenas.first(where: { $0.id == id }) { return found }
+        novena(id, spanish: SpanishContent.isActive, translations: LibraryContent.novenaSpanish)
+    }
+
+    static func novena(
+        _ id: String, spanish: Bool, translations: [String: PrayerBookTranslations.NovenaTranslation],
+        book: [PrayerBookDocument.Novena] = LibraryContent.prayerBook.novenas,
+        prayerInSpanish: (String) -> Bool = PrayerBook.isInSpanish
+    ) -> PrayerBookDocument.Novena? {
+        if let found = book.first(where: { $0.id == id }) {
+            guard spanish else { return found }
+            return translations[id].flatMap { found.inSpanish($0, prayerInSpanish: prayerInSpanish) }
+        }
         #if DEBUG
             if id == "debug_knots" { return debugKnots }
         #endif
@@ -209,6 +225,46 @@ extension NovenaDayContext {
                 painting: "novena_undoer_of_knots", days: days)
         }()
     #endif
+}
+
+// MARK: - A Novena in Spanish
+
+extension PrayerBookDocument.Novena {
+    /// The novena with its Spanish laid over by id: its names, each day's
+    /// title, and every part's own words. Nil unless the Spanish is whole:
+    /// a day title for every day, Spanish for every part with words of its
+    /// own, and every prayer a part names said in Spanish.
+    nonisolated func inSpanish(
+        _ spanish: PrayerBookTranslations.NovenaTranslation, prayerInSpanish: (String) -> Bool
+    ) -> PrayerBookDocument.Novena? {
+        guard spanish.id == id else { return nil }
+        let titles = spanish.dayTitles ?? []
+        guard titles.count == days.count else { return nil }
+        let parts = Dictionary(spanish.parts.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        var laid = self
+        laid.title = spanish.title
+        laid.listTitle = spanish.listTitle
+        laid.detail = spanish.detail ?? ""
+        laid.note = spanish.note
+        laid.origin = spanish.origin
+        laid.searchWords = spanish.searchWords ?? []
+        for (d, day) in days.enumerated() {
+            laid.days[d].title = titles[d]
+            for (p, part) in day.parts.enumerated() {
+                if let prayer = part.prayerID {
+                    guard prayerInSpanish(prayer) else { return nil }
+                } else if part.isRosary {
+                    continue
+                } else {
+                    guard let partID = part.id, let words = parts[partID] else { return nil }
+                    laid.days[d].parts[p].text = words.text
+                    // An English heading with no Spanish one stands down
+                    laid.days[d].parts[p].title = words.title
+                }
+            }
+        }
+        return laid
+    }
 }
 
 // MARK: - NovenaDays

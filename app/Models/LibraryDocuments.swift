@@ -531,15 +531,54 @@ nonisolated struct PrayerBookTranslations: Codable, Sendable, Equatable {
         }
     }
 
+    /// A novena's Spanish (`fields[prayer_book]=…,novena_translations`, api
+    /// docs/JSON_API.md, "The Prayer Book in Spanish"): its names, a title
+    /// per day, and its own words by part id. A part naming a prayer takes
+    /// that prayer's Spanish from `translations`; a rosary part has no words.
+    var novenaTranslations: [NovenaTranslation]
+
+    nonisolated struct NovenaTranslation: Codable, Sendable, Equatable {
+        /// The novena's id
+        let id: String
+        let title: String
+        var listTitle: String?
+        var detail: String?
+        var note: String?
+        var origin: String?
+        var searchWords: [String]?
+        /// One per day, day 1 first
+        var dayTitles: [String]?
+        var parts: [Part]
+
+        nonisolated struct Part: Codable, Sendable, Equatable {
+            /// The part id in the novena's `days`
+            let id: String
+            var title: String?
+            let text: String
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case id, title, detail, note, origin, parts
+            case listTitle = "list_title"
+            case searchWords = "search_words"
+            case dayTitles = "day_titles"
+        }
+    }
+
     enum CodingKeys: String, CodingKey {
         case version, translations
         case updatedAt = "updated_at"
+        case novenaTranslations = "novena_translations"
     }
 
-    init(version: String? = nil, updatedAt: String? = nil, translations: [Translation] = []) {
+    init(
+        version: String? = nil, updatedAt: String? = nil, translations: [Translation] = [],
+        novenaTranslations: [NovenaTranslation] = []
+    ) {
         self.version = version
         self.updatedAt = updatedAt
         self.translations = translations
+        self.novenaTranslations = novenaTranslations
     }
 
     init(from decoder: Decoder) throws {
@@ -547,6 +586,21 @@ nonisolated struct PrayerBookTranslations: Codable, Sendable, Equatable {
         version = try container.decodeIfPresent(String.self, forKey: .version)
         updatedAt = try container.decodeIfPresent(String.self, forKey: .updatedAt)
         translations = try container.decodeIfPresent([Translation].self, forKey: .translations) ?? []
+        novenaTranslations =
+            try container.decodeIfPresent([NovenaTranslation].self, forKey: .novenaTranslations) ?? []
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(version, forKey: .version)
+        try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
+        try container.encode(translations, forKey: .translations)
+        if !novenaTranslations.isEmpty { try container.encode(novenaTranslations, forKey: .novenaTranslations) }
+    }
+
+    /// The novenas' Spanish by novena id
+    var novenasByID: [String: NovenaTranslation] {
+        Dictionary(novenaTranslations.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
     }
 
     /// The translations by prayer id

@@ -46,7 +46,7 @@ import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 SEED = ROOT / "app" / "Resources" / "Library"
-NAMES = {"prayer_book": ("prayer-book", "version,updated_at,prayers,chapters"),
+NAMES = {"prayer_book": ("prayer-book", "version,updated_at,prayers,chapters,novenas"),
          "chant_library": ("chant-library", "version,updated_at,groups,chants")}
 SECTIONS = {"prayer_book": ["prayers", "chapters"], "chant_library": ["groups", "chants"]}
 
@@ -95,6 +95,28 @@ def is_file(asset: dict) -> bool:
     return https(asset.get("url")) and bool(HEX64.match(asset.get("sha256") or ""))
 
 
+def novena_problem(novenas: list, ids: set):
+    """LibraryContent.novenaProblem: a novena that would leave a day unprayable"""
+    if len({n["id"] for n in novenas}) != len(novenas):
+        return "a novena id twice"
+    for n in novenas:
+        if n["prayer_id"] not in ids:
+            return f"{n['id']}'s twin {n['prayer_id']} is missing"
+        length = n.get("length") or len(n["days"])
+        if [d["number"] for d in n["days"]] != list(range(1, length + 1)):
+            return f"{n['id']}'s days are not 1 to {length}"
+        for part in (p for d in n["days"] for p in d["parts"]):
+            if part.get("prayer_id"):
+                if part["prayer_id"] not in ids:
+                    return f"{n['id']} names {part['prayer_id']}, which the book lacks"
+            elif part.get("kind") == "rosary":
+                if not part.get("decades") or not all(1 <= x <= 5 for x in part["decades"]):
+                    return f"{n['id']} has a rosary part without its decades"
+            elif not part.get("text"):
+                return f"{n['id']} has a part with no words"
+    return None
+
+
 def problem(name: str, doc: dict):
     """The app's own checks (LibraryContent.swift), so no seed is made that
     the app would refuse."""
@@ -117,7 +139,9 @@ def problem(name: str, doc: dict):
             if lacking:
                 return f"{c['id']} names {lacking[0]}, which the book lacks"
         empty = [p["id"] for p in prayers if not p.get("english")]
-        return f"{empty[0]} has no words" if empty else None
+        if empty:
+            return f"{empty[0]} has no words"
+        return novena_problem(doc.get("novenas") or [], ids)
 
     chants, groups = doc.get("chants") or [], doc.get("groups") or []
     if not chants or not groups:
@@ -147,7 +171,7 @@ def problem(name: str, doc: dict):
 # The Spanish documents the app ships: path, JSON:API type, fields
 SPANISH = {
     "consecration.es": ("consecration", "consecration", "version,updated_at,translations"),
-    "prayer_book.es": ("prayer-book", "prayer_book", "version,updated_at,translations"),
+    "prayer_book.es": ("prayer-book", "prayer_book", "version,updated_at,translations,novena_translations"),
 }
 
 

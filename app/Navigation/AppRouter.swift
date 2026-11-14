@@ -401,7 +401,8 @@ final class AppRouter {
                 // reads as the evening before
                 let start = PrayerDay.adding(days: 1 - day, to: PrayerDay.today()).addingTimeInterval(12 * 3600)
                 NovenaStore.shared.begin(
-                    novena, on: start, intention: "For my brother's new job",
+                    novena, on: start,
+                    intention: SpanishContent.isActive ? "Por el nuevo trabajo de mi hermano" : "For my brother's new job",
                     reminder: DateComponents(hour: 20, minute: 0))
                 for earlier in 1..<max(day, 1) { NovenaStore.shared.markPrayed(earlier, of: novena) }
                 NovenaStore.shared.forgetKept(novenaID: novena.id)

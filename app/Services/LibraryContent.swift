@@ -34,7 +34,14 @@ nonisolated protocol LibraryDocument: Codable, Sendable {
 extension PrayerBookTranslations: LibraryDocument {
     nonisolated var problem: String? {
         let ids = translations.map(\.id)
-        return Set(ids).count == ids.count ? nil : "a Spanish prayer twice"
+        guard Set(ids).count == ids.count else { return "a Spanish prayer twice" }
+        let novenaIDs = novenaTranslations.map(\.id)
+        guard Set(novenaIDs).count == novenaIDs.count else { return "a Spanish novena twice" }
+        for novena in novenaTranslations {
+            let partIDs = novena.parts.map(\.id)
+            guard Set(partIDs).count == partIDs.count else { return "\(novena.id) has a Spanish part twice" }
+        }
+        return nil
     }
 }
 
@@ -259,6 +266,13 @@ nonisolated enum LibraryContent {
         return prayerBookSpanishStore.current()?.byID ?? [:]
     }()
 
+    /// The novenas' Spanish as this launch reads it, by novena id: empty in
+    /// English, in the tests, and until the server has sent some
+    static let novenaSpanish: [String: PrayerBookTranslations.NovenaTranslation] = {
+        guard SpanishContent.isActive, !hostsTests else { return [:] }
+        return prayerBookSpanishStore.current()?.novenasByID ?? [:]
+    }()
+
     /// The Consecration's Spanish as this launch reads it: empty in
     /// English, in the tests, and until the server has sent some. Read
     /// once, as the days it is laid over are built once.
@@ -390,7 +404,7 @@ final class LibraryContentSync {
         if spanish {
             _ = try? await refresh(
                 prayerBookSpanishStore, path: "prayer-book", type: "prayer_book",
-                fields: "version,updated_at,translations", lang: "es")
+                fields: "version,updated_at,translations,novena_translations", lang: "es")
             // The Consecration's Spanish, laid over the bundled English
             // at the next launch
             _ = try? await refresh(
