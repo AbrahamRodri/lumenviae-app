@@ -669,7 +669,10 @@ extension ScripturalRosaryPrayerView {
         return VStack(spacing: 0) {
             if aloud {
                 if let failure = viewModel.spokenFailure {
-                    SpokenRosaryNotice(failure: failure) {
+                    SpokenRosaryNotice(
+                        failure: failure,
+                        railInset: OneRosaryColumn<EmptyView>.trailingInset(large: playerIsLarge)
+                    ) {
                         Task { await viewModel.restartSpoken() }
                     }
                     .transition(.opacity)

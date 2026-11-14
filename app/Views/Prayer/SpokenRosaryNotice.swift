@@ -18,6 +18,9 @@ import SwiftUI
 struct SpokenRosaryNotice: View {
 
     let failure: SpokenRosaryPlayer.Failure
+    /// The words' trailing inset in the player, clear of the bead rail and
+    /// its numeral (`OneRosaryColumn.trailingInset`)
+    var railInset: CGFloat = Self.edge
     let onRetry: () -> Void
 
     var body: some View {
@@ -35,6 +38,10 @@ struct SpokenRosaryNotice: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             .shadow(color: .black.opacity(0.5), radius: 4, y: 1)
+            // The line alone stands in the words' column, clear of the bead
+            // rail and its numeral; the button keeps the notice's width,
+            // which it needs at the largest text size on a small phone
+            .padding(.trailing, max(railInset - Self.edge, 0))
 
             switch failure {
             case .offline:
@@ -58,9 +65,14 @@ struct SpokenRosaryNotice: View {
                     .frame(maxWidth: 260)
             }
         }
-        .padding(.horizontal, 30)
+        .padding(.horizontal, Self.edge)
+        // Kept off the line above it (the grace to ask for)
+        .padding(.top, 12)
         .accessibilityElement(children: .contain)
     }
+
+    /// The notice's own margin
+    static let edge: CGFloat = 30
 
     private var icon: String {
         switch failure {
