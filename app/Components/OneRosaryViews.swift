@@ -583,9 +583,10 @@ struct OneRosaryColumn<Words: View>: View {
 
     static func headHeight(large: Bool) -> CGFloat { large ? largeHeadHeight : headHeight }
 
-    /// The least the words keep under the head: about two lines at the
-    /// largest size the player follows
-    static var minimumWordsHeight: CGFloat { 120 }
+    /// The least the words keep under the head: two lines at the largest
+    /// size the player follows, with the grace to ask for beneath them on
+    /// two lines and the gaps between (14 + 2 x 44 + 10 + 56)
+    static var minimumWordsHeight: CGFloat { 168 }
 
     /// Where the column begins: at `preferred` (the words at one height on
     /// every step), raised when the foot has grown (the offline notice and

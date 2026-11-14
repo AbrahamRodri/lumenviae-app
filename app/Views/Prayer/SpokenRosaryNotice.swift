@@ -68,6 +68,10 @@ struct SpokenRosaryNotice: View {
         .padding(.horizontal, Self.edge)
         // Kept off the line above it (the grace to ask for)
         .padding(.top, 12)
+        // Chrome, held at the app's own largest size while the player's
+        // words follow the phone to AX1: grown with them, the notice took
+        // the room the prayer's words need on a small phone
+        .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         .accessibilityElement(children: .contain)
     }
 

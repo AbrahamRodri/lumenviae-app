@@ -655,6 +655,10 @@ extension ScripturalRosaryPrayerView {
                             .tracking(1.5)
                             .foregroundColor(AppColors.cream.opacity(0.55))
                             .fixedSize(horizontal: false, vertical: true)
+                            // A small capital label, held at the app's own
+                            // largest size, so it keeps to one line and
+                            // leaves the prayer's words their room at AX1
+                            .dynamicTypeSize(...DynamicTypeSize.appMaximum)
                     }
                 }
             }
