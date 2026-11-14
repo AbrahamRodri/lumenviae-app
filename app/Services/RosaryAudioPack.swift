@@ -53,7 +53,7 @@ final class RosaryAudioPack {
             case .prayer(let id): self = .prayer(id)
             case .announcement: self = .announcement(segment.mysteryKey)
             case .verse(let number): self = .verse(segment.mysteryKey, number)
-            case .meditation: return nil
+            case .meditation, .words: return nil
             }
         }
 

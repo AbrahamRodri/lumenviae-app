@@ -100,6 +100,10 @@ struct SpokenSegment: Hashable {
         case meditation
         /// The Scriptural Rosary's verse for one Hail Mary, counted from 1
         case verse(Int)
+        /// Words with no recording (a novena's meditation, its closing
+        /// prayer), by their id: shown and held for their reading time
+        /// (`HeldWords`), then the voice goes on by itself
+        case words(String)
 
         /// A stable name for what is heard, the same in every language,
         /// kept with a resume step so it can be matched again
@@ -109,6 +113,7 @@ struct SpokenSegment: Hashable {
             case .announcement: return "announcement"
             case .meditation: return "meditation"
             case .verse(let number): return "verse:\(number)"
+            case .words(let id): return "words:\(id)"
             }
         }
     }
@@ -143,6 +148,9 @@ struct SpokenSegment: Hashable {
     /// Where on the pendant an opening or closing prayer is said
     var place: PendantPlace? = nil
 
+    /// The words a `.words` segment shows and holds for
+    var held: HeldWords? = nil
+
     /// Silence after the segment before the next begins. A pause after a
     /// meditation lets it settle before the Our Father; a Hail Mary runs
     /// on to the next as a Rosary said aloud does.
@@ -152,6 +160,110 @@ struct SpokenSegment: Hashable {
         case .announcement: return 1.2
         case .verse: return 0.8
         case .prayer: return 0.9
+        case .words: return 0.6
+        }
+    }
+}
+
+// MARK: - HeldWords
+
+/// Words said in the Rosary's course that have no recording: a novena
+/// day's meditation, its invocation, its closing prayer. The voice holds
+/// on them for the time they take to read, then goes on by itself; a
+/// pause holds the time, and Next goes on at once.
+struct HeldWords: Hashable {
+    var id: String
+    var title: String?
+    var text: String
+    var source: String?
+
+    /// Words at 150 a minute and five seconds more, never under twenty
+    var readingSeconds: Double {
+        let words = text.split { $0.isWhitespace }.count
+        return max(20, Double(words) / 150 * 60 + 5)
+    }
+}
+
+// MARK: - SpokenNovenaDay
+
+/// What a novena day adds to the Rosary it is prayed in (design plan, "The
+/// continuous day"): parts after the Sign of the Cross, parts between two
+/// decades, and parts after the Rosary's closing prayer, before the last
+/// Sign of the Cross. Each is a recorded prayer or held words.
+struct SpokenNovenaDay: Hashable {
+    enum Insert: Hashable {
+        case prayer(id: String, caption: String)
+        case words(caption: String, HeldWords)
+    }
+
+    var opening: [Insert] = []
+    /// By the 0-based decade they follow
+    var afterDecade: [Int: [Insert]] = [:]
+    var closing: [Insert] = []
+
+    /// The prayers the Rosary's voice has recordings of: a novena part
+    /// naming one is said, any other prayer is shown and held
+    static let recordedPrayers: Set<String> = [
+        "sign_of_cross", "apostles_creed", "our_father", "hail_mary", "glory_be", "fatima_prayer",
+        "hail_holy_queen", "rosary_closing_prayer", "act_of_contrition", "sorrows_closing_prayer", "memorare",
+        "st_michael_prayer",
+    ]
+
+    /// A day of a novena laid out for the Rosary: `book` finds a prayer's
+    /// title and English by id. Parts before the first `rosary` part open,
+    /// parts between two follow the last decade of the one before, and
+    /// parts after the last close. A day with no `rosary` part gives nil.
+    static func make(
+        from day: PrayerBookDocument.Day, book: (String) -> (title: String, text: String)?
+    ) -> SpokenNovenaDay? {
+        guard day.parts.contains(where: \.isRosary) else { return nil }
+        var result = SpokenNovenaDay()
+        var lastDecade: Int?
+        for part in day.parts {
+            if part.isRosary {
+                lastDecade = (part.decades ?? []).max().map { $0 - 1 } ?? lastDecade
+                continue
+            }
+            var inserts: [Insert] = []
+            if let id = part.prayerID {
+                let found = book(id)
+                let caption = part.title ?? found?.title ?? id
+                for _ in 0..<max(part.times ?? 1, 1) {
+                    if recordedPrayers.contains(id) {
+                        inserts.append(.prayer(id: id, caption: caption))
+                    } else if let found {
+                        inserts.append(
+                            .words(caption: caption, HeldWords(id: id, title: found.title, text: found.text, source: nil)))
+                    }
+                }
+            } else if let text = part.text, !text.isEmpty {
+                let id = part.id ?? "\(day.number).\(part.kind)"
+                inserts.append(
+                    .words(
+                        caption: part.title ?? caption(forKind: part.kind),
+                        HeldWords(id: id, title: part.title, text: text, source: part.source)))
+            }
+            if let decade = lastDecade {
+                if decade >= 4 {
+                    result.closing += inserts
+                } else {
+                    result.afterDecade[decade, default: []] += inserts
+                }
+            } else {
+                result.opening += inserts
+            }
+        }
+        return result
+    }
+
+    static func caption(forKind kind: String) -> String {
+        switch kind {
+        case "meditation":
+            return String(localized: "Today's Meditation", comment: "Prayer screen, novena day: caption over the day's meditation")
+        case "closing":
+            return String(localized: "The Closing Prayer", comment: "Prayer screen: caption while the closing prayer after the Rosary or the chaplet is said")
+        default:
+            return String(localized: "The Novena", comment: "Prayer screen, novena day: caption over a part of the novena with no title of its own")
         }
     }
 }
@@ -280,7 +392,8 @@ enum SpokenRosaryScript {
         mysteryKeys: [String],
         hailMarys: Int,
         style: Style,
-        extras: [RosaryClosingExtra] = []
+        extras: [RosaryClosingExtra] = [],
+        novena: SpokenNovenaDay? = nil
     ) -> [SpokenSegment] {
         guard let firstKey = mysteryKeys.first, let lastKey = mysteryKeys.last else { return [] }
         let isChaplet = category == .sevenSorrows
@@ -315,7 +428,23 @@ enum SpokenRosaryScript {
             localized: "The Closing Prayer",
             comment: "Prayer screen: caption while the closing prayer after the Rosary or the chaplet is said"
         )
+        func insert(_ inserts: [SpokenNovenaDay.Insert], phase: SpokenSegment.Phase, mystery: Int, bead: Int, key: String) {
+            for item in inserts {
+                switch item {
+                case .prayer(let id, let caption):
+                    script.append(SpokenSegment(
+                        kind: .prayer(id), phase: phase, mystery: mystery, bead: bead, mysteryKey: key,
+                        caption: caption, place: phase == .decade ? nil : .cross))
+                case .words(let caption, let words):
+                    script.append(SpokenSegment(
+                        kind: .words(words.id), phase: phase, mystery: mystery, bead: bead, mysteryKey: key,
+                        caption: caption, held: words))
+                }
+            }
+        }
+
         opening("sign_of_cross", signOfTheCross, .cross)
+        insert(novena?.opening ?? [], phase: .opening, mystery: 0, bead: 0, key: firstKey)
         if isChaplet {
             opening(
                 "act_of_contrition",
@@ -388,6 +517,11 @@ enum SpokenRosaryScript {
             if !isChaplet {
                 add(.prayer("fatima_prayer"), bead: gloryBe, String(localized: "The Fatima Prayer", comment: "Prayer screen: caption while the Fatima Prayer is said"))
             }
+            // A novena day's parts between this decade and the next, on
+            // the Glory Be's bead
+            if decade < lastDecade {
+                insert(novena?.afterDecade[decade] ?? [], phase: .decade, mystery: decade, bead: gloryBe, key: key)
+            }
         }
 
         if isChaplet {
@@ -417,6 +551,7 @@ enum SpokenRosaryScript {
                 }
             }
         }
+        insert(novena?.closing ?? [], phase: .closing, mystery: lastDecade, bead: gloryBe, key: lastKey)
         closing("sign_of_cross", signOfTheCross, .cross)
 
         return script

@@ -220,3 +220,69 @@ struct NovenaReminderTests {
         #expect(!NovenaStore.dayLine(3, of: 9, novenaID: "x").lowercased().contains("missed"))
     }
 }
+
+@MainActor @Suite("Novena day in the Rosary")
+struct NovenaRosaryDayTests {
+    private let day = PrayerBookDocument.Day(
+        number: 4, title: "Day 4",
+        parts: [
+            .init(kind: "opening", prayerID: "act_of_contrition"),
+            .init(kind: "rosary", decades: [1, 2, 3]),
+            .init(kind: "meditation", id: "knots_meditation_4", text: String(repeating: "word ", count: 300)),
+            .init(kind: "invocation", id: "knots_invocation", text: "Mary, Undoer of Knots, pray for me."),
+            .init(kind: "rosary", decades: [4, 5]),
+            .init(kind: "closing", id: "knots_closing", title: "The Closing Prayer", text: "Holy Mary, ..."),
+        ])
+
+    private func script() -> [SpokenSegment] {
+        let novena = SpokenNovenaDay.make(from: day) { _ in nil }
+        let keys = (1...5).map { "joyful_\($0)" }
+        return SpokenRosaryScript.build(
+            category: .joyful, mysteryKeys: keys, hailMarys: 10, style: .plain, novena: novena)
+    }
+
+    @Test func theActOfContritionFollowsTheSignOfTheCross() {
+        let s = script()
+        #expect(s[0].kind == .prayer("sign_of_cross"))
+        #expect(s[1].kind == .prayer("act_of_contrition"))
+        #expect(s[2].kind == .prayer("apostles_creed"))
+    }
+
+    @Test func theMeditationStandsBetweenTheThirdAndFourthDecades() throws {
+        let s = script()
+        let meditation = try #require(s.firstIndex { $0.kind == .words("knots_meditation_4") })
+        #expect(s[meditation - 1].kind == .prayer("fatima_prayer"))
+        #expect(s[meditation - 1].mystery == 2)
+        #expect(s[meditation + 1].kind == .words("knots_invocation"))
+        #expect(s[meditation + 2].kind == .announcement)
+        #expect(s[meditation + 2].mystery == 3)
+    }
+
+    @Test func theClosingPrayerComesBeforeTheLastSignOfTheCross() {
+        let s = script()
+        #expect(s[s.count - 2].kind == .words("knots_closing"))
+        #expect(s.last?.kind == .prayer("sign_of_cross"))
+        #expect(s[s.count - 3].kind == .prayer("rosary_closing_prayer"))
+    }
+
+    @Test func heldWordsAreNeverFetched() {
+        #expect(!SpokenRosaryScript.clips(in: script()).contains { "\($0)".contains("knots") })
+    }
+
+    @Test func readingTimeIsWordsAtOneFiftyAndNeverUnderTwenty() {
+        #expect(HeldWords(id: "a", text: "Mary, pray for me.").readingSeconds == 20)
+        #expect(HeldWords(id: "b", text: String(repeating: "word ", count: 300)).readingSeconds == 125)
+    }
+
+    @Test func anUnrecordedBookPrayerIsHeldNotSkipped() throws {
+        let d = PrayerBookDocument.Day(
+            number: 1, title: "",
+            parts: [.init(kind: "rosary", decades: [1, 2, 3, 4, 5]), .init(kind: "closing", prayerID: "sub_tuum")])
+        let novena = try #require(SpokenNovenaDay.make(from: d) { _ in ("We fly to thy patronage", "We fly...") })
+        guard case .words(_, let words) = try #require(novena.closing.first) else {
+            Issue.record("expected held words")
+            return
+        }
+        #expect(words.id == "sub_tuum")
+    }
+}

@@ -159,6 +159,30 @@ final class SpokenRosaryPlayer {
     /// Between two segments, in the breath before the next begins
     private(set) var inPause = false
 
+    // MARK: Held Words
+
+    /// On words with no recording (`HeldWords`): when the hold ends and
+    /// the voice goes on, while it runs
+    private(set) var holdEnds: Date?
+    /// The whole reading time of the words being held, for the ring
+    private(set) var holdTotal: Double = 0
+    /// What was left of the hold when it was paused
+    private(set) var holdPausedRemaining: Double?
+
+    /// How much of the hold has run, 0 to 1, for the ring around play
+    func holdProgress(at now: Date = Date()) -> Double? {
+        guard holdTotal > 0 else { return nil }
+        if let ends = holdEnds { return min(1, max(0, 1 - ends.timeIntervalSince(now) / holdTotal)) }
+        if let left = holdPausedRemaining { return min(1, max(0, 1 - left / holdTotal)) }
+        return nil
+    }
+
+    private func clearHold() {
+        holdEnds = nil
+        holdTotal = 0
+        holdPausedRemaining = nil
+    }
+
     /// Finding and loading the segment about to be said: a meditation's
     /// link can take a round trip. The Rosary is going on, not paused,
     /// and a pause here must hold it.
@@ -228,6 +252,7 @@ final class SpokenRosaryPlayer {
         inPause = false
         heldInPause = false
         restartOnResume = false
+        clearHold()
         index = target
         currentTimings = nil
         if let segment = currentSegment {
@@ -249,7 +274,7 @@ final class SpokenRosaryPlayer {
     /// button shows.
     var isPlaying: Bool {
         guard phase == .running else { return false }
-        return isFetching || (inPause && !heldInPause) || (ownsPlayer && audio.isPlaying)
+        return isFetching || holdEnds != nil || (inPause && !heldInPause) || (ownsPlayer && audio.isPlaying)
     }
 
     // MARK: - Dependencies
@@ -366,7 +391,12 @@ final class SpokenRosaryPlayer {
     @MainActor
     func pause() {
         guard phase == .running else { return }
-        if inPause {
+        if let ends = holdEnds {
+            // Words being held: the time left is kept for play
+            advanceTask?.cancel()
+            holdPausedRemaining = max(0, ends.timeIntervalSinceNow)
+            holdEnds = nil
+        } else if inPause {
             advanceTask?.cancel()
             heldInPause = true
         } else if isFetching {
@@ -388,7 +418,9 @@ final class SpokenRosaryPlayer {
     @MainActor
     func resume() {
         guard phase == .running, !isFetching else { return }
-        if restartOnResume {
+        if let left = holdPausedRemaining {
+            hold(for: left)
+        } else if restartOnResume {
             restartOnResume = false
             sayCurrentSoon()
         } else if heldInPause || inPause {
@@ -425,6 +457,7 @@ final class SpokenRosaryPlayer {
         advanceTask?.cancel()
         inPause = false
         heldInPause = false
+        clearHold()
         index = SpokenRosaryScript.startIndex(in: script, mystery: mystery, bead: bead, includingOpening: false)
         // The lines timed for the prayer left behind are not this one's
         currentTimings = nil
@@ -457,6 +490,7 @@ final class SpokenRosaryPlayer {
         advanceTask?.cancel()
         inPause = false
         heldInPause = false
+        clearHold()
         index = target
         // The lines timed for the prayer left behind are not this one's:
         // kept while paused, Back from the Creed named the Sign of the
@@ -485,6 +519,7 @@ final class SpokenRosaryPlayer {
         inPause = false
         heldInPause = false
         isFetching = false
+        clearHold()
         letAppSleep()
         if phase != .finished { phase = .idle }
         if isMuted {
@@ -529,8 +564,20 @@ final class SpokenRosaryPlayer {
 
         isFetching = true
         currentTimings = nil
+        clearHold()
         host?.spokenRosaryMoved(mystery: segment.mystery, bead: segment.bead)
         reportStep()
+
+        // Words with no recording are held for their reading time, never
+        // passed over after a breath as a missing recording is
+        if let held = segment.held {
+            isFetching = false
+            installNavigation()
+            if audio.isPlaying { audio.pause() }
+            holdTotal = held.readingSeconds
+            hold(for: held.readingSeconds)
+            return
+        }
 
         let url: String?
         switch segment.kind {
@@ -645,6 +692,24 @@ final class SpokenRosaryPlayer {
     private func reportStep() {
         guard let step = currentStep else { return }
         host?.spokenRosaryReached(step)
+    }
+
+    /// Holds on the words being shown for `seconds`, then goes on to the
+    /// next segment by itself
+    @MainActor
+    private func hold(for seconds: Double) {
+        let saying = generation
+        holdPausedRemaining = nil
+        holdEnds = Date().addingTimeInterval(seconds)
+        keepAppAwake()
+        advanceTask?.cancel()
+        advanceTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(seconds))
+            guard let self, !Task.isCancelled, saying == self.generation else { return }
+            self.clearHold()
+            self.index += 1
+            await self.sayCurrent()
+        }
     }
 
     /// The breath after a segment, then the next one
