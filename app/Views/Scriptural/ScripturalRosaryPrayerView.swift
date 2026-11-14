@@ -202,11 +202,12 @@ struct ScripturalRosaryPrayerView: View {
 
             case .stops:
                 RosaryStopsSheet(
-                    title: viewModel.displayName,
+                    title: viewModel.novena.map(\.goToTitle) ?? viewModel.displayName,
                     stops: viewModel.stops,
                     current: viewModel.currentStop,
                     mysteryNames: MysteryData.mysteries(for: viewModel.category).map(\.name),
-                    isChaplet: viewModel.category == .sevenSorrows
+                    isChaplet: viewModel.category == .sevenSorrows,
+                    rows: viewModel.novenaStopRows
                 ) { stop in
                     travel = .forward
                     viewModel.jump(to: stop)
@@ -569,7 +570,8 @@ extension ScripturalRosaryPrayerView {
                 stops: viewModel.stops,
                 current: viewModel.currentStop,
                 isChaplet: viewModel.category == .sevenSorrows,
-                title: viewModel.novenaPillTitle
+                title: viewModel.novenaPillTitle,
+                days: viewModel.novenaDays
             ) { activeSheet = .stops }
         } trailing: {
             if viewModel.isPrayingAloud, viewModel.spokenFailure == nil {

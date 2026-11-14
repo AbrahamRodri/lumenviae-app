@@ -1481,6 +1481,9 @@ struct RosaryStopsPill: View {
     /// What the pill says in place of the part's own name (a novena day:
     /// DAY 4 OF 9, TODAY'S MEDITATION, THE CLOSING PRAYER)
     var title: String? = nil
+    /// A novena day's nine dashes, which stand under the pill on every
+    /// step in place of the Rosary's own
+    var days: NovenaDays? = nil
     let action: () -> Void
 
     var body: some View {
@@ -1501,21 +1504,26 @@ struct RosaryStopsPill: View {
                 .background(Capsule().fill(AppColors.background.opacity(0.55)))
                 .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.35), lineWidth: 1))
 
-                HStack(spacing: 5) {
-                    ForEach(Array(stops.indices), id: \.self) { index in
-                        Capsule()
-                            .fill(index <= position ? AppColors.gold : AppColors.cardBackground)
-                            .frame(width: index == position ? 18 : 7, height: 4)
+                if let days {
+                    NovenaDashes(days: days)
+                } else {
+                    HStack(spacing: 5) {
+                        ForEach(Array(stops.indices), id: \.self) { index in
+                            Capsule()
+                                .fill(index <= position ? AppColors.gold : AppColors.cardBackground)
+                                .frame(width: index == position ? 18 : 7, height: 4)
+                        }
                     }
+                    .animation(Motion.settle, value: position)
                 }
-                .animation(Motion.settle, value: position)
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 4)
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel(RosaryStopsPill.label(current, of: stops, isChaplet: isChaplet))
+        .accessibilityLabel(title ?? RosaryStopsPill.label(current, of: stops, isChaplet: isChaplet))
+        .accessibilityValue(days?.spoken ?? "")
         .accessibilityHint(Text("Opens the parts of the Rosary, to go to any of them", comment: "Simple Rosary player: VoiceOver hint on the pill at the top"))
     }
 
@@ -1528,10 +1536,47 @@ struct RosaryStopsPill: View {
             return String(localized: "Opening Prayers", comment: "Simple Rosary player: the pill at the top while the opening prayers are said")
         case .closing:
             return String(localized: "Closing Prayers", comment: "Simple Rosary player: the pill at the top while the closing prayers are said")
+        case .between:
+            return SpokenNovenaDay.caption(forKind: "meditation")
         case .mystery(let n):
             return isChaplet
                 ? String(localized: "Sorrow \(n + 1) of \(total)", comment: "One Rosary beta, the player: under the title, which sorrow of the Seven Sorrows chaplet this is, like Sorrow 3 of 7")
                 : String(localized: "Mystery \(n + 1) of \(total)", comment: "One Rosary beta, the player: under the title, which mystery of the Rosary this is, like Mystery 2 of 5")
+        }
+    }
+}
+
+// MARK: - NovenaDashes
+
+/// A novena's days under the pill and on the "Day 4 prayed" screen: one
+/// dash a day, gold once prayed, the day in hand longer and lit, a past
+/// day not yet prayed hollow, the days ahead quiet. Marks, not text, so
+/// fixed in size; one element to VoiceOver, never nine.
+struct NovenaDashes: View {
+    let days: NovenaDays
+
+    var body: some View {
+        HStack(spacing: 5) {
+            ForEach(1...max(days.length, 1), id: \.self) { day in
+                dash(days.mark(day))
+            }
+        }
+        .animation(Motion.settle, value: days)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(days.spoken)
+    }
+
+    @ViewBuilder
+    private func dash(_ mark: NovenaDays.Mark) -> some View {
+        switch mark {
+        case .prayed:
+            Capsule().fill(AppColors.gold).frame(width: 14, height: 4)
+        case .here:
+            Capsule().fill(AppColors.goldLight).frame(width: 20, height: 4)
+        case .open:
+            Capsule().strokeBorder(AppColors.gold.opacity(0.75), lineWidth: 1).frame(width: 14, height: 5)
+        case .ahead:
+            Capsule().fill(AppColors.cream.opacity(0.22)).frame(width: 14, height: 4)
         }
     }
 }
@@ -1548,6 +1593,10 @@ struct RosaryStopsSheet: View {
     let mysteryNames: [String]
     var meditationTitles: [String] = []
     let isChaplet: Bool
+    /// Rows said otherwise than the Rosary's own (a novena day: its
+    /// opening with the Act of Contrition, its meditation, its closing
+    /// prayer): name, detail and glyph by stop
+    var rows: [RosaryStop: (name: String, detail: String?, icon: String)] = [:]
     let onSelect: (RosaryStop) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -1594,6 +1643,7 @@ struct RosaryStopsSheet: View {
     }
 
     private func describe(_ stop: RosaryStop) -> (String, String?, String) {
+        if let row = rows[stop] { return (row.name, row.detail, row.icon) }
         switch stop {
         case .opening:
             return (
@@ -1611,6 +1661,8 @@ struct RosaryStopsSheet: View {
                     : String(localized: "The Hail, Holy Queen, the closing prayer and the Sign of the Cross", comment: "Simple Rosary: what the Rosary closes with"),
                 "lv-rosary"
             )
+        case .between:
+            return (SpokenNovenaDay.caption(forKind: "meditation"), nil, "lv-lozenge")
         case .mystery(let n):
             let name = mysteryNames.indices.contains(n) ? mysteryNames[n] : ""
             let title = meditationTitles.indices.contains(n) ? meditationTitles[n] : nil

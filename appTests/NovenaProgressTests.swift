@@ -282,11 +282,13 @@ struct NovenaRosaryDayTests {
         let d = PrayerBookDocument.Day(
             number: 1, title: "",
             parts: [.init(kind: "rosary", decades: [1, 2, 3, 4, 5]), .init(kind: "closing", prayerID: "sub_tuum")])
-        let novena = try #require(SpokenNovenaDay.make(from: d) { _ in ("We fly to thy patronage", "We fly...") })
+        let novena = try #require(SpokenNovenaDay.make(from: d) { _ in ("We fly to thy patronage", "We fly...", "Egyptian papyrus · 3rd century") })
         guard case .words(_, let words) = try #require(novena.closing.first) else {
             Issue.record("expected held words")
             return
         }
         #expect(words.id == "sub_tuum")
+        // The prayer's origin is its credit, as the meditation's source is
+        #expect(words.source == "Egyptian papyrus · 3rd century")
     }
 }

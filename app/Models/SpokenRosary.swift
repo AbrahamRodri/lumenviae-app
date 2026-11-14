@@ -213,11 +213,12 @@ struct SpokenNovenaDay: Hashable {
     ]
 
     /// A day of a novena laid out for the Rosary: `book` finds a prayer's
-    /// title and English by id. Parts before the first `rosary` part open,
+    /// title, English and origin by id; a part's own source, else the
+    /// prayer's origin, is the credit under its words. Parts before the first `rosary` part open,
     /// parts between two follow the last decade of the one before, and
     /// parts after the last close. A day with no `rosary` part gives nil.
     static func make(
-        from day: PrayerBookDocument.Day, book: (String) -> (title: String, text: String)?
+        from day: PrayerBookDocument.Day, book: (String) -> (title: String, text: String, source: String?)?
     ) -> SpokenNovenaDay? {
         guard day.parts.contains(where: \.isRosary) else { return nil }
         var result = SpokenNovenaDay()
@@ -254,7 +255,11 @@ struct SpokenNovenaDay: Hashable {
                         inserts.append(.prayer(id: id, caption: caption))
                     } else if let found {
                         inserts.append(
-                            .words(caption: caption, HeldWords(id: id, title: found.title, text: found.text, source: nil)))
+                            .words(
+                                caption: caption,
+                                HeldWords(
+                                    id: id, title: found.title, text: found.text,
+                                    source: part.source ?? found.source)))
                     }
                 }
             } else if let text = part.text, !text.isEmpty {

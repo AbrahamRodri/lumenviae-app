@@ -579,6 +579,45 @@ final class ScripturalRosaryViewModel {
         }
     }
 
+    /// The novena's nine days under the pill, the day in hand lit
+    var novenaDays: NovenaDays? {
+        guard let novena else { return nil }
+        return NovenaDays.of(
+            NovenaStore.shared.progress[novena.novenaID], length: novena.length, here: novena.dayNumber)
+    }
+
+    /// Go to's rows said for a novena day: the opening with its own
+    /// prayers, the day's meditation, and the closing with the novena's
+    /// closing prayer (design frame f-c6)
+    var novenaStopRows: [RosaryStop: (name: String, detail: String?, icon: String)] {
+        guard let novena, let spoken else { return [:] }
+        var rows: [RosaryStop: (name: String, detail: String?, icon: String)] = [:]
+        let opening = spoken.script.filter { $0.phase == .opening }.map(\.caption)
+        rows[.opening] = (
+            String(localized: "The Opening", comment: "Novena day, Go to: the row going to the opening prayers"),
+            opening.formatted(.list(type: .and)),
+            "lv-rosary"
+        )
+        for stop in stops {
+            guard case .between(let n) = stop else { continue }
+            let held = spoken.script.first { $0.held != nil && $0.phase == .decade && $0.mystery == n }
+            rows[stop] = (
+                held?.caption ?? SpokenNovenaDay.caption(forKind: "meditation"),
+                String(localized: "Day \(novena.dayNumber), read at your pace", comment: "Novena day, Go to: under the day's meditation, which the voice holds on rather than reads"),
+                "lv-lozenge"
+            )
+        }
+        let closingWords = spoken.script.last { $0.held != nil && $0.phase == .closing }
+        rows[.closing] = (
+            SpokenNovenaDay.caption(forKind: "closing"),
+            closingWords.map {
+                String(localized: "The Hail, Holy Queen, then \($0.caption)", comment: "Novena day, Go to: under The Closing Prayer, what is said there; the second part is the novena's closing prayer's title")
+            },
+            "lv-lozenge"
+        )
+        return rows
+    }
+
     /// In a novena day, Next and Back step a prayer at a time around the
     /// novena's own parts, which sit on no bead: on held words, at a
     /// decade's end that words follow, at the start of the decade after
@@ -881,7 +920,9 @@ extension ScripturalRosaryViewModel {
 
     /// The parts of this Rosary the pill at the top goes to
     var stops: [RosaryStop] {
-        RosaryStop.all(decades: strand.decades, includesPendant: spoken != nil || pendantShown)
+        let stops = RosaryStop.all(decades: strand.decades, includesPendant: spoken != nil || pendantShown)
+        guard novena != nil, let spoken else { return stops }
+        return RosaryStop.withNovenaParts(stops, in: spoken.script)
     }
 
     /// The part the hand is on
@@ -911,6 +952,9 @@ extension ScripturalRosaryViewModel {
         case .mystery(let n):
             guard n >= 0, n < strand.decades else { return }
             currentMysteryIndex = n
+        case .between:
+            // Only a spoken novena day has parts between the decades
+            return
         case .closing:
             currentMysteryIndex = max(strand.decades - 1, 0)
             currentBeadIndex = strand.gloryBe

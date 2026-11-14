@@ -163,7 +163,7 @@ extension NovenaDayContext {
         guard let novena = novena(novenaID), let day = novena.day(number),
             let laid = SpokenNovenaDay.make(
                 from: day,
-                book: { id in PrayerBook.prayer(id).map { ($0.title, $0.english) } })
+                book: { id in PrayerBook.prayer(id).map { ($0.title, $0.english, $0.origin) } })
         else { return nil }
         return NovenaDayContext(
             novenaID: novena.id, shortName: novena.listTitle ?? novena.title, dayNumber: number,
@@ -205,4 +205,77 @@ extension NovenaDayContext {
                 detail: "", prayerID: "sub_tuum", chapterID: "our_lady", length: 9, days: days)
         }()
     #endif
+}
+
+// MARK: - NovenaDays
+
+/// A novena's days as its dashes draw them: prayed in gold, the day in
+/// hand lit, an open day hollow, the days ahead quiet. Never a count of
+/// misses (design plan, rules 2 and 3).
+struct NovenaDays: Hashable {
+    enum Mark: Hashable { case prayed, here, open, ahead }
+
+    let length: Int
+    let prayed: Set<Int>
+    /// The day being prayed or shown
+    let here: Int
+    let open: Set<Int>
+
+    func mark(_ day: Int) -> Mark {
+        if prayed.contains(day) { return .prayed }
+        if day == here { return .here }
+        if open.contains(day) { return .open }
+        return .ahead
+    }
+
+    /// The day `here` of a novena under way; a novena not begun counts
+    /// nothing prayed
+    static func of(_ progress: NovenaProgress?, length: Int, here: Int, on date: Date = Date()) -> NovenaDays {
+        guard let progress else { return NovenaDays(length: length, prayed: [], here: here, open: []) }
+        var open: Set<Int> = []
+        switch progress.standing(on: date) {
+        case .underWay(_, let days): open = Set(days)
+        case .welcomeBack, .finished: break
+        }
+        return NovenaDays(length: progress.length, prayed: progress.prayed, here: here, open: open.subtracting([here]))
+    }
+
+    /// One sentence for VoiceOver, never nine marks: "Days 1 to 3
+    /// prayed, day 4 today." / "Days 1 and 2 prayed, day 3 open."
+    var spoken: String {
+        var parts: [String] = []
+        let done = prayed.sorted()
+        if !done.isEmpty { parts.append(Self.spokenDays(done, prayed: true)) }
+        let openDays = open.sorted()
+        if !openDays.isEmpty { parts.append(Self.spokenDays(openDays, prayed: false)) }
+        if !prayed.contains(here) {
+            parts.append(String(localized: "day \(here) today", comment: "Novena dashes, VoiceOver: the day being prayed, as in Days 1 to 3 prayed, day 4 today"))
+        }
+        let sentence = parts.joined(separator: ", ")
+        return sentence.prefix(1).uppercased() + sentence.dropFirst() + "."
+    }
+
+    private static func spokenDays(_ days: [Int], prayed: Bool) -> String {
+        let run = days.count > 2 && days.last! - days.first! == days.count - 1
+        let list: String
+        if days.count == 1 {
+            return prayed
+                ? String(localized: "day \(days[0]) prayed", comment: "Novena dashes, VoiceOver: one day prayed")
+                : String(localized: "day \(days[0]) open", comment: "Novena dashes, VoiceOver: one past day not yet prayed")
+        } else if run {
+            list = String(localized: "\(days.first!) to \(days.last!)", comment: "Novena dashes, VoiceOver: a run of days, as in 1 to 3")
+        } else {
+            list = days.map(String.init).formatted(.list(type: .and))
+        }
+        return prayed
+            ? String(localized: "days \(list) prayed", comment: "Novena dashes, VoiceOver: days prayed, as in days 1 to 3 prayed")
+            : String(localized: "days \(list) open", comment: "Novena dashes, VoiceOver: past days not yet prayed")
+    }
+}
+
+extension NovenaDayContext {
+    /// Go to's title in a novena day: "Day 4 of the Novena"
+    var goToTitle: String {
+        String(localized: "Day \(dayNumber) of the Novena", comment: "Novena day, Go to sheet: its title")
+    }
 }

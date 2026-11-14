@@ -49,6 +49,9 @@ extension Array where Element == TimedLine {
 enum RosaryStop: Hashable {
     case opening
     case mystery(Int)
+    /// A novena day's own part between two decades (its meditation), by
+    /// the 0-based decade it follows. Never in a Rosary of its own.
+    case between(after: Int)
     case closing
 
     /// Every stop of a Rosary of `decades`, in order; the opening and
@@ -74,7 +77,11 @@ enum RosaryStop: Hashable {
     /// mystery, which the hand's own place fell back to
     static func spoken(at index: Int, in script: [SpokenSegment]) -> RosaryStop? {
         let segment = script.indices.contains(index) ? script[index] : (index >= script.count ? script.last : nil)
-        return segment.map { current(phase: $0.phase, mystery: $0.mystery) }
+        guard let segment else { return nil }
+        // Held words between two decades are a part of their own; the
+        // novena's closing prayer is the closing's, as it stands in it
+        if segment.held != nil, segment.phase == .decade { return .between(after: segment.mystery) }
+        return current(phase: segment.phase, mystery: segment.mystery)
     }
 
     /// Where in a spoken Rosary's script a stop begins: the first opening
@@ -84,6 +91,7 @@ enum RosaryStop: Hashable {
         switch self {
         case .opening: return script.firstIndex { $0.phase == .opening }
         case .mystery(let n): return script.firstIndex { $0.phase == .decade && $0.mystery == n }
+        case .between(let n): return script.firstIndex { $0.held != nil && $0.phase == .decade && $0.mystery == n }
         case .closing: return script.firstIndex { $0.phase == .closing }
         }
     }
@@ -91,6 +99,17 @@ enum RosaryStop: Hashable {
     /// The stop's place in `stops`, for the pill's dashes
     func position(in stops: [RosaryStop]) -> Int {
         stops.firstIndex(of: self) ?? 0
+    }
+
+    /// A Rosary's stops with a novena day's parts between the decades
+    /// that `script` holds words after, each after its decade
+    static func withNovenaParts(_ stops: [RosaryStop], in script: [SpokenSegment]) -> [RosaryStop] {
+        stops.flatMap { stop -> [RosaryStop] in
+            guard case .mystery(let n) = stop,
+                script.contains(where: { $0.held != nil && $0.phase == .decade && $0.mystery == n })
+            else { return [stop] }
+            return [stop, .between(after: n)]
+        }
     }
 }
 
