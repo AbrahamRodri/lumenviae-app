@@ -323,6 +323,13 @@ struct PrayerBookPainting: Equatable {
             "regina_caeli": reginaCaeli,
             "magnificat": p("topic_thanksgiving", 0.5, 0.3, "The Madonna of the Magnificat"),
             "ave_maris_stella": p("feast_annunciation", 0.7, 0.5, "The Annunciation"),
+            // The six the server added in Nov 2026 (design row b1f86b5b)
+            "st_bridget_twelve_years": blood,
+            "advent_wreath_collects": p("joyful_visitation", 0.5, 0.3, "The Visitation"),
+            "immaculate_conception_novena": immaculate,
+            "st_andrew_novena": p("joyful_nativity", 0.5, 0.35, "The Nativity"),
+            "o_antiphons": p("feast_annunciation", 0.7, 0.5, "The Annunciation"),
+            "undoer_of_knots_novena": mercy,
             "inviolata": immaculate,
             "salve_mater": mercy,
             "tota_pulchra": immaculate,

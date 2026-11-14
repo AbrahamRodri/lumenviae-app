@@ -55,7 +55,15 @@ struct RecordingContractTests {
         let exported = Set((export["prayers"] as? [[String: Any]] ?? []).compactMap { $0["id"] as? String })
         // A prayer the Rosary also says plays its `prayers` recording
         let rosarys = Set(RosaryPrayers.all.map(\.id))
-        for id in PrayerBook.prayers.keys where !exported.contains(id) && !rosarys.contains(id) {
+        // Prayers the server added that have no recording, and will get none
+        // made by us: the pray-along says so (api-build row 6500b13d). Not
+        // exported, so the export stays a true list of what is recorded.
+        let awaitingRecording: Set<String> = [
+            "st_bridget_twelve_years", "advent_wreath_collects", "immaculate_conception_novena",
+            "st_andrew_novena", "o_antiphons", "undoer_of_knots_novena",
+        ]
+        for id in PrayerBook.prayers.keys
+        where !exported.contains(id) && !rosarys.contains(id) && !awaitingRecording.contains(id) {
             // Joined in from the consecration's own store, with recordings of its own
             #expect(BilingualConsecrationPrayers.allPrayers[id] != nil || ConsecrationData.prayer(id) != nil,
                     "\(id) has no recording to be said aloud; re-export the Prayer Book")

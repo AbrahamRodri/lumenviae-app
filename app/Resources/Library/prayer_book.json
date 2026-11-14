@@ -1,6 +1,4 @@
 {
-  "version": "f16e6e8bb9b60649",
-  "updated_at": "2026-10-14T03:14:56Z",
   "chapters": [
     {
       "id": "first",
@@ -445,6 +443,7 @@
         "precious_blood_offering",
         "en_ego",
         "st_francis_before_crucifix",
+        "st_bridget_twelve_years",
         "christ_the_king",
         "divine_mercy_chaplet",
         "jesus_i_trust_in_thee",
@@ -506,7 +505,8 @@
         {
           "prayer_ids": [
             "en_ego",
-            "st_francis_before_crucifix"
+            "st_francis_before_crucifix",
+            "st_bridget_twelve_years"
           ],
           "title": "The Passion"
         },
@@ -574,6 +574,7 @@
         "immaculate_heart",
         "mary_help_of_christians",
         "our_lady_of_mount_carmel",
+        "undoer_of_knots_novena",
         "stabat_mater",
         "our_lady_of_sorrows",
         "litany_seven_sorrows",
@@ -639,7 +640,8 @@
             "our_lady_of_lourdes",
             "immaculate_heart",
             "mary_help_of_christians",
-            "our_lady_of_mount_carmel"
+            "our_lady_of_mount_carmel",
+            "undoer_of_knots_novena"
           ],
           "title": "Her titles"
         },
@@ -748,6 +750,10 @@
       "numeral": "XII",
       "prayer_ids": [
         "alma_redemptoris",
+        "advent_wreath_collects",
+        "immaculate_conception_novena",
+        "st_andrew_novena",
+        "o_antiphons",
         "nunc_dimittis",
         "stabat_mater",
         "miserere",
@@ -773,6 +779,10 @@
         {
           "prayer_ids": [
             "alma_redemptoris",
+            "advent_wreath_collects",
+            "immaculate_conception_novena",
+            "st_andrew_novena",
+            "o_antiphons",
             "nunc_dimittis"
           ],
           "title": "Advent and Christmas"
@@ -1086,6 +1096,878 @@
       ],
       "title": "In Time of Need",
       "topic": "Prayers in Time of Need"
+    }
+  ],
+  "novenas": [
+    {
+      "art": {
+        "bytes": 155553,
+        "credit": "Johann Georg Melchior Schmidtner, Mary, Untier of Knots (Maria Knotenlöserin), about 1700, St. Peter am Perlach, Augsburg. Public domain, via Wikimedia Commons.",
+        "sha256": "e09422c019f8460fb9772438519b789670898f2b1b6940855f78a9e1c9888675",
+        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/novenas/art/novena_undoer_of_knots-e09422c019f8.jpg"
+      },
+      "chant_ids": [
+        "ave_maris_stella",
+        "sub_tuum",
+        "memorare"
+      ],
+      "chapter_id": "our_lady",
+      "days": [
+        {
+          "number": 1,
+          "parts": [
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "sign_of_cross",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "act_of_contrition",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": [
+                1,
+                2,
+                3
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d1_meditation",
+              "kind": "meditation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Dearest Holy Mother, Most Holy Mary, you undo the knots that suffocate your children, extend your merciful hands to me. I entrust to You today this knot....and all the negative consequences that it provokes in my life. I give you this knot that torments me and makes me unhappy and so impedes me from uniting myself to You and Your Son Jesus, my Savior. I run to You, Mary, Undoer of Knots because I trust you and I know that you never despise a sinning child who comes to ask you for help. I believe that you can undo this knot because Jesus grants you everything. I believe that you want to undo this knot because you are my Mother. I believe that You will do this because you love me with eternal love.\n\nThank you, Dear Mother.",
+              "times": null,
+              "title": "Meditation for Day 1"
+            },
+            {
+              "decades": [
+                4,
+                5
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_invocation",
+              "kind": "invocation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Mary, Undoer of Knots, pray for me.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d1_saying",
+              "kind": "saying",
+              "prayer_id": null,
+              "source": null,
+              "text": "The one who seeks grace, finds it in Mary's hands.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_closing",
+              "kind": "closing",
+              "prayer_id": null,
+              "source": null,
+              "text": "Virgin Mary, Mother of fair love, Mother who never refuses to come to the aid of a child in need, Mother whose hands never cease to serve your beloved children because they are moved by the divine love and immense mercy that exists in your heart, cast your compassionate eyes upon me and see the snarl of knots that exist in my life.\n\nYou know very well how desperate I am, my pain and how I am bound by these knots.\n\nMary, Mother to whom God entrusted the undoing of the knots in the lives of His children, I entrust into your hands the ribbon of my life.\n\nNo one, not even the evil one himself, can take it away from your precious care. In your hands there is no knot that cannot be undone.\n\nPowerful Mother, by your grace and intercessory power with Your Son and My Liberator, Jesus, take into your hands today this knot...I beg you to undo it for the glory of God, once for all, You are my hope.\n\nO my Lady, you are the only consolation God gives me, the fortification of my feeble strength, the enrichment of my destitution and with Christ the freedom from my chains.\n\nHear my plea.\n\nKeep me, guide me, protect me, o safe refuge!",
+              "times": null,
+              "title": "Prayer to Mary, Undoer of Knots"
+            }
+          ],
+          "title": "The First Day"
+        },
+        {
+          "number": 2,
+          "parts": [
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "sign_of_cross",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "act_of_contrition",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": [
+                1,
+                2,
+                3
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d2_meditation",
+              "kind": "meditation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Mary, Beloved Mother, channel of all grace, I return to You today my heart, recognizing that I am a sinner in need of your help. Many times I lose the graces you grant me because of my sins of egoism, pride, rancor and my lack of generosity and humility. I turn to You today, Mary, Undoer of knots, for You to ask your Son Jesus to grant me a pure, divested, humble and trusting heart. I will live today practicing these virtues and offering you this as a sign of my love for You. I entrust into Your hands this knot (...describe) which keeps me from reflecting the glory of God.",
+              "times": null,
+              "title": "Meditation for Day 2"
+            },
+            {
+              "decades": [
+                4,
+                5
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_invocation",
+              "kind": "invocation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Mary, Undoer of Knots, pray for me.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d2_saying",
+              "kind": "saying",
+              "prayer_id": null,
+              "source": null,
+              "text": "Mary offered all the moments of her day to God.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_closing",
+              "kind": "closing",
+              "prayer_id": null,
+              "source": null,
+              "text": "Virgin Mary, Mother of fair love, Mother who never refuses to come to the aid of a child in need, Mother whose hands never cease to serve your beloved children because they are moved by the divine love and immense mercy that exists in your heart, cast your compassionate eyes upon me and see the snarl of knots that exist in my life.\n\nYou know very well how desperate I am, my pain and how I am bound by these knots.\n\nMary, Mother to whom God entrusted the undoing of the knots in the lives of His children, I entrust into your hands the ribbon of my life.\n\nNo one, not even the evil one himself, can take it away from your precious care. In your hands there is no knot that cannot be undone.\n\nPowerful Mother, by your grace and intercessory power with Your Son and My Liberator, Jesus, take into your hands today this knot...I beg you to undo it for the glory of God, once for all, You are my hope.\n\nO my Lady, you are the only consolation God gives me, the fortification of my feeble strength, the enrichment of my destitution and with Christ the freedom from my chains.\n\nHear my plea.\n\nKeep me, guide me, protect me, o safe refuge!",
+              "times": null,
+              "title": "Prayer to Mary, Undoer of Knots"
+            }
+          ],
+          "title": "The Second Day"
+        },
+        {
+          "number": 3,
+          "parts": [
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "sign_of_cross",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "act_of_contrition",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": [
+                1,
+                2,
+                3
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d3_meditation",
+              "kind": "meditation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Meditating Mother, Queen of heaven, in whose hands the treasures of the King are found, turn your merciful eyes upon me today. I entrust into your holy hands this knot in my life...and all the rancor and resentment it has caused in me. I ask Your forgiveness, God the Father, for my sin. Help me now to forgive all the persons who consciously or unconsciously provoked this knot. Give me, also, the grace to forgive me for having provoked this knot. Only in this way can You undo it. Before You, dearest Mother, and in the name of Your Son Jesus, my Savior, who has suffered so many offenses, having been granted forgiveness, I now forgive these persons...and myself, forever. Thank you, Mary, Undoer of Knots for undoing the knot of rancor in my heart and the knot which I now present to you. Amen.",
+              "times": null,
+              "title": "Meditation for Day 3"
+            },
+            {
+              "decades": [
+                4,
+                5
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_invocation",
+              "kind": "invocation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Mary, Undoer of Knots, pray for me.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d3_saying",
+              "kind": "saying",
+              "prayer_id": null,
+              "source": null,
+              "text": "Turn to Mary, you who desire grace.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_closing",
+              "kind": "closing",
+              "prayer_id": null,
+              "source": null,
+              "text": "Virgin Mary, Mother of fair love, Mother who never refuses to come to the aid of a child in need, Mother whose hands never cease to serve your beloved children because they are moved by the divine love and immense mercy that exists in your heart, cast your compassionate eyes upon me and see the snarl of knots that exist in my life.\n\nYou know very well how desperate I am, my pain and how I am bound by these knots.\n\nMary, Mother to whom God entrusted the undoing of the knots in the lives of His children, I entrust into your hands the ribbon of my life.\n\nNo one, not even the evil one himself, can take it away from your precious care. In your hands there is no knot that cannot be undone.\n\nPowerful Mother, by your grace and intercessory power with Your Son and My Liberator, Jesus, take into your hands today this knot...I beg you to undo it for the glory of God, once for all, You are my hope.\n\nO my Lady, you are the only consolation God gives me, the fortification of my feeble strength, the enrichment of my destitution and with Christ the freedom from my chains.\n\nHear my plea.\n\nKeep me, guide me, protect me, o safe refuge!",
+              "times": null,
+              "title": "Prayer to Mary, Undoer of Knots"
+            }
+          ],
+          "title": "The Third Day"
+        },
+        {
+          "number": 4,
+          "parts": [
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "sign_of_cross",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "act_of_contrition",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": [
+                1,
+                2,
+                3
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d4_meditation",
+              "kind": "meditation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Dearest Holy Mother, you are generous with all who seek you, have mercy on me. I entrust into your hands this knot which robs the peace of my heart, paralyzes my soul and keeps me from going to my Lord and serving Him with my life.\n\nUndo this knot in my love...., O mother, and ask Jesus to heal my paralytic faith which gets down hearted with the stones on the road. Along with you, dearest Mother, may I see these stones as friends. Not murmuring against them anymore but giving endless thanks for them, may I smile trustingly in your power.",
+              "times": null,
+              "title": "Meditation for Day 4"
+            },
+            {
+              "decades": [
+                4,
+                5
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_invocation",
+              "kind": "invocation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Mary, Undoer of Knots, pray for me.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d4_saying",
+              "kind": "saying",
+              "prayer_id": null,
+              "source": null,
+              "text": "Mary is the Sun and no one is deprived of her warmth.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_closing",
+              "kind": "closing",
+              "prayer_id": null,
+              "source": null,
+              "text": "Virgin Mary, Mother of fair love, Mother who never refuses to come to the aid of a child in need, Mother whose hands never cease to serve your beloved children because they are moved by the divine love and immense mercy that exists in your heart, cast your compassionate eyes upon me and see the snarl of knots that exist in my life.\n\nYou know very well how desperate I am, my pain and how I am bound by these knots.\n\nMary, Mother to whom God entrusted the undoing of the knots in the lives of His children, I entrust into your hands the ribbon of my life.\n\nNo one, not even the evil one himself, can take it away from your precious care. In your hands there is no knot that cannot be undone.\n\nPowerful Mother, by your grace and intercessory power with Your Son and My Liberator, Jesus, take into your hands today this knot...I beg you to undo it for the glory of God, once for all, You are my hope.\n\nO my Lady, you are the only consolation God gives me, the fortification of my feeble strength, the enrichment of my destitution and with Christ the freedom from my chains.\n\nHear my plea.\n\nKeep me, guide me, protect me, o safe refuge!",
+              "times": null,
+              "title": "Prayer to Mary, Undoer of Knots"
+            }
+          ],
+          "title": "The Fourth Day"
+        },
+        {
+          "number": 5,
+          "parts": [
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "sign_of_cross",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "act_of_contrition",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": [
+                1,
+                2,
+                3
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d5_meditation",
+              "kind": "meditation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Mother, Undoer of Knots, generous and compassionate, I come to You today to once again entrust this knot...in my life to you and to ask the divine wisdom to undo, under the light of the Holy Spirit, this snarl of problems. No one ever saw you angry; to the contrary, your words were so charged with sweetness that the Holy Spirit was manifested on your lips. Take away from me the bitterness, anger and hatred which this knot has caused me. Give me, o dearest Mother, some of the sweetness and wisdom that is all silently reflected in your heart. And just as you were present at Pentecost, ask Jesus to send me a new presence of the Holy Spirit at this moment in my life. Holy Spirit, come upon me!",
+              "times": null,
+              "title": "Meditation for Day 5"
+            },
+            {
+              "decades": [
+                4,
+                5
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_invocation",
+              "kind": "invocation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Mary, Undoer of Knots, pray for me.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d5_saying",
+              "kind": "saying",
+              "prayer_id": null,
+              "source": null,
+              "text": "Mary, with God, is powerful.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_closing",
+              "kind": "closing",
+              "prayer_id": null,
+              "source": null,
+              "text": "Virgin Mary, Mother of fair love, Mother who never refuses to come to the aid of a child in need, Mother whose hands never cease to serve your beloved children because they are moved by the divine love and immense mercy that exists in your heart, cast your compassionate eyes upon me and see the snarl of knots that exist in my life.\n\nYou know very well how desperate I am, my pain and how I am bound by these knots.\n\nMary, Mother to whom God entrusted the undoing of the knots in the lives of His children, I entrust into your hands the ribbon of my life.\n\nNo one, not even the evil one himself, can take it away from your precious care. In your hands there is no knot that cannot be undone.\n\nPowerful Mother, by your grace and intercessory power with Your Son and My Liberator, Jesus, take into your hands today this knot...I beg you to undo it for the glory of God, once for all, You are my hope.\n\nO my Lady, you are the only consolation God gives me, the fortification of my feeble strength, the enrichment of my destitution and with Christ the freedom from my chains.\n\nHear my plea.\n\nKeep me, guide me, protect me, o safe refuge!",
+              "times": null,
+              "title": "Prayer to Mary, Undoer of Knots"
+            }
+          ],
+          "title": "The Fifth Day"
+        },
+        {
+          "number": 6,
+          "parts": [
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "sign_of_cross",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "act_of_contrition",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": [
+                1,
+                2,
+                3
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d6_meditation",
+              "kind": "meditation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Queen of Mercy, I entrust to you this knot in my life...and I ask you to give me a heart that is patient until you undo it. Teach me to persevere in the living word of Jesus, in the Eucharist, the Sacrament of Confession; stay with me and prepare my heart to celebrate with the angels the grace that will be granted to me. Amen! Alleluia!",
+              "times": null,
+              "title": "Meditation for Day 6"
+            },
+            {
+              "decades": [
+                4,
+                5
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_invocation",
+              "kind": "invocation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Mary, Undoer of Knots, pray for me.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d6_saying",
+              "kind": "saying",
+              "prayer_id": null,
+              "source": null,
+              "text": "You are beautiful, Mary, and there is no stain of sin in You.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_closing",
+              "kind": "closing",
+              "prayer_id": null,
+              "source": null,
+              "text": "Virgin Mary, Mother of fair love, Mother who never refuses to come to the aid of a child in need, Mother whose hands never cease to serve your beloved children because they are moved by the divine love and immense mercy that exists in your heart, cast your compassionate eyes upon me and see the snarl of knots that exist in my life.\n\nYou know very well how desperate I am, my pain and how I am bound by these knots.\n\nMary, Mother to whom God entrusted the undoing of the knots in the lives of His children, I entrust into your hands the ribbon of my life.\n\nNo one, not even the evil one himself, can take it away from your precious care. In your hands there is no knot that cannot be undone.\n\nPowerful Mother, by your grace and intercessory power with Your Son and My Liberator, Jesus, take into your hands today this knot...I beg you to undo it for the glory of God, once for all, You are my hope.\n\nO my Lady, you are the only consolation God gives me, the fortification of my feeble strength, the enrichment of my destitution and with Christ the freedom from my chains.\n\nHear my plea.\n\nKeep me, guide me, protect me, o safe refuge!",
+              "times": null,
+              "title": "Prayer to Mary, Undoer of Knots"
+            }
+          ],
+          "title": "The Sixth Day"
+        },
+        {
+          "number": 7,
+          "parts": [
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "sign_of_cross",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "act_of_contrition",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": [
+                1,
+                2,
+                3
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d7_meditation",
+              "kind": "meditation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Mother Most Pure, I come to You today to beg you to undo this knot in my life...and free me from the snares of Evil. God has granted you great power over all the demons. I renounce all of them today, every connection I have had with them and I proclaim Jesus as my one and only Lord and Savior. Mary, Undoer of Knots, crush the evil one's head and destroy the traps he has set for me by this knot. Thank you, dearest Mother. Most Precious Blood of Jesus, free me!",
+              "times": null,
+              "title": "Meditation for Day 7"
+            },
+            {
+              "decades": [
+                4,
+                5
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_invocation",
+              "kind": "invocation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Mary, Undoer of Knots, pray for me.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d7_saying",
+              "kind": "saying",
+              "prayer_id": null,
+              "source": null,
+              "text": "You are the glory of Jerusalem, the joy of our people.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_closing",
+              "kind": "closing",
+              "prayer_id": null,
+              "source": null,
+              "text": "Virgin Mary, Mother of fair love, Mother who never refuses to come to the aid of a child in need, Mother whose hands never cease to serve your beloved children because they are moved by the divine love and immense mercy that exists in your heart, cast your compassionate eyes upon me and see the snarl of knots that exist in my life.\n\nYou know very well how desperate I am, my pain and how I am bound by these knots.\n\nMary, Mother to whom God entrusted the undoing of the knots in the lives of His children, I entrust into your hands the ribbon of my life.\n\nNo one, not even the evil one himself, can take it away from your precious care. In your hands there is no knot that cannot be undone.\n\nPowerful Mother, by your grace and intercessory power with Your Son and My Liberator, Jesus, take into your hands today this knot...I beg you to undo it for the glory of God, once for all, You are my hope.\n\nO my Lady, you are the only consolation God gives me, the fortification of my feeble strength, the enrichment of my destitution and with Christ the freedom from my chains.\n\nHear my plea.\n\nKeep me, guide me, protect me, o safe refuge!",
+              "times": null,
+              "title": "Prayer to Mary, Undoer of Knots"
+            }
+          ],
+          "title": "The Seventh Day"
+        },
+        {
+          "number": 8,
+          "parts": [
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "sign_of_cross",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "act_of_contrition",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": [
+                1,
+                2,
+                3
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d8_meditation",
+              "kind": "meditation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Virgin Mother of God, overflowing with mercy, have mercy on your child and undo this knot...in my life. I need your visit to my life, like you visited Elizabeth. Bring me Jesus, bring me the Holy Spirit. Teach me to practice the virtues of courage, joyfulness, humility and faith, and, like Elizabeth, to be filled with the Holy Spirit. Make me joyfully rest on your bosom, Mary. I consecrate you as my mother, Queen and friend. I give you my heart and everything I have (my home and family, my material and spiritual goods.) I am yours forever. Put your heart in me so that I can do everything Jesus tells me.",
+              "times": null,
+              "title": "Meditation for Day 8"
+            },
+            {
+              "decades": [
+                4,
+                5
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_invocation",
+              "kind": "invocation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Mary, Undoer of Knots, pray for me.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d8_saying",
+              "kind": "saying",
+              "prayer_id": null,
+              "source": null,
+              "text": "Let us go, therefore, full of trust, to the throne of grace.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_closing",
+              "kind": "closing",
+              "prayer_id": null,
+              "source": null,
+              "text": "Virgin Mary, Mother of fair love, Mother who never refuses to come to the aid of a child in need, Mother whose hands never cease to serve your beloved children because they are moved by the divine love and immense mercy that exists in your heart, cast your compassionate eyes upon me and see the snarl of knots that exist in my life.\n\nYou know very well how desperate I am, my pain and how I am bound by these knots.\n\nMary, Mother to whom God entrusted the undoing of the knots in the lives of His children, I entrust into your hands the ribbon of my life.\n\nNo one, not even the evil one himself, can take it away from your precious care. In your hands there is no knot that cannot be undone.\n\nPowerful Mother, by your grace and intercessory power with Your Son and My Liberator, Jesus, take into your hands today this knot...I beg you to undo it for the glory of God, once for all, You are my hope.\n\nO my Lady, you are the only consolation God gives me, the fortification of my feeble strength, the enrichment of my destitution and with Christ the freedom from my chains.\n\nHear my plea.\n\nKeep me, guide me, protect me, o safe refuge!",
+              "times": null,
+              "title": "Prayer to Mary, Undoer of Knots"
+            }
+          ],
+          "title": "The Eighth Day"
+        },
+        {
+          "number": 9,
+          "parts": [
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "sign_of_cross",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": null,
+              "kind": "opening",
+              "prayer_id": "act_of_contrition",
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": [
+                1,
+                2,
+                3
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d9_meditation",
+              "kind": "meditation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Most Holy Mary, our Advocate, Undoer of Knots, I come today to thank you for undoing this knot in my life...You know very well the suffering it has caused me. Thank you for coming, Mother, with your long fingers of mercy to dry the tears in my eyes; you receive me in your arms and make it possible for me to receive once again the divine grace.\n\nMary, Undoer of Knots, dearest Mother, I thank you for undoing the knots in my life. Wrap me in your mantle of love, keep me under your protection, enlighten me with your peace! Amen.",
+              "times": null,
+              "title": "Meditation for Day 9"
+            },
+            {
+              "decades": [
+                4,
+                5
+              ],
+              "id": null,
+              "kind": "rosary",
+              "prayer_id": null,
+              "source": null,
+              "text": null,
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_invocation",
+              "kind": "invocation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Mary, Undoer of Knots, pray for me.",
+              "times": null,
+              "title": null
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_closing",
+              "kind": "closing",
+              "prayer_id": null,
+              "source": null,
+              "text": "Virgin Mary, Mother of fair love, Mother who never refuses to come to the aid of a child in need, Mother whose hands never cease to serve your beloved children because they are moved by the divine love and immense mercy that exists in your heart, cast your compassionate eyes upon me and see the snarl of knots that exist in my life.\n\nYou know very well how desperate I am, my pain and how I am bound by these knots.\n\nMary, Mother to whom God entrusted the undoing of the knots in the lives of His children, I entrust into your hands the ribbon of my life.\n\nNo one, not even the evil one himself, can take it away from your precious care. In your hands there is no knot that cannot be undone.\n\nPowerful Mother, by your grace and intercessory power with Your Son and My Liberator, Jesus, take into your hands today this knot...I beg you to undo it for the glory of God, once for all, You are my hope.\n\nO my Lady, you are the only consolation God gives me, the fortification of my feeble strength, the enrichment of my destitution and with Christ the freedom from my chains.\n\nHear my plea.\n\nKeep me, guide me, protect me, o safe refuge!",
+              "times": null,
+              "title": "Prayer to Mary, Undoer of Knots"
+            },
+            {
+              "decades": null,
+              "id": "undoer_of_knots_d9_invocation",
+              "kind": "invocation",
+              "prayer_id": null,
+              "source": null,
+              "text": "Mary, Undoer of Knots, pray for me.",
+              "times": null,
+              "title": null
+            }
+          ],
+          "title": "The Ninth Day"
+        }
+      ],
+      "detail": "Nine days of the Rosary, a meditation and the prayer to Mary, Undoer of Knots.",
+      "feast": null,
+      "id": "undoer_of_knots",
+      "latin_title": null,
+      "length": 9,
+      "list_title": "Undoer of Knots",
+      "note": null,
+      "origin": "Novena by Fr. Juan Ramón Celeiro, as printed by Ascension Press",
+      "painting": "novena_undoer_of_knots",
+      "prayer_id": "undoer_of_knots_novena",
+      "search_words": [
+        "undoer of knots",
+        "untier of knots",
+        "novena",
+        "knots"
+      ],
+      "title": "Our Lady, Undoer of Knots"
     }
   ],
   "prayers": [
@@ -2106,7 +2988,7 @@
       "title": "Prayer to the Infant Jesus of Prague"
     },
     {
-      "english": "Lord, have mercy on us.\nChrist, have mercy on us.\nLord, have mercy on us.\nChrist, hear us. ℟. Christ, graciously hear us.\n\nGod the Father of Heaven, ℟. have mercy on us.\nGod the Son, Redeemer of the world,\nGod the Holy Ghost,\nHoly Trinity, One God,\n\nHeart of Jesus, Son of the Eternal Father, ℟. have mercy on us.\nHeart of Jesus, formed by the Holy Ghost in the womb of the Virgin Mother,\nHeart of Jesus, substantially united to the Word of God,\nHeart of Jesus, of infinite majesty,\nHeart of Jesus, holy temple of God,\nHeart of Jesus, tabernacle of the Most High,\n\nHeart of Jesus, house of God and gate of heaven, ℟. have mercy on us.\nHeart of Jesus, burning furnace of charity,\nHeart of Jesus, vessel of justice and of love,\nHeart of Jesus, full of goodness and love,\nHeart of Jesus, abyss of all virtues,\nHeart of Jesus, most worthy of all praise,\n\nHeart of Jesus, king and center of all hearts, ℟. have mercy on us.\nHeart of Jesus, wherein are all the treasures of wisdom and knowledge,\nHeart of Jesus, wherein dwelleth all the fullness of the Godhead,\nHeart of Jesus, wherein the Father was well pleased,\nHeart of Jesus, of Whose fullness we have all received,\n\nHeart of Jesus, desire of the everlasting hills, ℟. have mercy on us.\nHeart of Jesus, patient and of great mercy,\nHeart of Jesus, rich unto all who call upon Thee,\nHeart of Jesus, fountain of life and holiness,\nHeart of Jesus, propitiation for our sins,\n\nHeart of Jesus, filled with reproaches, ℟. have mercy on us.\nHeart of Jesus, bruised for our iniquities,\nHeart of Jesus, made obedient unto death,\nHeart of Jesus, pierced with a lance,\nHeart of Jesus, fountain of all consolation,\n\nHeart of Jesus, our life and resurrection, ℟. have mercy on us.\nHeart of Jesus, our peace and reconciliation,\nHeart of Jesus, victim for sinners,\nHeart of Jesus, salvation of those who hope in Thee,\nHeart of Jesus, hope of those who die in Thee,\nHeart of Jesus, delight of all the Saints,\n\nLamb of God, Who takest away the sins of the world, ℟. spare us, O Lord.\nLamb of God, Who takest away the sins of the world, ℟. graciously hear us, O Lord.\nLamb of God, Who takest away the sins of the world, ℟. have mercy on us.\n\n℣. Jesus, meek and humble of heart.\n℟. Make our hearts like unto Thine.\n\n[Let us pray.]\n\nAlmighty and everlasting God, look upon the Heart of Thy most beloved Son, and upon the praises and satisfactions which He hath rendered unto Thee in the name of sinners; and to those who seek Thy mercy do Thou, being appeased, grant pardon in the name of the same Thy Son Jesus Christ, Who liveth and reigneth with Thee world without end.\n\n℟. Amen.",
+      "english": "Lord, have mercy on us.\nChrist, have mercy on us.\nLord, have mercy on us.\nChrist, hear us. ℟. Christ, graciously hear us.\n\nGod the Father of Heaven, ℟. have mercy on us.\nGod the Son, Redeemer of the world,\nGod the Holy Ghost,\nHoly Trinity, One God,\n\nHeart of Jesus, Son of the Eternal Father, ℟. have mercy on us.\nHeart of Jesus, formed by the Holy Ghost in the womb of the Virgin Mother,\nHeart of Jesus, substantially united to the Word of God,\nHeart of Jesus, of infinite majesty,\nHeart of Jesus, holy temple of God,\nHeart of Jesus, tabernacle of the Most High,\n\nHeart of Jesus, house of God and gate of heaven, ℟. have mercy on us.\nHeart of Jesus, burning furnace of charity,\nHeart of Jesus, vessel of justice and of love,\nHeart of Jesus, full of goodness and love,\nHeart of Jesus, abyss of all virtues,\nHeart of Jesus, most worthy of all praise,\n\nHeart of Jesus, King and center of all hearts, ℟. have mercy on us.\nHeart of Jesus, wherein are all the treasures of wisdom and knowledge,\nHeart of Jesus, wherein dwelleth all the fullness of the Godhead,\nHeart of Jesus, wherein the Father was well pleased,\nHeart of Jesus, of Whose fullness we have all received,\n\nHeart of Jesus, desire of the everlasting hills, ℟. have mercy on us.\nHeart of Jesus, patient and of great mercy,\nHeart of Jesus, rich unto all who call upon Thee,\nHeart of Jesus, fountain of life and holiness,\nHeart of Jesus, propitiation for our sins,\n\nHeart of Jesus, filled with reproaches, ℟. have mercy on us.\nHeart of Jesus, bruised for our iniquities,\nHeart of Jesus, made obedient unto death,\nHeart of Jesus, pierced with a lance,\nHeart of Jesus, fountain of all consolation,\n\nHeart of Jesus, our life and resurrection, ℟. have mercy on us.\nHeart of Jesus, our peace and reconciliation,\nHeart of Jesus, victim for sinners,\nHeart of Jesus, salvation of those who hope in Thee,\nHeart of Jesus, hope of those who die in Thee,\nHeart of Jesus, delight of all the Saints,\n\nLamb of God, Who takest away the sins of the world, ℟. spare us, O Lord.\nLamb of God, Who takest away the sins of the world, ℟. graciously hear us, O Lord.\nLamb of God, Who takest away the sins of the world, ℟. have mercy on us.\n\n℣. Jesus, meek and humble of heart.\n℟. Make our hearts like unto Thine.\n\n[Let us pray.]\n\nAlmighty and everlasting God, look upon the Heart of Thy most beloved Son, and upon the praises and satisfactions which He hath rendered unto Thee in the name of sinners; and to those who seek Thy mercy do Thou, being appeased, grant pardon in the name of the same Thy Son Jesus Christ, Who liveth and reigneth with Thee world without end.\n\n℟. Amen.",
       "english_name": null,
       "id": "litany_sacred_heart",
       "latin": "Kyrie, eleison.\nChriste, eleison.\nKyrie, eleison.\nChriste, audi nos. ℟. Christe, exaudi nos.\n\nPater de caelis, Deus, ℟. miserere nobis.\nFili, Redemptor mundi, Deus,\nSpiritus Sancte, Deus,\nSancta Trinitas, unus Deus,\n\nCor Iesu, Filii Patris aeterni, ℟. miserere nobis.\nCor Iesu, in sinu Virginis Matris a Spiritu Sancto formatum,\nCor Iesu, Verbo Dei substantialiter unitum,\nCor Iesu, maiestatis infinitae,\nCor Iesu, templum Dei sanctum,\nCor Iesu, tabernaculum Altissimi,\n\nCor Iesu, domus Dei et porta caeli, ℟. miserere nobis.\nCor Iesu, fornax ardens caritatis,\nCor Iesu, iustitiae et amoris receptaculum,\nCor Iesu, bonitate et amore plenum,\nCor Iesu, virtutum omnium abyssus,\nCor Iesu, omni laude dignissimum,\n\nCor Iesu, rex et centrum omnium cordium, ℟. miserere nobis.\nCor Iesu, in quo sunt omnes thesauri sapientiae et scientiae,\nCor Iesu, in quo habitat omnis plenitudo divinitatis,\nCor Iesu, in quo Pater sibi bene complacuit,\nCor Iesu, de cuius plenitudine omnes nos accepimus,\n\nCor Iesu, desiderium collium aeternorum, ℟. miserere nobis.\nCor Iesu, patiens et multae misericordiae,\nCor Iesu, dives in omnes qui invocant te,\nCor Iesu, fons vitae et sanctitatis,\nCor Iesu, propitiatio pro peccatis nostris,\n\nCor Iesu, saturatum opprobriis, ℟. miserere nobis.\nCor Iesu, attritum propter scelera nostra,\nCor Iesu, usque ad mortem obediens factum,\nCor Iesu, lancea perforatum,\nCor Iesu, fons totius consolationis,\n\nCor Iesu, vita et resurrectio nostra, ℟. miserere nobis.\nCor Iesu, pax et reconciliatio nostra,\nCor Iesu, victima peccatorum,\nCor Iesu, salus in te sperantium,\nCor Iesu, spes in te morientium,\nCor Iesu, deliciae Sanctorum omnium,\n\nAgnus Dei, qui tollis peccata mundi, ℟. parce nobis, Domine.\nAgnus Dei, qui tollis peccata mundi, ℟. exaudi nos, Domine.\nAgnus Dei, qui tollis peccata mundi, ℟. miserere nobis.\n\n℣. Iesu, mitis et humilis Corde.\n℟. Fac cor nostrum secundum Cor tuum.\n\n[Oremus.]\n\nOmnipotens sempiterne Deus, respice in Cor dilectissimi Filii tui, et in laudes et satisfactiones, quas in nomine peccatorum tibi persolvit, iisque misericordiam tuam petentibus tu veniam concede placatus, in nomine eiusdem Filii tui Iesu Christi, qui tecum vivit et regnat in saecula saeculorum.\n\n℟. Amen.",
@@ -2206,6 +3088,24 @@
       "origin": "St Francis of Assisi · c. 1205",
       "search_words": [],
       "title": "Prayer of St Francis before the Crucifix"
+    },
+    {
+      "english": "[A devotion long attributed to St. Bridget of Sweden: each day, seven Our Fathers and seven Hail Marys in honor of the seven times Our Lord shed His Blood, traditionally kept for twelve years.]\n\n[The first shedding of His Blood: the Circumcision. Luke 2:21.]\n\nAnd after eight days were accomplished, that the child should be circumcised, his name was called JESUS, which was called by the angel, before he was conceived in the womb.\n\nOur Father. Hail Mary.\n\n[The second shedding of His Blood: the Agony in the Garden. Luke 22:44.]\n\nAnd his sweat became as drops of blood trickling down upon the earth.\n\nOur Father. Hail Mary.\n\n[The third shedding of His Blood: the Scourging. Matthew 27:26.]\n\nThen he released to them Barabbas, and having scourged Jesus, delivered him unto them for to be crucified.\n\nOur Father. Hail Mary.\n\n[The fourth shedding of His Blood: the Crowning with Thorns. Matthew 27:29.]\n\nAnd platting a crown of thorns, put it upon his head, and a reed in his right hand. And bowing the knee before him, they mocked him, saying: Hail King of the Jews.\n\nOur Father. Hail Mary.\n\n[The fifth shedding of His Blood: the Carrying of the Cross. John 19:17.]\n\nAnd bearing his own cross he went forth into that which is called the place of Calvary, in Hebrew Golgotha.\n\nOur Father. Hail Mary.\n\n[The sixth shedding of His Blood: the Crucifixion. Luke 23:33.]\n\nAnd after they came to the place which is called Calvary, there they crucified him: and the thieves, one on the right hand and the other on the left.\n\nOur Father. Hail Mary.\n\n[The seventh shedding of His Blood: the Piercing of the Side. John 19:34.]\n\nBut one of the soldiers with a spear opened his side, and incontinent there came forth blood and water.\n\nOur Father. Hail Mary.",
+      "english_name": null,
+      "id": "st_bridget_twelve_years",
+      "latin": null,
+      "latin_title": null,
+      "list_title": null,
+      "note": null,
+      "origin": "Devotion attributed to St. Bridget; Scripture Douay-Rheims.",
+      "search_words": [
+        "bridget",
+        "brigid",
+        "birgitta",
+        "twelve years",
+        "precious blood"
+      ],
+      "title": "The Prayers of St. Bridget (for twelve years)"
     },
     {
       "english": "O most sweet Jesus, Redeemer of the human race, look down upon us, most humbly prostrate before Thine altar. We are Thine, and Thine we wish to be; and that we may be bound to Thee more firmly, behold, each one of us today freely dedicates himself to Thy most Sacred Heart.\n\nMany indeed have never known Thee; many, despising Thy commandments, have rejected Thee. Have mercy on them all, O most gracious Jesus, and draw them all to Thy holy Heart.\n\nBe Thou King, O Lord, not only of the faithful who have never gone away from Thee, but also of the prodigal children who have forsaken Thee: grant that they may soon return to their Father's house, lest they perish of misery and hunger.\n\nBe Thou King of those whom error of opinion has deceived, or whom discord keeps apart, and call them back to the harbour of truth and the unity of faith, so that soon there may be one fold and one shepherd.\n\nGrant, O Lord, to Thy Church a sure freedom and safety; grant to all nations the tranquillity of order; bring it about that from one end of the earth to the other one voice may resound: Praise be to the divine Heart, through which our salvation was won; to It be glory and honour for ever. Amen.",
@@ -2352,6 +3252,74 @@
       "origin": "Attributed to Hermann of Reichenau · 11th century",
       "search_words": [],
       "title": "Loving Mother of the Redeemer"
+    },
+    {
+      "english": "[On each Sunday of Advent one candle more is lit, and the collect of that Sunday is said.]\n\n[The First Sunday of Advent.]\n\nExert, we beseech thee, O Lord, thy power, and come: that by thy protection we may be freed from the imminent dangers of our sins, and be saved by thy mercy.\n℟. Amen.\n\n[The Second Sunday of Advent.]\n\nStir up, O Lord, our hearts to prepare the ways of thy only begotten Son: that by his coming we may be enabled to serve thee with pure minds.\n℟. Amen.\n\n[The Third Sunday of Advent.]\n\nBend thine ear, O Lord, we beseech thee, to our prayers, and enlighten the darkness of our minds by the grace of thy visitation.\n℟. Amen.\n\n[The Fourth Sunday of Advent.]\n\nExert, we beseech thee, O Lord, thy power, and come: and succour us by thy great might: that by the assistance of thy grace, thy indulgent mercy may hasten, what is delayed by our sins.\n℟. Amen.",
+      "english_name": null,
+      "id": "advent_wreath_collects",
+      "latin": "[Singulis Dominicis Adventus.]\n\n[Dominica I Adventus.]\n\nExcita, quaesumus, Domine, potentiam tuam, et veni: ut ab imminentibus peccatorum nostrorum periculis, te mereamur protegente eripi, te liberante salvari.\n℟. Amen.\n\n[Dominica II Adventus.]\n\nExcita, Domine, corda nostra ad praeparandas Unigeniti tui vias: ut per ejus adventum purificatis tibi mentibus servire mereamur.\n℟. Amen.\n\n[Dominica III Adventus.]\n\nAurem tuam, quaesumus, Domine, precibus nostris accommoda: et mentis nostrae tenebras gratia tuae visitationis illustra.\n℟. Amen.\n\n[Dominica IV Adventus.]\n\nExcita, quaesumus, Domine, potentiam tuam, et veni: et magna nobis virtute succurre: ut per auxilium gratiae tuae, quod nostra peccata praepediunt, indulgentia tuae propitiationis acceleret.\n℟. Amen.",
+      "latin_title": "Orationes Dominicarum Adventus",
+      "list_title": null,
+      "note": "The collect of each Sunday of Advent, from the Mass of that Sunday, said at the Advent wreath as one candle more is lit each week.",
+      "origin": "The Roman Missal for the use of the laity · 1861; the Latin, Missale Romanum · 1882",
+      "search_words": [
+        "wreath",
+        "advent wreath",
+        "corona de adviento",
+        "advent sunday",
+        "collect"
+      ],
+      "title": "The Advent Wreath: the Sunday Collects"
+    },
+    {
+      "english": "[Each day.]\n\nCome, O Holy Ghost, fill the hearts of Thy faithful and kindle in them the fire of Thy love.\n\n℣. Send forth Thy Spirit and they shall be created;\n℟. And Thou shalt renew the face of the earth.\n\n[Let us pray.]\n\nO God, who hast taught the hearts of the faithful by the light of the Holy Spirit; grant us by the same Spirit to relish what is right, and evermore to rejoice in His consolation. Through Christ our Lord.\n℟. Amen.\n\n[The preparatory prayer, said each day.]\n\nVirgin most pure, conceived without sin, all fair and stainless in thy Conception; glorious Mary, full of grace, Mother of my God, Queen of Angels and of men, I humbly venerate thee as Mother of my Saviour, who, though He was God, taught me by His own veneration, reverence, and obedience to thee, the honour and homage that are due to thee. Vouchsafe, I pray thee, to accept this Novena which I dedicate to thee. Thou art the safe refuge of the penitent sinner; it is very fitting, then, that I should have recourse to thee. Thou art the Mother of Compassion; then wilt thou surely be moved with pity for my many miseries. Thou art my best hope after Jesus; thou canst not but accept the loving confidence that I have in thee. Make me worthy to be called thy son, that so I may dare to cry unto thee: Show thyself a mother.\n\n[The Hail Mary nine times, and the Glory Be once. Then the prayer for the day, below.]\n\n[After the prayer for the day, say or sing the Litany of the Blessed Virgin, or else:]\n\n℣. All fair art thou, O Mary.\n℟. All fair art thou, O Mary.\n℣. The original stain is not in thee.\n℟. The original stain is not in thee.\n℣. Thou art the glory of Jerusalem.\n℟. Thou art the joy of Israel.\n℣. Thou art the honour of our people.\n℟. Thou art the advocate of sinners.\n℣. O Mary.\n℟. O Mary.\n℣. Virgin most prudent.\n℟. Mother most clement.\n℣. Pray for us.\n℟. Intercede for us with our Lord Jesus Christ.\n\n[After the Litany or Hymn as above, say:]\n\n℣. In thy conception, O Virgin, thou wast immaculate.\n℟. Pray for us to the Father, whose Son was born of thee.\n\n[Let us pray.]\n\nO God, who through the Immaculate Conception of a Virgin didst prepare a worthy dwelling-place for Thy Son, we beseech Thee, who by the death of that Son, foreseen by Thee, didst preserve her from all stain of sin, to grant that by her intercession we also may be purified, and so may come to Thee. Through Christ our Lord. Amen.\n\nO God, the Shepherd and Ruler of all the faithful, graciously look down upon Thy servant N., whom Thou hast chosen to be the Pastor of Thy Church; and grant him, we beseech Thee, both by word and example, so to direct those over whom Thou hast placed him, that together with the flock entrusted to his care, he may attain eternal life.\n\nO God, our refuge and strength, who art the author of all holiness, listen to the pious prayers of Thy Church, and grant that what we ask in faith we may effectually obtain, through Christ our Lord.\n℟. Amen.\n\n[The same order is to be observed on the other days of the Novena, the prayer for the day alone being changed.]\n\n[The First Day, November 29.]\n\nBehold me at thy sacred feet, O Immaculate Virgin. I rejoice with thee, because from all eternity thou wast elected to be the Mother of the Eternal Word, and wast preserved stainless from the taint of original sin. I praise and bless the Most Holy Trinity, who poured out upon thy soul in thy Conception the treasure of that privilege. I humbly pray thee to obtain for me grace effectually to overcome the sad effects produced in my soul by original sin; make me wholly victorious over them, that I may never cease to love my God.\n\n[The Second Day, November 30.]\n\nMary, unsullied lily of purity, I rejoice with thee, because from the first moment of thy Conception thou wast filled with grace, and hadst given unto thee the perfect use of reason. I thank and adore the ever blessed Trinity, who gave thee those high gifts. Behold me at thy feet overwhelmed with shame to see myself so poor in grace. O thou who wast filled full of heavenly grace, grant me a portion of that same grace, and make me a partaker in the treasures of thy Immaculate Conception.\n\n[The Third Day, December 1.]\n\nMary, mystic rose of purity, I rejoice with thee at the glorious triumph thou didst gain over the serpent by thy Immaculate Conception, in that thou wast conceived without original sin. I thank and praise with my whole heart the ever blessed Trinity, who granted thee that glorious privilege; and I pray thee to obtain for me courage to overcome every snare of the great enemy, and never to stain my soul with mortal sin. Be thou always mine aid, and enable me with thy protection to obtain the victory over all the enemies of man's eternal welfare.\n\n[The Fourth Day, December 2.]\n\nMary Immaculate Virgin, mirror of holy purity, I rejoice exceedingly to see how from thy Immaculate Conception there were infused into thy soul the most sublime and perfect virtues with all the gifts of the most Holy Spirit. I thank and praise the ever blessed Trinity who bestowed upon thee these high privileges, and I beseech thee, gracious Mother, obtain for me grace to practise every Christian virtue, and so to become worthy to receive the gifts and graces of the Holy Ghost.\n\n[The Fifth Day, December 3.]\n\nMary, bright moon of purity, I congratulate thee in that the mystery of thy Immaculate Conception was the beginning of salvation to the human race, and was the joy of the whole world. I thank and bless the ever blessed Trinity who did so magnify and glorify thy person. I entreat thee to obtain for me grace so to profit by the death and passion of thy dear Son, that His Precious Blood may not have been shed upon the Cross for me in vain, but that after a holy life I may be saved.\n\n[The Sixth Day, December 4.]\n\nMary Immaculate, brilliant star of purity, I rejoice with thee, because thy Immaculate Conception brought exceeding joy to all the angels of Paradise. I thank and bless the ever blessed Trinity, who enriched thee with this privilege. Enable me also one day to take part in this heavenly joy, praising and blessing thee in the company of angels, world without end. Amen.\n\n[The Seventh Day, December 5.]\n\nMary Immaculate, rising morn of purity, I rejoice with thee, and I am filled with admiration at beholding thee confirmed in grace and rendered sinless from the first moment of thy Conception. I thank and praise the ever blessed Trinity, who elected thee alone from all mankind for this special privilege. Holiest Virgin, obtain for me so entire and lasting a hatred of sin, the worst of all evils, that I may rather die than ever again commit a mortal sin.\n\n[The Eighth Day, December 6.]\n\nMary, Virgin, sun without stain, I congratulate thee and I rejoice with thee, because God gave thee in thy Conception a greater and more abundant grace than He gave to all His angels and His saints together, even when their merits were most exalted. I thank and admire the immense beneficence of the ever blessed Trinity, who hath dispensed to thee alone this privilege. Oh, enable me too to correspond with the grace of God, and never more to receive it in vain; change my heart, and help me to begin in earnest a new life.\n\n[The Ninth Day, December 7.]\n\nImmaculate Mary, living light of holiness, model of purity, Virgin and Mother, as soon as thou wast conceived, thou didst profoundly adore thy God, giving Him thanks, because by means of thee the ancient curse was blotted out, and blessing was again come upon the sinful sons of Adam. Let this blessing kindle in my heart love towards God; and do thou inflame my heart still more and more, that I may ever love Him constantly on earth, and afterwards eternally enjoy Him in heaven, there to thank and praise Him more and more fervently for all the wondrous privileges conferred on thee, and to rejoice with thee for thy high crown of glory.",
+      "english_name": null,
+      "id": "immaculate_conception_novena",
+      "latin": null,
+      "latin_title": null,
+      "list_title": null,
+      "note": "Nine days before the feast, from November 29 to December 7: each day the Come, O Holy Ghost, the preparatory prayer with nine Hail Marys and a Glory Be, the prayer for that day, then the Litany of Our Lady or the Tota pulchra versicles, and the closing prayers.",
+      "origin": "The Raccolta · 1910, the Novena for the Immaculate Conception · indulgenced by Pope Pius VII, 1808",
+      "search_words": [
+        "immaculate conception",
+        "novena",
+        "december 8"
+      ],
+      "title": "The Novena for the Immaculate Conception"
+    },
+    {
+      "english": "Hail and blessed be the hour and moment in which the Son of God was born of the most pure Virgin Mary, at midnight, in Bethlehem, in piercing cold. In that hour vouchsafe, O my God, to hear my prayer and grant my desires, through the merits of our Saviour Jesus Christ, and of His blessed Mother. Amen.",
+      "english_name": null,
+      "id": "st_andrew_novena",
+      "latin": null,
+      "latin_title": null,
+      "list_title": "St Andrew Christmas Novena",
+      "note": "Said fifteen times a day from the feast of St Andrew, November 30, until Christmas.",
+      "origin": "Imprimatur, Archbishop Michael Augustine Corrigan of New York · 1897",
+      "search_words": [
+        "st andrew",
+        "christmas novena",
+        "novena",
+        "christmas anticipation prayer"
+      ],
+      "title": "The St Andrew Christmas Novena"
+    },
+    {
+      "english": "[December 17.]\n\nO Wisdom, who camest forth from the mouth of the Most High, reaching from end to end, mightily and sweetly ordering all things: come and teach us the way of prudence.\n\n[December 18.]\n\nO Adonai, and Leader of the house of Israel, who to Moses in the fire of the burning bush didst appear, and gavest him the law on Sinai: come to redeem us with an outstretched arm.\n\n[December 19.]\n\nO Root of Jesse, who standest for an ensign of the peoples, before whom kings shall keep their mouths shut, to whom the Gentiles shall make their prayer: come to deliver us, and tarry now no longer.\n\n[December 20.]\n\nO Key of David, and Sceptre of the house of Israel, who openest, and no man shutteth; who shuttest, and no man openeth: come, and lead forth the captive out of the prison house, him that sitteth in darkness and in the shadow of death.\n\n[December 21.]\n\nO Dayspring, splendour of light eternal, and Sun of justice: come, and enlighten those who sit in darkness and in the shadow of death.\n\n[December 22.]\n\nO King of the nations, and their Desired One, and the Cornerstone, who makest both one: come, and save man, whom Thou didst form out of clay.\n\n[December 23.]\n\nO Emmanuel, our King and Lawgiver, the Expected of the nations, and their Saviour: come to save us, O Lord our God.",
+      "english_name": null,
+      "id": "o_antiphons",
+      "latin": "[Die 17 Decembris.]\n\nO Sapientia, quae ex ore Altissimi prodisti, attingens a fine usque ad finem, fortiter suaviterque disponens omnia: veni ad docendum nos viam prudentiae.\n\n[Die 18 Decembris.]\n\nO Adonai, et Dux domus Israel, qui Moysi in igne flammae rubi apparuisti, et ei in Sina legem dedisti: veni ad redimendum nos in brachio extento.\n\n[Die 19 Decembris.]\n\nO Radix Jesse, qui stas in signum populorum, super quem continebunt reges os suum, quem gentes deprecabuntur: veni ad liberandum nos, jam noli tardare.\n\n[Die 20 Decembris.]\n\nO Clavis David, et sceptrum domus Israel: qui aperis, et nemo claudit; claudis, et nemo aperit: veni, et educ vinctum de domo carceris, sedentem in tenebris et umbra mortis.\n\n[Die 21 Decembris.]\n\nO Oriens, splendor lucis aeternae, et sol justitiae: veni, et illumina sedentes in tenebris et umbra mortis.\n\n[Die 22 Decembris.]\n\nO Rex gentium, et desideratus earum, lapisque angularis, qui facis utraque unum: veni, et salva hominem, quem de limo formasti.\n\n[Die 23 Decembris.]\n\nO Emmanuel, Rex et legifer noster, exspectatio gentium, et Salvator earum: veni ad salvandum nos, Domine Deus noster.",
+      "latin_title": "Antiphonae O",
+      "list_title": null,
+      "note": "The antiphons sung with the Magnificat at Vespers on the seven evenings before Christmas Eve, each calling on Christ by one of His names. Each is in the Chant Library on its day.",
+      "origin": "The Roman Breviary · Vespers, December 17 to 23",
+      "search_words": [
+        "o antiphons",
+        "o sapientia",
+        "o emmanuel",
+        "great antiphons"
+      ],
+      "title": "The O Antiphons"
     },
     {
       "english": "Hail, O Queen of heaven,\nhail, O Lady of the Angels;\nhail, thou root, hail, thou gate,\nfrom whom unto the world a light hath arisen.\n\nRejoice, O glorious Virgin,\nlovely beyond all others;\nfarewell, O most beautiful,\nand pray for us to Christ.\n\n℣. Vouchsafe that I may praise thee, O sacred Virgin.\n℟. Give me strength against thine enemies.\n\n[Let us pray.]\n\nGrant, O merciful God, to our weak natures Thy protection, that we who commemorate the holy Mother of God may, by the help of her intercession, rise again from our iniquities. Through the same Christ our Lord. Amen.",
@@ -2983,6 +3951,25 @@
       "origin": "St Teresa of Ávila · 16th century",
       "search_words": [],
       "title": "Let Nothing Disturb Thee"
+    },
+    {
+      "english": "[Each day: the Sign of the Cross; the Act of Contrition; the first three decades of the Rosary; the meditation of the day; the last two decades of the Rosary; then the closing prayer below.]\n\n[The First Day.]\n\nDearest Holy Mother, Most Holy Mary, you undo the knots that suffocate your children, extend your merciful hands to me. I entrust to You today this knot....and all the negative consequences that it provokes in my life. I give you this knot that torments me and makes me unhappy and so impedes me from uniting myself to You and Your Son Jesus, my Savior. I run to You, Mary, Undoer of Knots because I trust you and I know that you never despise a sinning child who comes to ask you for help. I believe that you can undo this knot because Jesus grants you everything. I believe that you want to undo this knot because you are my Mother. I believe that You will do this because you love me with eternal love.\n\nThank you, Dear Mother.\n\nMary, Undoer of Knots, pray for me.\n\nThe one who seeks grace, finds it in Mary's hands.\n\n[The Second Day.]\n\nMary, Beloved Mother, channel of all grace, I return to You today my heart, recognizing that I am a sinner in need of your help. Many times I lose the graces you grant me because of my sins of egoism, pride, rancor and my lack of generosity and humility. I turn to You today, Mary, Undoer of knots, for You to ask your Son Jesus to grant me a pure, divested, humble and trusting heart. I will live today practicing these virtues and offering you this as a sign of my love for You. I entrust into Your hands this knot (...describe) which keeps me from reflecting the glory of God.\n\nMary, Undoer of Knots, pray for me.\n\nMary offered all the moments of her day to God.\n\n[The Third Day.]\n\nMeditating Mother, Queen of heaven, in whose hands the treasures of the King are found, turn your merciful eyes upon me today. I entrust into your holy hands this knot in my life...and all the rancor and resentment it has caused in me. I ask Your forgiveness, God the Father, for my sin. Help me now to forgive all the persons who consciously or unconsciously provoked this knot. Give me, also, the grace to forgive me for having provoked this knot. Only in this way can You undo it. Before You, dearest Mother, and in the name of Your Son Jesus, my Savior, who has suffered so many offenses, having been granted forgiveness, I now forgive these persons...and myself, forever. Thank you, Mary, Undoer of Knots for undoing the knot of rancor in my heart and the knot which I now present to you. Amen.\n\nMary, Undoer of Knots, pray for me.\n\nTurn to Mary, you who desire grace.\n\n[The Fourth Day.]\n\nDearest Holy Mother, you are generous with all who seek you, have mercy on me. I entrust into your hands this knot which robs the peace of my heart, paralyzes my soul and keeps me from going to my Lord and serving Him with my life.\n\nUndo this knot in my love...., O mother, and ask Jesus to heal my paralytic faith which gets down hearted with the stones on the road. Along with you, dearest Mother, may I see these stones as friends. Not murmuring against them anymore but giving endless thanks for them, may I smile trustingly in your power.\n\nMary, Undoer of Knots, pray for me.\n\nMary is the Sun and no one is deprived of her warmth.\n\n[The Fifth Day.]\n\nMother, Undoer of Knots, generous and compassionate, I come to You today to once again entrust this knot...in my life to you and to ask the divine wisdom to undo, under the light of the Holy Spirit, this snarl of problems. No one ever saw you angry; to the contrary, your words were so charged with sweetness that the Holy Spirit was manifested on your lips. Take away from me the bitterness, anger and hatred which this knot has caused me. Give me, o dearest Mother, some of the sweetness and wisdom that is all silently reflected in your heart. And just as you were present at Pentecost, ask Jesus to send me a new presence of the Holy Spirit at this moment in my life. Holy Spirit, come upon me!\n\nMary, Undoer of Knots, pray for me.\n\nMary, with God, is powerful.\n\n[The Sixth Day.]\n\nQueen of Mercy, I entrust to you this knot in my life...and I ask you to give me a heart that is patient until you undo it. Teach me to persevere in the living word of Jesus, in the Eucharist, the Sacrament of Confession; stay with me and prepare my heart to celebrate with the angels the grace that will be granted to me. Amen! Alleluia!\n\nMary, Undoer of Knots, pray for me.\n\nYou are beautiful, Mary, and there is no stain of sin in You.\n\n[The Seventh Day.]\n\nMother Most Pure, I come to You today to beg you to undo this knot in my life...and free me from the snares of Evil. God has granted you great power over all the demons. I renounce all of them today, every connection I have had with them and I proclaim Jesus as my one and only Lord and Savior. Mary, Undoer of Knots, crush the evil one's head and destroy the traps he has set for me by this knot. Thank you, dearest Mother. Most Precious Blood of Jesus, free me!\n\nMary, Undoer of Knots, pray for me.\n\nYou are the glory of Jerusalem, the joy of our people.\n\n[The Eighth Day.]\n\nVirgin Mother of God, overflowing with mercy, have mercy on your child and undo this knot...in my life. I need your visit to my life, like you visited Elizabeth. Bring me Jesus, bring me the Holy Spirit. Teach me to practice the virtues of courage, joyfulness, humility and faith, and, like Elizabeth, to be filled with the Holy Spirit. Make me joyfully rest on your bosom, Mary. I consecrate you as my mother, Queen and friend. I give you my heart and everything I have (my home and family, my material and spiritual goods.) I am yours forever. Put your heart in me so that I can do everything Jesus tells me.\n\nMary, Undoer of Knots, pray for me.\n\nLet us go, therefore, full of trust, to the throne of grace.\n\n[The Ninth Day.]\n\nMost Holy Mary, our Advocate, Undoer of Knots, I come today to thank you for undoing this knot in my life...You know very well the suffering it has caused me. Thank you for coming, Mother, with your long fingers of mercy to dry the tears in my eyes; you receive me in your arms and make it possible for me to receive once again the divine grace.\n\nMary, Undoer of Knots, dearest Mother, I thank you for undoing the knots in my life. Wrap me in your mantle of love, keep me under your protection, enlighten me with your peace! Amen.\n\nMary, Undoer of Knots, pray for me.\n\n[Closing prayer, each day.]\n\nVirgin Mary, Mother of fair love, Mother who never refuses to come to the aid of a child in need, Mother whose hands never cease to serve your beloved children because they are moved by the divine love and immense mercy that exists in your heart, cast your compassionate eyes upon me and see the snarl of knots that exist in my life.\n\nYou know very well how desperate I am, my pain and how I am bound by these knots.\n\nMary, Mother to whom God entrusted the undoing of the knots in the lives of His children, I entrust into your hands the ribbon of my life.\n\nNo one, not even the evil one himself, can take it away from your precious care. In your hands there is no knot that cannot be undone.\n\nPowerful Mother, by your grace and intercessory power with Your Son and My Liberator, Jesus, take into your hands today this knot...I beg you to undo it for the glory of God, once for all, You are my hope.\n\nO my Lady, you are the only consolation God gives me, the fortification of my feeble strength, the enrichment of my destitution and with Christ the freedom from my chains.\n\nHear my plea.\n\nKeep me, guide me, protect me, o safe refuge!\n\nMary, Undoer of Knots, pray for me.",
+      "english_name": null,
+      "id": "undoer_of_knots_novena",
+      "latin": null,
+      "latin_title": null,
+      "list_title": null,
+      "note": "Nine days, begun on any day: each day the Sign of the Cross, the Act of Contrition, three decades of the Rosary, the day's meditation, the last two decades, then the closing prayer.",
+      "origin": "Novena by Fr. Juan Ramón Celeiro, as printed by Ascension Press",
+      "search_words": [
+        "undoer of knots",
+        "untier of knots",
+        "novena",
+        "knots"
+      ],
+      "title": "The Novena to Our Lady, Undoer of Knots"
     }
-  ]
+  ],
+  "updated_at": "2026-11-14T06:00:00Z",
+  "version": "06ff98fbd2838a7b"
 }
