@@ -303,6 +303,9 @@ struct ContentView: View {
         // Once dismissed, the next first look owed (What's New, the tour)
         // follows
         .sheet(isPresented: $showsTranslationNotice, onDismiss: {
+            // Seen however it leaves, a swipe included: the daily strip
+            // goes on warning, and the sheet must not come straight back
+            SpanishBeta.markSheetSeen()
             Task { await presentFirstLook(after: .milliseconds(500)) }
         }) {
             SpanishBetaSheet {

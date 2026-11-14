@@ -93,7 +93,8 @@ struct appApp: App {
                     showsTranslationNotice = true
                 }
             }
-            .sheet(isPresented: $showsTranslationNotice) {
+            // Seen however it leaves, a swipe included
+            .sheet(isPresented: $showsTranslationNotice, onDismiss: { SpanishBeta.markSheetSeen() }) {
                 SpanishBetaSheet {
                     SpanishBeta.markSheetSeen()
                     showsTranslationNotice = false
