@@ -573,7 +573,10 @@ struct MysteryPrayerView: View {
     @ViewBuilder
     private var spokenLine: some View {
         if let failure = viewModel.spokenFailure {
-            SpokenRosaryNotice(failure: failure) {
+            SpokenRosaryNotice(
+                failure: failure,
+                railInset: OneRosaryColumn<EmptyView>.trailingInset(large: playerIsLarge)
+            ) {
                 Task { await viewModel.retrySpoken() }
             }
             .padding(.top, 10)
