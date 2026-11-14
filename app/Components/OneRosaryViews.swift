@@ -916,6 +916,26 @@ struct OneRosaryFooter: View {
     /// play between them stands at the row's centre on every step
     static let wayWidth: CGFloat = 128
 
+    /// The wider of Back's and Next's own widths, which both take, so a
+    /// longer word on one side (SIGUIENTE at the largest text) never
+    /// pushes play off the row's centre
+    @State private var sharedWidth: CGFloat = 0
+
+    /// The row's own width, so Back and Next never run into play's slot:
+    /// each may take at most half of what play leaves, less a 4 pt gap
+    /// beside the disc (135.5 on a 375 pt phone)
+    @State private var rowWidth: CGFloat = 0
+
+    private var wayCap: CGFloat {
+        rowWidth > 0 ? max(0, (rowWidth - OneRosaryPlayDisc.diameter) / 2 - 4) : .infinity
+    }
+
+    /// What Back and Next take: the shared width, held to the cap, where
+    /// the word scales a little rather than run under the disc
+    private var wayWidth: CGFloat { min(max(Self.wayWidth, sharedWidth), wayCap) }
+
+    private var wayPadding: CGFloat { dynamicTypeSize.isAccessibilitySize ? 8 : 12 }
+
     var body: some View {
         HStack(spacing: 0) {
             button(
@@ -970,6 +990,9 @@ struct OneRosaryFooter: View {
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .frame(minHeight: controlHeight)
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { rowWidth = $0 }
+        // A new text size starts the shared width again from its words
+        .onChange(of: dynamicTypeSize) { sharedWidth = 0 }
         .animation(Motion.settle, value: isLast)
         .animation(Motion.crossfade, value: play == nil)
     }
@@ -977,23 +1000,32 @@ struct OneRosaryFooter: View {
     private func button(
         title: String, leading: String?, trailing: String?, isWayOn: Bool, action: @escaping () -> Void
     ) -> some View {
-        Button(action: action) {
-            HStack(spacing: 8) {
-                if let leading { AppIcon(leading, size: 10) }
-                Text(title.uppercased())
-                    .font(AppFonts.labelFont(12))
-                    .tracking(2)
-                    .lineLimit(1)
-                if let trailing { AppIcon(trailing, size: 10) }
-            }
-            // Back in cream on a cream edge, plainly there; Next in gold,
-            // with the firmer edge, still the way on
-            .foregroundColor(isWayOn ? AppColors.goldLight : AppColors.cream.opacity(0.88))
-            .padding(.horizontal, 12)
-            // At least the shared width, and wider for a longer word
-            .frame(minWidth: Self.wayWidth)
-            .fixedSize(horizontal: true, vertical: false)
-            .frame(minHeight: controlHeight)
+        let label = HStack(spacing: 8) {
+            if let leading { AppIcon(leading, size: 10) }
+            Text(title.uppercased())
+                .font(AppFonts.labelFont(12))
+                // Tracked a little closer at the accessibility sizes, so
+                // SIGUIENTE stands whole on a 375 pt phone
+                .tracking(dynamicTypeSize.isAccessibilitySize ? 1 : 2)
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
+            if let trailing { AppIcon(trailing, size: 10) }
+        }
+        .padding(.horizontal, wayPadding)
+        return Button(action: action) {
+            label
+                // Back in cream on a cream edge, plainly there; Next in gold,
+                // with the firmer edge, still the way on
+                .foregroundColor(isWayOn ? AppColors.goldLight : AppColors.cream.opacity(0.88))
+                // The word's own width, measured unscaled, shared by both
+                .background(
+                    label.fixedSize(horizontal: true, vertical: false).hidden()
+                        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width in
+                            if width > sharedWidth { sharedWidth = width }
+                        }
+                )
+                .frame(width: wayWidth)
+                .frame(minHeight: controlHeight)
             .background(Capsule().fill(AppColors.background.opacity(isWayOn ? 0.7 : 0.55)))
             .overlay(
                 Capsule().strokeBorder(
