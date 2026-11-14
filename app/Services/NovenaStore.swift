@@ -25,6 +25,9 @@ final class NovenaStore {
     /// Finished, newest first
     private(set) var history: [FinishedNovena]
 
+    /// A reminder tapped: the novena and day it named, for the app to open
+    var requested: NovenaRequest?
+
     @ObservationIgnored private let defaults: UserDefaults
     /// False in tests: nothing is laid on the system's notification center
     @ObservationIgnored private let schedulesNotifications: Bool
@@ -34,9 +37,9 @@ final class NovenaStore {
         static let history = "novenas.history"
     }
 
-    static let category = "LUMEN_NOVENA"
-    static let novenaKey = "novenaID"
-    static let dayKey = "novenaDay"
+    nonisolated static let category = "LUMEN_NOVENA"
+    nonisolated static let novenaKey = "novenaID"
+    nonisolated static let dayKey = "novenaDay"
 
     init(defaults: UserDefaults = .standard, schedulesNotifications: Bool = true) {
         self.defaults = defaults
@@ -264,4 +267,11 @@ final class NovenaStore {
         let ids = await center.pendingNotificationRequests().map(\.identifier).filter { $0.hasPrefix(prefix) }
         center.removePendingNotificationRequests(withIdentifiers: ids)
     }
+}
+
+/// A novena reminder's tap: which novena, and which day (0 for the one
+/// the day after the last date)
+struct NovenaRequest: Equatable {
+    var novenaID: String
+    var day: Int
 }
