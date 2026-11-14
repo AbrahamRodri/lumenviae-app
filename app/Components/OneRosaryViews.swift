@@ -916,6 +916,11 @@ struct OneRosaryFooter: View {
     /// play between them stands at the row's centre on every step
     static let wayWidth: CGFloat = 128
 
+    /// The wider of Back's and Next's own widths, which both take, so a
+    /// longer word on one side (SIGUIENTE at the largest text) never
+    /// pushes play off the row's centre
+    @State private var sharedWidth: CGFloat = 0
+
     var body: some View {
         HStack(spacing: 0) {
             button(
@@ -990,9 +995,12 @@ struct OneRosaryFooter: View {
             // with the firmer edge, still the way on
             .foregroundColor(isWayOn ? AppColors.goldLight : AppColors.cream.opacity(0.88))
             .padding(.horizontal, 12)
-            // At least the shared width, and wider for a longer word
-            .frame(minWidth: Self.wayWidth)
             .fixedSize(horizontal: true, vertical: false)
+            .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width in
+                if width > sharedWidth { sharedWidth = width }
+            }
+            // At least the shared width, and as wide as the wider word
+            .frame(minWidth: max(Self.wayWidth, sharedWidth))
             .frame(minHeight: controlHeight)
             .background(Capsule().fill(AppColors.background.opacity(isWayOn ? 0.7 : 0.55)))
             .overlay(
