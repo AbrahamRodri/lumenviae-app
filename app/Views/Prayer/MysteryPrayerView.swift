@@ -808,12 +808,15 @@ extension MysteryPrayerView {
             let rail = rail
             // The words' first line at one height on every step; the head
             // stands in its room above them
-            let columnTop = max(
+            let preferredTop = max(
                 OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight, large: playerIsLarge)
                     - OneRosaryColumn<EmptyView>.headHeight(large: playerIsLarge)
                     - geometry.safeAreaInsets.top,
                 12 + 44 + 14
             )
+            let columnTop = OneRosaryColumn<EmptyView>.columnTop(
+                preferred: preferredTop, height: geometry.size.height, footHeight: controlsHeight,
+                large: playerIsLarge, headerFoot: 12 + 44 + 14)
 
             VStack(spacing: 0) {
                 let placed = OneRosaryColumn<EmptyView>.layout(
