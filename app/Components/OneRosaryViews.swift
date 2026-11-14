@@ -84,15 +84,21 @@ struct OneRosaryRailView: View {
     /// Where the rail's window begins, from the top of the glass: lower
     /// than the strand's, and lowered with the words (`OneRosaryColumn
     /// .wordsTop`), so the hand's bead stays level with them
-    static func windowTop(fullHeight: CGFloat) -> CGFloat {
-        fullHeight * 0.38
+    static func windowTop(fullHeight: CGFloat, large: Bool = false) -> CGFloat {
+        // At the accessibility sizes, three beads level with the words'
+        // middle, under the larger head
+        large ? fullHeight * 0.5 - rowHeight : fullHeight * 0.38
     }
 
     /// The window's height: about half the glass, and never past the top
     /// of Back and Next, cut to an odd number of rows, so with the hand at
     /// the middle both edges fall on the gap between two beads and never
     /// through one
-    static func windowHeight(fullHeight: CGFloat) -> CGFloat {
+    static func windowHeight(fullHeight: CGFloat, large: Bool = false) -> CGFloat {
+        // At the accessibility sizes the rail is the bead under the hand
+        // and one either side; the step line keeps the count. Five rows,
+        // since the window's fade clears the outermost one at each end
+        if large { return rowHeight * 5 }
         let room = min(fullHeight * 0.52, fullHeight * 0.8 + rowHeight - windowTop(fullHeight: fullHeight))
         var rows = Int((room / rowHeight).rounded(.down))
         if rows % 2 == 0 { rows -= 1 }
@@ -471,10 +477,11 @@ extension View {
         complete: Bool = false,
         closing: Bool = false,
         hidden: Bool = false,
+        large: Bool = false,
         onTap: @escaping (Int) -> Void
     ) -> some View {
-        let windowTop = max(OneRosaryRailView.windowTop(fullHeight: fullHeight) - topInset, 0)
-        let windowHeight = OneRosaryRailView.windowHeight(fullHeight: fullHeight)
+        let windowTop = max(OneRosaryRailView.windowTop(fullHeight: fullHeight, large: large) - topInset, 0)
+        let windowHeight = OneRosaryRailView.windowHeight(fullHeight: fullHeight, large: large)
         let row = OneRosaryRailView.rowHeight
         let beadInset: CGFloat = 26
 
@@ -542,6 +549,8 @@ extension View {
 /// The words take the room left above the foot, so a long prayer scrolls
 /// in it rather than shrink (`SimpleRosaryWords`).
 struct OneRosaryColumn<Words: View>: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     let title: String
     /// Where the Rosary stands, under the title
     let place: String
@@ -568,18 +577,32 @@ struct OneRosaryColumn<Words: View>: View {
     /// less this
     static var headHeight: CGFloat { 112 }
 
+    /// The head's room at the accessibility sizes, where the title and
+    /// the step are set larger
+    static var largeHeadHeight: CGFloat { 168 }
+
+    static func headHeight(large: Bool) -> CGFloat { large ? largeHeadHeight : headHeight }
+
+    /// The words' trailing inset, clear of the rail: at the accessibility
+    /// sizes the rail is three beads at the edge and the words widen
+    static func trailingInset(large: Bool) -> CGFloat { large ? 80 : 104 }
+
     /// Where the first line of the words stands, from the top of the
     /// glass: low enough that the words sit near Back and Next, with the
     /// painting's fold (`paintingFraction`) lowered with them, so the
     /// painting keeps its height and no dark band stands under a short
     /// prayer
-    static func wordsTop(fullHeight: CGFloat) -> CGFloat {
-        fullHeight * 0.55
+    static func wordsTop(fullHeight: CGFloat, large: Bool = false) -> CGFloat {
+        // At the accessibility sizes the painting gives up room: the
+        // words begin higher, with the larger head above them
+        large ? fullHeight * 0.38 + largeHeadHeight - headHeight : fullHeight * 0.55
     }
 
     /// The painting's share of the glass on the players, so it
     /// has dissolved by the time the words begin
     static var paintingFraction: CGFloat { 0.65 }
+
+    static func paintingFraction(large: Bool) -> CGFloat { large ? 0.48 : paintingFraction }
 
     /// Where the column's head stands with the words and beads put away:
     /// anchored low, just over Back and Next, as a caption under the
@@ -635,7 +658,7 @@ struct OneRosaryColumn<Words: View>: View {
                     .padding(.top, 12)
             }
             .fixedSize(horizontal: false, vertical: true)
-            .frame(height: Self.headHeight, alignment: .bottomLeading)
+            .frame(height: Self.headHeight(large: dynamicTypeSize.isAccessibilitySize), alignment: .bottomLeading)
 
             VStack(alignment: .leading, spacing: 0) {
                 if let help {
@@ -871,6 +894,12 @@ struct OneRosaryPendantVeil: View {
 /// Next's place. While a voice speaks, its play and pause stands between
 /// them (`play`), always in that one place.
 struct OneRosaryFooter: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    /// The controls' height: 56 at the accessibility sizes, where the
+    /// player follows the phone's text to AX1
+    private var controlHeight: CGFloat { dynamicTypeSize.isAccessibilitySize ? 56 : 44 }
+
     let canGoBack: Bool
     let canGoOn: Bool
     let isLast: Bool
@@ -886,6 +915,26 @@ struct OneRosaryFooter: View {
     /// Back and Next (and AMEN in Next's place) share one width, so the
     /// play between them stands at the row's centre on every step
     static let wayWidth: CGFloat = 128
+
+    /// The wider of Back's and Next's own widths, which both take, so a
+    /// longer word on one side (SIGUIENTE at the largest text) never
+    /// pushes play off the row's centre
+    @State private var sharedWidth: CGFloat = 0
+
+    /// The row's own width, so Back and Next never run into play's slot:
+    /// each may take at most half of what play leaves, less a 4 pt gap
+    /// beside the disc (135.5 on a 375 pt phone)
+    @State private var rowWidth: CGFloat = 0
+
+    private var wayCap: CGFloat {
+        rowWidth > 0 ? max(0, (rowWidth - OneRosaryPlayDisc.diameter) / 2 - 4) : .infinity
+    }
+
+    /// What Back and Next take: the shared width, held to the cap, where
+    /// the word scales a little rather than run under the disc
+    private var wayWidth: CGFloat { min(max(Self.wayWidth, sharedWidth), wayCap) }
+
+    private var wayPadding: CGFloat { dynamicTypeSize.isAccessibilitySize ? 8 : 12 }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -909,7 +958,7 @@ struct OneRosaryFooter: View {
                     play.transition(.opacity)
                 }
             }
-            .frame(width: OneRosaryPlayDisc.diameter, height: 44)
+            .frame(width: OneRosaryPlayDisc.diameter, height: controlHeight)
 
             Group {
                 if isLast {
@@ -940,7 +989,10 @@ struct OneRosaryFooter: View {
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
-        .frame(minHeight: 44)
+        .frame(minHeight: controlHeight)
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { rowWidth = $0 }
+        // A new text size starts the shared width again from its words
+        .onChange(of: dynamicTypeSize) { sharedWidth = 0 }
         .animation(Motion.settle, value: isLast)
         .animation(Motion.crossfade, value: play == nil)
     }
@@ -948,23 +1000,32 @@ struct OneRosaryFooter: View {
     private func button(
         title: String, leading: String?, trailing: String?, isWayOn: Bool, action: @escaping () -> Void
     ) -> some View {
-        Button(action: action) {
-            HStack(spacing: 8) {
-                if let leading { AppIcon(leading, size: 10) }
-                Text(title.uppercased())
-                    .font(AppFonts.labelFont(12))
-                    .tracking(2)
-                    .lineLimit(1)
-                if let trailing { AppIcon(trailing, size: 10) }
-            }
-            // Back in cream on a cream edge, plainly there; Next in gold,
-            // with the firmer edge, still the way on
-            .foregroundColor(isWayOn ? AppColors.goldLight : AppColors.cream.opacity(0.88))
-            .padding(.horizontal, 12)
-            // At least the shared width, and wider for a longer word
-            .frame(minWidth: Self.wayWidth)
-            .fixedSize(horizontal: true, vertical: false)
-            .frame(minHeight: 44)
+        let label = HStack(spacing: 8) {
+            if let leading { AppIcon(leading, size: 10) }
+            Text(title.uppercased())
+                .font(AppFonts.labelFont(12))
+                // Tracked a little closer at the accessibility sizes, so
+                // SIGUIENTE stands whole on a 375 pt phone
+                .tracking(dynamicTypeSize.isAccessibilitySize ? 1 : 2)
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
+            if let trailing { AppIcon(trailing, size: 10) }
+        }
+        .padding(.horizontal, wayPadding)
+        return Button(action: action) {
+            label
+                // Back in cream on a cream edge, plainly there; Next in gold,
+                // with the firmer edge, still the way on
+                .foregroundColor(isWayOn ? AppColors.goldLight : AppColors.cream.opacity(0.88))
+                // The word's own width, measured unscaled, shared by both
+                .background(
+                    label.fixedSize(horizontal: true, vertical: false).hidden()
+                        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width in
+                            if width > sharedWidth { sharedWidth = width }
+                        }
+                )
+                .frame(width: wayWidth)
+                .frame(minHeight: controlHeight)
             .background(Capsule().fill(AppColors.background.opacity(isWayOn ? 0.7 : 0.55)))
             .overlay(
                 Capsule().strokeBorder(

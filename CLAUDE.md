@@ -3282,7 +3282,18 @@ default to Candlelit**:
   Past that the display type broke mid-word and the pages stopped reading
   as designed; `.xxLarge` was tried first and still cut the home page's
   Today's Prayer rows short. At every accessibility size (AX1–AX5) the app
-  draws exactly as at `.xLarge`, so no layout is designed for those sizes:
+  draws exactly as at `.xLarge`, so no layout is designed for those sizes,
+  with one exception: **the Rosary's player follows the phone to
+  `.accessibility1`** (`DynamicTypeSize.playerMaximum`, Abraham, 10 Nov
+  2026: "Yes, build it"). `PhoneTypeSizeRoot` in `appApp` reads the
+  phone's size above the root's clamp (`phoneTypeSize`), both players
+  wear `.followsPhoneTypeSize(upTo: .playerMaximum)`, and their Voice,
+  Text, Go to and More sheets cap at `playerMaximum` (the journal editor
+  and the feedback form keep `appMaximum`). At an accessibility size the
+  player makes room (`playerIsLarge`): the painting folds at 48 percent,
+  the words begin at 38 percent under a taller head, the rail is three
+  beads, the words' trailing inset is 80 rather than 104, clear of the decade's numeral, Back, play and
+  Next stand 56 points tall, and the Text sheet opens full. Elsewhere:
   the `isAccessibilitySize` and `>= .accessibility1` branches that remain
   (the Chant Library, a set's ledger, the Prayer Book's grid and its
   aloud-or-silence sheet) are unreachable, kept only in case the cap is

@@ -59,6 +59,7 @@ struct appApp: App {
 
     var body: some Scene {
         WindowGroup {
+            PhoneTypeSizeRoot {
             Group {
                 if isLaunched {
                     if hasSeenOnboarding {
@@ -97,6 +98,7 @@ struct appApp: App {
             // no further. Sheets and covers don't inherit this; each one
             // carries the same modifier on its content.
             .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+            }
         }
         .environment(userSettings)
         .modelContainer(for: [PrayerSession.self, JournalEntry.self, ConsecrationProgress.self, TrueDevotionReadingProgress.self, BookReadingProgress.self])
