@@ -226,6 +226,8 @@ struct NovenaRosaryDayTests {
     private let day = PrayerBookDocument.Day(
         number: 4, title: "Day 4",
         parts: [
+            // As served: the day opens on its own Sign of the Cross
+            .init(kind: "opening", prayerID: "sign_of_cross"),
             .init(kind: "opening", prayerID: "act_of_contrition"),
             .init(kind: "rosary", decades: [1, 2, 3]),
             .init(kind: "meditation", id: "knots_meditation_4", text: String(repeating: "word ", count: 300)),
@@ -246,6 +248,11 @@ struct NovenaRosaryDayTests {
         #expect(s[0].kind == .prayer("sign_of_cross"))
         #expect(s[1].kind == .prayer("act_of_contrition"))
         #expect(s[2].kind == .prayer("apostles_creed"))
+    }
+
+    @Test func theSignOfTheCrossIsSaidOnceAtEachEnd() {
+        let s = script()
+        #expect(s.filter { $0.kind == .prayer("sign_of_cross") }.count == 2)
     }
 
     @Test func theMeditationStandsBetweenTheThirdAndFourthDecades() throws {

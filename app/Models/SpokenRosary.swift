@@ -247,6 +247,9 @@ struct SpokenNovenaDay: Hashable {
                 }
                 if attached { continue }
             }
+            // The Rosary opens and ends on its own Sign of the Cross: a
+            // day's own, before the Rosary or after it, would be said twice
+            if part.prayerID == "sign_of_cross", lastDecade == nil || lastDecade! >= 4 { continue }
             if let id = part.prayerID {
                 let found = book(id)
                 let caption = part.title ?? found?.title ?? id
