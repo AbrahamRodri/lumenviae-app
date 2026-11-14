@@ -25,6 +25,9 @@ nonisolated struct PrayerBookDocument: Codable, Equatable, Sendable {
     var updatedAt: String?
     var prayers: [Prayer]
     var chapters: [Chapter]
+    /// The novenas (`NovenaDocument.swift`), served only when named in
+    /// `fields`; empty in a document from before them
+    var novenas: [Novena] = []
 
     struct Prayer: Codable, Equatable, Sendable {
         var id: String
@@ -169,15 +172,19 @@ nonisolated struct PrayerBookDocument: Codable, Equatable, Sendable {
     }
 
     enum CodingKeys: String, CodingKey {
-        case version, prayers, chapters
+        case version, prayers, chapters, novenas
         case updatedAt = "updated_at"
     }
 
-    init(version: String? = nil, updatedAt: String? = nil, prayers: [Prayer], chapters: [Chapter]) {
+    init(
+        version: String? = nil, updatedAt: String? = nil, prayers: [Prayer], chapters: [Chapter],
+        novenas: [Novena] = []
+    ) {
         self.version = version
         self.updatedAt = updatedAt
         self.prayers = prayers
         self.chapters = chapters
+        self.novenas = novenas
     }
 
     init(from decoder: Decoder) throws {
@@ -186,6 +193,7 @@ nonisolated struct PrayerBookDocument: Codable, Equatable, Sendable {
         updatedAt = try c.decodeIfPresent(String.self, forKey: .updatedAt)
         prayers = try c.decode([Prayer].self, forKey: .prayers)
         chapters = try c.decode([Chapter].self, forKey: .chapters)
+        novenas = try c.decodeIfPresent([Novena].self, forKey: .novenas) ?? []
     }
 
     func encode(to encoder: Encoder) throws {
@@ -194,6 +202,8 @@ nonisolated struct PrayerBookDocument: Codable, Equatable, Sendable {
         try c.encodeIfPresent(updatedAt, forKey: .updatedAt)
         try c.encode(prayers, forKey: .prayers)
         try c.encode(chapters, forKey: .chapters)
+        // Left out when empty, so a book from before novenas writes as it did
+        if !novenas.isEmpty { try c.encode(novenas, forKey: .novenas) }
     }
 }
 
