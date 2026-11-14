@@ -13355,6 +13355,18 @@
         }
       }
     },
+    "Mary, Undoer of Knots, pray for me." : {
+      "comment" : "Undoer of Knots novena: the invocation said after its meditation and its closing prayer (Spanish: Nuestra Señora Desatanudos, Abraham 14 Nov)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "María, Desatanudos, ruega por mí."
+          }
+        }
+      }
+    },
     "Mary’s feasts, titles and saints" : {
       "comment" : "Chapel, Library tile: line under the Marian Library door",
       "localizations" : {
@@ -16197,6 +16209,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Salterio de Nuestra Señora"
+          }
+        }
+      }
+    },
+    "Our Lady, Undoer of Knots" : {
+      "comment" : "Undoer of Knots novena: its name (Spanish: Nuestra Señora Desatanudos, Abraham 14 Nov)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuestra Señora Desatanudos"
           }
         }
       }
@@ -25963,6 +25987,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En curso, %@"
+          }
+        }
+      }
+    },
+    "Undoer of Knots" : {
+      "comment" : "Undoer of Knots novena: its short name, under each step and in reminders (Spanish: Desatanudos)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desatanudos"
           }
         }
       }

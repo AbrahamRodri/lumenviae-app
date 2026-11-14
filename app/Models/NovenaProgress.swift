@@ -182,7 +182,8 @@ extension NovenaDayContext {
     #if DEBUG
         static let debugKnots: PrayerBookDocument.Novena = {
             let invocation = PrayerBookDocument.Part(
-                kind: "invocation", id: "debug_knots_invocation", text: "Mary, Undoer of Knots, pray for me.")
+                kind: "invocation", id: "debug_knots_invocation",
+                text: String(localized: "Mary, Undoer of Knots, pray for me.", comment: "Undoer of Knots novena: the invocation said after its meditation and its closing prayer (Spanish: Nuestra Señora Desatanudos, Abraham 14 Nov)"))
             let days = (1...9).map { n in
                 PrayerBookDocument.Day(
                     number: n, title: "Day \(n)",
@@ -201,7 +202,9 @@ extension NovenaDayContext {
                     ])
             }
             return PrayerBookDocument.Novena(
-                id: "debug_knots", title: "Our Lady, Undoer of Knots", listTitle: "Undoer of Knots",
+                id: "debug_knots",
+                title: String(localized: "Our Lady, Undoer of Knots", comment: "Undoer of Knots novena: its name (Spanish: Nuestra Señora Desatanudos, Abraham 14 Nov)"),
+                listTitle: String(localized: "Undoer of Knots", comment: "Undoer of Knots novena: its short name, under each step and in reminders (Spanish: Desatanudos)"),
                 detail: "", prayerID: "sub_tuum", chapterID: "our_lady", length: 9,
                 painting: "novena_undoer_of_knots", days: days)
         }()
