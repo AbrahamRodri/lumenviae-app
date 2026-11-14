@@ -1039,47 +1039,6 @@ struct OneRosaryPlayDisc: View, Equatable {
     }
 }
 
-// MARK: - OneRosaryReadLink
-
-/// On a mystery's Our Father, where its meditation is heard: the door to
-/// the meditation as text, named with its title where it has one, in a
-/// hairline capsule of its own so it reads as a button and not a caption
-struct OneRosaryReadLink: View {
-    var title: String? = nil
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 8) {
-                AppIcon("ph-book-open", size: 15)
-                Text(
-                    "READ THE MEDITATION",
-                    comment: "One Rosary beta, the player on a mystery's Our Father: the quiet door to the meditation as text"
-                )
-                .font(AppFonts.labelFont(12))
-                .tracking(1.6)
-                if let title {
-                    Text(verbatim: "·")
-                    Text(title)
-                        .font(AppFonts.italicFont(14))
-                        .lineLimit(1)
-                }
-                AppIcon("ph-caret-right", size: 9)
-            }
-            .foregroundColor(AppColors.goldLight)
-            .padding(.horizontal, 16)
-            .frame(minHeight: 40)
-            .background(Capsule().fill(AppColors.background.opacity(0.55)))
-            .overlay(Capsule().strokeBorder(AppColors.goldLight.opacity(0.5), lineWidth: 1))
-            .frame(minHeight: 44)
-            .contentShape(Capsule())
-        }
-        .buttonStyle(SacredCardButtonStyle())
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(Text("Read the meditation", comment: "Prayer screen: VoiceOver name of the button that opens the meditation as text"))
-    }
-}
-
 // MARK: - OneRosaryTapHint
 
 /// Once, the first time the beads can be tapped: that they can. Set in
@@ -1192,13 +1151,15 @@ struct OneRosaryUtility: Identifiable {
     let title: String
     /// The name VoiceOver reads
     let label: String
+    /// Drawn in gold, as this step's own act (READ), where the rest are cream
+    var isAccent: Bool = false
     let action: () -> Void
 }
 
 /// The row under Back and Next, the same on both players and on every
 /// step: each glyph with its name beneath (VOICE, TEXT, MORE), quieter
-/// than the prayer above it. The meditation to read is a door of its own
-/// on the step it belongs to (`OneRosaryReadLink`).
+/// than the prayer above it. Through a mystery with a meditation, READ
+/// leads the row in gold and opens the meditation as text.
 struct OneRosaryUtilityRow: View {
     let items: [OneRosaryUtility]
 
@@ -1210,10 +1171,12 @@ struct OneRosaryUtilityRow: View {
                         AppIcon(item.icon, size: 20)
                         Text(item.title.uppercased())
                             .font(AppFonts.labelFont(12))
-                            .tracking(1.4)
+                            // Four names to a row hold to one line at
+                            // xLarge with the letters a little closer
+                            .tracking(items.count > 3 ? 0.8 : 1.4)
                             .lineLimit(1)
                     }
-                    .foregroundColor(AppColors.cream.opacity(0.72))
+                    .foregroundColor(item.isAccent ? AppColors.goldLight : AppColors.cream.opacity(0.72))
                     .frame(width: 80, height: 50)
                     .contentShape(Rectangle())
                 }
@@ -1221,6 +1184,20 @@ struct OneRosaryUtilityRow: View {
                 .accessibilityLabel(item.label)
             }
         }
+    }
+
+    /// The mystery's meditation, opened as text over the player
+    static func read(_ action: @escaping () -> Void) -> OneRosaryUtility {
+        OneRosaryUtility(
+            id: "read",
+            icon: "ph-book-open",
+            title: String(
+                localized: "player.read", defaultValue: "Read",
+                comment: "Prayer screen, the row of small buttons under Back and Next: the first, opening the mystery's meditation as text; one short word (Spanish: Leer)"),
+            label: String(localized: "Read the meditation", comment: "Prayer screen: VoiceOver name of the button that opens the meditation as text"),
+            isAccent: true,
+            action: action
+        )
     }
 
     /// The voice, the speed and the Rosary's choices
