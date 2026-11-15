@@ -240,7 +240,7 @@ struct SpanishBetaSheet: View {
                     .font(AppFonts.italicFont(15))
                     .foregroundColor(AppColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.leading, SheetMetrics.gutter + 44)
+                    .padding(.leading, SheetMetrics.gutter + 36)
                     .padding(.trailing, SheetMetrics.gutter)
                     .padding(.bottom, 10)
                 }
