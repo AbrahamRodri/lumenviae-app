@@ -841,7 +841,9 @@ the page they serve):
   Sorrowful, Vellum) is built but switched off
   (`AppIconPickerRows.isEnabled = false`), and `appApp` puts any
   alternate back to the primary at launch until it returns.
-- **Prayer Experience** — text size, prayer language (English by
+- **Prayer Experience** — text size (a new install starts it from the
+  phone's own text size, `UserSettings.startTextSizeFromPhone`, as the introduction opens; an
+  install read in before keeps its own), prayer language (English by
   default; the app's first face is the one most users read), and the
   narration voice (`NarrationVoiceRow`, the server's list; the same
   choice stands in the player's playback sheet): how every page that

@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import UIKit
 import UserNotifications
 import Foundation
 
@@ -159,6 +160,38 @@ final class UserSettings {
     /// Maps to a point-size range of 16–24 pt.
     var textSizeScale: Double = 0.5 {
         didSet { UserDefaults.standard.set(textSizeScale, forKey: "userSettings.textSizeScale") }
+    }
+
+    /// Where a new install's Text Size starts: the phone's own text size,
+    /// so someone who reads large on the phone reads large here from the
+    /// first prayer. The phone's default, Large, is the middle of the
+    /// range, as before; every accessibility size is the top of it.
+    nonisolated static func textSizeScale(forPhone category: UIContentSizeCategory) -> Double {
+        switch category {
+        case .extraSmall: return 0.25
+        case .small: return 0.3125
+        case .medium: return 0.375
+        case .extraLarge: return 0.625
+        case .extraExtraLarge: return 0.75
+        case .extraExtraExtraLarge: return 0.875
+        case .accessibilityMedium, .accessibilityLarge, .accessibilityExtraLarge,
+             .accessibilityExtraExtraLarge, .accessibilityExtraExtraExtraLarge:
+            return 1
+        default: return 0.5
+        }
+    }
+
+    /// A new install, as the introduction opens, takes the phone's text
+    /// size as its own Text Size and keeps it; one chosen already, or an
+    /// install read in before, is left as it is. Asked once the app has
+    /// launched: while the app is still being made the phone's size reads
+    /// as unspecified.
+    func startTextSizeFromPhone(_ category: UIContentSizeCategory) {
+        let d = UserDefaults.standard
+        guard d.object(forKey: "userSettings.textSizeScale") == nil, category != .unspecified,
+            !LibraryContent.hostsTests
+        else { return }
+        textSizeScale = Self.textSizeScale(forPhone: category)
     }
 
     /// Resolved font size for meditation content. The middle of the range
