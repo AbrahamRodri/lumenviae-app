@@ -15683,17 +15683,6 @@
         }
       }
     },
-    "Off, only the prayer's name stays" : {
-      "comment" : "The Rosary's player, text sheet: the line under Show Words and Beads, saying what is left when it is off",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Si lo apagas, solo queda el nombre de la oración"
-          }
-        }
-      }
-    },
     "Offertory Chant" : {
       "comment" : "The Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it",
       "localizations" : {
@@ -27350,6 +27339,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sea cual sea el día que tuviste, las cuentas son las mismas."
+          }
+        }
+      }
+    },
+    "When off, only the prayer's name stays." : {
+      "comment" : "The Rosary's player, text sheet: the line under Show Words and Beads, saying what is left when it is off",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si lo apagas, solo queda el nombre de la oración."
           }
         }
       }
