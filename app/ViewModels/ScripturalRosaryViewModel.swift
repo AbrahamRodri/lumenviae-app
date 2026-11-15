@@ -608,6 +608,16 @@ final class ScripturalRosaryViewModel {
             NovenaStore.shared.progress[novena.novenaID], length: novena.length, here: novena.dayNumber)
     }
 
+    /// A prayer's name set after the first in a sentence: "The Act of
+    /// Contrition" reads "the Act of Contrition" there, as the Sign of the
+    /// Cross's sentence names the Creed (and Spanish "El Acto", "el Acto")
+    static func midSentence(_ name: String) -> String {
+        for article in ["The ", "El ", "La ", "Los ", "Las "] where name.hasPrefix(article) {
+            return article.lowercased() + name.dropFirst(article.count)
+        }
+        return name
+    }
+
     /// Go to's rows said for a novena day: the opening with its own
     /// prayers, the day's meditation, and the closing with the novena's
     /// closing prayer (design frame f-c6)
@@ -617,7 +627,7 @@ final class ScripturalRosaryViewModel {
         // The novena's own opening prayers, said after the Sign of the Cross
         let own = novena.day.opening.map { insert -> String in
             switch insert {
-            case .prayer(_, let caption), .words(let caption, _): return caption
+            case .prayer(_, let caption), .words(let caption, _): return Self.midSentence(caption)
             }
         }
         rows[.opening] = (
@@ -640,7 +650,7 @@ final class ScripturalRosaryViewModel {
         rows[.closing] = (
             SpokenNovenaDay.caption(forKind: "closing"),
             closingWords.map {
-                String(localized: "The Hail, Holy Queen, then \($0.caption)", comment: "Novena day, Go to: under The Closing Prayer, what is said there; the second part is the novena's closing prayer's title")
+                String(localized: "The Hail, Holy Queen, then \(Self.midSentence($0.caption))", comment: "Novena day, Go to: under The Closing Prayer, what is said there; the second part is the novena's closing prayer's title")
             },
             "lv-lozenge"
         )

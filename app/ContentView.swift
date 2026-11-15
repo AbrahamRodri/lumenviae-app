@@ -258,7 +258,7 @@ struct ContentView: View {
                 let day = today ?? open.first
             else { return }
             router.push(.scripturalRosaryPrayer(ScripturalRosaryLaunch(
-                category: ScheduleService.categoryForToday(), form: .plain,
+                category: NovenaProgress.mysteriesToday(), form: .plain,
                 novenaID: request.novenaID, novenaDay: day)))
         }
         .task {

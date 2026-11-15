@@ -284,6 +284,9 @@ struct PrayerSaidSheet: View {
 /// than "(here name your request)" in the sentence
 struct PrayerIntentionPause: View {
     let size: CGFloat
+    /// The reader's own intention, kept with a novena: said under the
+    /// pause in place of the line asking for one
+    var intention: String? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -295,13 +298,20 @@ struct PrayerIntentionPause: View {
             .font(AppFonts.readingItalicFont(max(15, size - 2)))
             .foregroundColor(AppColors.gold)
             .underline(pattern: .dot, color: AppColors.gold)
-            Text(
-                String(
-                    localized: "Pause, and name it in your heart.",
-                    comment: "Pray-along page: the line under the intention pause")
-            )
-            .font(AppFonts.readingItalicFont(max(13, size - 5)))
-            .foregroundColor(AppColors.textSecondary)
+            if let intention, !intention.isEmpty {
+                Text(intention)
+                    .font(AppFonts.italicFont(max(15, size - 2)))
+                    .foregroundColor(AppColors.goldLight)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else {
+                Text(
+                    String(
+                        localized: "Pause, and name it in your heart.",
+                        comment: "Pray-along page: the line under the intention pause")
+                )
+                .font(AppFonts.readingItalicFont(max(13, size - 5)))
+                .foregroundColor(AppColors.textSecondary)
+            }
         }
         .accessibilityElement(children: .combine)
     }

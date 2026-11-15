@@ -658,20 +658,29 @@ extension ScripturalRosaryPrayerView {
             // whatever the intention, the language or the text size; its
             // foot dissolves under Back and Next as the prayers' does
             ScrollView(showsIndicators: false) {
+            let paragraphs = ReadingText.paragraphs(of: held.text)
+            let pauses = paragraphs.contains(where: Self.isIntentionPause)
             VStack(alignment: .leading, spacing: 12) {
-                if held.id.contains("meditation"), let intention = novena.intention {
+                // Where the words have no pause for it, the intention
+                // stands over the meditation; where they have one, it is
+                // said there, as the book page sets it
+                if !pauses, held.id.contains("meditation"), let intention = novena.intention {
                     Text(intention)
                         .font(AppFonts.italicFont(16))
                         .foregroundColor(AppColors.goldLight)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                ForEach(Array(ReadingText.paragraphs(of: held.text).enumerated()), id: \.offset) { _, line in
-                    Text(Rubric.paragraph([line], size: simpleWordsSize))
-                        .font(AppFonts.readingFont(simpleWordsSize))
-                        .foregroundColor(AppColors.cream)
-                        .lineSpacing(5)
-                        .frame(maxWidth: .infinity, alignment: .topLeading)
-                        .fixedSize(horizontal: false, vertical: true)
+                ForEach(Array(paragraphs.enumerated()), id: \.offset) { _, line in
+                    if Self.isIntentionPause(line) {
+                        PrayerIntentionPause(size: simpleWordsSize, intention: novena.intention)
+                    } else {
+                        Text(Rubric.paragraph([line], size: simpleWordsSize))
+                            .font(AppFonts.readingFont(simpleWordsSize))
+                            .foregroundColor(AppColors.cream)
+                            .lineSpacing(5)
+                            .frame(maxWidth: .infinity, alignment: .topLeading)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
                 if let invocation = held.invocation {
                     Text(invocation)
@@ -726,6 +735,13 @@ extension ScripturalRosaryPrayerView {
             ]
             .compactMap { $0 }
             .joined(separator: ". "))
+    }
+
+    /// "[Here name your request.]" on a line of its own: the book page's
+    /// gold pause, never a red direction
+    static func isIntentionPause(_ line: String) -> Bool {
+        let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        return PrayerMarkup.isRubric(trimmed) && PrayerPage.isIntention(PrayerMarkup.rubric(trimmed))
     }
 
     @ViewBuilder
