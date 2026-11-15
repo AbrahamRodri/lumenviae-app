@@ -11765,7 +11765,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si no ves Idioma, agrega inglés en Ajustes > General > Idioma y región."
+            "value" : "Si no ves Idioma, agrega inglés en Configuración > General > Idioma y región."
           }
         }
       }
