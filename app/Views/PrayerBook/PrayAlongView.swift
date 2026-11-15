@@ -568,7 +568,9 @@ struct PrayAlongView: View {
 
                             // Where the prayer comes from, quietly: the
                             // book credits every prayer it prints
-                            if let origin = prayer.origin, !origin.isEmpty {
+                            // English only for now: hidden on a Spanish page
+                            // until the book gives the origin in Spanish
+                            if let origin = prayer.origin, !origin.isEmpty, !SpanishContent.isActive {
                                 Text(origin)
                                     .font(AppFonts.readingItalicFont(15))
                                     .foregroundColor(AppColors.textSecondary)

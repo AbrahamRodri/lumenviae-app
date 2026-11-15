@@ -308,7 +308,7 @@ struct PrayerIntentionPause: View {
 // MARK: - A litany's group
 
 /// A group of calls marked by a red line, its answer once beside the
-/// first call; an answer too long to stand beside them stands above
+/// first call; where they cannot share the line, the answer stands above
 struct PrayerLitanyGroup: View {
     let invocations: [String]
     let response: String
@@ -332,17 +332,18 @@ struct PrayerLitanyGroup: View {
     }
 
     var body: some View {
-        Group {
-            if response.count <= 18 {
-                HStack(alignment: .firstTextBaseline, spacing: 12) {
-                    calls.frame(maxWidth: .infinity, alignment: .leading)
-                    answer.fixedSize()
-                }
-            } else {
-                VStack(alignment: .leading, spacing: 6) {
-                    answer
-                    calls
-                }
+        // Beside the calls when every call and the answer fit on their
+        // lines at this size, measured; otherwise above them, the same
+        // rule at every size
+        ViewThatFits(in: .horizontal) {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                calls.fixedSize(horizontal: true, vertical: false)
+                Spacer(minLength: 0)
+                answer.fixedSize()
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                answer
+                calls
             }
         }
         .padding(.leading, 12)
