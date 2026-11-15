@@ -728,7 +728,7 @@ struct OneRosaryColumn<Words: View>: View {
                             .transition(.opacity)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                    .padding(.top, 14)
+                    .padding(.top, SimpleRosaryWords.topFade)  // the words dissolve into this room
                     .animation(Motion.crossfade, value: wordsKey)
                 }
 
@@ -1445,7 +1445,7 @@ struct SimpleRosaryWords: View {
     /// for the line before, the rest of the words' height for it
     static let litLineAnchor = UnitPoint(x: 0, y: 0.06)
     /// The dissolve over the words' top edge, laid in the room the column
-    /// keeps above them (`OneRosaryColumn`'s 14 points)
+    /// keeps above them (`OneRosaryColumn` reads it for that room)
     static let topFade: CGFloat = 14
     /// A lit line taller than this share of the words is scrolled
     /// through as it is said
