@@ -171,7 +171,7 @@ def problem(name: str, doc: dict):
 # The Spanish documents the app ships: path, JSON:API type, fields
 SPANISH = {
     "consecration.es": ("consecration", "consecration", "version,updated_at,translations"),
-    "prayer_book.es": ("prayer-book", "prayer_book", "version,updated_at,translations,novena_translations"),
+    "prayer_book.es": ("prayer-book", "prayer_book", "version,updated_at,translations,novena_translations,chapter_translations"),
     "chant_library.es": ("chant-library", "chant_library", "version,updated_at,translations"),
 }
 

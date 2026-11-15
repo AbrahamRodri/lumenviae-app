@@ -424,12 +424,31 @@ enum PrayerBook {
     /// how the app sets each (its glyph, its shelf, its orders of prayer)
     /// from `layouts`
     static let chapters: [PrayerBookChapter] = LibraryContent.prayerBook.chapters.map { chapter in
+        inSpanish(chapter, LibraryContent.chapterSpanish[chapter.id])
+    }
+
+    /// A topic as the app sets it, its words laid over by their Spanish
+    /// where the server has them (a topic with none keeps its English).
+    /// Its English names stay searchable beside the Spanish ones.
+    static func inSpanish(
+        _ chapter: PrayerBookDocument.Chapter, _ spanish: PrayerBookTranslations.ChapterTranslation?
+    ) -> PrayerBookChapter {
         let layout = layouts[chapter.id] ?? ChapterLayout(icon: "lv-prayer-book", part: .others)
+        let sectionTitles = spanish?.sectionTitles
+        let sections = chapter.sections.enumerated().map { index, section in
+            let title = sectionTitles.flatMap { index < $0.count ? $0[index] : nil } ?? section.title
+            return PrayerBookSection(title: title, prayerIDs: section.prayerIDs)
+        }
+        var searchWords = chapter.searchWords
+        if let spanish {
+            searchWords = (spanish.searchWords ?? []) + [chapter.title, chapter.topic].compactMap { $0 } + searchWords
+        }
         return PrayerBookChapter(
-            id: chapter.id, numeral: chapter.numeral, title: chapter.title, latinTitle: chapter.latinTitle,
-            icon: layout.icon, part: layout.part, epigraph: chapter.note,
-            sections: chapter.sections.map { PrayerBookSection(title: $0.title, prayerIDs: $0.prayerIDs) },
-            orderIDs: layout.orderIDs, topic: chapter.topic ?? "", searchWords: chapter.searchWords
+            id: chapter.id, numeral: chapter.numeral, title: spanish?.title ?? chapter.title,
+            latinTitle: chapter.latinTitle, icon: layout.icon, part: layout.part,
+            epigraph: spanish == nil ? chapter.note : spanish?.note,
+            sections: sections, orderIDs: layout.orderIDs,
+            topic: spanish?.topic ?? chapter.topic ?? "", searchWords: searchWords
         )
     }
 
