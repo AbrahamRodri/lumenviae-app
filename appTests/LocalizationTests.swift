@@ -218,3 +218,57 @@ struct TranslationNoticeTests {
         #expect(!AppLanguage.owesTranslationNotice(defaults: freshDefaults(), inSpanish: false))
     }
 }
+
+/// The Spanish beta strip and its sheet (Spanish only): the strip comes
+/// back the calendar day after it is closed; the sheet is owed once, the
+/// old notice's readers included
+struct SpanishBetaTests {
+
+    private func freshDefaults() -> UserDefaults {
+        let name = "SpanishBetaTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: name)!
+        defaults.removePersistentDomain(forName: name)
+        return defaults
+    }
+
+    private var calendar: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "America/Mexico_City")!
+        return calendar
+    }
+
+    private func date(_ day: Int, _ hour: Int, _ minute: Int = 0) -> Date {
+        calendar.date(from: DateComponents(year: 2026, month: 11, day: day, hour: hour, minute: minute))!
+    }
+
+    @Test func stripShowsInSpanishUntilClosed() {
+        #expect(SpanishBeta.showsStrip(closedOn: "", now: date(14, 9), calendar: calendar, inSpanish: true))
+        #expect(!SpanishBeta.showsStrip(closedOn: "", now: date(14, 9), calendar: calendar, inSpanish: false))
+    }
+
+    @Test func closedStripReturnsTheNextCalendarDay() {
+        let closed = SpanishBeta.dayStamp(date(14, 9), calendar: calendar)
+        #expect(closed == "2026-11-14")
+        #expect(!SpanishBeta.showsStrip(closedOn: closed, now: date(14, 23, 59), calendar: calendar, inSpanish: true))
+        #expect(SpanishBeta.showsStrip(closedOn: closed, now: date(15, 0, 1), calendar: calendar, inSpanish: true))
+    }
+
+    @Test func sheetOwedOnceEvenAfterTheOldNotice() {
+        let defaults = freshDefaults()
+        AppLanguage.markTranslationNoticeShown(defaults: defaults)
+        #expect(SpanishBeta.owesSheet(defaults: defaults, inSpanish: true))
+        SpanishBeta.markSheetSeen(defaults: defaults)
+        #expect(!SpanishBeta.owesSheet(defaults: defaults, inSpanish: true))
+        #expect(!AppLanguage.owesTranslationNotice(defaults: defaults, inSpanish: true))
+        #expect(!SpanishBeta.owesSheet(defaults: freshDefaults(), inSpanish: false))
+    }
+
+    @Test func reportMailIsAddressedAndTitled() throws {
+        let url = try #require(SpanishBeta.reportURL)
+        let components = try #require(URLComponents(url: url, resolvingAgainstBaseURL: false))
+        #expect(components.scheme == "mailto")
+        #expect(components.path == Constants.supportEmail)
+        #expect(components.queryItems?.first { $0.name == "subject" }?.value == "Error en español")
+        #expect(components.queryItems?.first { $0.name == "body" }?.value?.contains("Lumen Viae") == true)
+    }
+}

@@ -327,7 +327,7 @@ final class PrayerBookStore {
                     )
             // The Angelus keeps the full peal; it is no longer one of the
             // reminder picker's sounds, so the file stays in the bundle for this.
-            content.sound = UNNotificationSound(named: UNNotificationSoundName("church_bell.caf"))
+            content.sound = SilentTesting.isOn ? nil : UNNotificationSound(named: UNNotificationSoundName("church_bell.caf"))
             content.categoryIdentifier = Self.angelusCategory
             content.threadIdentifier = "angelus"
 

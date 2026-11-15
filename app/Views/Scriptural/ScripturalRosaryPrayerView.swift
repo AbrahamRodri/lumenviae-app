@@ -38,6 +38,9 @@ struct ScripturalRosaryPrayerView: View {
 
     /// The one sheet this screen presents at a time.
     @State private var activeSheet: ScripturalSheet?
+    /// Back, play and Next with what stands over them, measured so the
+    /// words keep room when it grows (`OneRosaryColumn.columnTop`)
+    @State private var footHeight: CGFloat = 0
 
     /// An act the ⋯ tray asked for, run once the tray is actually gone.
     /// Sequenced on `onDismiss` rather than a timer: presenting into a
@@ -508,12 +511,15 @@ extension ScripturalRosaryPrayerView {
             let rail = rail
             // The words' first line at one height on every step; the head
             // stands in its room above them
-            let columnTop = max(
+            let preferredTop = max(
                 OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight, large: playerIsLarge)
                     - OneRosaryColumn<EmptyView>.headHeight(large: playerIsLarge)
                     - geometry.safeAreaInsets.top,
                 12 + 44 + 14
             )
+            let columnTop = OneRosaryColumn<EmptyView>.columnTop(
+                preferred: preferredTop, height: geometry.size.height, footHeight: footHeight,
+                large: playerIsLarge, headerFoot: 12 + 44 + 14)
 
             VStack(spacing: 0) {
                 let placed = OneRosaryColumn<EmptyView>.layout(
@@ -528,6 +534,7 @@ extension ScripturalRosaryPrayerView {
                     .animation(Motion.crossfade, value: showsWordsAndBeads)
 
                 oneRosaryFoot
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { footHeight = $0 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .overlay(alignment: .top) {
@@ -768,6 +775,10 @@ extension ScripturalRosaryPrayerView {
                             .tracking(1.5)
                             .foregroundColor(AppColors.cream.opacity(0.55))
                             .fixedSize(horizontal: false, vertical: true)
+                            // A small capital label, held at the app's own
+                            // largest size, so it keeps to one line and
+                            // leaves the prayer's words their room at AX1
+                            .dynamicTypeSize(...DynamicTypeSize.appMaximum)
                     }
                 }
             }
@@ -782,7 +793,10 @@ extension ScripturalRosaryPrayerView {
         return VStack(spacing: 0) {
             if aloud {
                 if let failure = viewModel.spokenFailure {
-                    SpokenRosaryNotice(failure: failure) {
+                    SpokenRosaryNotice(
+                        failure: failure,
+                        railInset: OneRosaryColumn<EmptyView>.trailingInset(large: playerIsLarge)
+                    ) {
                         Task { await viewModel.restartSpoken() }
                     }
                     .transition(.opacity)

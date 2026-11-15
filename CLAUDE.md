@@ -4001,6 +4001,13 @@ Spiritual Reading book's page with
 `rosaryAloudPrayer:joyful`…; `AppRouter.launchRoute` lists them), which
 the App Store screenshots use (`Tools/AppStore/screenshots`).
 
+**Testing is silent** (Abraham, 15 Nov 2026: "are you able to do testing
+without audio from now on so I dont hear it"). Launch every debug run,
+screenshot and recording with `-LVMuteAudio YES` (`SilentTesting`; give
+it the YES, or the next launch argument is read as its value): every
+recording, bell and sound preview plays at no volume, and the unit tests'
+host is always silent. Never in a release build.
+
 `Tools/dev` is the door to everyday tasks: `Tools/dev check` runs lint,
 the generated-file check, the build and the tests. Run tests with
 `Tools/dev test`, which uses its own simulator ("LumenViae Dev"), never
