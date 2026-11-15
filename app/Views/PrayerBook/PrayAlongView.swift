@@ -1353,7 +1353,8 @@ struct PrayAlongStanza: View {
                         if rubric {
                             Text(PrayerMarkup.rubric(line))
                                 .font(AppFonts.readingItalicFont(max(12, size - 2)))
-                                .foregroundColor(Rubric.red)
+                                // A direction, read: the red lifted for sentences
+                                .foregroundColor(Rubric.text)
                                 .fixedSize(horizontal: false, vertical: true)
                                 .opacity(max(opacity, 0.85))
                         } else {
