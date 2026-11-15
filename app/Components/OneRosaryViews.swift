@@ -1714,9 +1714,12 @@ struct RosaryStopsSheet: View {
                 }
                 Spacer(minLength: 30)
             }
+            .sheetContentMeasure()
         }
         .sheetGround()
-        .presentationDetents([.medium, .large])
+        // As tall as its rows: the Rosary's seven stood in a sheet half
+        // again their height, a novena day's ten run on and scroll
+        .fittedScrollingSheet(fallback: [.medium, .large])
     }
 
     private func row(_ stop: RosaryStop) -> some View {

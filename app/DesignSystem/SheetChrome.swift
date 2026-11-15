@@ -413,6 +413,47 @@ extension View {
     func fittedSheetDetent(estimate: CGFloat) -> some View {
         modifier(FittedSheetDetent(estimate: estimate))
     }
+
+    /// A sheet whose body scrolls opens as tall as what it holds, and no
+    /// taller: put `sheetContentMeasure()` on the scroll's content and
+    /// this on the scroll view. Taller than the glass, it opens full and
+    /// scrolls; until measured it opens at `fallback`.
+    func fittedScrollingSheet(fallback: Set<PresentationDetent> = [.large]) -> some View {
+        modifier(FittedScrollingSheet(fallback: fallback))
+    }
+
+    /// The scroll's content, measured for `fittedScrollingSheet`
+    func sheetContentMeasure() -> some View {
+        background(
+            GeometryReader { proxy in
+                Color.clear.preference(key: SheetContentHeightKey.self, value: proxy.size.height.rounded(.up))
+            }
+        )
+    }
+}
+
+/// The scroll's content height, carried up to `fittedScrollingSheet`.
+/// Nonisolated because SwiftUI reduces preferences off the main actor.
+private nonisolated struct SheetContentHeightKey: PreferenceKey {
+    static let defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = max(value, nextValue()) }
+}
+
+private struct FittedScrollingSheet: ViewModifier {
+    let fallback: Set<PresentationDetent>
+
+    @State private var contentHeight: CGFloat = 0
+    @State private var bottomInset: CGFloat = 0
+
+    func body(content: Content) -> some View {
+        content
+            .onPreferenceChange(SheetContentHeightKey.self) { height in
+                // Nothing tall is a view not yet laid out
+                if height > 0 { contentHeight = height }
+            }
+            .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { bottomInset = $0 }
+            .presentationDetents(contentHeight > 0 ? [.height(contentHeight + bottomInset)] : fallback)
+    }
 }
 
 private struct FittedSheetDetent: ViewModifier {
