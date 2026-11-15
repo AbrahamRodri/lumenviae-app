@@ -473,3 +473,19 @@ struct NovenaSpanishTests {
         #expect(english.inSpanish(spanish, prayerInSpanish: { _ in false }) == nil)
     }
 }
+
+@Suite("Which novenas are prayed day by day")
+struct NovenaWithTheRosaryTests {
+    /// Only a novena whose days pray the Rosary has a page of its own and
+    /// PRAY IT AS A NOVENA; the rest are read a day at a time in the book
+    @Test func onlyANovenaPrayedWithTheRosaryHasItsPage() throws {
+        let book = LibraryContent.prayerBook.novenas
+        let knots = try #require(book.first { $0.id == "undoer_of_knots" })
+        let jude = try #require(book.first { $0.id == "st_jude" })
+        #expect(knots.praysTheRosary)
+        #expect(!jude.praysTheRosary)
+        #expect(NovenaDayContext.novena("undoer_of_knots") != nil)
+        #expect(NovenaDayContext.novena("st_jude") == nil)
+        #expect(book.filter(\.praysTheRosary).map(\.id) == ["undoer_of_knots"])
+    }
+}
