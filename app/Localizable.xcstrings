@@ -15050,6 +15050,17 @@
         }
       }
     },
+    "Nine days in a row. Once you begin, each day shows its date here." : {
+      "comment" : "Novena page, not begun: under THE NINE DAYS and their nine dashes",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueve días seguidos. Cuando empieces, cada día mostrará aquí su fecha."
+          }
+        }
+      }
+    },
     "Nine days in a row: a novena, as the Apostles prayed for nine days before Pentecost." : {
       "comment" : "Streak milestone: the line of blessing shown when it is reached, saying what the run of days means",
       "localizations" : {
@@ -16000,6 +16011,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Una vez abierto, este libro se lee sin conexión."
+          }
+        }
+      }
+    },
+    "Once you begin, each day shows its date here." : {
+      "comment" : "Novena page, not begun: under THE DAYS of a novena not nine days long",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando empieces, cada día mostrará aquí su fecha."
           }
         }
       }

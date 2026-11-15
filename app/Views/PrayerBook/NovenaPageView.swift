@@ -420,13 +420,39 @@ struct NovenaPageView: View {
                         comment: "Novena page: the heading over the days of a novena not nine days long")
             )
             .padding(.bottom, 6)
-            ForEach(1...max(novena.length, 1), id: \.self) { day in
-                dayRow(day, novena: novena)
-                if day < novena.length {
-                    Rectangle().fill(AppColors.gold.opacity(0.14)).frame(height: AppLine.hairline)
+            if progress == nil {
+                // Not begun: nine bare DAY rows read as unfinished, so the
+                // days are their dashes, as on the begun page and the
+                // Prayers card, and one line says what the rows become
+                VStack(alignment: .leading, spacing: 12) {
+                    NovenaDashes(days: NovenaDays.of(nil, length: novena.length, here: 0))
+                        .accessibilityHidden(true)
+                    Text(Self.notBegunDaysLine(length: novena.length))
+                        .font(AppFonts.readingItalicFont(16))
+                        .foregroundColor(AppColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.top, 6)
+            } else {
+                ForEach(1...max(novena.length, 1), id: \.self) { day in
+                    dayRow(day, novena: novena)
+                    if day < novena.length {
+                        Rectangle().fill(AppColors.gold.opacity(0.14)).frame(height: AppLine.hairline)
+                    }
                 }
             }
         }
+    }
+
+    /// The line under the days of a novena not yet begun
+    static func notBegunDaysLine(length: Int) -> String {
+        length == 9
+            ? String(
+                localized: "Nine days in a row. Once you begin, each day shows its date here.",
+                comment: "Novena page, not begun: under THE NINE DAYS and their nine dashes")
+            : String(
+                localized: "Once you begin, each day shows its date here.",
+                comment: "Novena page, not begun: under THE DAYS of a novena not nine days long")
     }
 
     private func dayRow(_ day: Int, novena: PrayerBookDocument.Novena) -> some View {
