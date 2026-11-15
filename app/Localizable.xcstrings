@@ -8010,18 +8010,6 @@
         }
       }
     },
-    "DAY %lld OF %lld" : {
-      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "DÍA %1$lld DE %2$lld"
-          }
-        }
-      }
-    },
     "DAY %lld OF 33" : {
       "comment" : "Consecration day index sheet: kicker in small capitals naming the day of the 33-day preparation\nConsecration day overview: badge in small capitals naming the day of the 33-day preparation\nHome, Today's Prayer: small capitals, the day of the 33-day consecration",
       "localizations" : {
@@ -8029,18 +8017,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DÍA %lld DE 33"
-          }
-        }
-      }
-    },
-    "DAY %lld PRAYED" : {
-      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "DÍA %lld REZADO"
           }
         }
       }
@@ -15653,18 +15629,6 @@
         }
       }
     },
-    "OPEN" : {
-      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SIN REZAR"
-          }
-        }
-      }
-    },
     "OPEN THE BOOK" : {
       "localizations" : {
         "es" : {
@@ -16806,18 +16770,6 @@
         }
       }
     },
-    "PICK UP AT DAY %lld" : {
-      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "RETOMAR EN EL DÍA %lld"
-          }
-        }
-      }
-    },
     "PLACE IT HERE" : {
       "localizations" : {
         "es" : {
@@ -16866,18 +16818,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "REZAR DE NUEVO"
-          }
-        }
-      }
-    },
-    "PRAY DAY %lld" : {
-      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "REZAR EL DÍA %lld"
           }
         }
       }
@@ -26965,18 +26905,6 @@
         }
       }
     },
-    "WELCOME BACK" : {
-      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "QUÉ BUENO QUE VOLVISTE"
-          }
-        }
-      }
-    },
     "WRITE A REFLECTION" : {
       "localizations" : {
         "es" : {
@@ -27947,18 +27875,6 @@
         }
       }
     },
-    "YOUR INTENTION" : {
-      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "TU INTENCIÓN"
-          }
-        }
-      }
-    },
     "YOUR PLACE IS KEPT" : {
       "localizations" : {
         "es" : {
@@ -28470,18 +28386,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Luego tu iPhone te preguntará una vez si Lumen Viae puede enviarte recordatorios. Puedes cambiar la hora o desactivarlo en Configuración."
-          }
-        }
-      }
-    },
-    "Your intention" : {
-      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu intención"
           }
         }
       }
@@ -29112,6 +29016,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "día %lld rezado"
+          }
+        }
+      }
+    },
+    "novena.intention.title" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your intention"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu intención"
           }
         }
       }

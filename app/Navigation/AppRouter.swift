@@ -394,7 +394,22 @@ final class AppRouter {
             return (.scripturalRosaryPrayer(ScripturalRosaryLaunch(
                 category: c, form: form, startIndex: mystery, startBead: bead)), nil)
         case ("novena", _) where parts.count > 1:
-            // `novena:<novena id>`, its own page
+            // `novena:<novena id>`, its own page; `novena:<id>:<today's
+            // day>:<days prayed, comma-separated>` first begins it so that
+            // today is that day (0: it begins tomorrow), for the page's shots;
+            // `novena:<id>:none` ends any under way, to shoot it not begun
+            if parts.count > 2, parts[2] == "none" {
+                NovenaStore.shared.end(parts[1])
+            } else if parts.count > 2, let day = Int(parts[2]), let novena = NovenaDayContext.novena(parts[1]) {
+                let start = PrayerDay.adding(days: 1 - day, to: PrayerDay.today()).addingTimeInterval(12 * 3600)
+                NovenaStore.shared.begin(
+                    novena, on: start,
+                    intention: SpanishContent.isActive ? "Por el nuevo trabajo de mi hermano" : "For my brother's new job",
+                    reminder: DateComponents(hour: 20, minute: 0))
+                let prayed = parts.count > 3 ? parts[3].split(separator: ",").compactMap { Int($0) } : []
+                for earlier in prayed { NovenaStore.shared.markPrayed(earlier, of: novena) }
+                NovenaStore.shared.forgetKept(novenaID: novena.id)
+            }
             return (.novena(id: parts[1]), nil)
         case ("novenaDay", _) where parts.count > 2:
             // `novenaDay:<novena id>:<day>`, on today's mysteries;

@@ -24,6 +24,9 @@ struct NovenaPageView: View {
     @State private var sheet: NovenaSheet?
     @State private var confirming: Confirmation?
     @State private var footHeight: CGFloat = 0
+    /// Whether the painting has scrolled up behind the clock and the
+    /// Back, so the dark ground under them is needed
+    @State private var paintingGone = false
 
     private var store: NovenaStore { NovenaStore.shared }
     private var novena: PrayerBookDocument.Novena? { NovenaDayContext.novena(novenaID) }
@@ -42,6 +45,11 @@ struct NovenaPageView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 0) {
                         NovenaHero(novena: novena)
+                            .onGeometryChange(for: Bool.self) { hero in
+                                hero.frame(in: .global).maxY < 200
+                            } action: { gone in
+                                paintingGone = gone
+                            }
                         head(novena)
                             .padding(.horizontal, 22)
                             .padding(.top, -64)
@@ -58,6 +66,8 @@ struct NovenaPageView: View {
                     }
                 }
                 .ignoresSafeArea(edges: .top)
+
+                chromeGround
 
                 foot(novena)
                     .onGeometryChange(for: CGFloat.self) {
@@ -129,6 +139,31 @@ struct NovenaPageView: View {
         }
     }
 
+    /// The dark ground under the clock and the Back once the painting has
+    /// gone, so the page dissolves beneath them (the topic page's)
+    private var chromeGround: some View {
+        VStack(spacing: 0) {
+            // From the top of the glass to just under the Back
+            AppColors.backgroundDeep.frame(height: 52)
+                .background(AppColors.backgroundDeep.ignoresSafeArea(edges: .top))
+            LinearGradient(
+                stops: [
+                    .init(color: AppColors.backgroundDeep, location: 0),
+                    .init(color: AppColors.backgroundDeep.opacity(0.85), location: 0.35),
+                    .init(color: AppColors.backgroundDeep.opacity(0), location: 1),
+                ],
+                startPoint: .top, endPoint: .bottom
+            )
+            .frame(height: 44)
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .opacity(paintingGone ? 1 : 0)
+        .animation(Motion.crossfade, value: paintingGone)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+
     // MARK: - Head
 
     private func head(_ novena: PrayerBookDocument.Novena) -> some View {
@@ -177,6 +212,13 @@ struct NovenaPageView: View {
         }
     }
 
+    /// "Your intention": the sheet's title, and in capitals the page's heading
+    static var intentionTitle: String {
+        String(
+            localized: "novena.intention.title", defaultValue: "Your intention",
+            comment: "Novena: the reader's intention, as a sheet title and (in capitals) the page's heading")
+    }
+
     static func kicker(length: Int) -> String {
         length == 9
             ? String(
@@ -198,6 +240,10 @@ struct NovenaPageView: View {
                 comment: "Novena page, head: a novena set to begin tomorrow, with its date")
         }
         let picked = progress.anchorDay > 1
+        // Welcome back names no day today: the card says where she was
+        if case .welcomeBack = progress.standing(on: now) {
+            return String(localized: "Began \(began)", comment: "Novena page, head: the date it began, past its last day")
+        }
         if (1...length).contains(day) {
             return picked
                 ? String(
@@ -303,7 +349,7 @@ struct NovenaPageView: View {
         } label: {
             VStack(alignment: .leading, spacing: 8) {
                 NovenaLabel(
-                    String(localized: "YOUR INTENTION", comment: "Novena page: the heading over the reader's intention")
+                    NovenaPageView.intentionTitle.uppercased()
                 )
                 HStack(alignment: .firstTextBaseline) {
                     if let intention = progress?.intention {
@@ -415,7 +461,7 @@ struct NovenaPageView: View {
                         String(localized: "TODAY", comment: "Novena page: the day to pray today, at its row's end"))
                 case .open:
                     NovenaLabel(
-                        String(localized: "OPEN", comment: "Novena page: a past day not yet prayed, at its row's end"),
+                        Self.spokenState(.open).uppercased(),
                         dim: true)
                 case .ahead, .none:
                     EmptyView()
@@ -530,8 +576,9 @@ struct NovenaPageView: View {
                     let day = min(progress.dayNumber(on: now), novena.length)
                     Text(
                         String(
-                            localized: "DAY \(day) PRAYED",
-                            comment: "Novena page: today's day is prayed; shown in capitals")
+                            localized: "Day \(day) prayed",
+                            comment: "Novena, after a day is prayed in the Rosary: the title"
+                        ).uppercased()
                     )
                     .font(AppFonts.labelFont(11))
                     .tracking(2.4)
@@ -652,8 +699,7 @@ struct NovenaIntentionSheet: View {
                         : nil,
                     title: isBeginning
                         ? novena.title
-                        : String(
-                            localized: "Your intention", comment: "Intention sheet: title when editing the intention")
+                        : NovenaPageView.intentionTitle
                 ) {
                     if !isBeginning {
                         SheetHeaderAction(
@@ -1029,11 +1075,11 @@ struct NovenaShelfCard: View {
         guard let progress else { return NovenaPageView.kicker(length: novena.length) }
         switch progress.standing(on: now) {
         case .welcomeBack:
-            return String(localized: "WELCOME BACK", comment: "Prayers tab, novena card: after three or more days left open")
+            return String(localized: "Welcome back", comment: "Novena page: the card after three or more days left open").uppercased()
         default:
             let day = progress.dayNumber(on: now)
             if day < 1 { return String(localized: "BEGINS TOMORROW", comment: "Prayers tab, novena card: set to begin tomorrow") }
-            return String(localized: "DAY \(min(day, novena.length)) OF \(novena.length)", comment: "Prayers tab, novena card: today's day of the novena")
+            return String(localized: "Day \(min(day, novena.length)) of \(novena.length)", comment: "Novena: which day of how many, like Day 4 of 9").uppercased()
         }
     }
 
@@ -1043,9 +1089,9 @@ struct NovenaShelfCard: View {
         }
         switch progress.standing(on: now) {
         case .welcomeBack(let first):
-            return String(localized: "PICK UP AT DAY \(first)", comment: "Prayers tab, novena card: the way back after days left open")
+            return String(localized: "Pick Up at Day \(first)", comment: "Novena page, Welcome back: the gold act; the rest run from today").uppercased()
         case .underWay(let today, _):
-            if let today { return String(localized: "PRAY DAY \(today)", comment: "Prayers tab, novena card: today's day to pray") }
+            if let today { return String(localized: "Pray Day \(today)", comment: "Novena page: the gold act praying today's day").uppercased() }
             if progress.dayNumber(on: now) < 1 {
                 return String(localized: "PRAY DAY 1 TODAY", comment: "Prayers tab, novena card: set to begin tomorrow, may begin today")
             }
