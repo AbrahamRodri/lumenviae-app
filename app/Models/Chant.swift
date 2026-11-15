@@ -157,11 +157,30 @@ struct Chant: Identifiable, Hashable {
         return named ? setting : setting.lowercased()
     }
 
+    /// The name under the Latin title, where it is not the Latin's own:
+    /// nil for a chant known by its Latin in the reader's language too
+    /// ("Magnificat", and in Spanish "Salve Regina", "Te Deum", "Ave
+    /// María"), so no row or voice says the one name twice
+    var secondTitle: String? {
+        SearchText.fold(englishTitle) == SearchText.fold(latinTitle) ? nil : englishTitle
+    }
+
+    /// The line under the Latin title: the second title, with the setting
+    /// after it where neither title says it ("Hail, Holy Queen · simple
+    /// melody"); the setting alone where there is no second title
+    /// ("Melodía sencilla"); nil when there is neither
+    var subtitleLine: String? {
+        guard let secondTitle else { return distinctSetting }
+        return settingMidLine.map { "\(secondTitle) · \($0)" } ?? secondTitle
+    }
+
     /// Its two names as VoiceOver says them: "Salve Regina, Hail, Holy
-    /// Queen". A Latin title is never heard alone.
+    /// Queen". A Latin title is never heard alone, unless it is the
+    /// reader's name for it too, and then it is said once.
     var spokenName: String {
-        String(
-            localized: "\(latinTitle), \(englishTitle)",
+        guard let secondTitle else { return latinTitle }
+        return String(
+            localized: "\(latinTitle), \(secondTitle)",
             comment: "VoiceOver: a chant's Latin title, then its English title"
         )
     }
@@ -181,8 +200,9 @@ struct Chant: Identifiable, Hashable {
     /// The English name with the Latin after it, where one line holds
     /// both: "Hail, Holy Queen (Salve Regina)"
     var englishWithLatin: String {
-        String(
-            localized: "\(englishTitle) (\(latinTitle))",
+        guard let secondTitle else { return latinTitle }
+        return String(
+            localized: "\(secondTitle) (\(latinTitle))",
             comment: "A chant's English title with its Latin title after it in brackets, like Hail, Holy Queen (Salve Regina)"
         )
     }

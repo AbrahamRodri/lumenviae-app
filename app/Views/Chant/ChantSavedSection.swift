@@ -458,10 +458,12 @@ struct ChantSavedSection: View {
                                         .font(AppFonts.readingFont(16))
                                         .foregroundColor(AppColors.cream.opacity(0.9))
                                         .lineLimit(1)
-                                    Text(chant.englishTitle)
-                                        .font(AppFonts.readingItalicFont(13.5))
-                                        .foregroundColor(AppColors.textSecondary)
-                                        .lineLimit(1)
+                                    if let second = chant.secondTitle {
+                                        Text(second)
+                                            .font(AppFonts.readingItalicFont(13.5))
+                                            .foregroundColor(AppColors.textSecondary)
+                                            .lineLimit(1)
+                                    }
                                 }
                                 Spacer(minLength: 0)
                             }

@@ -268,7 +268,9 @@ struct ChantPracticeView: View {
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .minimumScaleFactor(0.75)
-            (lines ? Text("\(chant.englishTitle) · \(chant.lines.count) lines") : Text(chant.englishTitle))
+            (lines
+                ? Text(chant.secondTitle.map { "\($0) · \(chant.lines.count) lines" } ?? "\(chant.lines.count) lines")
+                : Text(chant.secondTitle ?? ""))
                 .font(AppFonts.readingItalicFont(16))
                 .foregroundColor(AppColors.cream.opacity(0.8))
                 .multilineTextAlignment(.center)
@@ -551,10 +553,12 @@ struct ChantPracticeView: View {
                     .foregroundColor(AppColors.cream)
                     .multilineTextAlignment(.center)
                     .minimumScaleFactor(0.75)
-                Text(chant.englishTitle)
-                    .font(AppFonts.readingItalicFont(17))
-                    .foregroundColor(AppColors.cream.opacity(0.85))
-                    .multilineTextAlignment(.center)
+                if let second = chant.secondTitle {
+                    Text(second)
+                        .font(AppFonts.readingItalicFont(17))
+                        .foregroundColor(AppColors.cream.opacity(0.85))
+                        .multilineTextAlignment(.center)
+                }
             }
             .accessibilityElement(children: .combine)
             .accessibilityAddTraits(.isHeader)

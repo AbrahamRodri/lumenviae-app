@@ -141,15 +141,19 @@ struct ChantMiniPlayer: View {
             // The English name beside the Latin title above, and the time
             // kept whole however long the name runs
             HStack(spacing: 0) {
-                Text(chant.englishTitle)
-                    .truncationMode(.tail)
-                Text(" · \(time)")
-                    .fixedSize()
+                if let second = chant.secondTitle {
+                    Text(second)
+                        .truncationMode(.tail)
+                    Text(" · \(time)")
+                        .fixedSize()
+                } else {
+                    Text(time)
+                }
             }
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel([chant.englishTitle, player.spokenTimeLabel].compactMap { $0 }.joined(separator: ", "))
+            .accessibilityLabel([chant.secondTitle, player.spokenTimeLabel].compactMap { $0 }.joined(separator: ", "))
         } else {
-            Text(chant.englishTitle)
+            Text(chant.secondTitle ?? chant.latinTitle)
         }
     }
 }

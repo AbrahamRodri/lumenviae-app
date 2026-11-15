@@ -198,6 +198,26 @@ struct SpanishContentTests {
         #expect(Set(spanish.translations.groups.map(\.id)) == Set(english.groups.map(\.id)))
     }
 
+    /// Where the Spanish name is the Latin (Salve Regina, Ave María), the
+    /// chant is named once: no second title under it, and VoiceOver says
+    /// it once (ios-review, 15 Nov)
+    @Test func aChantWhoseSpanishNameIsItsLatinIsNamedOnce() throws {
+        let english = LibraryContent.chantLibraryStore.seed!
+        let spanish = try #require(LibraryContent.chantLibrarySpanishStore.seed)
+        let named = spanish.laidOver(english).chants.map(Chant.init(document:))
+        let salve = try #require(named.first { $0.latinTitle == "Salve Regina" && $0.setting != nil })
+        #expect(salve.secondTitle == nil)
+        #expect(salve.spokenName == "Salve Regina")
+        #expect(salve.englishWithLatin == "Salve Regina")
+        #expect(salve.subtitleLine == salve.distinctSetting)
+        // Folded, so "Ave María" over "Ave Maria" is one name too
+        #expect(named.filter { SearchText.fold($0.englishTitle) == SearchText.fold($0.latinTitle) }.allSatisfy { $0.secondTitle == nil })
+        // English keeps both names
+        let englishSalve = try #require(english.chants.first { $0.latinTitle == "Salve Regina" }.map(Chant.init(document:)))
+        #expect(englishSalve.secondTitle == "Hail, Holy Queen")
+        #expect(englishSalve.spokenName.contains("Hail, Holy Queen"))
+    }
+
     @Test func aChantLibraryWithoutSpanishDecodesAsNone() throws {
         let empty = try JSONDecoder().decode(
             ChantLibraryTranslations.self, from: Data(#"{"version":"v","translations":[]}"#.utf8))

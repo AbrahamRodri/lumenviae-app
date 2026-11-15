@@ -303,21 +303,20 @@ struct ChantView: View {
                 }
             }
 
-            Text(subtitle(chant))
-                .font(AppFonts.readingItalicFont(16))
-                .foregroundColor(AppColors.cream.opacity(0.75))
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .shadow(color: .black.opacity(0.6), radius: 10)
+            if let line = subtitle(chant) {
+                Text(line)
+                    .font(AppFonts.readingItalicFont(16))
+                    .foregroundColor(AppColors.cream.opacity(0.75))
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .shadow(color: .black.opacity(0.6), radius: 10)
+            }
         }
         .frame(maxWidth: .infinity)
     }
 
-    private func subtitle(_ chant: Chant) -> String {
-        if let setting = chant.settingMidLine {
-            return "\(chant.englishTitle) · \(setting)"
-        }
-        return chant.englishTitle
+    private func subtitle(_ chant: Chant) -> String? {
+        chant.subtitleLine
     }
 
     // MARK: - Score

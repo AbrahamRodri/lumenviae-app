@@ -2725,7 +2725,7 @@ struct ChapelChantTile: View {
     /// The English name, where it is not the Latin's own word
     /// ("Magnificat")
     private var englishName: String? {
-        chant.englishTitle.caseInsensitiveCompare(chant.latinTitle) == .orderedSame ? nil : chant.englishTitle
+        chant.secondTitle
     }
 
     /// What stands under the chant's name: a failure to play it, else its

@@ -571,11 +571,13 @@ struct ChantSetPage: View {
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
                         .animation(Motion.crossfade, value: lit)
-                    Text(chant.englishTitle)
-                        .font(AppFonts.readingItalicFont(13.5))
-                        .foregroundColor(AppColors.textSecondary)
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
+                    if let second = chant.secondTitle {
+                        Text(second)
+                            .font(AppFonts.readingItalicFont(13.5))
+                            .foregroundColor(AppColors.textSecondary)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 if lit && goingOn {
