@@ -277,7 +277,8 @@ struct NovenaDays: Hashable {
 
     let length: Int
     let prayed: Set<Int>
-    /// The day being prayed or shown
+    /// The day being prayed or shown; 0 marks none (Welcome back, whose
+    /// card says where she was)
     let here: Int
     let open: Set<Int>
 
@@ -308,7 +309,7 @@ struct NovenaDays: Hashable {
         if !done.isEmpty { parts.append(Self.spokenDays(done, prayed: true)) }
         let openDays = open.sorted()
         if !openDays.isEmpty { parts.append(Self.spokenDays(openDays, prayed: false)) }
-        if !prayed.contains(here) {
+        if (1...length).contains(here), !prayed.contains(here) {
             parts.append(String(localized: "day \(here) today", comment: "Novena dashes, VoiceOver: the day being prayed, as in Days 1 to 3 prayed, day 4 today"))
         }
         let sentence = parts.joined(separator: ", ")

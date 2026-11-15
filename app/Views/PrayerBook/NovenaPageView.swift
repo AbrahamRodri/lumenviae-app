@@ -58,7 +58,7 @@ struct NovenaPageView: View {
                             if progress != nil { intentionBlock(novena) }
                             if progress != nil { reminderRow(novena) }
                             daysList(novena)
-                            if progress != nil { endLinks }
+                            if let progress { endLinks(progress) }
                         }
                         .padding(.horizontal, 22)
                         .padding(.top, 26)
@@ -257,7 +257,14 @@ struct NovenaPageView: View {
     }
 
     private func hereDay(_ progress: NovenaProgress, _ novena: PrayerBookDocument.Novena) -> Int {
-        min(max(progress.dayNumber(on: now), 1), novena.length)
+        Self.hereDay(progress, length: novena.length, on: now)
+    }
+
+    /// Today's dash; none in Welcome back, where a marker on today read as
+    /// the day she is on while the card names another
+    static func hereDay(_ progress: NovenaProgress, length: Int, on now: Date) -> Int {
+        if case .welcomeBack = progress.standing(on: now) { return 0 }
+        return min(max(progress.dayNumber(on: now), 1), length)
     }
 
     // MARK: - Where it stands
@@ -502,10 +509,13 @@ struct NovenaPageView: View {
         }
     }
 
-    private var endLinks: some View {
+    private func endLinks(_ progress: NovenaProgress) -> some View {
         VStack(alignment: .leading, spacing: 14) {
-            Button(String(localized: "Begin again", comment: "Novena page foot: begin the novena again from Day 1")) {
-                confirming = .beginAgain
+            // Welcome back's card carries its own Begin Again
+            if !Self.isWelcomeBack(progress, on: now) {
+                Button(String(localized: "Begin again", comment: "Novena page foot: begin the novena again from Day 1")) {
+                    confirming = .beginAgain
+                }
             }
             Button(String(localized: "End this novena", comment: "Novena page foot: end the novena under way")) {
                 confirming = .end
@@ -514,6 +524,11 @@ struct NovenaPageView: View {
         .font(AppFonts.readingFont(17))
         .foregroundColor(AppColors.textSecondary)
         .buttonStyle(QuietGlyphButtonStyle())
+    }
+
+    static func isWelcomeBack(_ progress: NovenaProgress, on now: Date) -> Bool {
+        if case .welcomeBack = progress.standing(on: now) { return true }
+        return false
     }
 
     // MARK: - Foot
@@ -1045,7 +1060,7 @@ struct NovenaShelfCard: View {
                         NovenaDashes(
                             days: NovenaDays.of(
                                 progress, length: novena.length,
-                                here: min(max(progress.dayNumber(on: now), 1), novena.length), on: now)
+                                here: NovenaPageView.hereDay(progress, length: novena.length, on: now), on: now)
                         )
                         .padding(.vertical, 4)
                     }
