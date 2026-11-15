@@ -647,6 +647,35 @@ nonisolated struct ChantLibraryTranslations: Codable, Sendable, Equatable {
     nonisolated struct GroupName: Codable, Sendable, Equatable {
         let id: String
         let title: String
+        /// When the section is sung, in Spanish; nil where the English
+        /// has none
+        var note: String? = nil
+        /// The section's parts in the English parts' order, each its
+        /// heading and note in Spanish (nil where the English is); empty
+        /// where the parts have no words
+        var parts: [PartName] = []
+
+        init(id: String, title: String, note: String? = nil, parts: [PartName] = []) {
+            self.id = id
+            self.title = title
+            self.note = note
+            self.parts = parts
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            id = try container.decode(String.self, forKey: .id)
+            title = try container.decode(String.self, forKey: .title)
+            note = try container.decodeIfPresent(String.self, forKey: .note)
+            parts = (try? container.decodeIfPresent([PartName].self, forKey: .parts)) ?? []
+        }
+
+        enum CodingKeys: String, CodingKey { case id, title, note, parts }
+    }
+
+    nonisolated struct PartName: Codable, Sendable, Equatable {
+        var title: String?
+        var note: String?
     }
 
     enum CodingKeys: String, CodingKey {
@@ -694,6 +723,12 @@ nonisolated struct ChantLibraryTranslations: Codable, Sendable, Equatable {
             guard let name = groups[group.id] else { return group }
             var group = group
             group.title = name.title
+            if let note = name.note { group.note = note }
+            // By position, the server's parts in the English parts' order
+            for (index, part) in name.parts.enumerated() where group.parts.indices.contains(index) {
+                if let title = part.title, group.parts[index].title != nil { group.parts[index].title = title }
+                if let note = part.note, group.parts[index].note != nil { group.parts[index].note = note }
+            }
             return group
         }
         return spanish

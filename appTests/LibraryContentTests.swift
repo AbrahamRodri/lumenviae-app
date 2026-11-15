@@ -240,6 +240,29 @@ struct LibraryDocumentStoreTests {
         #expect(store.current()?.version == (try shippedBook()).version)
     }
 
+    /// A field this build does not know is kept for the build that does
+    @Test func theServersBytesAreKeptAsTheyCame() throws {
+        let store = store(in: try temporaryDirectory())
+        var newer = try shippedBook()
+        newer.version = "abcdef0123456789"
+        var object = try #require(try JSONSerialization.jsonObject(with: encoded(newer)) as? [String: Any])
+        object["a_later_field"] = "kept"
+        try store.keep(JSONSerialization.data(withJSONObject: object))
+        let onDisk = try #require(
+            try JSONSerialization.jsonObject(with: Data(contentsOf: store.cacheURL)) as? [String: Any])
+        #expect(onDisk["a_later_field"] as? String == "kept")
+    }
+
+    /// An older build kept its copy without the fields it did not know:
+    /// the shipped copy of the same version is read in its place
+    @Test func aShippedCopyOfTheSameVersionIsReadWhole() throws {
+        let store = store(in: try temporaryDirectory())
+        var stripped = try shippedBook()
+        stripped.prayers[0].note = "Kept by an older build"
+        try store.keep(encoded(stripped))
+        #expect(store.current()?.prayers[0].note == (try shippedBook()).prayers[0].note)
+    }
+
     @Test func aBrokenOrPartialCopyIsNeverKept() throws {
         let store = store(in: try temporaryDirectory())
         var good = try shippedBook()

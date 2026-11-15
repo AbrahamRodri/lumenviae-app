@@ -189,6 +189,29 @@ struct SpanishContentTests {
         #expect(named.chants.count == english.chants.count)
     }
 
+    /// A section's note and its parts' headings and notes are laid over
+    /// by position; a part with no Spanish keeps its English
+    @Test func aSectionsNoteAndPartsAreLaidOver() throws {
+        let english = LibraryContent.chantLibraryStore.seed!
+        let group = try #require(english.groups.first { $0.parts.count > 1 && $0.parts.first?.title != nil })
+        let spanish = ChantLibraryTranslations(translations: .init(groups: [
+            .init(id: group.id, title: "Sección", note: "Nota", parts: [.init(title: "Parte uno", note: nil)])
+        ]))
+        let laid = try #require(spanish.laidOver(english).groups.first { $0.id == group.id })
+        #expect(laid.title == "Sección")
+        #expect(laid.note == "Nota")
+        #expect(laid.parts[0].title == "Parte uno")
+        #expect(laid.parts[0].note == group.parts[0].note)
+        #expect(laid.parts[1] == group.parts[1])
+        #expect(laid.parts.map(\.chantIDs) == group.parts.map(\.chantIDs))
+    }
+
+    /// The shipped Spanish names the Mass of the Angels' note in Spanish
+    @Test func theShippedCopyCarriesTheNotes() throws {
+        let spanish = try #require(LibraryContent.chantLibrarySpanishStore.seed)
+        #expect(spanish.translations.groups.contains { $0.note != nil || !$0.parts.isEmpty })
+    }
+
     /// The app ships the server's Spanish names, every chant and section
     @Test func theShippedChantNamesCoverTheLibrary() throws {
         let spanish = try #require(LibraryContent.chantLibrarySpanishStore.seed)
