@@ -63,6 +63,7 @@ struct ReminderSoundSheet: View {
 
         player?.stop()
         player = try? AVAudioPlayer(contentsOf: url)
+        if SilentTesting.isOn { player?.volume = 0 }
         player?.play()
 
         withAnimation(.easeInOut(duration: 0.2)) {

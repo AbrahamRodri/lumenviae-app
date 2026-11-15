@@ -237,7 +237,7 @@ final class AngelusBellSound {
         guard let url = Bundle.main.url(forResource: "church_bell", withExtension: "caf") else { return }
         do {
             let player = try AVAudioPlayer(contentsOf: url)
-            player.volume = 0.55
+            player.volume = SilentTesting.isOn ? 0 : 0.55
             player.prepareToPlay()
             player.play()
             self.player = player

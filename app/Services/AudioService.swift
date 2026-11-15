@@ -53,7 +53,7 @@ final class AudioService {
     /// go when the player is put down for good, so no other flow is ever
     /// silent for it.
     var isMuted = false {
-        didSet { player?.isMuted = isMuted }
+        didSet { player?.isMuted = isMuted || SilentTesting.isOn }
     }
 
     // MARK: - Private Properties
@@ -1358,7 +1358,7 @@ final class AudioService {
         let asset = AVURLAsset(url: url)
         let playerItem = AVPlayerItem(asset: asset)
         player = AVPlayer(playerItem: playerItem)
-        player?.isMuted = isMuted
+        player?.isMuted = isMuted || SilentTesting.isOn
 
         do {
             let cmDuration = try await asset.load(.duration)
