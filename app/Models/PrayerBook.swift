@@ -405,11 +405,11 @@ enum PrayerBook {
         spanish: Bool = SpanishContent.isActive
     ) -> BookPrayer {
         guard spanish else { return prayer }
-        let spanishWords: (title: String, text: String, origin: String?)?
+        let spanishWords: (title: String, text: String, origin: String?, shortCredit: String?)?
         if let translation = translations[prayer.id] {
-            spanishWords = (translation.title, translation.text, translation.origin)
+            spanishWords = (translation.title, translation.text, translation.origin, translation.shortCredit)
         } else if let rosary = SpanishContent.prayers[prayer.id] {
-            spanishWords = (rosary.title, rosary.lines, nil)
+            spanishWords = (rosary.title, rosary.lines, nil, nil)
         } else {
             spanishWords = nil
         }
@@ -418,7 +418,8 @@ enum PrayerBook {
         // at all otherwise: never an English line on a Spanish page
         return BookPrayer(
             id: prayer.id, title: spanishWords.title, latinTitle: prayer.latinTitle,
-            origin: spanishWords.origin, note: prayer.note, english: spanishWords.text, latin: prayer.latin
+            origin: spanishWords.origin, shortCredit: spanishWords.shortCredit, note: prayer.note,
+            english: spanishWords.text, latin: prayer.latin
         )
     }
 
