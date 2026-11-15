@@ -8294,14 +8294,14 @@
         }
       }
     },
-    "Day %lld is open, with the %@." : {
-      "comment" : "Novena, after a day is prayed: the next day can be prayed now; the second part names its mysteries, like the Glorious Mysteries",
+    "Day %lld is open." : {
+      "comment" : "Novena, after a day is prayed: the next day is a past day not yet prayed, which can be prayed now",
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El día %1$lld quedó sin rezar; se reza con los %2$@."
+            "value" : "El día %lld quedó sin rezar."
           }
         }
       }

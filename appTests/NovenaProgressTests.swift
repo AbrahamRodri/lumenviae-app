@@ -347,7 +347,8 @@ struct NovenaDaysTests {
         let line = try #require(p.nextDayLine(after: 3, now: noon(12), calendar: calendar))
         #expect(line.hasPrefix("Day 4 is tomorrow"))
         let back = try #require(p.nextDayLine(after: 9, now: noon(12), calendar: calendar))
-        #expect(back.hasPrefix("Day 2 is open"))
+        // its mysteries are the day it is prayed on's, so none are named
+        #expect(back == "Day 2 is open.")
     }
 
     @Test func theReminderLineSaysItsTime() {
