@@ -2345,6 +2345,47 @@
         }
       }
     },
+    "%lld lines" : {
+      "comment" : "Chant practice: how many timed lines a chant has, under its Latin name where the reader's name for it is the Latin, like 20 lines",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld line"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lines"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld línea"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld líneas"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld min" : {
       "comment" : "How far into a recording, minutes, abbreviated, like 31 min; stands inside a sentence like 31 min in",
       "localizations" : {

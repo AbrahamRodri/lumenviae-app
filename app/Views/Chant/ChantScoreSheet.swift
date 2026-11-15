@@ -286,12 +286,14 @@ private struct ChantScoreSheetHead: View {
                 .shadow(color: .black.opacity(0.7), radius: 8)
                 .accessibilityAddTraits(.isHeader)
 
-            Text(englishLine)
-                .font(AppFonts.readingItalicFont(16))
-                .foregroundColor(AppColors.cream.opacity(0.8))
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .shadow(color: .black.opacity(0.7), radius: 6)
+            if let englishLine {
+                Text(englishLine)
+                    .font(AppFonts.readingItalicFont(16))
+                    .foregroundColor(AppColors.cream.opacity(0.8))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .shadow(color: .black.opacity(0.7), radius: 6)
+            }
         }
         .padding(.horizontal, SheetMetrics.gutter)
         // Clear of DONE above, and of the painting's last light beneath
@@ -323,9 +325,8 @@ private struct ChantScoreSheetHead: View {
 
     /// "Hail, Holy Queen · simple melody": the setting, where neither
     /// title says it, rides after the English
-    private var englishLine: String {
-        guard let setting = chant.settingMidLine else { return chant.englishTitle }
-        return "\(chant.englishTitle) · \(setting)"
+    private var englishLine: String? {
+        chant.subtitleLine
     }
 
     /// Drawn behind the names and no taller than them, so the band grows

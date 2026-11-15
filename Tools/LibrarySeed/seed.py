@@ -16,8 +16,8 @@ Usage (through Tools/dev library-seed):
     seed.py --check          # exit 1 if the API checkout's files differ from the app's
 
 With --live it also copies the two Spanish documents the app ships
-(consecration.es.json and prayer_book.es.json: GET /api/v2/consecration
-and /api/v2/prayer-book with lang=es), so a new install's first Spanish
+(consecration.es.json, prayer_book.es.json and chant_library.es.json: GET
+/api/v2/consecration, /api/v2/prayer-book and /api/v2/chant-library with lang=es), so a new install's first Spanish
 launch reads Spanish; the server's copy is read only at the next launch.
 They are assembled by the server, so they come from the live API alone.
 
@@ -172,6 +172,7 @@ def problem(name: str, doc: dict):
 SPANISH = {
     "consecration.es": ("consecration", "consecration", "version,updated_at,translations"),
     "prayer_book.es": ("prayer-book", "prayer_book", "version,updated_at,translations,novena_translations"),
+    "chant_library.es": ("chant-library", "chant_library", "version,updated_at,translations"),
 }
 
 

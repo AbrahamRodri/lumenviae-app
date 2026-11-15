@@ -175,9 +175,13 @@ extension NovenaDayContext {
     /// The novena the Prayer Book holds under `id`, as this launch prays it:
     /// in a Spanish app, in Spanish, or not at all. A Spanish reader is
     /// never given a novena day in English, so a novena whose Spanish is
-    /// missing or incomplete is not there for them.
+    /// missing or incomplete is not there for them. Nor is a novena whose
+    /// days pray no Rosary: it has no page of its own and is read a day at a
+    /// time in the Prayer Book (orch-lead, 15 Nov 2026), since its days
+    /// would open a plain Rosary that never marked the day.
     static func novena(_ id: String) -> PrayerBookDocument.Novena? {
         novena(id, spanish: SpanishContent.isActive, translations: LibraryContent.novenaSpanish)
+            .flatMap { $0.praysTheRosary ? $0 : nil }
     }
 
     static func novena(

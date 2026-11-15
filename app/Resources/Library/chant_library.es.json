@@ -1,0 +1,578 @@
+{
+  "translations": {
+    "chants": [
+      {
+        "id": "salve_regina_simple",
+        "setting": "Melodía sencilla",
+        "title": "Salve Regina"
+      },
+      {
+        "id": "salve_regina_solemn",
+        "setting": "Melodía solemne",
+        "title": "Salve Regina"
+      },
+      {
+        "id": "alma_redemptoris_simple",
+        "setting": "Melodía sencilla",
+        "title": "Madre del Redentor"
+      },
+      {
+        "id": "alma_redemptoris",
+        "setting": "Melodía solemne",
+        "title": "Madre del Redentor"
+      },
+      {
+        "id": "ave_regina_simple",
+        "setting": "Melodía sencilla",
+        "title": "Salve, Reina de los cielos"
+      },
+      {
+        "id": "ave_regina_solemn",
+        "setting": "Melodía solemne",
+        "title": "Salve, Reina de los cielos"
+      },
+      {
+        "id": "regina_caeli_simple",
+        "setting": "Melodía sencilla",
+        "title": "Reina del cielo, alégrate"
+      },
+      {
+        "id": "regina_caeli_solemn",
+        "setting": "Melodía solemne",
+        "title": "Reina del cielo, alégrate"
+      },
+      {
+        "id": "sub_tuum",
+        "setting": null,
+        "title": "Bajo tu protección"
+      },
+      {
+        "id": "ave_maris_stella_feasts",
+        "setting": "Melodía de fiesta",
+        "title": "Ave Maris Stella"
+      },
+      {
+        "id": "ave_maris_stella",
+        "setting": "Melodía del sábado",
+        "title": "Ave Maris Stella"
+      },
+      {
+        "id": "quem_terra",
+        "setting": null,
+        "title": "A quien la tierra, el mar y los astros"
+      },
+      {
+        "id": "omni_die",
+        "setting": null,
+        "title": "Canta a María cada día"
+      },
+      {
+        "id": "concordi_laetitia",
+        "setting": null,
+        "title": "Con gozo unánime"
+      },
+      {
+        "id": "magnificat",
+        "setting": "Con aleluya",
+        "title": "Magnificat"
+      },
+      {
+        "id": "tota_pulchra",
+        "setting": null,
+        "title": "Toda hermosa eres"
+      },
+      {
+        "id": "flos_carmeli",
+        "setting": null,
+        "title": "Flor del Carmelo"
+      },
+      {
+        "id": "stabat_mater",
+        "setting": "Secuencia",
+        "title": "Estaba la Madre dolorosa"
+      },
+      {
+        "id": "litany_loreto",
+        "setting": null,
+        "title": "Letanías lauretanas"
+      },
+      {
+        "id": "memorare",
+        "setting": null,
+        "title": "Acordaos"
+      },
+      {
+        "id": "ave_maria_antiphon",
+        "setting": "Canto breve",
+        "title": "Ave María"
+      },
+      {
+        "id": "salve_mater",
+        "setting": null,
+        "title": "Salve, Madre de misericordia"
+      },
+      {
+        "id": "inviolata",
+        "setting": null,
+        "title": "Inviolada"
+      },
+      {
+        "id": "o_gloriosa",
+        "setting": null,
+        "title": "Oh gloriosa Virgen"
+      },
+      {
+        "id": "te_matrem",
+        "setting": null,
+        "title": "A ti, Madre, te alabamos"
+      },
+      {
+        "id": "in_nomine_patris",
+        "setting": null,
+        "title": "Señal de la Cruz"
+      },
+      {
+        "id": "credo_in_deum",
+        "setting": null,
+        "title": "Símbolo de los Apóstoles"
+      },
+      {
+        "id": "pater_noster",
+        "setting": null,
+        "title": "Padre nuestro"
+      },
+      {
+        "id": "ave_maria",
+        "setting": null,
+        "title": "Ave María"
+      },
+      {
+        "id": "gloria_patri",
+        "setting": null,
+        "title": "Gloria al Padre"
+      },
+      {
+        "id": "o_mi_jesu",
+        "setting": null,
+        "title": "Oración de Fátima"
+      },
+      {
+        "id": "angelus",
+        "setting": null,
+        "title": "Ángelus"
+      },
+      {
+        "id": "adoro_te",
+        "setting": null,
+        "title": "Te adoro con devoción"
+      },
+      {
+        "id": "ave_verum",
+        "setting": null,
+        "title": "Salve, verdadero Cuerpo"
+      },
+      {
+        "id": "o_salutaris",
+        "setting": null,
+        "title": "Oh Hostia salvadora"
+      },
+      {
+        "id": "tantum_ergo",
+        "setting": null,
+        "title": "Tantum Ergo"
+      },
+      {
+        "id": "o_sacrum_convivium",
+        "setting": null,
+        "title": "Oh sagrado banquete"
+      },
+      {
+        "id": "divine_praises",
+        "setting": null,
+        "title": "Alabanzas divinas"
+      },
+      {
+        "id": "anima_christi",
+        "setting": null,
+        "title": "Alma de Cristo"
+      },
+      {
+        "id": "panis_angelicus",
+        "setting": null,
+        "title": "Pan de los ángeles"
+      },
+      {
+        "id": "lauda_sion",
+        "setting": null,
+        "title": "Alaba, Sión"
+      },
+      {
+        "id": "adoremus",
+        "setting": null,
+        "title": "Adoremos por siempre"
+      },
+      {
+        "id": "ecce_panis",
+        "setting": null,
+        "title": "He aquí el pan de los ángeles"
+      },
+      {
+        "id": "ubi_caritas",
+        "setting": null,
+        "title": "Donde hay caridad y amor"
+      },
+      {
+        "id": "adoramus_te",
+        "setting": null,
+        "title": "Te adoramos"
+      },
+      {
+        "id": "pange_lingua",
+        "setting": null,
+        "title": "Canta, oh lengua, el misterio"
+      },
+      {
+        "id": "jesu_nostra_redemptio",
+        "setting": null,
+        "title": "Oh Jesús, redención nuestra"
+      },
+      {
+        "id": "veni_creator",
+        "setting": null,
+        "title": "Ven, Espíritu Creador"
+      },
+      {
+        "id": "veni_sancte_spiritus",
+        "setting": "Secuencia",
+        "title": "Ven, Espíritu divino"
+      },
+      {
+        "id": "veni_sancte_reple",
+        "setting": "Canto breve",
+        "title": "Ven, Espíritu Santo"
+      },
+      {
+        "id": "litany_sacred_heart",
+        "setting": null,
+        "title": "Letanías del Sagrado Corazón"
+      },
+      {
+        "id": "litany_holy_name",
+        "setting": null,
+        "title": "Letanías del Santo Nombre de Jesús"
+      },
+      {
+        "id": "jesu_dulcis_memoria",
+        "setting": null,
+        "title": "Jesús, dulce memoria"
+      },
+      {
+        "id": "cor_jesu",
+        "setting": null,
+        "title": "Sacratísimo Corazón de Jesús"
+      },
+      {
+        "id": "te_deum_simple",
+        "setting": "Melodía sencilla",
+        "title": "Te Deum"
+      },
+      {
+        "id": "te_deum",
+        "setting": "Melodía solemne",
+        "title": "Te Deum"
+      },
+      {
+        "id": "christus_vincit",
+        "setting": null,
+        "title": "Cristo vence"
+      },
+      {
+        "id": "te_saeculorum",
+        "setting": null,
+        "title": "A ti, Príncipe de los siglos"
+      },
+      {
+        "id": "salvete_christi_vulnera",
+        "setting": null,
+        "title": "Salve, llagas de Cristo"
+      },
+      {
+        "id": "lucis_creator",
+        "setting": null,
+        "title": "Oh buen Creador de la luz"
+      },
+      {
+        "id": "da_pacem",
+        "setting": null,
+        "title": "Danos la paz, Señor"
+      },
+      {
+        "id": "sancte_michael",
+        "setting": null,
+        "title": "San Miguel Arcángel"
+      },
+      {
+        "id": "ut_queant_laxis",
+        "setting": null,
+        "title": "Para que tus siervos canten"
+      },
+      {
+        "id": "litany_st_joseph",
+        "setting": null,
+        "title": "Letanías de San José"
+      },
+      {
+        "id": "te_joseph",
+        "setting": null,
+        "title": "Que el cielo te celebre, José"
+      },
+      {
+        "id": "litany_saints",
+        "setting": null,
+        "title": "Letanías de los santos"
+      },
+      {
+        "id": "rorate_caeli",
+        "setting": null,
+        "title": "Destilad, cielos, el rocío"
+      },
+      {
+        "id": "en_clara_vox",
+        "setting": null,
+        "title": "Una voz clara resuena"
+      },
+      {
+        "id": "creator_alme",
+        "setting": null,
+        "title": "Creador de los astros"
+      },
+      {
+        "id": "veni_emmanuel",
+        "setting": null,
+        "title": "Oh ven, oh ven, Emmanuel"
+      },
+      {
+        "id": "o_sapientia_magnificat",
+        "setting": null,
+        "title": "Oh Sabiduría, con el Magnificat"
+      },
+      {
+        "id": "o_adonai_magnificat",
+        "setting": null,
+        "title": "Oh Adonai, con el Magnificat"
+      },
+      {
+        "id": "o_radix_magnificat",
+        "setting": null,
+        "title": "Oh Raíz de Jesé, con el Magnificat"
+      },
+      {
+        "id": "o_clavis_magnificat",
+        "setting": null,
+        "title": "Oh Llave de David, con el Magnificat"
+      },
+      {
+        "id": "o_oriens_magnificat",
+        "setting": null,
+        "title": "Oh Oriente, con el Magnificat"
+      },
+      {
+        "id": "o_rex_magnificat",
+        "setting": null,
+        "title": "Oh Rey de las naciones, con el Magnificat"
+      },
+      {
+        "id": "o_emmanuel_magnificat",
+        "setting": null,
+        "title": "Oh Emmanuel, con el Magnificat"
+      },
+      {
+        "id": "puer_natus",
+        "setting": null,
+        "title": "Ha nacido un Niño en Belén"
+      },
+      {
+        "id": "adeste_fideles",
+        "setting": null,
+        "title": "Venid, fieles todos"
+      },
+      {
+        "id": "jesu_redemptor",
+        "setting": null,
+        "title": "Jesús, Redentor de todos"
+      },
+      {
+        "id": "attende_domine",
+        "setting": null,
+        "title": "Atiende, Señor"
+      },
+      {
+        "id": "parce_domine",
+        "setting": null,
+        "title": "Perdona, Señor"
+      },
+      {
+        "id": "media_vita",
+        "setting": null,
+        "title": "En medio de la vida"
+      },
+      {
+        "id": "miserere",
+        "setting": null,
+        "title": "Salmo 50 · Misericordia, Dios mío"
+      },
+      {
+        "id": "vexilla_regis",
+        "setting": null,
+        "title": "Los estandartes del Rey"
+      },
+      {
+        "id": "audi_benigne",
+        "setting": null,
+        "title": "Escucha, Creador benigno"
+      },
+      {
+        "id": "o_vos_omnes",
+        "setting": null,
+        "title": "Oh vosotros, los que pasáis"
+      },
+      {
+        "id": "victimae_paschali",
+        "setting": null,
+        "title": "Ofrezcan los cristianos"
+      },
+      {
+        "id": "o_filii",
+        "setting": null,
+        "title": "Oh hijos e hijas"
+      },
+      {
+        "id": "vidi_aquam",
+        "setting": null,
+        "title": "Vi el agua"
+      },
+      {
+        "id": "salve_festa_dies",
+        "setting": null,
+        "title": "Salve, día de fiesta"
+      },
+      {
+        "id": "aurora_caelum",
+        "setting": null,
+        "title": "La aurora tiñe el cielo"
+      },
+      {
+        "id": "ad_regias",
+        "setting": null,
+        "title": "Al banquete del Cordero"
+      },
+      {
+        "id": "dies_irae",
+        "setting": null,
+        "title": "Día de ira"
+      },
+      {
+        "id": "kyrie_de_angelis",
+        "setting": "Misa de los Ángeles",
+        "title": "Señor, ten piedad"
+      },
+      {
+        "id": "gloria_de_angelis",
+        "setting": "Misa de los Ángeles",
+        "title": "Gloria a Dios en el cielo"
+      },
+      {
+        "id": "sanctus_de_angelis",
+        "setting": "Misa de los Ángeles",
+        "title": "Santo, Santo, Santo"
+      },
+      {
+        "id": "agnus_de_angelis",
+        "setting": "Misa de los Ángeles",
+        "title": "Cordero de Dios"
+      },
+      {
+        "id": "credo_iii",
+        "setting": "Credo III",
+        "title": "Credo niceno"
+      },
+      {
+        "id": "asperges_me",
+        "setting": null,
+        "title": "Rocíame, Señor"
+      },
+      {
+        "id": "kyrie_orbis_factor",
+        "setting": "Misa XI",
+        "title": "Señor, ten piedad"
+      },
+      {
+        "id": "gloria_orbis_factor",
+        "setting": "Misa XI",
+        "title": "Gloria a Dios en el cielo"
+      },
+      {
+        "id": "sanctus_orbis_factor",
+        "setting": "Misa XI",
+        "title": "Santo, Santo, Santo"
+      },
+      {
+        "id": "agnus_orbis_factor",
+        "setting": "Misa XI",
+        "title": "Cordero de Dios"
+      }
+    ],
+    "groups": [
+      {
+        "id": "asperges",
+        "title": "Asperges me y Vidi aquam"
+      },
+      {
+        "id": "mass",
+        "title": "El Ordinario de la Misa"
+      },
+      {
+        "id": "creed",
+        "title": "El Credo"
+      },
+      {
+        "id": "sequences",
+        "title": "Secuencias"
+      },
+      {
+        "id": "requiem",
+        "title": "La Misa de difuntos"
+      },
+      {
+        "id": "hymns",
+        "title": "Himnos y cantos para todo el año"
+      },
+      {
+        "id": "ourLady",
+        "title": "Himnos y cantos a la Santísima Virgen María"
+      },
+      {
+        "id": "seasons",
+        "title": "Himnos y cantos de los tiempos litúrgicos"
+      },
+      {
+        "id": "canticles",
+        "title": "Cánticos evangélicos y letanías de los santos"
+      },
+      {
+        "id": "litanies",
+        "title": "Letanías"
+      },
+      {
+        "id": "benediction",
+        "title": "Bendición con el Santísimo Sacramento"
+      },
+      {
+        "id": "rosary",
+        "title": "El Rosario en latín"
+      }
+    ]
+  },
+  "updated_at": "2026-11-15T06:20:00Z",
+  "version": "f234faa866cfbd11"
+}

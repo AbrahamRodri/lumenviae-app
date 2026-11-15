@@ -67,10 +67,12 @@ struct ChantLibraryRow: View {
                             .fixedSize(horizontal: false, vertical: true)
                             .animation(Motion.crossfade, value: sounding)
 
-                        Text(subtitle)
-                            .font(AppFonts.readingItalicFont(13.5))
-                            .foregroundColor(AppColors.textSecondary)
-                            .fixedSize(horizontal: false, vertical: true)
+                        if let subtitle {
+                            Text(subtitle)
+                                .font(AppFonts.readingItalicFont(13.5))
+                                .foregroundColor(AppColors.textSecondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
 
                         if lengthBelow { length }
                     }
@@ -88,7 +90,8 @@ struct ChantLibraryRow: View {
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(chant.latinTitle), \(subtitle), \(chant.spokenLength)")
+            .accessibilityLabel(
+                [chant.latinTitle, subtitle, chant.spokenLength].compactMap { $0 }.joined(separator: ", "))
             .accessibilityHint("Opens the chant with its sheet music")
             .accessibilityAddTraits(.isButton)
         }
@@ -109,12 +112,8 @@ struct ChantLibraryRow: View {
             .lineLimit(1)
     }
 
-    private var subtitle: String {
-        if let note { return note }
-        if let setting = chant.settingMidLine {
-            return "\(chant.englishTitle) · \(setting)"
-        }
-        return chant.englishTitle
+    private var subtitle: String? {
+        note ?? chant.subtitleLine
     }
 }
 
@@ -193,6 +192,6 @@ extension Chant {
             )
             : latinTitle
         // Rounded as the lengths beside it are shown
-        return "\(name), \(englishTitle), \(ChantPlayer.spoken(duration.rounded()))"
+        return [name, secondTitle, ChantPlayer.spoken(duration.rounded())].compactMap { $0 }.joined(separator: ", ")
     }
 }

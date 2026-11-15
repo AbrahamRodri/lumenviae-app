@@ -473,3 +473,32 @@ struct NovenaSpanishTests {
         #expect(english.inSpanish(spanish, prayerInSpanish: { _ in false }) == nil)
     }
 }
+
+@Suite("Which novenas are prayed day by day")
+struct NovenaWithTheRosaryTests {
+    /// Only a novena whose days pray the Rosary has a page of its own and
+    /// PRAY IT AS A NOVENA; the rest are read a day at a time in the book
+    @Test func onlyANovenaPrayedWithTheRosaryHasItsPage() throws {
+        let book = LibraryContent.prayerBook.novenas
+        let knots = try #require(book.first { $0.id == "undoer_of_knots" })
+        let jude = try #require(book.first { $0.id == "st_jude" })
+        #expect(knots.praysTheRosary)
+        #expect(!jude.praysTheRosary)
+        #expect(NovenaDayContext.novena("undoer_of_knots") != nil)
+        #expect(NovenaDayContext.novena("st_jude") == nil)
+        #expect(book.filter(\.praysTheRosary).map(\.id) == ["undoer_of_knots"])
+    }
+
+    /// A novena begun on a build that let any novena be begun: its
+    /// reminders are taken down, its progress kept; the Rosary's novena,
+    /// and a novena the book no longer holds, are left alone
+    @Test func aBegunNovenaWithoutTheRosaryIsSilenced() {
+        let book = LibraryContent.prayerBook.novenas
+        let begun = Date(timeIntervalSince1970: 1_794_700_000)
+        let progress = Dictionary(
+            uniqueKeysWithValues: ["st_jude", "undoer_of_knots", "gone"].map {
+                ($0, NovenaProgress(novenaID: $0, length: 9, beginning: begun))
+            })
+        #expect(NovenaStore.unreachable(progress, book: book) == ["st_jude"])
+    }
+}

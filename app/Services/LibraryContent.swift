@@ -45,6 +45,16 @@ extension PrayerBookTranslations: LibraryDocument {
     }
 }
 
+extension ChantLibraryTranslations: LibraryDocument {
+    nonisolated var problem: String? {
+        let ids = translations.chants.map(\.id)
+        guard Set(ids).count == ids.count else { return "a Spanish chant twice" }
+        let groupIDs = translations.groups.map(\.id)
+        guard Set(groupIDs).count == groupIDs.count else { return "a Spanish section twice" }
+        return nil
+    }
+}
+
 extension ConsecrationTranslations: LibraryDocument {
     nonisolated var problem: String? {
         let numbers = days.map(\.number)
@@ -243,6 +253,9 @@ nonisolated enum LibraryContent {
     /// The Consecration's Spanish, the same way: the English is bundled
     /// (`ConsecrationData`), the Spanish shipped as `consecration.es.json`
     static let consecrationSpanishStore = LibraryDocumentStore<ConsecrationTranslations>(name: "consecration.es")
+    /// The chant library's names in Spanish, the same way, shipped as
+    /// `chant_library.es.json`
+    static let chantLibrarySpanishStore = LibraryDocumentStore<ChantLibraryTranslations>(name: "chant_library.es")
 
     /// Whether the app was launched to host the unit tests, which read
     /// the shipped copies alone: never what a simulator kept from the
@@ -289,6 +302,16 @@ nonisolated enum LibraryContent {
         return document
     }()
 
+    /// The library as its pages name it: in a Spanish app each chant's
+    /// and section's Spanish name over the English, where the server has
+    /// one; the Latin, the words and the files are the same
+    static let chantLibraryNamed: ChantLibraryDocument = {
+        guard SpanishContent.isActive, !hostsTests, let spanish = chantLibrarySpanishStore.current() else {
+            return chantLibrary
+        }
+        return spanish.laidOver(chantLibrary)
+    }()
+
     static func date(from string: String) -> Date? {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
@@ -324,6 +347,7 @@ final class LibraryContentSync {
     private let chantLibraryStore: LibraryDocumentStore<ChantLibraryDocument>
     private let prayerBookSpanishStore: LibraryDocumentStore<PrayerBookTranslations>
     private let consecrationSpanishStore: LibraryDocumentStore<ConsecrationTranslations>
+    private let chantLibrarySpanishStore: LibraryDocumentStore<ChantLibraryTranslations>
     private let spanish: Bool
     private var running: Task<Void, Never>?
 
@@ -343,6 +367,8 @@ final class LibraryContentSync {
         prayerBookSpanishStore: LibraryDocumentStore<PrayerBookTranslations> = LibraryContent.prayerBookSpanishStore,
         consecrationSpanishStore: LibraryDocumentStore<ConsecrationTranslations> =
             LibraryContent.consecrationSpanishStore,
+        chantLibrarySpanishStore: LibraryDocumentStore<ChantLibraryTranslations> =
+            LibraryContent.chantLibrarySpanishStore,
         spanish: Bool = SpanishContent.isActive
     ) {
         if let session {
@@ -359,6 +385,7 @@ final class LibraryContentSync {
         self.chantLibraryStore = chantLibraryStore
         self.prayerBookSpanishStore = prayerBookSpanishStore
         self.consecrationSpanishStore = consecrationSpanishStore
+        self.chantLibrarySpanishStore = chantLibrarySpanishStore
         self.spanish = spanish
     }
 
@@ -409,6 +436,10 @@ final class LibraryContentSync {
             // at the next launch
             _ = try? await refresh(
                 consecrationSpanishStore, path: "consecration", type: "consecration",
+                fields: "version,updated_at,translations", lang: "es")
+            // The chant library's names, read at the next launch
+            _ = try? await refresh(
+                chantLibrarySpanishStore, path: "chant-library", type: "chant_library",
                 fields: "version,updated_at,translations", lang: "es")
         }
         if allAnswered { defaults.set(now, forKey: Self.checkedKey) }
