@@ -156,6 +156,11 @@ struct NovenaDayContext {
     /// under the opening prayers' title, over Go to, and over the day's
     /// held words
     var dayAndName: String { "\(dayLine) · \(shortName)" }
+
+    /// The mark of a novena day's meditation in Go to: Mary's lily, since
+    /// a novena prayed with the Rosary is prayed to her, where the
+    /// lozenge it wore is an ornament and means nothing
+    static let meditationIcon = "ch-lily"
 }
 
 extension NovenaDayContext {

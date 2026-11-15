@@ -1698,6 +1698,9 @@ struct RosaryStopsSheet: View {
     /// opening with the Act of Contrition, its meditation, its closing
     /// prayer): name, detail and glyph by stop
     var rows: [RosaryStop: (name: String, detail: String?, icon: String)] = [:]
+    /// The set being prayed: each mystery's row wears its emblem, the
+    /// star of the Joyful, the banner of the Glorious
+    var category: MysteryCategory? = nil
     let onSelect: (RosaryStop) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -1764,13 +1767,13 @@ struct RosaryStopsSheet: View {
                 "lv-rosary"
             )
         case .between:
-            return (SpokenNovenaDay.caption(forKind: "meditation"), nil, "lv-lozenge")
+            return (SpokenNovenaDay.caption(forKind: "meditation"), nil, NovenaDayContext.meditationIcon)
         case .mystery(let n):
             let name = mysteryNames.indices.contains(n) ? mysteryNames[n] : ""
             let title = meditationTitles.indices.contains(n) ? meditationTitles[n] : nil
             let differs = title.map { !$0.isEmpty && $0.caseInsensitiveCompare(name) != .orderedSame } ?? false
             let place = RosaryStopsPill.label(stop, of: stops, isChaplet: isChaplet)
-            return (name, differs ? "\(place) · \(title ?? "")" : place, "ch-praying-hands")
+            return (name, differs ? "\(place) · \(title ?? "")" : place, category?.iconName ?? "ch-praying-hands")
         }
     }
 }
