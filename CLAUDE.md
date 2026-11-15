@@ -4003,7 +4003,8 @@ the App Store screenshots use (`Tools/AppStore/screenshots`).
 
 **Testing is silent** (Abraham, 15 Nov 2026: "are you able to do testing
 without audio from now on so I dont hear it"). Launch every debug run,
-screenshot and recording with `-LVMuteAudio` (`SilentTesting`): every
+screenshot and recording with `-LVMuteAudio YES` (`SilentTesting`; give
+it the YES, or the next launch argument is read as its value): every
 recording, bell and sound preview plays at no volume, and the unit tests'
 host is always silent. Never in a release build.
 
