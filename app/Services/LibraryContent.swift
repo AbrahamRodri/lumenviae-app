@@ -34,7 +34,14 @@ nonisolated protocol LibraryDocument: Codable, Sendable {
 extension PrayerBookTranslations: LibraryDocument {
     nonisolated var problem: String? {
         let ids = translations.map(\.id)
-        return Set(ids).count == ids.count ? nil : "a Spanish prayer twice"
+        guard Set(ids).count == ids.count else { return "a Spanish prayer twice" }
+        let novenaIDs = novenaTranslations.map(\.id)
+        guard Set(novenaIDs).count == novenaIDs.count else { return "a Spanish novena twice" }
+        for novena in novenaTranslations {
+            let partIDs = novena.parts.map(\.id)
+            guard Set(partIDs).count == partIDs.count else { return "\(novena.id) has a Spanish part twice" }
+        }
+        return nil
     }
 }
 
@@ -78,6 +85,31 @@ extension PrayerBookDocument: LibraryDocument {
             }
         }
         if let empty = prayers.first(where: { $0.english.isEmpty }) { return "\(empty.id) has no words" }
+        return novenaProblem(prayerIDs: ids)
+    }
+
+    /// A novena that would leave a day unprayable: its twin or a prayer a
+    /// part names missing, a day gone, or a part holding neither words nor
+    /// a prayer nor decades
+    nonisolated func novenaProblem(prayerIDs ids: Set<String>) -> String? {
+        guard Set(novenas.map(\.id)).count == novenas.count else { return "a novena id twice" }
+        for novena in novenas {
+            guard ids.contains(novena.prayerID) else { return "\(novena.id)'s twin \(novena.prayerID) is missing" }
+            guard novena.length > 0, novena.days.map(\.number) == Array(1...novena.length) else {
+                return "\(novena.id)'s days are not 1 to \(novena.length)"
+            }
+            for part in novena.days.flatMap(\.parts) {
+                if let prayer = part.prayerID {
+                    guard ids.contains(prayer) else { return "\(novena.id) names \(prayer), which the book lacks" }
+                } else if part.isRosary {
+                    guard let decades = part.decades, !decades.isEmpty, decades.allSatisfy((1...5).contains) else {
+                        return "\(novena.id) has a rosary part without its decades"
+                    }
+                } else if (part.text ?? "").isEmpty {
+                    return "\(novena.id) has a part with no words"
+                }
+            }
+        }
         return nil
     }
 }
@@ -234,6 +266,13 @@ nonisolated enum LibraryContent {
         return prayerBookSpanishStore.current()?.byID ?? [:]
     }()
 
+    /// The novenas' Spanish as this launch reads it, by novena id: empty in
+    /// English, in the tests, and until the server has sent some
+    static let novenaSpanish: [String: PrayerBookTranslations.NovenaTranslation] = {
+        guard SpanishContent.isActive, !hostsTests else { return [:] }
+        return prayerBookSpanishStore.current()?.novenasByID ?? [:]
+    }()
+
     /// The Consecration's Spanish as this launch reads it: empty in
     /// English, in the tests, and until the server has sent some. Read
     /// once, as the days it is laid over are built once.
@@ -345,7 +384,7 @@ final class LibraryContentSync {
         do {
             try await refresh(
                 prayerBookStore, path: "prayer-book", type: "prayer_book",
-                fields: "version,updated_at,prayers,chapters")
+                fields: "version,updated_at,prayers,chapters,novenas")
         } catch {
             allAnswered = false
         }
@@ -365,7 +404,7 @@ final class LibraryContentSync {
         if spanish {
             _ = try? await refresh(
                 prayerBookSpanishStore, path: "prayer-book", type: "prayer_book",
-                fields: "version,updated_at,translations", lang: "es")
+                fields: "version,updated_at,translations,novena_translations", lang: "es")
             // The Consecration's Spanish, laid over the bundled English
             // at the next launch
             _ = try? await refresh(

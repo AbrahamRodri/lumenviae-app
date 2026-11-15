@@ -1459,6 +1459,9 @@ extension PrayerSessionViewModel {
         case .mystery(let n):
             guard n >= 0, n < totalMysteries else { return }
             currentMysteryIndex = n
+        case .between:
+            // Only a spoken novena day has parts between the decades
+            return
         case .closing:
             currentMysteryIndex = max(totalMysteries - 1, 0)
             currentBeadIndex = strand.gloryBe

@@ -67,13 +67,22 @@ struct ScripturalRosaryPrayerView: View {
 
     init(launch: ScripturalRosaryLaunch) {
         self.sessionStartedAt = launch.startedAt
-        self._viewModel = State(initialValue: ScripturalRosaryViewModel(
+        let model = ScripturalRosaryViewModel(
             category: launch.category,
             form: launch.form,
             startAtIndex: launch.startIndex,
             startAtBead: launch.startBead,
             priorSeconds: launch.priorSeconds
-        ))
+        )
+        if let id = launch.novenaID, let day = launch.novenaDay {
+            model.novena = NovenaDayContext.resolve(
+                novenaID: id, day: day, intention: NovenaStore.shared.progress[id]?.intention)
+            // Left earlier today: taken up at the step it was left on
+            if model.novena != nil, let step = NovenaStore.shared.keptStep(novenaID: id, day: day) {
+                model.resumeNovena(at: step)
+            }
+        }
+        self._viewModel = State(initialValue: model)
     }
 
     var body: some View {
@@ -108,7 +117,7 @@ struct ScripturalRosaryPrayerView: View {
             // as the place to resume. Value copies and a weak model: the
             // View's @State box holds the model that holds this closure.
             viewModel.onMysteryChanged = { [weak viewModel, sessionStartedAt] index in
-                guard let viewModel else { return }
+                guard let viewModel, viewModel.novena == nil else { return }
                 PrayerResumeService.shared.save(
                     kind: viewModel.resumeKind,
                     setId: 0,
@@ -200,11 +209,12 @@ struct ScripturalRosaryPrayerView: View {
 
             case .stops:
                 RosaryStopsSheet(
-                    title: viewModel.displayName,
+                    title: viewModel.novena.map(\.goToTitle) ?? viewModel.displayName,
                     stops: viewModel.stops,
                     current: viewModel.currentStop,
                     mysteryNames: MysteryData.mysteries(for: viewModel.category).map(\.name),
-                    isChaplet: viewModel.category == .sevenSorrows
+                    isChaplet: viewModel.category == .sevenSorrows,
+                    rows: viewModel.novenaStopRows
                 ) { stop in
                     travel = .forward
                     viewModel.jump(to: stop)
@@ -261,7 +271,7 @@ struct ScripturalRosaryPrayerView: View {
             ),
             onAddReflection: { activeSheet = .journal },
             onGiveFeedback: { activeSheet = .feedback },
-            onEndSession: { router.popToRoot() }
+            onEndSession: { leave() }
         )
     }
 
@@ -325,7 +335,9 @@ struct ScripturalRosaryPrayerView: View {
     /// it is the next prayer instead.
     private func prayForward() {
         guard !beadsHeld else { return }
-        if movesByPrayer || viewModel.canStepOnIntoClosing {
+        if movesByPrayer || viewModel.canStepOnIntoClosing
+            || viewModel.novenaMovesByPrayer(forward: true)
+        {
             stepPrayer(forward: true)
             return
         }
@@ -342,7 +354,9 @@ struct ScripturalRosaryPrayerView: View {
     /// goes back into the opening prayers, one prayer at a time.
     private func prayBack() {
         guard !beadsHeld else { return }
-        if movesByPrayer || viewModel.canStepBackIntoOpening {
+        if movesByPrayer || viewModel.canStepBackIntoOpening
+            || viewModel.novenaMovesByPrayer(forward: false)
+        {
             stepPrayer(forward: false)
             return
         }
@@ -388,6 +402,8 @@ struct ScripturalRosaryPrayerView: View {
     private func saveResumePosition(evenAtTheStart: Bool = false) {
         let mystery = viewModel.currentMysteryIndex
         let bead = viewModel.currentBeadIndex
+        // A novena day keeps its own place (NovenaStore.keep)
+        guard viewModel.novena == nil else { return }
         guard mystery > 0 || bead > 0 || evenAtTheStart else { return }
         PrayerResumeService.shared.save(
             kind: viewModel.resumeKind,
@@ -404,11 +420,22 @@ struct ScripturalRosaryPrayerView: View {
     /// Completed all mysteries — the record is local only; there is no
     /// set on the server to credit.
     private func finishRosary() {
-        PrayerResumeService.shared.clear()
+        if let day = viewModel.novena {
+            NovenaStore.shared.forgetKept(novenaID: day.novenaID)
+        } else {
+            PrayerResumeService.shared.clear()
+        }
+        // A novena day prayed in this Rosary is marked at its AMEN
+        var prayed: NovenaPrayed?
+        if let day = viewModel.novena, let novena = NovenaDayContext.novena(day.novenaID) {
+            NovenaStore.shared.markPrayed(day.dayNumber, of: novena)
+            prayed = NovenaPrayed(novenaID: day.novenaID, dayNumber: day.dayNumber, length: day.length)
+        }
         router.navigateToCompletion(CompletedPrayer(
             category: viewModel.category,
             devotionName: viewModel.devotionName,
-            durationSeconds: viewModel.sessionDuration
+            durationSeconds: viewModel.sessionDuration,
+            novena: prayed
         ))
     }
 }
@@ -423,14 +450,22 @@ struct ScripturalRosaryPrayerView: View {
 extension ScripturalRosaryPrayerView {
 
     fileprivate var rail: OneRosaryRail {
-        OneRosaryRail(
+        let script = viewModel.novena == nil ? [] : (viewModel.spoken?.script ?? [])
+        return OneRosaryRail(
             strand: viewModel.strand,
             pendant: viewModel.silentPendant,
-            showsPendant: userSettings.showsOpeningPrayers || viewModel.isPrayingAloud
+            showsPendant: userSettings.showsOpeningPrayers || viewModel.isPrayingAloud,
+            novenaAfter: Set(script.filter { $0.held != nil && $0.phase == .decade }.map(\.mystery)),
+            novenaCloses: script.contains { $0.held != nil && $0.phase == .closing }
         )
     }
 
     fileprivate func railIndex(_ rail: OneRosaryRail) -> Int {
+        // A novena day's words stand on their diamond
+        if let segment = viewModel.spoken?.currentSegment, segment.held != nil {
+            if segment.phase == .decade, let index = rail.novenaIndex(after: segment.mystery) { return index }
+            if segment.phase == .closing, let index = rail.novenaClosingIndex { return index }
+        }
         if let step = viewModel.currentPendantStep { return rail.index(of: step) }
         if let pendant = viewModel.spokenPendant { return rail.index(of: pendant) }
         return rail.index(strandIndex: viewModel.strandIndex)
@@ -556,13 +591,22 @@ extension ScripturalRosaryPrayerView {
         }
     }
 
+    /// Leaves the player: a novena day back to its novena's page when it
+    /// was opened from there, anything else to the tab
+    fileprivate func leave() {
+        if let id = viewModel.novena?.novenaID, router.popBack(to: .novena(id: id)) { return }
+        router.popToRoot()
+    }
+
     /// The way out
     fileprivate var oneRosaryHeader: some View {
-        OneRosaryHeader(onClose: { router.popToRoot() }) {
+        OneRosaryHeader(onClose: { leave() }) {
             RosaryStopsPill(
                 stops: viewModel.stops,
                 current: viewModel.currentStop,
-                isChaplet: viewModel.category == .sevenSorrows
+                isChaplet: viewModel.category == .sevenSorrows,
+                title: viewModel.novenaPillTitle,
+                days: viewModel.novenaDays
             ) { activeSheet = .stops }
         } trailing: {
             if viewModel.isPrayingAloud, viewModel.spokenFailure == nil {
@@ -594,9 +638,92 @@ extension ScripturalRosaryPrayerView {
         return RosaryPlace.spoken(title: viewModel.currentMystery?.name ?? "", bead: viewModel.beadLabel)
     }
 
+    /// A novena day's words the voice is holding on: the day's meditation
+    /// (her intention over it), an invocation, the closing prayer, each
+    /// with its source, and one line saying the voice goes on by itself
+    @ViewBuilder
+    private func heldColumn(_ held: HeldWords, novena: NovenaDayContext) -> some View {
+        let caption = viewModel.spoken?.currentSegment?.caption ?? ""
+        OneRosaryColumn(
+            title: caption,
+            place: "\(novena.dayLine) · \(novena.shortName)",
+            bead: nil,
+            wordsKey: "held.\(held.id).\(viewModel.spoken?.index ?? 0)",
+            showsWords: true
+        ) {
+            // One scroll for all of it, so every held word can be read
+            // whatever the intention, the language or the text size; its
+            // foot dissolves under Back and Next as the prayers' does
+            ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                if held.id.contains("meditation"), let intention = novena.intention {
+                    Text(intention)
+                        .font(AppFonts.italicFont(16))
+                        .foregroundColor(AppColors.goldLight)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                ForEach(Array(ReadingText.paragraphs(of: held.text).enumerated()), id: \.offset) { _, line in
+                    Text(Rubric.paragraph([line], size: simpleWordsSize))
+                        .font(AppFonts.readingFont(simpleWordsSize))
+                        .foregroundColor(AppColors.cream)
+                        .lineSpacing(5)
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                if let invocation = held.invocation {
+                    Text(invocation)
+                        .font(AppFonts.italicFont(simpleWordsSize))
+                        .foregroundColor(AppColors.goldLight)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                if let source = held.source {
+                    Text(source)
+                        .font(AppFonts.italicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Text(
+                    viewModel.isHoldPaused
+                        ? String(localized: "Paused. Tap play to go on, or Next.", comment: "Novena day in the Rosary: under held words while paused")
+                        : String(localized: "Read at your pace. The voice goes on by itself.", comment: "Novena day in the Rosary: under words the voice has no recording of, which it waits on")
+                )
+                .font(AppFonts.italicFont(13))
+                .foregroundColor(AppColors.cream.opacity(0.7))
+                .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.bottom, 32)
+            }
+            .mask(
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear, location: 0),
+                        .init(color: .black, location: 0.04),
+                        .init(color: .black, location: 0.88),
+                        .init(color: .clear, location: 1),
+                    ],
+                    startPoint: .top, endPoint: .bottom)
+            )
+        }
+        // The words themselves, which the column's own drawing does not
+        // give VoiceOver, with what stands round them
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(
+            [
+                caption,
+                held.id.contains("meditation") ? novena.intention : nil,
+                held.text,
+                held.invocation,
+                held.source,
+            ]
+            .compactMap { $0 }
+            .joined(separator: ". "))
+    }
+
     @ViewBuilder
     fileprivate var oneRosaryColumn: some View {
-        if let pendant = viewModel.spokenPendant {
+        if let held = viewModel.heldWords, let novena = viewModel.novena {
+            heldColumn(held, novena: novena)
+        } else if let pendant = viewModel.spokenPendant {
             let lines = SilentPendant.lines(of: pendant.prayerID, in: userSettings.prayerLanguage)
             OneRosaryColumn(
                 title: pendant.heading,
@@ -704,7 +831,8 @@ extension ScripturalRosaryPrayerView {
                     ? OneRosaryPlayDisc(
                         glyph: viewModel.isSpeaking ? .pause : .play,
                         isLoading: viewModel.spokenStatus != nil,
-                        isEnabled: !viewModel.isSpokenFinished
+                        isEnabled: !viewModel.isSpokenFinished,
+                        ring: viewModel.heldWords == nil ? nil : { viewModel.holdProgress(at: Date()) }
                     ) { viewModel.toggleSpeaking() }
                     : nil,
                 onBack: prayBack,
