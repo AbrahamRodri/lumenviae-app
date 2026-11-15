@@ -115,6 +115,21 @@ extension PrayerBookDocument {
             try c.encode(days, forKey: .days)
         }
 
+        /// Where the novena's words can be read at their source, which its
+        /// credit line links to (the mission: "credited and linked on
+        /// screen"): Ascension Press's page for the Undoer of Knots, in
+        /// Spanish for a Spanish reader
+        func sourceURL(spanish: Bool) -> URL? {
+            switch id {
+            case "undoer_of_knots":
+                return URL(
+                    string: spanish
+                        ? "https://ascensionpress.com/es/pages/novena-to-our-lady-undoer-of-knots"
+                        : "https://ascensionpress.com/pages/novena-to-our-lady-undoer-of-knots")
+            default: return nil
+            }
+        }
+
         /// Whether every day prays the Rosary: only such a novena is begun
         /// and prayed day by day (today, the Undoer of Knots)
         var praysTheRosary: Bool {

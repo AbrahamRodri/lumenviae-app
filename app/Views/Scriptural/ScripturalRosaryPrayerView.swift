@@ -450,19 +450,21 @@ struct ScripturalRosaryPrayerView: View {
 extension ScripturalRosaryPrayerView {
 
     fileprivate var rail: OneRosaryRail {
-        let script = viewModel.novena == nil ? [] : (viewModel.spoken?.script ?? [])
+        // A novena day's own words, with the voice or without it
+        let words = viewModel.novenaWordsParts
         return OneRosaryRail(
             strand: viewModel.strand,
             pendant: viewModel.silentPendant,
             showsPendant: userSettings.showsOpeningPrayers || viewModel.isPrayingAloud,
-            novenaAfter: Set(script.filter { $0.held != nil && $0.phase == .decade }.map(\.mystery)),
-            novenaCloses: script.contains { $0.held != nil && $0.phase == .closing }
+            novenaAfter: Set(words.filter { $0.phase == .decade }.map(\.mystery)),
+            novenaCloses: words.contains { $0.phase == .closing }
         )
     }
 
     fileprivate func railIndex(_ rail: OneRosaryRail) -> Int {
         // A novena day's words stand on their diamond
-        if let segment = viewModel.spoken?.currentSegment, segment.held != nil {
+        let segment = viewModel.isSilentNovena ? viewModel.silentNovenaSegment : viewModel.spoken?.currentSegment
+        if let segment, segment.held != nil {
             if segment.phase == .decade, let index = rail.novenaIndex(after: segment.mystery) { return index }
             if segment.phase == .closing, let index = rail.novenaClosingIndex { return index }
         }
@@ -643,12 +645,13 @@ extension ScripturalRosaryPrayerView {
     /// with its source, and one line saying the voice goes on by itself
     @ViewBuilder
     private func heldColumn(_ held: HeldWords, novena: NovenaDayContext) -> some View {
-        let caption = viewModel.spoken?.currentSegment?.caption ?? ""
+        let segment = viewModel.isSilentNovena ? viewModel.silentNovenaSegment : viewModel.spoken?.currentSegment
+        let caption = segment?.caption ?? ""
         OneRosaryColumn(
             title: caption,
             place: "\(novena.dayLine) · \(novena.shortName)",
             bead: nil,
-            wordsKey: "held.\(held.id).\(viewModel.spoken?.index ?? 0)",
+            wordsKey: "held.\(held.id).\(viewModel.isSilentNovena ? viewModel.silentNovenaPart ?? 0 : viewModel.spoken?.index ?? 0)",
             showsWords: true
         ) {
             // One scroll for all of it, so every held word can be read
@@ -682,14 +685,20 @@ extension ScripturalRosaryPrayerView {
                         .foregroundColor(AppColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                Text(
-                    viewModel.isHoldPaused
-                        ? String(localized: "Paused. Tap play to go on, or Next.", comment: "Novena day in the Rosary: under held words while paused")
-                        : String(localized: "Read at your pace. The voice goes on by itself.", comment: "Novena day in the Rosary: under words the voice has no recording of, which it waits on")
-                )
-                .font(AppFonts.italicFont(13))
-                .foregroundColor(AppColors.cream.opacity(0.7))
-                .fixedSize(horizontal: false, vertical: true)
+                // With no voice the offline notice beneath says why, and
+                // Next is the way on: no second line about it
+                if !(viewModel.isSilentNovena && viewModel.spokenFailure != nil) {
+                    Text(
+                        viewModel.isSilentNovena
+                            ? String(localized: "Read at your pace, then Next.", comment: "Novena day in the Rosary with no voice: under the day's meditation or closing prayer, which the reader moves past with Next")
+                            : viewModel.isHoldPaused
+                            ? String(localized: "Paused. Tap play to go on, or Next.", comment: "Novena day in the Rosary: under held words while paused")
+                            : String(localized: "Read at your pace. The voice goes on by itself.", comment: "Novena day in the Rosary: under words the voice has no recording of, which it waits on")
+                    )
+                    .font(AppFonts.italicFont(13))
+                    .foregroundColor(AppColors.cream.opacity(0.7))
+                    .fixedSize(horizontal: false, vertical: true)
+                }
             }
             .padding(.bottom, 32)
             }

@@ -168,3 +168,33 @@ struct PrayAsNovenaRow: View {
         .buttonStyle(SacredCardButtonStyle())
     }
 }
+
+/// A prayer's or a novena's credit line, a link to the words at their
+/// source where the book knows one (Ascension Press's page for the
+/// Undoer of Knots), plain text otherwise
+struct NovenaCreditLine: View {
+    let origin: String
+    let url: URL?
+    let size: CGFloat
+    let color: Color
+
+    var body: some View {
+        if let url {
+            Link(destination: url) {
+                Text(origin)
+                    .font(AppFonts.readingItalicFont(size))
+                    .foregroundColor(color)
+                    .underline(true, color: color.opacity(0.5))
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .accessibilityHint(
+                String(localized: "Opens the publisher's page", comment: "VoiceOver: a novena's credit line, which opens the page its words were printed on"))
+        } else {
+            Text(origin)
+                .font(AppFonts.readingItalicFont(size))
+                .foregroundColor(color)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+}

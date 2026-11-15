@@ -99,6 +99,7 @@ final class ScripturalRosaryViewModel {
             currentBeadIndex = 0
             // A mystery reached is off the pendant, however it was reached
             pendantStep = nil
+            silentNovenaPart = nil
         }
     }
 
@@ -111,6 +112,7 @@ final class ScripturalRosaryViewModel {
         // Cross never comes back
         didSet {
             if currentBeadIndex > 0, case .opening = pendantStep { pendantStep = nil }
+            silentNovenaPart = nil
         }
     }
 
@@ -270,7 +272,11 @@ final class ScripturalRosaryViewModel {
         if pendantShown, let last = silentPendant.lastClosing {
             return pendantStep == last
         }
-        return isLastMystery && isDecadePrayed
+        guard isLastMystery && isDecadePrayed else { return false }
+        // With no voice, a novena day ends on its last words, not the
+        // Glory Be before them
+        guard isSilentNovena, let last = novenaWordsParts.indices.last else { return true }
+        return silentNovenaPart == last
     }
 
     // MARK: - The Pendant, Prayed in Silence
@@ -388,6 +394,7 @@ final class ScripturalRosaryViewModel {
     ///   by the move that reaches it.
     func prayForward() -> Bool {
         if let step = currentPendantStep { return stepSilentPendant(from: step, forward: true) }
+        if let moved = silentNovenaForward() { return moved }
         if isDecadePrayed {
             if isLastMystery, pendantShown, let first = silentPendant.firstClosing {
                 pendantStep = first
@@ -408,6 +415,7 @@ final class ScripturalRosaryViewModel {
             _ = stepSilentPendant(from: step, forward: false)
             return
         }
+        if silentNovenaBack() { return }
         if currentBeadIndex > 0 {
             currentBeadIndex -= 1
             spokenFollowHand()
@@ -551,6 +559,12 @@ final class ScripturalRosaryViewModel {
     /// The whole Rosary said aloud
     private(set) var spoken: SpokenRosaryPlayer?
 
+    /// With no voice, the novena day's words the hand is on
+    /// (`novenaWordsParts`), nil on the beads
+    fileprivate(set) var silentNovenaPart: Int?
+
+    @ObservationIgnored fileprivate var novenaWordsCache: [SpokenSegment]?
+
     // MARK: A Novena Day
 
     /// A novena day prayed in this Rosary (design plan, "The continuous
@@ -559,7 +573,10 @@ final class ScripturalRosaryViewModel {
     var novena: NovenaDayContext?
 
     /// The words being held while the voice waits on them, if any
-    var heldWords: HeldWords? { spoken?.currentSegment?.held }
+    var heldWords: HeldWords? {
+        if isSilentNovena { return silentNovenaPart.map { novenaWordsParts[$0].held } ?? nil }
+        return spoken?.currentSegment?.held
+    }
 
     /// How much of the hold has run, 0 to 1, for the ring around play
     func holdProgress(at now: Date) -> Double? { spoken?.holdProgress(at: now) }
@@ -570,7 +587,12 @@ final class ScripturalRosaryViewModel {
     /// What the pill says in a novena day: the day on the opening
     /// prayers, and the novena's own parts by name; nil elsewhere
     var novenaPillTitle: String? {
-        guard let novena, let segment = spoken?.currentSegment else { return nil }
+        guard let novena else { return nil }
+        if isSilentNovena {
+            guard let part = silentNovenaSegment else { return novena.dayLine }
+            return SpokenNovenaDay.caption(forKind: part.phase == .closing ? "closing" : "meditation")
+        }
+        guard let segment = spoken?.currentSegment else { return nil }
         switch (segment.phase, segment.held != nil) {
         case (.opening, _): return novena.dayLine
         case (.decade, true): return SpokenNovenaDay.caption(forKind: "meditation")
@@ -630,7 +652,9 @@ final class ScripturalRosaryViewModel {
     /// decade's end that words follow, at the start of the decade after
     /// them, and on the pendant
     func novenaMovesByPrayer(forward: Bool) -> Bool {
-        guard novena != nil, let spoken, let segment = spoken.currentSegment else { return false }
+        // With no voice the hand moves, and the novena's words are steps
+        // of their own (`silentNovenaForward`)
+        guard novena != nil, !isSilentNovena, let spoken, let segment = spoken.currentSegment else { return false }
         if segment.held != nil || segment.phase != .decade { return true }
         let script = spoken.script
         let heldAfter = { (decade: Int) in
@@ -936,6 +960,94 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
     }
 }
 
+// MARK: - A Novena Day With No Voice
+
+extension ScripturalRosaryViewModel {
+
+    /// A novena day with no voice to say it (its recordings could not be
+    /// had): the hand moves with Next, and the day's own words, its
+    /// meditation and its closing prayer, are steps read and moved past
+    /// with Next before AMEN, as the mission has it ("with the voice off
+    /// every step is read and moved with Next")
+    var isSilentNovena: Bool {
+        novena != nil && (spoken == nil || spokenFailure != nil)
+    }
+
+    /// The day's own words, in the order the Rosary says them: each
+    /// decade's after its Glory Be, the closing prayer's at the end
+    var novenaWordsParts: [SpokenSegment] {
+        guard let day = novena?.day else { return [] }
+        if let cached = novenaWordsCache { return cached }
+        let script = spoken?.script ?? SpokenRosaryScript.build(
+            category: category,
+            mysteryKeys: mysteries.map { "\($0.category.lowercased())_\($0.order)" },
+            hailMarys: hailMarys,
+            style: isPlain ? .plain : .scriptural,
+            extras: UserSettings.shared.closingExtras,
+            novena: day
+        )
+        let parts = script.filter { $0.held != nil }
+        novenaWordsCache = parts
+        return parts
+    }
+
+    /// The words the hand is on, with no voice; nil on the beads
+    var silentNovenaSegment: SpokenSegment? {
+        guard isSilentNovena, let part = silentNovenaPart, novenaWordsParts.indices.contains(part) else { return nil }
+        return novenaWordsParts[part]
+    }
+
+    /// The decade whose Glory Be a part follows: the closing prayer's
+    /// is the last decade's, so everything after the last Glory Be is
+    /// one run of steps
+    fileprivate func gap(of part: SpokenSegment) -> Int {
+        part.phase == .closing ? max(strand.decades - 1, 0) : part.mystery
+    }
+
+    /// Next with no voice: on the day's words, the next of them, or on
+    /// to the next decade; on a Glory Be the words follow, the first of
+    /// them. Nil when the novena's words have nothing to do with the move
+    fileprivate func silentNovenaForward() -> Bool? {
+        guard isSilentNovena else { return nil }
+        let parts = novenaWordsParts
+        if let i = silentNovenaPart {
+            if parts.indices.contains(i + 1), gap(of: parts[i + 1]) == gap(of: parts[i]) {
+                silentNovenaPart = i + 1
+                return true
+            }
+            // The decade's words read: on to the next mystery (the last
+            // words of the day are AMEN's, never passed)
+            guard !isLastMystery else { return false }
+            return nextMystery()
+        }
+        if isDecadePrayed, let first = parts.firstIndex(where: { gap(of: $0) == currentMysteryIndex }) {
+            silentNovenaPart = first
+            return true
+        }
+        return nil
+    }
+
+    /// Back with no voice: from the day's words to the one before, or to
+    /// the Glory Be they follow; from an Our Father, back onto the last
+    /// words of the decade before. False when the novena's words have
+    /// nothing to do with the move
+    fileprivate func silentNovenaBack() -> Bool {
+        guard isSilentNovena else { return false }
+        let parts = novenaWordsParts
+        if let i = silentNovenaPart {
+            silentNovenaPart = parts.indices.contains(i - 1) && gap(of: parts[i - 1]) == gap(of: parts[i]) ? i - 1 : nil
+            return true
+        }
+        guard currentBeadIndex == 0, !isFirstMystery,
+            let last = parts.lastIndex(where: { gap(of: $0) == currentMysteryIndex - 1 })
+        else { return false }
+        currentMysteryIndex -= 1
+        currentBeadIndex = strand.gloryBe
+        silentNovenaPart = last
+        return true
+    }
+}
+
 // MARK: - The Simple Rosary
 
 extension ScripturalRosaryViewModel {
@@ -963,7 +1075,7 @@ extension ScripturalRosaryViewModel {
     /// Goes to a part of the Rosary: said aloud, the voice goes there;
     /// prayed in silence, the hand does
     func jump(to stop: RosaryStop) {
-        if let spoken {
+        if let spoken, !isSilentNovena {
             spoken.jump(to: stop)
             return
         }
@@ -974,13 +1086,19 @@ extension ScripturalRosaryViewModel {
         case .mystery(let n):
             guard n >= 0, n < strand.decades else { return }
             currentMysteryIndex = n
-        case .between:
-            // Only a spoken novena day has parts between the decades
-            return
+        case .between(let n):
+            // A novena day's words after decade n, read with no voice
+            guard let first = novenaWordsParts.firstIndex(where: { gap(of: $0) == n }) else { return }
+            currentMysteryIndex = n
+            currentBeadIndex = strand.gloryBe
+            silentNovenaPart = first
         case .closing:
             currentMysteryIndex = max(strand.decades - 1, 0)
             currentBeadIndex = strand.gloryBe
             if pendantShown, let first = silentPendant.firstClosing { pendantStep = first }
+            if isSilentNovena, let first = novenaWordsParts.firstIndex(where: { $0.phase == .closing }) {
+                silentNovenaPart = first
+            }
         }
     }
 

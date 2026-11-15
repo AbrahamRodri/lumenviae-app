@@ -589,10 +589,9 @@ struct PrayAlongView: View {
                             if let origin = prayer.origin, !origin.isEmpty,
                                 !SpanishContent.isActive || novena != nil
                             {
-                                Text(origin)
-                                    .font(AppFonts.readingItalicFont(15))
-                                    .foregroundColor(AppColors.textSecondary)
-                                    .fixedSize(horizontal: false, vertical: true)
+                                NovenaCreditLine(
+                                    origin: origin, url: novena?.sourceURL(spanish: SpanishContent.isActive), size: 15,
+                                    color: AppColors.textSecondary)
                             }
 
                             if let novena, let twin {

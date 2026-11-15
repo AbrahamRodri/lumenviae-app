@@ -16474,6 +16474,17 @@
         }
       }
     },
+    "Opens the publisher's page" : {
+      "comment" : "VoiceOver: a novena's credit line, which opens the page its words were printed on",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre la página de la editorial"
+          }
+        }
+      }
+    },
     "Opens the set" : {
       "localizations" : {
         "es" : {
@@ -18817,6 +18828,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Leer a la par"
+          }
+        }
+      }
+    },
+    "Read at your pace, then Next." : {
+      "comment" : "Novena day in the Rosary with no voice: under the day's meditation or closing prayer, which the reader moves past with Next",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lee a tu ritmo y luego toca Siguiente."
           }
         }
       }
