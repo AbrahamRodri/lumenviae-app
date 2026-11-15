@@ -649,7 +649,7 @@ extension ScripturalRosaryPrayerView {
         let caption = segment?.caption ?? ""
         OneRosaryColumn(
             title: caption,
-            place: "\(novena.dayLine) · \(novena.shortName)",
+            place: novena.dayAndName,
             bead: nil,
             wordsKey: "held.\(held.id).\(viewModel.isSilentNovena ? viewModel.silentNovenaPart ?? 0 : viewModel.spoken?.index ?? 0)",
             showsWords: true
@@ -751,8 +751,13 @@ extension ScripturalRosaryPrayerView {
         } else if let pendant = viewModel.spokenPendant {
             let lines = SilentPendant.lines(of: pendant.prayerID, in: userSettings.prayerLanguage)
             OneRosaryColumn(
-                title: pendant.heading,
-                place: OneRosaryColumn<EmptyView>.place(mystery: nil, of: viewModel.strand.decades, phase: pendant.phase),
+                // In a novena day the closing is The Closing Prayer, as
+                // the pill and Go to name it
+                title: viewModel.novena != nil && pendant.phase == .closing
+                    ? SpokenNovenaDay.caption(forKind: "closing") : pendant.heading,
+                // A novena day's opening prayers say which day it is
+                place: viewModel.novena.flatMap { pendant.phase == .opening ? $0.dayAndName : nil }
+                    ?? OneRosaryColumn<EmptyView>.place(mystery: nil, of: viewModel.strand.decades, phase: pendant.phase),
                 bead: OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount),
                 wordsKey: Self.pendantKey(pendant) + (viewModel.silentPendantCount ?? ""),
                 showsWords: showsWordsAndBeads

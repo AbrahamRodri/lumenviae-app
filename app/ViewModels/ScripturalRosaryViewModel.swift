@@ -602,15 +602,29 @@ final class ScripturalRosaryViewModel {
     /// prayers, and the novena's own parts by name; nil elsewhere
     var novenaPillTitle: String? {
         guard let novena else { return nil }
+        // The closing is THE CLOSING PRAYER on every step of it, the Hail,
+        // Holy Queen included, as Go to names it: it read CLOSING PRAYERS
+        // until the novena's own prayer came
+        let closing = SpokenNovenaDay.caption(forKind: "closing")
         if isSilentNovena {
-            guard let part = silentNovenaSegment else { return novena.dayLine }
-            return SpokenNovenaDay.caption(forKind: part.phase == .closing ? "closing" : "meditation")
+            guard let part = silentNovenaSegment else {
+                return spokenPendant?.phase == .closing ? closing : novena.dayLine
+            }
+            return part.phase == .closing ? closing : SpokenNovenaDay.caption(forKind: "meditation")
         }
-        guard let segment = spoken?.currentSegment else { return nil }
+        // Before the voice has a segment (a day taken up again, Go to
+        // over it), the pill reads where the hand stands
+        guard let segment = spoken?.currentSegment else {
+            switch currentStop {
+            case .opening: return novena.dayLine
+            case .closing: return closing
+            default: return nil
+            }
+        }
         switch (segment.phase, segment.held != nil) {
         case (.opening, _): return novena.dayLine
         case (.decade, true): return SpokenNovenaDay.caption(forKind: "meditation")
-        case (.closing, true): return SpokenNovenaDay.caption(forKind: "closing")
+        case (.closing, _): return closing
         default: return nil
         }
     }

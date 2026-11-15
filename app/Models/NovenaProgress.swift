@@ -151,6 +151,11 @@ struct NovenaDayContext {
     var dayLine: String {
         String(localized: "Day \(dayNumber) of \(length)", comment: "Novena: which day of how many, like Day 4 of 9")
     }
+
+    /// The day and the novena together, "Day 4 of 9 · Undoer of Knots":
+    /// under the opening prayers' title, over Go to, and over the day's
+    /// held words
+    var dayAndName: String { "\(dayLine) · \(shortName)" }
 }
 
 extension NovenaDayContext {
@@ -341,10 +346,9 @@ struct NovenaDays: Hashable {
 }
 
 extension NovenaDayContext {
-    /// Go to's title in a novena day: "Day 4 of the Novena"
-    var goToTitle: String {
-        String(localized: "Day \(dayNumber) of the Novena", comment: "Novena day, Go to sheet: its title")
-    }
+    /// Go to's title in a novena day: "Day 4 of 9 · Undoer of Knots", as
+    /// the opening prayers name the day
+    var goToTitle: String { dayAndName }
 }
 
 // MARK: - After a Novena Day

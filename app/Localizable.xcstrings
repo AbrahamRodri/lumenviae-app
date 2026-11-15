@@ -8377,18 +8377,6 @@
         }
       }
     },
-    "Day %lld of the Novena" : {
-      "comment" : "Novena day, Go to sheet: its title",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Día %lld de la novena"
-          }
-        }
-      }
-    },
     "Day %lld prayed" : {
       "comment" : "Novena, after a day is prayed in the Rosary: the title",
       "extractionState" : "manual",
