@@ -89,6 +89,10 @@ struct appApp: App {
             // meets it over the introduction; anyone past it, on the home
             // page, ahead of What's New (ContentView.presentFirstLook)
             .onChange(of: isLaunched) { _, launched in
+                // A new install reads at the phone's own text size
+                if launched, !hasSeenOnboarding {
+                    userSettings.startTextSizeFromPhone(UIApplication.shared.preferredContentSizeCategory)
+                }
                 if launched, !hasSeenOnboarding, SpanishBeta.owesSheet() {
                     showsTranslationNotice = true
                 }

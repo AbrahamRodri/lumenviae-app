@@ -181,6 +181,19 @@ final class UserSettings {
         }
     }
 
+    /// A new install, as the introduction opens, takes the phone's text
+    /// size as its own Text Size and keeps it; one chosen already, or an
+    /// install read in before, is left as it is. Asked once the app has
+    /// launched: while the app is still being made the phone's size reads
+    /// as unspecified.
+    func startTextSizeFromPhone(_ category: UIContentSizeCategory) {
+        let d = UserDefaults.standard
+        guard d.object(forKey: "userSettings.textSizeScale") == nil, category != .unspecified,
+            !LibraryContent.hostsTests
+        else { return }
+        textSizeScale = Self.textSizeScale(forPhone: category)
+    }
+
     /// Resolved font size for meditation content. The middle of the range
     /// — the default — is 20 pt: reading size, not caption size.
     var meditationFontSize: CGFloat {
@@ -674,14 +687,6 @@ final class UserSettings {
 
         if d.object(forKey: "userSettings.textSizeScale") != nil {
             textSizeScale = d.double(forKey: "userSettings.textSizeScale")
-        } else if !d.bool(forKey: "hasSeenOnboarding"), !LibraryContent.hostsTests {
-            // A new install starts from the phone's text size, and keeps it
-            // as its own choice; an install that has been read in keeps the
-            // middle it has always had
-            textSizeScale = Self.textSizeScale(forPhone: UIApplication.shared.preferredContentSizeCategory)
-            // didSet does not run in init: kept now, or the next launch,
-            // past the introduction, would read the middle again
-            d.set(textSizeScale, forKey: "userSettings.textSizeScale")
         }
         if d.object(forKey: "userSettings.prayerLanguage") != nil {
             prayerLanguagePreference = d.string(forKey: "userSettings.prayerLanguage") ?? PrayerLanguage.english.rawValue
