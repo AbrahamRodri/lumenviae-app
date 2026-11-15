@@ -728,7 +728,7 @@ struct OneRosaryColumn<Words: View>: View {
                             .transition(.opacity)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                    .padding(.top, 14)
+                    .padding(.top, SimpleRosaryWords.topFade)  // the words dissolve into this room
                     .animation(Motion.crossfade, value: wordsKey)
                 }
 
@@ -1444,6 +1444,9 @@ struct SimpleRosaryWords: View {
     /// Where the lit line's top is scrolled to: a line's room above it
     /// for the line before, the rest of the words' height for it
     static let litLineAnchor = UnitPoint(x: 0, y: 0.06)
+    /// The dissolve over the words' top edge, laid in the room the column
+    /// keeps above them (`OneRosaryColumn` reads it for that room)
+    static let topFade: CGFloat = 14
     /// A lit line taller than this share of the words is scrolled
     /// through as it is said
     static let tallLineShare: CGFloat = 0.8
@@ -1471,6 +1474,14 @@ struct SimpleRosaryWords: View {
         lineProgress.map { ($0 * 50).rounded() / 50 }
     }
 
+    /// `litLineAnchor` measured below the top fade, so a lit line rests
+    /// where it did before the scroll reached up into the fade's room
+    private var litAnchor: UnitPoint {
+        guard viewportHeight > Self.topFade else { return Self.litLineAnchor }
+        let words = viewportHeight - Self.topFade
+        return UnitPoint(x: 0, y: (Self.topFade + Self.litLineAnchor.y * words) / viewportHeight)
+    }
+
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
@@ -1489,31 +1500,50 @@ struct SimpleRosaryWords: View {
                             .id(index)
                     }
                 }
+                .padding(.top, Self.topFade)
                 .padding(.bottom, 24)
                 .animation(reduceMotion ? nil : Motion.crossfade, value: highlighted)
             }
             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { viewportHeight = $0 }
-            // The foot of a long prayer dissolves under Back and Next
+            // The foot of a long prayer dissolves under Back and Next, and
+            // a line scrolled up dissolves before the bead's name over it
+            // rather than being sliced at the scroll's edge. The fade lies
+            // in the gap above the words, so at rest nothing moves
             .mask(
-                LinearGradient(
-                    stops: [
-                        .init(color: .black, location: 0),
-                        .init(color: .black, location: 0.86),
-                        .init(color: .clear, location: 1),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                VStack(spacing: 0) {
+                    // Clear for its upper half, so nothing reads under
+                    // the bead's name, then dissolving into the words
+                    LinearGradient(
+                        stops: [
+                            .init(color: .clear, location: 0),
+                            .init(color: .clear, location: 0.45),
+                            .init(color: .black, location: 1),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: Self.topFade)
+                    LinearGradient(
+                        stops: [
+                            .init(color: .black, location: 0),
+                            .init(color: .black, location: 0.86),
+                            .init(color: .clear, location: 1),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                }
             )
+            .padding(.top, -Self.topFade)
             .onChange(of: highlighted) { _, line in
                 guard let line else { return }
                 // The lit line's top near the top of the words, so a line
                 // that wraps to many (a recording's line can run 39
                 // seconds) is read whole below it, never under the foot
                 if reduceMotion {
-                    proxy.scrollTo(line, anchor: Self.litLineAnchor)
+                    proxy.scrollTo(line, anchor: litAnchor)
                 } else {
-                    withAnimation(Motion.crossfade) { proxy.scrollTo(line, anchor: Self.litLineAnchor) }
+                    withAnimation(Motion.crossfade) { proxy.scrollTo(line, anchor: litAnchor) }
                 }
             }
             // A line too tall for the words (a long verse, a large text
