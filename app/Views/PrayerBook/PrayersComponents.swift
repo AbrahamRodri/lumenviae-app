@@ -292,10 +292,13 @@ struct PrayersPictureRow: View {
                                 .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
                         )
                     VStack(alignment: .leading, spacing: 1) {
+                        // Two lines: cut to one, "The Novena to Our Lady,
+                        // Undoer of…" lost the part that tells the novenas apart
                         Text(prayer.listTitle)
                             .font(AppFonts.readingFont(17))
                             .foregroundColor(AppColors.cream)
-                            .lineLimit(1)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
                         if let note {
                             Text(note)
                                 .font(AppFonts.readingItalicFont(13.5))
