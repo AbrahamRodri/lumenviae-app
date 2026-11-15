@@ -652,7 +652,9 @@ struct ReaderTextOptionsSheet: View {
                     icon: "lv-rosary",
                     isOn: $settings.rosaryShowsWordsAndBeads,
                     showsDivider: false,
-                    detailLineLimit: 1
+                    // Two lines, now the sheet measures itself: at the
+                    // accessibility sizes one cut the line mid-word
+                    detailLineLimit: 2
                 )
             }
 
