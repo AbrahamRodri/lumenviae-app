@@ -1712,7 +1712,7 @@ struct RosaryStopsSheet: View {
                 ForEach(stops, id: \.self) { stop in
                     row(stop)
                 }
-                Spacer(minLength: 30)
+                Spacer(minLength: 8)
             }
             .sheetContentMeasure()
         }
