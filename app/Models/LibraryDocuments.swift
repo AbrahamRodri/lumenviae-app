@@ -545,6 +545,97 @@ nonisolated struct PrayerBookTranslations: Codable, Sendable, Equatable {
     }
 }
 
+// MARK: - The Chant Library's Spanish
+
+/// The chant library's names in Spanish, as `GET /api/v2/chant-library
+/// ?lang=es` sends its `translations` (api PR #261): each chant's title
+/// (standing for its English title) and setting, and each section's
+/// title, by id. The Latin, the sung words and the files stay the
+/// English document's. Kept with a version of its own, apart from it.
+nonisolated struct ChantLibraryTranslations: Codable, Sendable, Equatable {
+    var version: String?
+    var updatedAt: String?
+    var translations: Names
+
+    nonisolated struct Names: Codable, Sendable, Equatable {
+        var chants: [ChantName]
+        var groups: [GroupName]
+
+        init(chants: [ChantName] = [], groups: [GroupName] = []) {
+            self.chants = chants
+            self.groups = groups
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            chants = try container.decodeIfPresent([ChantName].self, forKey: .chants) ?? []
+            groups = try container.decodeIfPresent([GroupName].self, forKey: .groups) ?? []
+        }
+    }
+
+    nonisolated struct ChantName: Codable, Sendable, Equatable {
+        let id: String
+        let title: String
+        /// Nil exactly where the English setting is nil
+        var setting: String?
+    }
+
+    nonisolated struct GroupName: Codable, Sendable, Equatable {
+        let id: String
+        let title: String
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case version, translations
+        case updatedAt = "updated_at"
+    }
+
+    init(version: String? = nil, updatedAt: String? = nil, translations: Names = Names()) {
+        self.version = version
+        self.updatedAt = updatedAt
+        self.translations = translations
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        version = try container.decodeIfPresent(String.self, forKey: .version)
+        updatedAt = try container.decodeIfPresent(String.self, forKey: .updatedAt)
+        // An empty list arrives as [] rather than an object
+        translations = (try? container.decodeIfPresent(Names.self, forKey: .translations)) ?? Names()
+    }
+
+    var chantsByID: [String: ChantName] {
+        Dictionary(translations.chants.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+    }
+
+    var groupsByID: [String: GroupName] {
+        Dictionary(translations.groups.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+    }
+
+    /// Each chant's names with the Spanish laid over by id; a chant or a
+    /// section with no Spanish keeps its English
+    func laidOver(_ document: ChantLibraryDocument) -> ChantLibraryDocument {
+        let chants = chantsByID
+        let groups = groupsByID
+        guard !chants.isEmpty || !groups.isEmpty else { return document }
+        var spanish = document
+        spanish.chants = document.chants.map { chant in
+            guard let name = chants[chant.id] else { return chant }
+            var chant = chant
+            chant.englishTitle = name.title
+            if chant.setting != nil, let setting = name.setting { chant.setting = setting }
+            return chant
+        }
+        spanish.groups = document.groups.map { group in
+            guard let name = groups[group.id] else { return group }
+            var group = group
+            group.title = name.title
+            return group
+        }
+        return spanish
+    }
+}
+
 // MARK: - The Consecration's Spanish
 
 /// The Consecration in Spanish, as `GET /api/v2/consecration?lang=es` sends

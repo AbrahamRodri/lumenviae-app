@@ -204,7 +204,7 @@ struct Chant: Identifiable, Hashable {
 enum ChantCatalog {
 
     /// The Parish Book of Chant's sections, in its order
-    static let groups: [ChantGroup] = groups(from: LibraryContent.chantLibrary)
+    static let groups: [ChantGroup] = groups(from: LibraryContent.chantLibraryNamed)
 
     static func groups(from document: ChantLibraryDocument) -> [ChantGroup] {
         document.groups.map { group in
@@ -217,7 +217,7 @@ enum ChantCatalog {
 
     /// Every chant, in the catalog's order (which decides a prayer's
     /// first chant: the simple melody before the solemn)
-    static let all: [Chant] = LibraryContent.chantLibrary.chants.map { Chant(document: $0) }
+    static let all: [Chant] = LibraryContent.chantLibraryNamed.chants.map { Chant(document: $0) }
 
     /// The catalog read once into the lookups the library asks of it on
     /// every row: a chant by its id, the chants of a prayer, a work's

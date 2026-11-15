@@ -162,6 +162,41 @@ struct SpanishContentTests {
         #expect(prayer.english.hasPrefix("Acordaos, oh piadosísima Virgen María"))
     }
 
+    /// The chant library's Spanish names stand over the English title and
+    /// the setting by id; the Latin stays, and a chant without Spanish keeps
+    /// its English
+    @Test func theChantLibrarysSpanishNamesAreLaidOver() throws {
+        let english = LibraryContent.chantLibraryStore.seed!
+        let first = try #require(english.chants.first(where: { $0.setting != nil }))
+        let other = try #require(english.chants.first(where: { $0.id != first.id }))
+        let group = try #require(english.groups.first)
+        let spanish = try JSONDecoder().decode(
+            ChantLibraryTranslations.self,
+            from: Data(
+                """
+                {"version":"v","updated_at":"2026-11-15T06:20:00Z","translations":{
+                "chants":[{"id":"\(first.id)","title":"Título","setting":"Melodía sencilla"}],
+                "groups":[{"id":"\(group.id)","title":"Sección"}]}}
+                """.utf8))
+        #expect(spanish.problem == nil)
+        let named = spanish.laidOver(english)
+        let chant = try #require(named.chants.first(where: { $0.id == first.id }))
+        #expect(chant.englishTitle == "Título")
+        #expect(chant.setting == "Melodía sencilla")
+        #expect(chant.latinTitle == first.latinTitle)
+        #expect(named.chants.first(where: { $0.id == other.id })?.englishTitle == other.englishTitle)
+        #expect(named.groups.first?.title == "Sección")
+        #expect(named.chants.count == english.chants.count)
+    }
+
+    @Test func aChantLibraryWithoutSpanishDecodesAsNone() throws {
+        let empty = try JSONDecoder().decode(
+            ChantLibraryTranslations.self, from: Data(#"{"version":"v","translations":[]}"#.utf8))
+        #expect(empty.translations.chants.isEmpty)
+        let english = LibraryContent.chantLibraryStore.seed!
+        #expect(empty.laidOver(english) == english)
+    }
+
     @Test func aDocumentWithoutTranslationsDecodesAsNone() throws {
         let document = try JSONDecoder().decode(
             PrayerBookTranslations.self, from: Data(#"{"version":"abc","updated_at":"2026-11-03T00:00:00Z"}"#.utf8))
