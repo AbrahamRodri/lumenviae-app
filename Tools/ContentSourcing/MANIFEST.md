@@ -32,6 +32,7 @@ Generated from `sources.py` by `build_manifest.py`; edit there. Machine-readable
 | `occasion_before_bed` | (i) Chant Occasions 'Before Bed' (Compline chants) | Reuse hour_night (no separate file proposed) | — | — | — | — | unverified |
 | `seven_sorrows_finding` | The third sorrow, the loss of Jesus in the Temple (it borrowed joyful_finding) | The Finding of the Saviour in the Temple | William Holman Hunt (1827–1910) | 1854–60 | Birmingham Museum and Art Gallery | Public domain | verified |
 | `seven_sorrows_calvary` | The fifth sorrow, Mary at the foot of the Cross (it borrowed sorrowful_crucifixion) | Crucifixion Diptych | Rogier van der Weyden (c. 1399–1464) | c. 1460 | Philadelphia Museum of Art | Public domain | verified |
+| `novena_undoer_of_knots` | Novenas: Our Lady, Undoer of Knots: the end of a novena day | Mary, Untier of Knots (Maria Knotenlöserin) | Johann Georg Melchior Schmidtner | c. 1700 | St. Peter am Perlach, Augsburg | Public domain (PD-Art: faithful 2D reproduction of a work whose author died more than 100 years ago) | unverified |
 | `topic_first_prayers` | Prayer Book topic: The First Prayers | The Education of the Virgin | Bartolomé Esteban Murillo (1617–1682) | c. 1641 | Museo del Prado, Madrid | Public domain | verified |
 | `topic_daily_prayers` | Prayer Book topic: Daily Prayers | The Angelus | Jean-François Millet (1814–1875) | 1857–59 | Musée d'Orsay, Paris | Public domain | verified |
 | `topic_short_prayers` | Prayer Book topic: Short Prayers | Saint Francis in Meditation | Francisco de Zurbarán (1598–1664) | 1635–39 | The National Gallery, London | Public domain | verified |
@@ -121,6 +122,7 @@ Alternates and reasons:
 - `occasion_before_bed`: Same subject as Night Prayers; an alias saves ~500 KB. If a distinct picture is wanted: Gerrit van Honthorst / Jan Lievens candlelight devotional scenes.
 - `seven_sorrows_finding`: Mary's own part in the scene: she has found Him and holds Him, where Veronese's Christ among the Doctors (joyful_finding) shows the boy teaching and no mother.
 - `seven_sorrows_calvary`: Mary swooning into St John's arms beside the Cross: the sorrow is hers, where Velázquez's Christ Crucified (sorrowful_crucifixion) shows Him alone. Commons holds the diptych at 1195×1128, below the 1600 target, so it is pinned.
+- `novena_undoer_of_knots`: The novena's own image. Cropped inside its arched frame (600 x 960), so no arch or frame shows (Abraham, 14 Nov: "you can see the arches in the undoer of knots image find a better image"); Commons has no larger arch-free copy.
 - `topic_first_prayers`: St Anne teaching her daughter at her knee: the prayers learned first, from a mother.
 - `topic_daily_prayers`: Two field-workers stopping at the bell: the day kept by its prayers.
 - `topic_short_prayers`: A single upturned face and a word of prayer: a breath of prayer said in passing.
@@ -234,12 +236,10 @@ Identified by eye from the bundled images, then each compared with the Commons f
 | `luminous_cana` | The Marriage Feast at Cana | Bartolomé Esteban Murillo | c. 1672 | Barber Institute of Fine Arts, Birmingham | confirmed | File:The Barber Institute of Fine Arts - Bartolomé Esteban Murillo - The Marriage Feast at CanaFXD.jpg | Public domain | same work (0.965) | 1920×1407 | A crop of this scan. |
 | `sorrowful_carrying` | Christ Carrying the Cross | Anthony van Dyck | 1617–18 | Sint-Pauluskerk, Antwerp | confirmed | File:Anthony van Dyck - Jesus Christ bearing the Cross.jpg | Public domain | exact (1.0) | 1218×1600 | Sint-Pauluskerk's own photograph. Taken again at 1600 px from this file (fetch.py --retake); it was bundled at 960×1261. |
 | `glorious_resurrection` | The Resurrection of Christ | Noël Coypel | 1700 | — | confirmed | File:Noël Coypel - Resurrection of Christ (large version).jpg | Public domain | same work (0.782) | 566×732 | Commons holds the work only small (638×900 at most); the bundled image is a crop of it, the same composition by eye, and the smallest painting in the bundle. |
-| `glorious_pentecost` | Pentecost | — | — | — | ask Abraham | — | — | — | — | — |
+| `glorious_pentecost` | Pentecost | 17th-century European school, painter not identified | — | — | old master | — | — | — | — | — |
 | `glorious_ascension` | The Ascension | Francisco Camilo (1615–1673) | 1651 | Museo del Prado, Madrid (Google Art Project scan) | confirmed | File:Francisco Camilo - Ascension - Google Art Project.jpg | Public domain | same work (None) | 672×1024 | The same picture by eye, figure for figure (the signature at the lower left reads F. CAMILO); the Commons file is the Google Art Project scan at 3474×5293. |
 | `glorious_assumption` | The Assumption of the Virgin | Corrado Giaquinto (1703–1766) | — | Private collection (Sotheby's, New York, 2013, lot 76) | confirmed | File:CORRADO GIAQUINTO MOLFETTA 1703 - 1766 NAPLES ASSUMPTION OF THE VIRGIN.jpg | Public domain | same work (None) | 800×1245 | The same picture by eye: the Virgin's raised arm, the two angels on the cloud, the apostle with the staff at the tomb. Commons' file is the auction-house photograph (1286×2000). |
 | `joyful_nativity` | The Adoration of the Shepherds | Guido Reni (1575–1642) | c. 1640 | National Gallery, London | confirmed | File:The Adoration of the Shepherds by Guido Reni.jpg | Public domain | same work (None) | 711×1080 | The National Gallery's picture, the same to the angels' scroll; Commons holds it at 3953×6000. |
-
-**For Abraham:** where did these come from? `glorious_pentecost`. The subject and school are clear but not the painter, so their licence can't be confirmed yet.
 
 ## Texts
 
@@ -262,7 +262,10 @@ Every text the app bundles or fetches that is not its own writing, with the edit
 | The Roman Missal of 1962 | the Missale Meum project | Today's Mass, fetched when opened | missalemeum.com, MIT licence | MIT |
 | The Roman Breviary of 1962 | The Divinum Officium Project | The Hours of Prayer, fetched when opened | divinumofficium.com, by way of Lumen Viae's own server | Free to use, with the project's credit |
 | Gregorian chant: recordings and scores | Verbum Gloriae (verbumgloriae.es) | The Chant Library's 104 recordings and their scores | verbumgloriae.es, copyleft licence | Copyleft (share alike, no attribution required) |
-| Prayers of the Church | the 1910 Raccolta, the Roman Ritual and Missal, and the app's own literal renderings from the Latin | The Prayer Book | Public-domain editions, named in the Prayer Book's source notes | Public domain |
+| Prayers of the Church | the 1910 Raccolta, the Roman Ritual, Missal and Breviary, the app's own renderings from the Latin, and the prayer books and publishers named under each prayer | The Prayer Book | Each prayer's source is named under it | Credited under each prayer |
+| Novena to Our Lady, Undoer of Knots | Fr. Juan Ramón Celeiro, as printed by Ascension Press | The Undoer of Knots novena, in English and Spanish | ascensionpress.com | Used with credit |
+| Novenas from EWTN | EWTN; the Novena to St Joseph by Fr. Lawrence G. Lovasik, S.V.D. (1956); the Novena to the Holy Spirit by the Holy Ghost Fathers | The Efficacious Novena to the Sacred Heart, the Novena to the Holy Spirit, the Novena to St Joseph and the Guadalupe novena (its Spanish from EWTN Español) | ewtn.com | Used with credit |
+| The Litany of St Joseph, 2021 invocations | USCCB | The English of the invocations added in 2021 (Congregation for Divine Worship, Prot. N. 133/21) | usccb.org | Used with credit |
 | Cinzel and EB Garamond | Natanael Gama; Georg Duffner and Octavio Pardo | The app's type | Google Fonts | SIL Open Font License 1.1 |
 | Phosphor Icons and Christicons | Phosphor (Helena Zhang and Tobias Fried); Christicons | The app's glyphs, beside those drawn for it | phosphoricons.com (MIT); christicons.com (free for commercial use) | MIT; free for commercial use |
 
@@ -278,20 +281,20 @@ Licence for all: Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribu
 
 | id | Tier | Status | Page | Est. length | Size | Note |
 |---|---|---|---|---|---|---|
-| `pange_lingua` | 1 | verified | https://www.verbumgloriae.es/project/pange-lingua/ | 4:30 | 1.08 MB | — |
-| `vidi_aquam` | 1 | verified | https://www.verbumgloriae.es/project/vidi-aquam/ | 2:30 | 0.81 MB | — |
-| `kyrie_de_angelis` | 2 | verified | https://www.verbumgloriae.es/project/misa-viii-de-angelis/ | 1:30 | 0.59 MB | One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'kyrie'. |
-| `gloria_de_angelis` | 2 | verified | https://www.verbumgloriae.es/project/misa-viii-de-angelis/ | 3:00 | 0.64 MB | One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'gloria'. |
-| `sanctus_de_angelis` | 2 | verified | https://www.verbumgloriae.es/project/misa-viii-de-angelis/ | 1:00 | 0.36 MB | One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'sanctus'. |
-| `agnus_de_angelis` | 2 | verified | https://www.verbumgloriae.es/project/misa-viii-de-angelis/ | 1:00 | 0.30 MB | One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'agnus'. |
-| `credo_iii` | 2 | verified | https://www.verbumgloriae.es/project/credo-iii/ | 5:30 | 1.06 MB | — |
-| `audi_benigne` | 3 | verified | https://www.verbumgloriae.es/project/audi-benigne-conditor/ | 3:00 | 0.53 MB | — |
-| `o_vos_omnes` | 3 | verified | https://www.verbumgloriae.es/cantos/santo-rosario/misterios-dolorosos/ | 1:30 | 0.43 MB | The page holds the whole sung Sorrowful Rosary; fetch.py picks this antiphon's files by the pattern 'vos-omnes'. |
-| `ad_regias` | extra | verified | https://www.verbumgloriae.es/project/ad-regias-agni-dapes/ | 3:20 | 0.86 MB | An Eastertide hymn while Haec Dies is missing; there is also an 'otro tono' page. |
-| `te_matrem` | extra | verified | https://www.verbumgloriae.es/project/te-matrem-laudamus/ | 4:00 | 1.38 MB | — |
-| `o_oriens_magnificat` | extra | verified | https://www.verbumgloriae.es/project/o-oriens-et-magnificat/ | 5:30 | 0.92 MB | — |
+| `pange_lingua` | 1 | verified | https://www.verbumgloriae.es/project/pange-lingua/ | 4:30 | 1.11 MB (est.) | — |
+| `vidi_aquam` | 1 | verified | https://www.verbumgloriae.es/project/vidi-aquam/ | 2:30 | 0.61 MB (est.) | — |
+| `kyrie_de_angelis` | 2 | verified | https://www.verbumgloriae.es/project/misa-viii-de-angelis/ | 1:30 | 0.37 MB (est.) | One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'kyrie'. |
+| `gloria_de_angelis` | 2 | verified | https://www.verbumgloriae.es/project/misa-viii-de-angelis/ | 3:00 | 0.74 MB (est.) | One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'gloria'. |
+| `sanctus_de_angelis` | 2 | verified | https://www.verbumgloriae.es/project/misa-viii-de-angelis/ | 1:00 | 0.25 MB (est.) | One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'sanctus'. |
+| `agnus_de_angelis` | 2 | verified | https://www.verbumgloriae.es/project/misa-viii-de-angelis/ | 1:00 | 0.25 MB (est.) | One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'agnus'. |
+| `credo_iii` | 2 | verified | https://www.verbumgloriae.es/project/credo-iii/ | 5:30 | 1.35 MB (est.) | — |
+| `audi_benigne` | 3 | verified | https://www.verbumgloriae.es/project/audi-benigne-conditor/ | 3:00 | 0.74 MB (est.) | — |
+| `o_vos_omnes` | 3 | verified | https://www.verbumgloriae.es/cantos/santo-rosario/misterios-dolorosos/ | 1:30 | 0.37 MB (est.) | The page holds the whole sung Sorrowful Rosary; fetch.py picks this antiphon's files by the pattern 'vos-omnes'. |
+| `ad_regias` | extra | verified | https://www.verbumgloriae.es/project/ad-regias-agni-dapes/ | 3:20 | 0.82 MB (est.) | An Eastertide hymn while Haec Dies is missing; there is also an 'otro tono' page. |
+| `te_matrem` | extra | verified | https://www.verbumgloriae.es/project/te-matrem-laudamus/ | 4:00 | 0.98 MB (est.) | — |
+| `o_oriens_magnificat` | extra | verified | https://www.verbumgloriae.es/project/o-oriens-et-magnificat/ | 5:30 | 1.35 MB (est.) | — |
 
-Growth if all are taken: 9.0 MB of audio, on top of the bundle's ~59 MB (plus scores, ~60 KB each).
+Growth if all are taken: 8.9 MB of audio, on top of the bundle's ~59 MB (plus scores, ~60 KB each).
 
 ## Asked for, not on Verbum Gloriae
 

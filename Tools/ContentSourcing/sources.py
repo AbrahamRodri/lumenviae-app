@@ -797,7 +797,10 @@ EXISTING = [
     ("glorious_resurrection", "The Resurrection of Christ", "Noël Coypel", "1700", None, "confirmed"),
     # Once thought Maíno's; set beside the Prado's Maíno it is another
     # picture (landscape, Mary seated at the centre), so its painter is unknown
-    ("glorious_pentecost", "Pentecost", None, None, None, "ask Abraham"),
+    # Never identified (asked since the first audit; one more search on
+    # 15 Nov found nothing): an old-master cabinet picture, public domain
+    # whoever painted it, so credited as such until its painter is named
+    ("glorious_pentecost", "Pentecost", "17th-century European school, painter not identified", None, None, "old master"),
     # Identified in the app-clarity round (Oct 2026) by setting the bundled
     # image beside the Commons file: the same picture to the brushstroke
     ("glorious_ascension", "The Ascension", "Francisco Camilo (1615–1673)", "1651", "Museo del Prado, Madrid (Google Art Project scan)", "confirmed"),
@@ -1020,8 +1023,17 @@ TEXTS = [
          detail="The Hours of Prayer, fetched when opened", source="divinumofficium.com, by way of Lumen Viae's own server", licence="Free to use, with the project's credit"),
     dict(title="Gregorian chant: recordings and scores", maker="Verbum Gloriae (verbumgloriae.es)",
          detail="The Chant Library's 104 recordings and their scores", source="verbumgloriae.es, copyleft licence", licence="Copyleft (share alike, no attribution required)"),
-    dict(title="Prayers of the Church", maker="the 1910 Raccolta, the Roman Ritual and Missal, and the app's own literal renderings from the Latin",
-         detail="The Prayer Book", source="Public-domain editions, named in the Prayer Book's source notes", licence="Public domain"),
+    # Credited by source, not called public domain as a whole: several
+    # novenas are modern publishers' texts, used with their credit under
+    # each prayer (product-research's credits audit, 15 Nov 2026)
+    dict(title="Prayers of the Church", maker="the 1910 Raccolta, the Roman Ritual, Missal and Breviary, the app's own renderings from the Latin, and the prayer books and publishers named under each prayer",
+         detail="The Prayer Book", source="Each prayer's source is named under it", licence="Credited under each prayer"),
+    dict(title="Novena to Our Lady, Undoer of Knots", maker="Fr. Juan Ramón Celeiro, as printed by Ascension Press",
+         detail="The Undoer of Knots novena, in English and Spanish", source="ascensionpress.com", licence="Used with credit"),
+    dict(title="Novenas from EWTN", maker="EWTN; the Novena to St Joseph by Fr. Lawrence G. Lovasik, S.V.D. (1956); the Novena to the Holy Spirit by the Holy Ghost Fathers",
+         detail="The Efficacious Novena to the Sacred Heart, the Novena to the Holy Spirit, the Novena to St Joseph and the Guadalupe novena (its Spanish from EWTN Español)", source="ewtn.com", licence="Used with credit"),
+    dict(title="The Litany of St Joseph, 2021 invocations", maker="USCCB",
+         detail="The English of the invocations added in 2021 (Congregation for Divine Worship, Prot. N. 133/21)", source="usccb.org", licence="Used with credit"),
     dict(title="Cinzel and EB Garamond", maker="Natanael Gama; Georg Duffner and Octavio Pardo",
          detail="The app's type", source="Google Fonts", licence="SIL Open Font License 1.1"),
     dict(title="Phosphor Icons and Christicons", maker="Phosphor (Helena Zhang and Tobias Fried); Christicons",

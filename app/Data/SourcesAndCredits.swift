@@ -43,7 +43,7 @@ enum SourcesAndCredits {
         CreditedWork(title: "Christ Crucified", maker: "Diego Velázquez", detail: "c. 1632, Museo del Prado", licence: "Public domain"),
         CreditedWork(title: "The Resurrection of Christ", maker: "Noël Coypel", detail: "1700", licence: "Public domain"),
         CreditedWork(title: "The Ascension", maker: "Francisco Camilo (1615–1673)", detail: "1651, Museo del Prado, Madrid (Google Art Project scan)", licence: "Public domain"),
-        CreditedWork(title: "Pentecost", maker: "Painter not established", detail: "", licence: "Probably public domain (source not established)"),
+        CreditedWork(title: "Pentecost", maker: "17th-century European school, painter not identified", detail: "", licence: "Public domain (old master)"),
         CreditedWork(title: "The Assumption of the Virgin", maker: "Corrado Giaquinto (1703–1766)", detail: "Private collection (Sotheby's, New York, 2013, lot 76)", licence: "Public domain"),
         CreditedWork(title: "The Coronation of the Virgin", maker: "Diego Velázquez", detail: "1635–36, Museo del Prado", licence: "Public domain"),
         CreditedWork(title: "The Baptism of Christ", maker: "Guido Reni", detail: "c. 1623, Kunsthistorisches Museum, Vienna", licence: "Public domain"),
@@ -162,7 +162,10 @@ enum SourcesAndCredits {
         CreditedWork(title: "The Roman Missal of 1962", maker: "the Missale Meum project", detail: "Today's Mass, fetched when opened. missalemeum.com, MIT licence.", licence: "MIT"),
         CreditedWork(title: "The Roman Breviary of 1962", maker: "The Divinum Officium Project", detail: "The Hours of Prayer, fetched when opened. divinumofficium.com, by way of Lumen Viae's own server.", licence: "Free to use, with the project's credit"),
         CreditedWork(title: "Gregorian chant: recordings and scores", maker: "Verbum Gloriae (verbumgloriae.es)", detail: "The Chant Library's 104 recordings and their scores. verbumgloriae.es, copyleft licence.", licence: "Copyleft (share alike, no attribution required)"),
-        CreditedWork(title: "Prayers of the Church", maker: "the 1910 Raccolta, the Roman Ritual and Missal, and the app's own literal renderings from the Latin", detail: "The Prayer Book. Public-domain editions, named in the Prayer Book's source notes.", licence: "Public domain"),
+        CreditedWork(title: "Prayers of the Church", maker: "the 1910 Raccolta, the Roman Ritual, Missal and Breviary, the app's own renderings from the Latin, and the prayer books and publishers named under each prayer", detail: "The Prayer Book. Each prayer's source is named under it.", licence: "Credited under each prayer"),
+        CreditedWork(title: "Novena to Our Lady, Undoer of Knots", maker: "Fr. Juan Ramón Celeiro, as printed by Ascension Press", detail: "The Undoer of Knots novena, in English and Spanish. ascensionpress.com.", licence: "Used with credit"),
+        CreditedWork(title: "Novenas from EWTN", maker: "EWTN; the Novena to St Joseph by Fr. Lawrence G. Lovasik, S.V.D. (1956); the Novena to the Holy Spirit by the Holy Ghost Fathers", detail: "The Efficacious Novena to the Sacred Heart, the Novena to the Holy Spirit, the Novena to St Joseph and the Guadalupe novena (its Spanish from EWTN Español). ewtn.com.", licence: "Used with credit"),
+        CreditedWork(title: "The Litany of St Joseph, 2021 invocations", maker: "USCCB", detail: "The English of the invocations added in 2021 (Congregation for Divine Worship, Prot. N. 133/21). usccb.org.", licence: "Used with credit"),
         CreditedWork(title: "Cinzel and EB Garamond", maker: "Natanael Gama; Georg Duffner and Octavio Pardo", detail: "The app's type. Google Fonts.", licence: "SIL Open Font License 1.1"),
         CreditedWork(title: "Phosphor Icons and Christicons", maker: "Phosphor (Helena Zhang and Tobias Fried); Christicons", detail: "The app's glyphs, beside those drawn for it. phosphoricons.com (MIT); christicons.com (free for commercial use).", licence: "MIT; free for commercial use")
     ]

@@ -33,7 +33,8 @@ def paintings():
             continue
         prov = S.PROVENANCE.get(name, {})
         # A painting never identified has no licence read off a source page
-        fallback = "Public domain" if status == "confirmed" else "Probably public domain (source not established)"
+        fallback = {"confirmed": "Public domain", "old master": "Public domain (old master)"}.get(
+            status, "Probably public domain (source not established)")
         rows.append((name, work, creator or "Painter not established", date, collection, prov.get("licence") or fallback))
     for p in S.PAINTINGS:
         name = p["imageset"]
