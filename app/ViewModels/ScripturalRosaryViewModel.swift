@@ -638,13 +638,25 @@ final class ScripturalRosaryViewModel {
 
     /// A prayer's name set after the first in a sentence: "The Act of
     /// Contrition" reads "the Act of Contrition" there, as the Sign of the
-    /// Cross's sentence names the Creed (and Spanish "El Acto", "el Acto")
-    static func midSentence(_ name: String) -> String {
+    /// Cross's sentence names the Creed (and Spanish "El Acto", "el Acto").
+    /// A Spanish title printed bare as a heading, "Acto de Contrición",
+    /// takes its article in the sentence, as "el Credo" beside it does.
+    static func midSentence(_ name: String, spanish: Bool = SpanishContent.isActive) -> String {
         for article in ["The ", "El ", "La ", "Los ", "Las "] where name.hasPrefix(article) {
             return article.lowercased() + name.dropFirst(article.count)
         }
+        if spanish, let article = spanishArticle[name.split(separator: " ").first.map(String.init) ?? ""] {
+            return "\(article) \(name)"
+        }
         return name
     }
+
+    /// The article a bare Spanish prayer title takes mid-sentence, by its
+    /// first word
+    private static let spanishArticle: [String: String] = [
+        "Acto": "el", "Ofrecimiento": "el", "Himno": "el", "Credo": "el",
+        "Oración": "la", "Letanía": "la", "Letanías": "las", "Consagración": "la", "Invocación": "la",
+    ]
 
     /// Go to's rows said for a novena day: the opening with its own
     /// prayers, the day's meditation, and the closing with the novena's
