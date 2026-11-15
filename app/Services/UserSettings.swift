@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import UIKit
 import UserNotifications
 import Foundation
 
@@ -159,6 +160,25 @@ final class UserSettings {
     /// Maps to a point-size range of 16–24 pt.
     var textSizeScale: Double = 0.5 {
         didSet { UserDefaults.standard.set(textSizeScale, forKey: "userSettings.textSizeScale") }
+    }
+
+    /// Where a new install's Text Size starts: the phone's own text size,
+    /// so someone who reads large on the phone reads large here from the
+    /// first prayer. The phone's default, Large, is the middle of the
+    /// range, as before; every accessibility size is the top of it.
+    nonisolated static func textSizeScale(forPhone category: UIContentSizeCategory) -> Double {
+        switch category {
+        case .extraSmall: return 0.25
+        case .small: return 0.3125
+        case .medium: return 0.375
+        case .extraLarge: return 0.625
+        case .extraExtraLarge: return 0.75
+        case .extraExtraExtraLarge: return 0.875
+        case .accessibilityMedium, .accessibilityLarge, .accessibilityExtraLarge,
+             .accessibilityExtraExtraLarge, .accessibilityExtraExtraExtraLarge:
+            return 1
+        default: return 0.5
+        }
     }
 
     /// Resolved font size for meditation content. The middle of the range
@@ -654,6 +674,11 @@ final class UserSettings {
 
         if d.object(forKey: "userSettings.textSizeScale") != nil {
             textSizeScale = d.double(forKey: "userSettings.textSizeScale")
+        } else if !d.bool(forKey: "hasSeenOnboarding"), !LibraryContent.hostsTests {
+            // A new install starts from the phone's text size, and keeps it
+            // as its own choice; an install that has been read in keeps the
+            // middle it has always had
+            textSizeScale = Self.textSizeScale(forPhone: UIApplication.shared.preferredContentSizeCategory)
         }
         if d.object(forKey: "userSettings.prayerLanguage") != nil {
             prayerLanguagePreference = d.string(forKey: "userSettings.prayerLanguage") ?? PrayerLanguage.english.rawValue
