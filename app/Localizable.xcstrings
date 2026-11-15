@@ -23404,7 +23404,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La Salve, y luego %@"
+            "value" : "La Salve y luego %@"
           }
         }
       }

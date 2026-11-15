@@ -588,4 +588,13 @@ struct NovenaWalkFindingsTests {
         #expect(ScripturalRosaryViewModel.midSentence("El Acto de Contrición") == "el Acto de Contrición")
         #expect(ScripturalRosaryViewModel.midSentence("Memorare") == "Memorare")
     }
+
+    /// A Spanish title printed bare takes its article in Go to's sentence:
+    /// "La Señal de la Cruz, el Acto de Contrición y luego el Credo"
+    @Test func aBareSpanishTitleTakesItsArticleMidSentence() {
+        #expect(ScripturalRosaryViewModel.midSentence("Acto de Contrición", spanish: true) == "el Acto de Contrición")
+        #expect(ScripturalRosaryViewModel.midSentence("Oración a María Desatanudos", spanish: true) == "la Oración a María Desatanudos")
+        #expect(ScripturalRosaryViewModel.midSentence("Memorare", spanish: true) == "Memorare")
+        #expect(ScripturalRosaryViewModel.midSentence("Acto de Contrición", spanish: false) == "Acto de Contrición")
+    }
 }
