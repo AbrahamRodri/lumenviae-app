@@ -5,8 +5,10 @@
 //  Prayers said one after another on a screen of their own — an order
 //  of prayer (Morning Prayers, Before Confession) or a single prayer.
 //
-//  The order's painting hangs behind the words, veiled, as the Prayers
-//  page hangs it on the order's card; the page is the prayer, a quiet
+//  The words stand on the dark page all the way up, with no painting
+//  behind them (Abraham, 15 Nov 2026: "it cuts at the top and that
+//  doesnt look good it might as well be all dark"); the order's painting
+//  comes forward at the Amen. The page is the prayer, a quiet
 //  head (×, the order, its beads, ALOUD or SILENT) and one way on at the
 //  foot: NEXT with the next prayer's name, or AMEN on the last.
 //
@@ -56,6 +58,9 @@ struct PrayAlongView: View {
     /// Each prayer's stanzas measured once, for following the voice
     @State private var measures = StanzaMeasures()
     @State private var asksHowToPray = false
+
+    /// A prayer named in a direction ("Our Father, Hail Mary"), opened to read
+    @State private var saidPrayer: PrayerPage.SaidPrayer?
 
     /// Whether the page is on screen. Recordings still being fetched when
     /// it closes, or a prayer still turning in, must not go on to speak
@@ -167,10 +172,6 @@ struct PrayAlongView: View {
             AppColors.background.ignoresSafeArea()
 
             if let prayer {
-                // Fixed behind the scroll, so a long prayer runs over it
-                // and never carries it away
-                PrayAlongGround(painting: painting)
-
                 // Under the Amen's veil the page is still drawn, but
                 // VoiceOver should find only the Amen
                 VStack(spacing: 0) {
@@ -204,6 +205,9 @@ struct PrayAlongView: View {
         // Asked once, before the book's first sound; undismissable, since
         // answering is the only way through, and ALOUD or SILENT at the
         // head of the page owns the choice afterward
+        .sheet(item: $saidPrayer) { said in
+            PrayerSaidSheet(said: said, language: displayLanguage, size: textSize)
+        }
         .sheet(isPresented: $asksHowToPray, onDismiss: startSounding) {
             PrayAloudChoiceSheet(painting: painting) { chosen in
                 store.chooseAloud(chosen)
@@ -263,9 +267,6 @@ struct PrayAlongView: View {
 
                 moreMenu
             }
-            // A soft shadow of the ground under the head's words, so they
-            // hold over a dove's wing or a cherub's cloud
-            .shadow(color: AppColors.background.opacity(0.85), radius: 6)
 
             if prayers.count > 1 {
                 beads
@@ -518,6 +519,7 @@ struct PrayAlongView: View {
 
     private func pageScroll(_ prayer: BookPrayer) -> some View {
         let stanzas = Self.stanzas(prayer.content(for: displayLanguage))
+        let page = PrayerPage(stanzas: stanzas)
         let following = aloud && voice.isPlaying
 
         return ScrollViewReader { proxy in
@@ -563,22 +565,38 @@ struct PrayAlongView: View {
                                 .minimumScaleFactor(0.7)
                                 .fixedSize(horizontal: false, vertical: true)
                                 .accessibilityAddTraits(.isHeader)
+
+                            // Where the prayer comes from, quietly: the
+                            // book credits every prayer it prints
+                            // English only for now: hidden on a Spanish page
+                            // until the book gives the origin in Spanish
+                            if let origin = prayer.origin, !origin.isEmpty, !SpanishContent.isActive {
+                                Text(origin)
+                                    .font(AppFonts.readingItalicFont(15))
+                                    .foregroundColor(AppColors.textSecondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 24)
                         .padding(.top, 22)
 
                         VStack(alignment: .leading, spacing: ReadingTypography.stanzaSpacing(for: textSize)) {
-                            ForEach(Array(stanzas.enumerated()), id: \.offset) { i, stanza in
-                                PrayAlongStanza(
-                                    content: stanza,
+                            if page.hasLitanyGroups {
+                                Text(String(localized: "Answer each call with the words in red.", comment: "Pray-along page: the line over a litany, saying how to answer its calls"))
+                                    .font(AppFonts.readingItalicFont(max(14, textSize - 3)))
+                                    .foregroundColor(AppColors.textSecondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+
+                            ForEach(Array(page.sections.enumerated()), id: \.offset) { _, section in
+                                PrayerPageSectionView(
+                                    section: section,
                                     size: textSize,
-                                    showsDropCap: i == 0,
-                                    opacity: stanzaOpacity(i, following: following)
+                                    opacity: { stanzaOpacity($0, following: following) },
+                                    open: { saidPrayer = $0 }
                                 )
-                                .frame(maxWidth: .infinity, alignment: .leading)
                                 .animation(Motion.crossfade, value: litStanza)
-                                .id(i)
                             }
 
                             AITranslationNote(prayerID: prayer.id)
@@ -586,9 +604,6 @@ struct PrayAlongView: View {
                         .padding(.horizontal, 24)
                         .padding(.top, 20)
                     }
-                    // The veil goes with the words, so the painting reads
-                    // clear in the room a short prayer leaves beneath it
-                    .background(WordsVeil())
 
                     // Clear of the foot, so the last line can be read
                     // above NEXT
@@ -636,8 +651,7 @@ struct PrayAlongView: View {
     }
 
     /// The verse under the voice full, what has been said dimmed, what is
-    /// to come a little brighter — only while the voice is reading. Over
-    /// the painting the dimmed verses stay readable.
+    /// to come a little brighter — only while the voice is reading.
     private func stanzaOpacity(_ i: Int, following: Bool) -> Double {
         guard following, let lit = litStanza else { return 1 }
         if i == lit { return 1 }
@@ -1175,68 +1189,6 @@ final class StanzaMeasures {
     }
 }
 
-// MARK: - The ground
-
-/// The page's ground: the order's painting veiled, as Chant practice sets
-/// its chant's, and a scrim of the theme's own ground, light at the head
-/// where the painting shows and even below it. The words carry a veil of
-/// their own (`WordsVeil`), so they read over the brightest sky while the
-/// room a short prayer leaves beneath it shows the painting rather than a
-/// flat dark field. Hidden from VoiceOver, which reads the words.
-private struct PrayAlongGround: View {
-    let painting: PrayerBookPainting
-
-    var body: some View {
-        ZStack {
-            // The painting hangs off a clear view, so its fill never
-            // widens the page it stands behind
-            Color.clear
-                .overlay {
-                    CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
-                }
-                .clipped()
-                .opacity(0.55)
-
-            LinearGradient(
-                stops: [
-                    // Deeper behind the head, so its labels read over the
-                    // brightest sky
-                    .init(color: AppColors.background.opacity(0.62), location: 0),
-                    .init(color: AppColors.background.opacity(0.42), location: 0.1),
-                    .init(color: AppColors.background.opacity(0.15), location: 0.16),
-                    .init(color: AppColors.background.opacity(0.45), location: 0.22),
-                    .init(color: AppColors.background.opacity(0.55), location: 0.4),
-                    .init(color: AppColors.background.opacity(0.55), location: 1)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        }
-        .ignoresSafeArea()
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
-    }
-}
-
-/// The veil behind the title and the prayer, scrolling with them: the
-/// theme's ground, feathered above and below so it has no edge. The top
-/// feather lies within the words' own frame: hung above it, the scroll's
-/// edge cut it off in a hard line under the head.
-private struct WordsVeil: View {
-    var body: some View {
-        VStack(spacing: 0) {
-            LinearGradient(colors: [.clear, AppColors.background.opacity(0.62)], startPoint: .top, endPoint: .bottom)
-                .frame(height: 56)
-            AppColors.background.opacity(0.62)
-            LinearGradient(colors: [AppColors.background.opacity(0.62), .clear], startPoint: .top, endPoint: .bottom)
-                .frame(height: 72)
-        }
-        .padding(.bottom, -72)
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
-    }
-}
-
 // MARK: - A stanza on the page
 
 /// One stanza of the prayer. A stanza of plain verse — lines and rubrics,
@@ -1246,7 +1198,7 @@ private struct WordsVeil: View {
 /// rubrics stand apart from the verse, at full strength while the verse
 /// beside them is dimmed under the voice. Every other stanza is
 /// `PrayerText`'s, dimmed whole.
-private struct PrayAlongStanza: View {
+struct PrayAlongStanza: View {
     let content: String
     let size: CGFloat
     let showsDropCap: Bool
