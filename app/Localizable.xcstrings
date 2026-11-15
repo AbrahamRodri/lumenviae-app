@@ -21462,6 +21462,17 @@
         }
       }
     },
+    "Source" : {
+      "comment" : "Pray-along page, at the prayer's foot: small capitals over the prayer's full source, where the title carries only a short credit",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fuente"
+          }
+        }
+      }
+    },
     "Sources & Credits" : {
       "comment" : "About: a row's name, a heading, or the line under it",
       "localizations" : {

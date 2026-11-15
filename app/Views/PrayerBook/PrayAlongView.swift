@@ -572,7 +572,7 @@ struct PrayAlongView: View {
                             // book credits every prayer it prints. On a
                             // Spanish page the prayer carries the book's
                             // Spanish credit, or none
-                            if let origin = prayer.origin, !origin.isEmpty {
+                            if let origin = prayer.creditUnderTitle, !origin.isEmpty {
                                 NovenaCreditLine(
                                     origin: origin, url: novena?.sourceURL(spanish: SpanishContent.isActive), size: 15,
                                     color: AppColors.textSecondary)
@@ -617,6 +617,14 @@ struct PrayAlongView: View {
                             }
 
                             AITranslationNote(prayerID: prayer.id)
+
+                            // A long source, cut short under the title,
+                            // whole at the foot, as the website sets it
+                            if let source = prayer.creditAtFoot, !source.isEmpty {
+                                PrayerSourceFoot(
+                                    source: source, url: novena?.sourceURL(spanish: SpanishContent.isActive),
+                                    size: max(14, textSize - 3))
+                            }
                         }
                         .padding(.horizontal, 24)
                         .padding(.top, 20)
@@ -1434,5 +1442,29 @@ private extension Array {
         PrayAlongView(launch: .order(PrayerBook.order("morning")!))
             .environment(AppRouter())
             .environment(UserSettings.shared)
+    }
+}
+
+
+/// The whole source of a prayer whose title carries only a cut of it:
+/// a hairline, SOURCE, and the credit, linked where the novena has a page
+struct PrayerSourceFoot: View {
+    let source: String
+    let url: URL?
+    let size: CGFloat
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.16))
+                .frame(height: AppLine.hairline)
+            Text(String(localized: "Source", comment: "Pray-along page, at the prayer's foot: small capitals over the prayer's full source, where the title carries only a short credit"))
+                .font(AppFonts.labelFont(10))
+                .tracking(2)
+                .textCase(.uppercase)
+                .foregroundColor(AppColors.gold.opacity(0.8))
+            NovenaCreditLine(origin: source, url: url, size: size, color: AppColors.textSecondary)
+        }
+        .padding(.top, 12)
     }
 }
