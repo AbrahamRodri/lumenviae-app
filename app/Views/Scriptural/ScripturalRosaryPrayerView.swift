@@ -271,7 +271,7 @@ struct ScripturalRosaryPrayerView: View {
             ),
             onAddReflection: { activeSheet = .journal },
             onGiveFeedback: { activeSheet = .feedback },
-            onEndSession: { router.popToRoot() }
+            onEndSession: { leave() }
         )
     }
 
@@ -591,9 +591,16 @@ extension ScripturalRosaryPrayerView {
         }
     }
 
+    /// Leaves the player: a novena day back to its novena's page when it
+    /// was opened from there, anything else to the tab
+    fileprivate func leave() {
+        if let id = viewModel.novena?.novenaID, router.popBack(to: .novena(id: id)) { return }
+        router.popToRoot()
+    }
+
     /// The way out
     fileprivate var oneRosaryHeader: some View {
-        OneRosaryHeader(onClose: { router.popToRoot() }) {
+        OneRosaryHeader(onClose: { leave() }) {
             RosaryStopsPill(
                 stops: viewModel.stops,
                 current: viewModel.currentStop,

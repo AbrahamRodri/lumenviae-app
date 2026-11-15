@@ -7046,6 +7046,18 @@
         }
       }
     },
+    "Choose the time." : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige la hora."
+          }
+        }
+      }
+    },
     "Choose the voice and its speed" : {
       "comment" : "A Rosary's own page: VoiceOver hint on the Voice & speed row",
       "localizations" : {
@@ -16462,18 +16474,6 @@
         }
       }
     },
-    "Opens the time." : {
-      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abre la hora."
-          }
-        }
-      }
-    },
     "Opens this app's page in the iPhone's Settings, where its language is chosen" : {
       "comment" : "VoiceOver hint, Settings: what a tap on the App Language row does",
       "localizations" : {
@@ -17660,7 +17660,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mejor rezar hoy el día 1"
+            "value" : "Rezar hoy el día 1"
           }
         }
       }

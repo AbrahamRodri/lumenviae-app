@@ -73,14 +73,16 @@ final class NovenaStore {
 
     func begin(
         _ novena: PrayerBookDocument.Novena, on day: Date = PrayerDay.now, intention: String? = nil,
-        reminder: DateComponents? = nil
+        reminder: DateComponents? = nil, now: Date = PrayerDay.now
     ) {
         let trimmed = intention?.trimmingCharacters(in: .whitespacesAndNewlines)
         progress[novena.id] = NovenaProgress(
             novenaID: novena.id, length: novena.length, beginning: day,
             intention: trimmed?.isEmpty == false ? trimmed : nil, reminder: reminder)
         save()
-        reschedule(novena, now: day)
+        // The moment it is, not the day it begins: a novena begun for
+        // tomorrow still lays tomorrow's reminder
+        reschedule(novena, now: now)
     }
 
     /// Marks a day prayed (the AMEN on its last step). The last day

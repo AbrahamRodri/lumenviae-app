@@ -58,7 +58,7 @@ struct NovenaPageView: View {
                             if progress != nil { intentionBlock(novena) }
                             if progress != nil { reminderRow(novena) }
                             daysList(novena)
-                            if let progress { endLinks(progress) }
+                            if let progress { endLinks(progress, novena) }
                         }
                         .padding(.horizontal, 22)
                         .padding(.top, 26)
@@ -102,41 +102,6 @@ struct NovenaPageView: View {
                     .dynamicTypeSize(...DynamicTypeSize.appMaximum)
             }
         }
-        .confirmationDialog(
-            confirming == .end
-                ? String(
-                    localized: "End this novena? Its reminders will stop. You can begin it again any day.",
-                    comment: "Novena page: the question before ending a novena")
-                : String(
-                    localized: "Begin again from Day 1? The days you have prayed will be cleared.",
-                    comment: "Novena page: the question before beginning a novena again"),
-            isPresented: Binding(get: { confirming != nil }, set: { if !$0 { confirming = nil } }),
-            titleVisibility: .visible,
-            presenting: confirming
-        ) { which in
-            if let novena {
-                switch which {
-                case .end:
-                    Button(
-                        String(
-                            localized: "End Novena", comment: "Novena page: the act that ends a novena, in its question"
-                        ), role: .destructive
-                    ) {
-                        store.end(novena.id)
-                    }
-                case .beginAgain:
-                    Button(
-                        String(
-                            localized: "Begin Again",
-                            comment: "Novena page: the act that begins a novena again from Day 1, in its question"),
-                        role: .destructive
-                    ) {
-                        store.beginAgain(novena, now: now)
-                    }
-                }
-            }
-            Button(String(localized: "Cancel", comment: "A question's way to leave it unanswered"), role: .cancel) {}
-        }
     }
 
     /// The dark ground under the clock and the Back once the painting has
@@ -162,6 +127,20 @@ struct NovenaPageView: View {
         .animation(Motion.crossfade, value: paintingGone)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+    }
+
+    // MARK: - Questions
+
+    /// Begin again's and End this novena's questions, each anchored to the
+    /// control that asks it: on iOS 26 a question is drawn as a popover
+    /// pointing at the view it hangs from
+    private func asks(_ which: Confirmation, _ novena: PrayerBookDocument.Novena) -> some ViewModifier {
+        NovenaQuestion(which: which, confirming: $confirming) {
+            switch which {
+            case .end: store.end(novena.id)
+            case .beginAgain: store.beginAgain(novena, now: now)
+            }
+        }
     }
 
     // MARK: - Head
@@ -219,6 +198,12 @@ struct NovenaPageView: View {
             comment: "Novena: the reader's intention, as a sheet title and (in capitals) the page's heading")
     }
 
+    /// An instant inside tomorrow's prayer day: its noon. Tomorrow's
+    /// midnight is before the day turns at four, so it named today.
+    static func tomorrowsStart(after now: Date) -> Date {
+        PrayerDay.adding(days: 1, to: PrayerDay.day(of: now)).addingTimeInterval(12 * 3600)
+    }
+
     static func kicker(length: Int) -> String {
         length == 9
             ? String(
@@ -261,10 +246,13 @@ struct NovenaPageView: View {
     }
 
     /// Today's dash; none in Welcome back, where a marker on today read as
-    /// the day she is on while the card names another
+    /// the day she is on while the card names another, nor before Day 1
     static func hereDay(_ progress: NovenaProgress, length: Int, on now: Date) -> Int {
         if case .welcomeBack = progress.standing(on: now) { return 0 }
-        return min(max(progress.dayNumber(on: now), 1), length)
+        let day = progress.dayNumber(on: now)
+        // Set to begin tomorrow: no day is today's yet
+        if day < 1 { return 0 }
+        return min(day, length)
     }
 
     // MARK: - Where it stands
@@ -293,10 +281,12 @@ struct NovenaPageView: View {
                         .foregroundColor(AppColors.cream.opacity(0.9))
                         QuietGoldButton(
                             title: String(
-                                localized: "Begin Again", comment: "Novena page, Welcome back: begin from Day 1")
+                                localized: "Begin Again", comment: "Novena page, Welcome back: begin from Day 1"),
+                            horizontalPadding: 0
                         ) {
                             confirming = .beginAgain
                         }
+                        .modifier(asks(.beginAgain, novena))
                         .padding(.top, 4)
                     }
                 }
@@ -311,7 +301,8 @@ struct NovenaPageView: View {
                         ForEach(open, id: \.self) { day in
                             QuietGoldButton(
                                 title: String(
-                                    localized: "Pray Day \(day)", comment: "Novena page: pray a day left open")
+                                    localized: "Pray Day \(day)", comment: "Novena page: pray a day left open"),
+                                horizontalPadding: 0
                             ) {
                                 pray(day, of: novena)
                             }
@@ -410,7 +401,7 @@ struct NovenaPageView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityHint(String(localized: "Opens the time.", comment: "VoiceOver hint: the novena's reminder row"))
+        .accessibilityHint(String(localized: "Choose the time.", comment: "VoiceOver hint: the novena's reminder row"))
     }
 
     static func reminderTime(_ components: DateComponents?) -> String? {
@@ -509,17 +500,19 @@ struct NovenaPageView: View {
         }
     }
 
-    private func endLinks(_ progress: NovenaProgress) -> some View {
+    private func endLinks(_ progress: NovenaProgress, _ novena: PrayerBookDocument.Novena) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             // Welcome back's card carries its own Begin Again
             if !Self.isWelcomeBack(progress, on: now) {
                 Button(String(localized: "Begin again", comment: "Novena page foot: begin the novena again from Day 1")) {
                     confirming = .beginAgain
                 }
+                .modifier(asks(.beginAgain, novena))
             }
             Button(String(localized: "End this novena", comment: "Novena page foot: end the novena under way")) {
                 confirming = .end
             }
+            .modifier(asks(.end, novena))
         }
         .font(AppFonts.readingFont(17))
         .foregroundColor(AppColors.textSecondary)
@@ -661,12 +654,52 @@ struct NovenaPageView: View {
                 case .editing:
                     store.setReminder(reminder, showingIntention: showingIntention, for: novena, now: now)
                 case .beginning(let tomorrow, let intention):
-                    let start = tomorrow ? PrayerDay.adding(days: 1, to: PrayerDay.day(of: now)) : now
-                    store.begin(novena, on: start, intention: intention, reminder: reminder)
+                    let start = tomorrow ? Self.tomorrowsStart(after: now) : now
+                    store.begin(novena, on: start, intention: intention, reminder: reminder, now: now)
                     if !tomorrow { pray(1, of: novena) }
                 }
                 sheet = nil
+            } onCancel: {
+                sheet = nil
             }
+        }
+    }
+}
+
+// MARK: - Questions
+
+/// One of the page's two questions, hung from the control that asks it
+struct NovenaQuestion: ViewModifier {
+    let which: NovenaPageView.Confirmation
+    @Binding var confirming: NovenaPageView.Confirmation?
+    let answer: () -> Void
+
+    func body(content: Content) -> some View {
+        content.confirmationDialog(
+            which == .end
+                ? String(
+                    localized: "End this novena? Its reminders will stop. You can begin it again any day.",
+                    comment: "Novena page: the question before ending a novena")
+                : String(
+                    localized: "Begin again from Day 1? The days you have prayed will be cleared.",
+                    comment: "Novena page: the question before beginning a novena again"),
+            isPresented: Binding(get: { confirming == which }, set: { if !$0 { confirming = nil } }),
+            titleVisibility: .visible
+        ) {
+            switch which {
+            case .end:
+                Button(
+                    String(
+                        localized: "End Novena", comment: "Novena page: the act that ends a novena, in its question"
+                    ), role: .destructive, action: answer)
+            case .beginAgain:
+                Button(
+                    String(
+                        localized: "Begin Again",
+                        comment: "Novena page: the act that begins a novena again from Day 1, in its question"),
+                    role: .destructive, action: answer)
+            }
+            Button(String(localized: "Cancel", comment: "A question's way to leave it unanswered"), role: .cancel) {}
         }
     }
 }
@@ -740,6 +773,7 @@ struct NovenaIntentionSheet: View {
                             .strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline)
                     )
                     .focused($focused)
+                    .tint(AppColors.gold)
                     .accessibilityLabel(
                         String(localized: "Your intention, optional", comment: "VoiceOver: the novena intention field"))
 
@@ -792,6 +826,7 @@ struct NovenaReminderSheet: View {
     let showsIntentionChoice: Bool
     let showingIntention: Bool
     let onDone: (DateComponents?, Bool) -> Void
+    var onCancel: () -> Void = {}
 
     @Environment(\.openURL) private var openURL
     @State private var time = Date()
@@ -809,7 +844,11 @@ struct NovenaReminderSheet: View {
                         localized: "For each of the nine days, at the time you choose.",
                         comment: "Reminder sheet: the line under the title")
                 ) {
-                    EmptyView()
+                    if !isBeginning {
+                        SheetHeaderAction(
+                            title: String(localized: "Cancel", comment: "A sheet's way to leave without saving"),
+                            action: onCancel)
+                    }
                 }
 
                 if denied {
@@ -881,14 +920,17 @@ struct NovenaReminderSheet: View {
                         ) {
                             Task { await choose() }
                         }
-                        QuietGoldButton(
-                            title: isBeginning
-                                ? String(localized: "No reminder", comment: "Reminder sheet: begin without a reminder")
-                                : String(
-                                    localized: "Turn off the reminder",
-                                    comment: "Reminder sheet, opened later: no reminder")
-                        ) {
-                            onDone(nil, false)
+                        if isBeginning || initial != nil {
+                            QuietGoldButton(
+                                title: isBeginning
+                                    ? String(
+                                        localized: "No reminder", comment: "Reminder sheet: begin without a reminder")
+                                    : String(
+                                        localized: "Turn off the reminder",
+                                        comment: "Reminder sheet, opened later: no reminder")
+                            ) {
+                                onDone(nil, false)
+                            }
                         }
                     }
                 }

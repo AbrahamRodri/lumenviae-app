@@ -359,6 +359,9 @@ final class AppRouter {
     }
 
     #if DEBUG
+    /// Whether a `novena:` launch route has set its novena's state yet
+    private static var novenaStateSet = false
+
     /// A page named at launch by `LUMEN_VIAE_ROUTE`, for the App Store
     /// screenshots (`Tools/AppStore/screenshots`): `missal`, `office`,
     /// `howToPray`, `explore`, `spiritualReading`, `allMysteries`,
@@ -398,7 +401,11 @@ final class AppRouter {
             // day>:<days prayed, comma-separated>` first begins it so that
             // today is that day (0: it begins tomorrow), for the page's shots;
             // `novena:<id>:none` ends any under way, to shoot it not begun
-            if parts.count > 2, parts[2] == "none" {
+            // Set once a launch: the router can be built more than once,
+            // and a second pass undid what was begun since
+            if novenaStateSet {
+            } else if parts.count > 2, parts[2] == "none" {
+                novenaStateSet = true
                 NovenaStore.shared.end(parts[1])
             } else if parts.count > 2, let day = Int(parts[2]), let novena = NovenaDayContext.novena(parts[1]) {
                 let start = PrayerDay.adding(days: 1 - day, to: PrayerDay.today()).addingTimeInterval(12 * 3600)
@@ -407,6 +414,7 @@ final class AppRouter {
                     intention: SpanishContent.isActive ? "Por el nuevo trabajo de mi hermano" : "For my brother's new job",
                     reminder: DateComponents(hour: 20, minute: 0))
                 let prayed = parts.count > 3 ? parts[3].split(separator: ",").compactMap { Int($0) } : []
+                novenaStateSet = true
                 for earlier in prayed { NovenaStore.shared.markPrayed(earlier, of: novena) }
                 NovenaStore.shared.forgetKept(novenaID: novena.id)
             }
@@ -661,6 +669,16 @@ final class AppRouter {
     }
 
     /// Returns to the home screen and clears stored navigation state.
+    /// Pops back to the latest `route` on the stack and says whether it
+    /// was there: a novena day's × goes back to the novena's page
+    @discardableResult
+    func popBack(to route: AppRoute) -> Bool {
+        guard let index = routes.lastIndex(where: { $0 == route }) else { return false }
+        let drop = path.count - index - 1
+        if drop > 0 { path.removeLast(drop) }
+        return true
+    }
+
     func popToRoot() {
         // Mutate in place rather than replacing the NavigationPath object;
         // swapping the whole path mid-transition can desync the stack's
