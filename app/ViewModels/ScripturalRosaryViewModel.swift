@@ -612,7 +612,15 @@ final class ScripturalRosaryViewModel {
             }
             return part.phase == .closing ? closing : SpokenNovenaDay.caption(forKind: "meditation")
         }
-        guard let segment = spoken?.currentSegment else { return nil }
+        // Before the voice has a segment (a day taken up again, Go to
+        // over it), the pill reads where the hand stands
+        guard let segment = spoken?.currentSegment else {
+            switch currentStop {
+            case .opening: return novena.dayLine
+            case .closing: return closing
+            default: return nil
+            }
+        }
         switch (segment.phase, segment.held != nil) {
         case (.opening, _): return novena.dayLine
         case (.decade, true): return SpokenNovenaDay.caption(forKind: "meditation")
