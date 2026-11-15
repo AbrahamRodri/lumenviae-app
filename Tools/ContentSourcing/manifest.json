@@ -342,6 +342,30 @@
     },
     {
       "kind": "painting",
+      "status": "unverified",
+      "file_url": null,
+      "commons_file": "File:Mary-Untier-of-Knots-1.jpg",
+      "width": null,
+      "height": null,
+      "bytes": null,
+      "imageset": "novena_undoer_of_knots",
+      "slot": "Novenas: Our Lady, Undoer of Knots: the end of a novena day",
+      "features": [
+        "Novenas"
+      ],
+      "work": "Mary, Untier of Knots (Maria Knotenlöserin)",
+      "creator": "Johann Georg Melchior Schmidtner",
+      "date": "c. 1700",
+      "collection": "St. Peter am Perlach, Augsburg",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Mary-Untier-of-Knots-1.jpg",
+      "why": "The novena's own image. Cropped inside its arched frame (600 x 960), so no arch or frame shows (Abraham, 14 Nov: \"you can see the arches in the undoer of knots image find a better image\"); Commons has no larger arch-free copy.",
+      "alternate": null,
+      "licence": "Public domain (PD-Art: faithful 2D reproduction of a work whose author died more than 100 years ago)",
+      "licence_url": "https://commons.wikimedia.org/wiki/Commons:Reuse_of_PD-Art_photographs",
+      "attribution": null
+    },
+    {
+      "kind": "painting",
       "status": "verified",
       "file_url": "https://upload.wikimedia.org/wikipedia/commons/0/05/Santa_Ana_y_la_Virgen.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "commons_file": "File:Santa Ana y la Virgen.jpg",
@@ -2904,15 +2928,15 @@
       "kind": "painting",
       "imageset": "glorious_pentecost",
       "status": "unverified",
-      "identification_confidence": "ask Abraham",
+      "identification_confidence": "old master",
       "work": "Pentecost",
-      "creator": null,
+      "creator": "17th-century European school, painter not identified",
       "date": null,
       "collection": null,
       "source_page": null,
       "file_url": null,
-      "licence": "Probably public domain (old master), unconfirmed until the work is identified",
-      "licence_url": null,
+      "licence": "Public domain (PD-Art: faithful 2D reproduction of a work whose author died more than 100 years ago)",
+      "licence_url": "https://commons.wikimedia.org/wiki/Commons:Reuse_of_PD-Art_photographs",
       "attribution": null
     },
     {
@@ -3012,7 +3036,7 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 270,
       "estimated_bytes": 1159987,
-      "size_is_estimate": false,
+      "size_is_estimate": true,
       "note": null,
       "audio_files": [
         "2021/06/Pange-lingua.ogg"
@@ -3022,8 +3046,7 @@
         "Vers.-Panem-de-caelo-web.svg",
         "Or.-Deus-qui-nobis-web.svg"
       ],
-      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
-      "encoded_bytes": 1132809
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
     },
     {
       "kind": "chant",
@@ -3037,7 +3060,7 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 150,
       "estimated_bytes": 644437,
-      "size_is_estimate": false,
+      "size_is_estimate": true,
       "note": null,
       "audio_files": [
         "2022/05/Vidi-aquam.ogg"
@@ -3045,8 +3068,7 @@
       "score_files": [
         "Vidi-aquam-web.svg"
       ],
-      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
-      "encoded_bytes": 853299
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
     },
     {
       "kind": "chant",
@@ -3060,7 +3082,7 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 90,
       "estimated_bytes": 386662,
-      "size_is_estimate": false,
+      "size_is_estimate": true,
       "note": "One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'kyrie'.",
       "audio_files": [
         "2022/08/Kyrie-VIII.ogg"
@@ -3068,8 +3090,7 @@
       "score_files": [
         "Kyrie-VIII-web.svg"
       ],
-      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
-      "encoded_bytes": 620244
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
     },
     {
       "kind": "chant",
@@ -3083,7 +3104,7 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 180,
       "estimated_bytes": 773325,
-      "size_is_estimate": false,
+      "size_is_estimate": true,
       "note": "One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'gloria'.",
       "audio_files": [
         "2022/08/Gloria-VIII.ogg"
@@ -3091,8 +3112,7 @@
       "score_files": [
         "Gloria-VIII-web.svg"
       ],
-      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
-      "encoded_bytes": 666465
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
     },
     {
       "kind": "chant",
@@ -3106,7 +3126,7 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 60,
       "estimated_bytes": 257775,
-      "size_is_estimate": false,
+      "size_is_estimate": true,
       "note": "One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'sanctus'.",
       "audio_files": [
         "2022/09/Sanctus-VIII.ogg"
@@ -3114,8 +3134,7 @@
       "score_files": [
         "Sanctus-VIII-web.svg"
       ],
-      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
-      "encoded_bytes": 375927
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
     },
     {
       "kind": "chant",
@@ -3129,7 +3148,7 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 60,
       "estimated_bytes": 257775,
-      "size_is_estimate": false,
+      "size_is_estimate": true,
       "note": "One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'agnus'.",
       "audio_files": [
         "2022/09/Agnus-Dei-VIII.ogg"
@@ -3137,8 +3156,7 @@
       "score_files": [
         "Agnus-Dei-VIII-web.svg"
       ],
-      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
-      "encoded_bytes": 314161
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
     },
     {
       "kind": "chant",
@@ -3152,7 +3170,7 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 330,
       "estimated_bytes": 1417762,
-      "size_is_estimate": false,
+      "size_is_estimate": true,
       "note": null,
       "audio_files": [
         "2022/09/Credo-III.ogg"
@@ -3160,8 +3178,7 @@
       "score_files": [
         "Credo-III-web.svg"
       ],
-      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
-      "encoded_bytes": 1115138
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
     },
     {
       "kind": "chant",
@@ -3175,7 +3192,7 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 180,
       "estimated_bytes": 773325,
-      "size_is_estimate": false,
+      "size_is_estimate": true,
       "note": null,
       "audio_files": [
         "2022/03/Audi-benigne-Conditor-1.ogg"
@@ -3183,8 +3200,7 @@
       "score_files": [
         "Audi-benigne-Conditor-web-1.svg"
       ],
-      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
-      "encoded_bytes": 552949
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
     },
     {
       "kind": "chant",
@@ -3198,7 +3214,7 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 90,
       "estimated_bytes": 386662,
-      "size_is_estimate": false,
+      "size_is_estimate": true,
       "note": "The page holds the whole sung Sorrowful Rosary; fetch.py picks this antiphon's files by the pattern 'vos-omnes'.",
       "audio_files": [
         "2024/11/O-vos-omnes.ogg"
@@ -3206,8 +3222,7 @@
       "score_files": [
         "O-vos-omnes-web.svg"
       ],
-      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
-      "encoded_bytes": 451321
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
     },
     {
       "kind": "chant",
@@ -3221,7 +3236,7 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 200,
       "estimated_bytes": 859250,
-      "size_is_estimate": false,
+      "size_is_estimate": true,
       "note": "An Eastertide hymn while Haec Dies is missing; there is also an 'otro tono' page.",
       "audio_files": [
         "2021/05/Ad-Regias-Agni-dapes.ogg"
@@ -3229,8 +3244,7 @@
       "score_files": [
         "Ad-regias-Agni-dapes-web-2.svg"
       ],
-      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
-      "encoded_bytes": 905188
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
     },
     {
       "kind": "chant",
@@ -3244,7 +3258,7 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 240,
       "estimated_bytes": 1031100,
-      "size_is_estimate": false,
+      "size_is_estimate": true,
       "note": null,
       "audio_files": [
         "2022/02/Te-Matrem-laudamus.ogg"
@@ -3252,8 +3266,7 @@
       "score_files": [
         "Te-Matrem-laudamus-web.svg"
       ],
-      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
-      "encoded_bytes": 1448759
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
     },
     {
       "kind": "chant",
@@ -3267,7 +3280,7 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 330,
       "estimated_bytes": 1417762,
-      "size_is_estimate": false,
+      "size_is_estimate": true,
       "note": null,
       "audio_files": [
         "2022/11/O-Oriens-Magnificat.ogg"
@@ -3277,8 +3290,7 @@
         "O-Sapientia-Magnificat-2-web.svg",
         "O-Oriens-Magnificat-web-3.svg"
       ],
-      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
-      "encoded_bytes": 968010
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
     }
   ],
   "chants_not_found": [
