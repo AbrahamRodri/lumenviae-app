@@ -268,12 +268,20 @@ struct ChantPracticeView: View {
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .minimumScaleFactor(0.75)
-            (lines
-                ? Text(chant.secondTitle.map { "\($0) · \(chant.lines.count) lines" } ?? "\(chant.lines.count) lines")
-                : Text(chant.secondTitle ?? ""))
-                .font(AppFonts.readingItalicFont(16))
-                .foregroundColor(AppColors.cream.opacity(0.8))
-                .multilineTextAlignment(.center)
+            // The second name where it is not the Latin's own, and the
+            // count of lines where it steps by the line
+            Group {
+                if lines, let second = chant.secondTitle {
+                    Text("\(second) · \(chant.lines.count) lines")
+                } else if lines {
+                    Text("\(chant.lines.count) lines")
+                } else if let second = chant.secondTitle {
+                    Text(second)
+                }
+            }
+            .font(AppFonts.readingItalicFont(16))
+            .foregroundColor(AppColors.cream.opacity(0.8))
+            .multilineTextAlignment(.center)
         }
         .shadow(color: .black.opacity(0.55), radius: 10)
         .accessibilityElement(children: .combine)
