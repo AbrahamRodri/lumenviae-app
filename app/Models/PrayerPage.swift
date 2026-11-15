@@ -347,14 +347,20 @@ nonisolated struct PrayerPage: Equatable {
         return found.isEmpty ? nil : found
     }
 
-    /// "Here name your request." and the forms the book writes it in
+    /// "Here name your request." and the forms the book writes it in, in
+    /// English and Spanish ("Here make your request.", "Aquí nombra tu
+    /// petición.", "Aquí se pide la gracia...")
     static func isIntention(_ words: String) -> Bool {
-        let folded = words.lowercased()
-        let objects = [
-            "your request", "the favour asked", "the favor asked", "the need", "the grace", "your intention",
-        ]
-        guard folded.hasPrefix("here name ") else { return false }
-        return objects.contains { folded.contains($0) }
+        let folded = words.lowercased().replacingOccurrences(of: "aqui", with: "aquí")
+        let english = ["your request", "the favour asked", "the favor asked", "the need", "the grace", "your intention"]
+        if folded.hasPrefix("here name ") || folded.hasPrefix("here make ") {
+            return english.contains { folded.contains($0) }
+        }
+        let spanish = ["petición", "peticion", "necesidad", "gracia", "favor", "intención", "intencion"]
+        if folded.hasPrefix("aquí ") {
+            return spanish.contains { folded.contains($0) }
+        }
+        return false
     }
 
     /// A direction that names a part of the prayer: one ending on a
@@ -370,7 +376,8 @@ nonisolated struct PrayerPage: Equatable {
         let bare = trimmed.trimmingCharacters(in: CharacterSet(charactersIn: "."))
         let lowered = bare.lowercased()
         if trimmed.count <= 40,
-            lowered.hasSuffix(" day") || lowered.hasPrefix("día ") || lowered.hasPrefix("dia ")
+            lowered.hasSuffix(" day") || lowered.hasSuffix(" día") || lowered.hasSuffix(" dia")
+                || lowered.hasPrefix("día ") || lowered.hasPrefix("dia ")
         {
             return .heading(title: bare, reference: nil)
         }

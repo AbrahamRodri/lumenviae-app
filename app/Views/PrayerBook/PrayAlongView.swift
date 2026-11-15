@@ -206,7 +206,7 @@ struct PrayAlongView: View {
         // answering is the only way through, and ALOUD or SILENT at the
         // head of the page owns the choice afterward
         .sheet(item: $saidPrayer) { said in
-            PrayerSaidSheet(said: said, language: displayLanguage)
+            PrayerSaidSheet(said: said, language: displayLanguage, size: textSize)
         }
         .sheet(isPresented: $asksHowToPray, onDismiss: startSounding) {
             PrayAloudChoiceSheet(painting: painting) { chosen in
@@ -583,7 +583,7 @@ struct PrayAlongView: View {
 
                         VStack(alignment: .leading, spacing: ReadingTypography.stanzaSpacing(for: textSize)) {
                             if page.hasLitanyGroups {
-                                Text(String(localized: "Answer each line with the words in red beside it.", comment: "Pray-along page: the line over a litany, saying how to answer its calls"))
+                                Text(String(localized: "Answer each call with the words in red.", comment: "Pray-along page: the line over a litany, saying how to answer its calls"))
                                     .font(AppFonts.readingItalicFont(max(14, textSize - 3)))
                                     .foregroundColor(AppColors.textSecondary)
                                     .fixedSize(horizontal: false, vertical: true)

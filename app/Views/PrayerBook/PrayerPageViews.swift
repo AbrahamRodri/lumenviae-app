@@ -256,13 +256,15 @@ struct PrayerSaidMarks: View {
 struct PrayerSaidSheet: View {
     let said: PrayerPage.SaidPrayer
     let language: PrayerLanguage
+    /// The page's reading size, so the prayer reads as the page does
+    let size: CGFloat
 
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
                 if let prayer = PrayerBook.prayer(said.prayerID) {
                     SheetHeader(title: prayer.title)
-                    PrayerText(content: prayer.content(for: language), size: 18)
+                    PrayerText(content: prayer.content(for: language), size: size)
                         .padding(.horizontal, 24)
                         .padding(.bottom, 32)
                 } else {
