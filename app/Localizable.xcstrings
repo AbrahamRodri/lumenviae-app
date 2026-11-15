@@ -5172,6 +5172,18 @@
         }
       }
     },
+    "Answer each line with the words in red beside it." : {
+      "comment" : "Pray-along page: the line over a litany, saying how to answer its calls",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responde a cada línea con las palabras en rojo a su lado."
+          }
+        }
+      }
+    },
     "Antiphon:" : {
       "comment" : "The Mass and the Hours of Prayer: the word opening an antiphon's line, where the source prints \"Ant.\"",
       "localizations" : {
@@ -16659,6 +16671,18 @@
         }
       }
     },
+    "Pause, and name it in your heart." : {
+      "comment" : "Pray-along page: the line under the intention pause",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haz una pausa y nómbrala en tu corazón."
+          }
+        }
+      }
+    },
     "Paused. Tap play to go on, or Next." : {
       "comment" : "Novena day in the Rosary: under held words while paused",
       "extractionState" : "manual",
@@ -20371,6 +20395,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Muestra sus oraciones"
+          }
+        }
+      }
+    },
+    "Shows the prayer" : {
+      "comment" : "Pray-along page: VoiceOver hint on a mark naming a prayer said here (Our Father, Hail Mary)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muestra la oración"
           }
         }
       }
@@ -29161,6 +29197,18 @@
     },
     "•" : {
 
+    },
+    "… your intention" : {
+      "comment" : "Pray-along page: the pause in a prayer where the reader names what they ask for",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "… tu intención"
+          }
+        }
+      }
     },
     "✦" : {
 
