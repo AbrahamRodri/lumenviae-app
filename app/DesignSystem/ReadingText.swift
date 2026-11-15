@@ -268,7 +268,7 @@ enum Rubric {
             if PrayerMarkup.isRubric(line) {
                 var rubric = AttributedString(PrayerMarkup.rubric(line))
                 rubric.font = AppFonts.readingItalicFont(size)
-                rubric.foregroundColor = red
+                rubric.foregroundColor = text
                 paragraph += rubric
             } else {
                 paragraph += rubricated(line)
@@ -638,7 +638,9 @@ struct PrayerText: View {
     private func rubricLine(_ text: String, role: Role) -> some View {
         Text(PrayerMarkup.rubric(text))
             .font(AppFonts.readingItalicFont(role == .primary ? secondarySize : max(11, size - 4)))
-            .foregroundColor(Rubric.red.opacity(role == .primary ? 1 : 0.8))
+            // A direction is read, so it takes the red lifted for
+            // sentences; the vestment red stays for ℣ ℟ ✠
+            .foregroundColor(Rubric.text.opacity(role == .primary ? 1 : 0.8))
             .fixedSize(horizontal: false, vertical: true)
     }
 
