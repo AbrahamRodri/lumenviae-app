@@ -198,11 +198,14 @@ nonisolated struct LibraryDocumentStore<Document: LibraryDocument>: Sendable {
 
     /// The copy to read: the kept one, unless the app shipped a newer one
     /// since it was kept (an update whose seed is later than the server's
-    /// last copy on this phone)
+    /// last copy on this phone), or the same one: an older build kept its
+    /// copy as it decoded it, without the fields it did not know, and the
+    /// shipped copy of that version is the server's whole
     func current() -> Document? {
         let seed = self.seed
         guard let kept else { return seed }
         guard let seed else { return kept }
+        if seed.version != nil, seed.version == kept.version { return seed }
         return Self.isNewer(seed, than: kept) ? seed : kept
     }
 
@@ -214,14 +217,16 @@ nonisolated struct LibraryDocumentStore<Document: LibraryDocument>: Sendable {
     }
 
     /// Keeps `data` as the newest copy if it decodes and holds together,
-    /// and says what it kept. A copy that fails leaves the old one.
+    /// and says what it kept. A copy that fails leaves the old one. The
+    /// server's bytes are kept as they came, so a field this build does
+    /// not know is still there for the build that does
     @discardableResult
     func keep(_ data: Data) throws -> Document {
         let document = try JSONDecoder().decode(Document.self, from: data)
         if let problem = document.problem { throw LibraryContent.Failure.invalid(name, problem) }
         try FileManager.default.createDirectory(
             at: cacheURL.deletingLastPathComponent(), withIntermediateDirectories: true)
-        try LibraryDocumentCoding.encoder().encode(document).write(to: cacheURL, options: .atomic)
+        try data.write(to: cacheURL, options: .atomic)
         LibraryContent.excludeFromBackup(cacheURL.deletingLastPathComponent())
         return document
     }
