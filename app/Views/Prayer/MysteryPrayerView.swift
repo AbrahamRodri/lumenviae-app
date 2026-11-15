@@ -67,6 +67,10 @@ struct MysteryPrayerView: View {
     /// accessibility sizes it makes room for the larger words
     private var playerIsLarge: Bool { min(phoneTypeSize, .playerMaximum).isAccessibilitySize }
 
+    /// Back's and Next's width in the footer, so the row beneath sets
+    /// VOICE and MORE under them
+    @State private var footWayWidth: CGFloat = OneRosaryFooter.wayWidth
+
     /// The reader over the player. Not on the pendant: the opening and
     /// closing prayers have no meditation to read, and their words are
     /// on the player itself. A set with no recording is read in the
@@ -1036,6 +1040,7 @@ extension MysteryPrayerView {
             )
             .padding(.horizontal, 22)
             .padding(.top, 16)
+            .onPreferenceChange(OneRosaryWayWidthKey.self) { footWayWidth = $0 }
 
             // The same row on every step and on both players. On a
             // mystery with a meditation, READ leads it (Abraham, 10 Nov:
@@ -1051,8 +1056,10 @@ extension MysteryPrayerView {
                         OneRosaryUtilityRow.voice { activeSheet = .playback },
                         OneRosaryUtilityRow.text { activeSheet = .text },
                         OneRosaryUtilityRow.more { activeSheet = .tray },
-                    ]
+                    ],
+                columnWidth: footWayWidth
             )
+            .padding(.horizontal, 22)
             .padding(.top, 10)
             .padding(.bottom, 8)
         }

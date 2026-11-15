@@ -1067,6 +1067,9 @@ struct OneRosaryFooter: View {
         .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { rowWidth = $0 }
         // A new text size starts the shared width again from its words
         .onChange(of: dynamicTypeSize) { sharedWidth = 0 }
+        // The row under the footer sets its first and last names in
+        // these columns
+        .preference(key: OneRosaryWayWidthKey.self, value: wayWidth)
         .animation(Motion.settle, value: isLast)
         .animation(Motion.crossfade, value: play == nil)
     }
@@ -1310,6 +1313,13 @@ struct OneRosaryHeader<Pill: View, Trailing: View>: View {
 
 // MARK: - OneRosaryUtilityRow
 
+/// Back's and Next's width, carried up from the footer to the row beneath
+/// it. Nonisolated because SwiftUI reduces preferences off the main actor.
+nonisolated struct OneRosaryWayWidthKey: PreferenceKey {
+    static let defaultValue: CGFloat = OneRosaryFooter.wayWidth
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
+}
+
 /// One of the player's less used acts, under Back and Next
 struct OneRosaryUtility: Identifiable {
     let id: String
@@ -1329,6 +1339,8 @@ struct OneRosaryUtility: Identifiable {
 /// leads the row in gold and opens the meditation as text.
 struct OneRosaryUtilityRow: View {
     let items: [OneRosaryUtility]
+    /// Back's and Next's width in the footer above (`OneRosaryWayWidthKey`)
+    var columnWidth: CGFloat = OneRosaryFooter.wayWidth
 
     /// The glyphs grow with their names: at the accessibility sizes a
     /// 20 pt glyph stood small over a name twice its old size
@@ -1340,11 +1352,11 @@ struct OneRosaryUtilityRow: View {
             // Back, TEXT under play, MORE under Next, in the footer's own
             // columns; set evenly in the middle they stood inside them
             HStack(spacing: 0) {
-                cell(items[0]).frame(width: OneRosaryFooter.wayWidth)
+                cell(items[0]).frame(width: columnWidth)
                 Spacer(minLength: 0)
                 cell(items[1])
                 Spacer(minLength: 0)
-                cell(items[2]).frame(width: OneRosaryFooter.wayWidth)
+                cell(items[2]).frame(width: columnWidth)
             }
         } else {
             HStack(spacing: 8) {
