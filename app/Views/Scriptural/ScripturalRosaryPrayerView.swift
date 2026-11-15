@@ -678,6 +678,7 @@ extension ScripturalRosaryPrayerView {
                         PrayerIntentionPause(size: simpleWordsSize, intention: novena.intention)
                     } else {
                         Text(Rubric.paragraph([line], size: simpleWordsSize))
+                            .accessibilityLabel(Rubric.spokenParagraph([line]))
                             .font(AppFonts.readingFont(simpleWordsSize))
                             .foregroundColor(AppColors.cream)
                             .lineSpacing(5)

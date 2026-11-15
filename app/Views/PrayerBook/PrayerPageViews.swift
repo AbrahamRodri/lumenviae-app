@@ -133,11 +133,12 @@ struct PrayerPagePartView: View {
                 .accessibilityLabel(words)
 
         case .paragraph(let text):
-            Text(Rubric.rubricated(text))
+            Rubric.line(text)
                 .font(AppFonts.readingFont(size))
                 .foregroundColor(AppColors.cream.opacity(0.92))
                 .lineSpacing(ReadingTypography.lineSpacing(for: size))
                 .fixedSize(horizontal: false, vertical: true)
+                .spokenRubrics(text)
         }
     }
 
@@ -164,11 +165,12 @@ struct PrayerPageLineView: View {
         case .response(let text):
             marked("℟", text, bold: true)
         case .verse(let text):
-            Text(Rubric.rubricated(text))
+            Rubric.line(text)
                 .font(AppFonts.bodyFont(size))
                 .foregroundColor(AppColors.cream.opacity(0.92))
                 .lineSpacing(ReadingTypography.quoteLineSpacing(for: size))
                 .fixedSize(horizontal: false, vertical: true)
+                .spokenRubrics(text)
         case .rubric(let text):
             Text(text)
                 .font(AppFonts.readingItalicFont(max(12, size - 2)))
@@ -176,10 +178,11 @@ struct PrayerPageLineView: View {
                 .fixedSize(horizontal: false, vertical: true)
         case .litany(let invocation, let response):
             (Text(invocation).font(AppFonts.bodyFont(size)).foregroundColor(AppColors.cream.opacity(0.92))
-                + Text(" ℟ ").font(AppFonts.bodyFont(size)).foregroundColor(Rubric.red)
+                + Rubric.markText(" ℟ ").font(AppFonts.bodyFont(size)).foregroundColor(Rubric.red)
                 + Text(response).font(AppFonts.readingItalicFont(size)).foregroundColor(Rubric.text))
                 .lineSpacing(ReadingTypography.quoteLineSpacing(for: size))
                 .fixedSize(horizontal: false, vertical: true)
+                .spokenRubrics("\(invocation) ℟ \(response)")
         }
     }
 
@@ -190,13 +193,14 @@ struct PrayerPageLineView: View {
                 .foregroundColor(Rubric.red)
                 .frame(width: column, alignment: .leading)
                 .accessibilityHidden(true)
-            Text(Rubric.rubricated(text))
+            Rubric.line(text)
                 .font(bold ? AppFonts.semiboldBodyFont(size) : AppFonts.bodyFont(size))
                 .foregroundColor(AppColors.cream.opacity(bold ? 1 : 0.92))
                 .lineSpacing(ReadingTypography.quoteLineSpacing(for: size))
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Rubric.spoken("\(mark) \(text)"))
     }
 }
 
@@ -327,18 +331,20 @@ struct PrayerLitanyGroup: View {
     let size: CGFloat
 
     private var answer: some View {
-        (Text("℟ ").foregroundColor(Rubric.red) + Text(response).foregroundColor(Rubric.text))
+        (Rubric.markText("℟ ").foregroundColor(Rubric.red) + Text(response).foregroundColor(Rubric.text))
             .font(AppFonts.readingItalicFont(max(15, size - 1)))
             .fixedSize(horizontal: false, vertical: true)
+            .spokenRubrics("℟ \(response)")
     }
 
     private var calls: some View {
         VStack(alignment: .leading, spacing: ReadingTypography.quoteLineSpacing(for: size)) {
             ForEach(Array(invocations.enumerated()), id: \.offset) { _, call in
-                Text(Rubric.rubricated(call))
+                Rubric.line(call)
                     .font(AppFonts.bodyFont(size))
                     .foregroundColor(AppColors.cream.opacity(0.92))
                     .fixedSize(horizontal: false, vertical: true)
+                    .spokenRubrics(call)
             }
         }
     }

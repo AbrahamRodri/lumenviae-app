@@ -429,11 +429,12 @@ struct MissalPassageText: View {
                         DropCapText(text: lines, bodySize: bodySize, textColor: color)
                             .fixedSize(horizontal: false, vertical: true)
                     } else {
-                        Text(Rubric.rubricated(lines))
+                        Rubric.line(lines)
                             .font(font)
                             .foregroundColor(color)
                             .lineSpacing(ReadingTypography.lineSpacing(for: bodySize))
                             .fixedSize(horizontal: false, vertical: true)
+                            .spokenRubrics(lines)
                     }
                 }
             }
@@ -523,22 +524,24 @@ struct MissalPairedPassageText: View {
                 )
                 .fixedSize(horizontal: false, vertical: true)
             } else {
-                Text(Rubric.rubricated(pair.primary))
+                Rubric.line(pair.primary)
                     .font(AppFonts.readingFont(size))
                     .foregroundColor(AppColors.cream.opacity(0.92))
                     .lineSpacing((size * 0.3).rounded())
                     .fixedSize(horizontal: false, vertical: true)
+                    .spokenRubrics(pair.primary)
             }
 
             // The translation steps in from the margin — set under its
             // line the way the handoff recommends, so the eye keeps the
             // Latin as the text and the English as its shadow.
-            Text(Rubric.rubricated(pair.secondary))
+            Rubric.line(pair.secondary)
                 .font(AppFonts.readingItalicFont(max(12, size - 2)))
                 .foregroundColor(AppColors.accentSoft)
                 .lineSpacing((size * 0.25).rounded())
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.leading, 20)
+                .spokenRubrics(pair.secondary)
         }
     }
 }
@@ -591,10 +594,11 @@ struct MissalColumnPassageText: View {
                     textColor: AppColors.cream.opacity(0.92)
                 )
             } else {
-                Text(Rubric.rubricated(text))
+                Rubric.line(text)
                     .font(AppFonts.readingFont(columnSize))
                     .foregroundColor(AppColors.cream.opacity(0.92))
                     .lineSpacing((columnSize * 0.35).rounded())
+                    .spokenRubrics(text)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -602,12 +606,13 @@ struct MissalColumnPassageText: View {
     }
 
     private func secondaryCell(_ text: String) -> some View {
-        Text(Rubric.rubricated(text))
+        Rubric.line(text)
             .font(AppFonts.readingItalicFont(columnSize))
             .foregroundColor(AppColors.accentSoft)
             .lineSpacing((columnSize * 0.3).rounded())
             .frame(maxWidth: .infinity, alignment: .leading)
             .fixedSize(horizontal: false, vertical: true)
+            .spokenRubrics(text)
     }
 }
 

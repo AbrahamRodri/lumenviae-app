@@ -821,6 +821,8 @@ struct OneRosaryColumn<Words: View>: View {
             prayerText(words, size: fitted)
                 .minimumScaleFactor(0.5)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Rubric.spokenParagraph(lines))
     }
 
     private static func prayerText(_ words: AttributedString, size: CGFloat) -> some View {
@@ -1530,6 +1532,7 @@ struct SimpleRosaryWords: View {
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
                         Text(Rubric.paragraph([line], size: size))
+                            .accessibilityLabel(Rubric.spokenParagraph([line]))
                             .font(AppFonts.readingFont(size))
                             .foregroundColor(AppColors.cream)
                             .lineSpacing(5)

@@ -5012,6 +5012,17 @@
         }
       }
     },
+    "All:" : {
+      "comment" : "VoiceOver, for the ℟ before a response: the line everyone answers",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos:"
+          }
+        }
+      }
+    },
     "Almost everything. Your journal, your prayer record and streak, your place in every book and your settings are kept on this device and never sent to us. They leave it only in your iPhone's own iCloud Backup, if you have it on, under Apple's privacy policy." : {
       "comment" : "Privacy Policy: a section's text; keep it as plain and exact as the English",
       "localizations" : {
@@ -12747,6 +12758,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Laudes"
+          }
+        }
+      }
+    },
+    "Leader:" : {
+      "comment" : "VoiceOver, for the ℣ before a versicle: the line the leader says",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guía:"
           }
         }
       }
