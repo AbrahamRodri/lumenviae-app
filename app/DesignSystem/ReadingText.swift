@@ -257,6 +257,51 @@ enum Rubric {
         return attributed
     }
 
+    /// `string` rubricated, as `Text`, and heard the way the website
+    /// says it: a ℣ as "Leader:", a ℟ as "All:", the cross silent.
+    /// VoiceOver otherwise reads the bare symbols' names.
+    static func line(_ string: String) -> Text {
+        let text = Text(rubricated(string))
+        return string.contains(where: { glyphs.contains($0) }) ? text.accessibilityLabel(spoken(string)) : text
+    }
+
+    /// A mark set on its own ("℟", " ℟. "), heard as its word
+    static func markText(_ glyph: String) -> Text {
+        Text(glyph).accessibilityLabel(spoken(glyph))
+    }
+
+    /// What VoiceOver says for `paragraph(lines, size:)`: a direction
+    /// out of its brackets, ℣ and ℟ as their words
+    static func spokenParagraph(_ lines: [String]) -> String {
+        spoken(lines.map { PrayerMarkup.isRubric($0) ? PrayerMarkup.rubric($0) : $0 }.joined(separator: " "))
+    }
+
+    /// `string` with ℣ and ℟ said as the parts they mark, in the app's
+    /// language, and the cross left out
+    static func spoken(_ string: String) -> String {
+        let leader = String(localized: "Leader:", comment: "VoiceOver, for the ℣ before a versicle: the line the leader says")
+        let all = String(localized: "All:", comment: "VoiceOver, for the ℟ before a response: the line everyone answers")
+        var out = ""
+        let chars = Array(string)
+        var i = 0
+        while i < chars.count {
+            let c = chars[i]
+            if c == "℣" || c == "℟" {
+                if !out.isEmpty, out.last != " " { out += " " }
+                out += c == "℣" ? leader : all
+                i += 1
+                if i < chars.count, chars[i] == "." { i += 1 }
+                if i >= chars.count || chars[i] != " " { out += " " }
+            } else if c == "✠" {
+                i += 1
+            } else {
+                out.append(c)
+                i += 1
+            }
+        }
+        return out.split(separator: " ", omittingEmptySubsequences: true).joined(separator: " ")
+    }
+
     /// A prayer's lines as one paragraph, the way a player sets a prayer
     /// beside the beads, with a rubric line — "Let us pray." — in the
     /// rubric red and the italic a printed book gives it, out of its
@@ -650,18 +695,18 @@ struct PrayerText: View {
     private func styled(_ text: String, role: Role, prose: Bool = false) -> Text {
         switch role {
         case .primary:
-            return Text(Rubric.rubricated(text))
+            return Rubric.line(text)
                 .font(prose ? AppFonts.readingFont(size) : AppFonts.bodyFont(size))
                 .foregroundColor(primaryColor)
         case .secondary:
-            return Text(Rubric.rubricated(text))
+            return Rubric.line(text)
                 .font(AppFonts.readingItalicFont(secondarySize))
                 .foregroundColor(AppColors.accentSoft)
         }
     }
 
     private func mark(_ glyph: String, role: Role) -> Text {
-        Text(glyph)
+        Rubric.markText(glyph)
             .font(role == .primary ? AppFonts.bodyFont(size) : AppFonts.readingItalicFont(secondarySize))
             .foregroundColor(Rubric.red)
     }

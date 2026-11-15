@@ -1391,7 +1391,7 @@ private struct PrayAlongVerseLine: View {
     private var indent: CGFloat { (size * 1.1).rounded() }
 
     var body: some View {
-        let line = Text(Rubric.rubricated(text))
+        let line = Rubric.line(text)
             .font(AppFonts.bodyFont(size))
             .foregroundColor(AppColors.cream.opacity(0.92))
             .lineSpacing(ReadingTypography.quoteLineSpacing(for: size))
