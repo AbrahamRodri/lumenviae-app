@@ -150,6 +150,9 @@ struct PrayerBookView: View {
             }
             .padding(.horizontal, 18)
 
+            PrayersNovenaShelf(now: now)
+                .padding(.horizontal, 18)
+
             PrayersEverydayShelf()
                 .padding(.horizontal, 18)
 

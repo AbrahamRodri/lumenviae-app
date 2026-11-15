@@ -691,6 +691,9 @@ struct ContentView: View {
         case .prayerBookSaved:
             PrayerBookSavedView()
 
+        case .novena(let id):
+            NovenaPageView(novenaID: id)
+
         case .myPrayers:
             MyPrayersView()
 

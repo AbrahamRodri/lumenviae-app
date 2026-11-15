@@ -602,9 +602,7 @@ struct PrayAlongView: View {
                                         hasClosing: !twin.closing.isEmpty,
                                         page: Binding(get: { shown }, set: { twinPage = $0 })
                                     )
-                                    if let launch = Self.novenaDayLaunch(of: novena) {
-                                        PrayAsNovenaRow { router.push(.scripturalRosaryPrayer(launch)) }
-                                    }
+                                    PrayAsNovenaRow { router.push(.novena(id: novena.id)) }
                                 }
                                 .padding(.top, 14)
                             }
@@ -694,19 +692,6 @@ struct PrayAlongView: View {
     static func openingPage(of novena: PrayerBookDocument.Novena) -> NovenaTwinPage {
         guard let progress = NovenaStore.shared.progress[novena.id] else { return .day(1) }
         return .day(min(max(progress.dayNumber(on: PrayerDay.now), 1), novena.length))
-    }
-
-    /// PRAY IT AS A NOVENA, while the novena is under way: today's day
-    /// (or the first one left open) in the Rosary, as its reminder opens
-    /// it. Until the novena's own page is built (row 3f0c9f14) a novena
-    /// not begun shows no row, since nothing here could keep its day.
-    static func novenaDayLaunch(of novena: PrayerBookDocument.Novena) -> ScripturalRosaryLaunch? {
-        guard let progress = NovenaStore.shared.progress[novena.id],
-            case .underWay(let today, let open) = progress.standing(on: PrayerDay.now),
-            let day = today ?? open.first
-        else { return nil }
-        return ScripturalRosaryLaunch(
-            category: ScheduleService.categoryForToday(), form: .plain, novenaID: novena.id, novenaDay: day)
     }
 
     /// A point under the reading size, so more of each line of a prayer fits the measure

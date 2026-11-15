@@ -133,6 +133,9 @@ enum AppRoute: Hashable {
     /// menu, reached from the Saved shortcut on Prayers
     case prayerBookSaved
 
+    /// A novena's own page: begin it, its intention and reminder, its days
+    case novena(id: String)
+
     /// The reader's own prayers and playlists, from the My Prayers shelf
     /// on Prayers, and one playlist's page
     case myPrayers
@@ -390,6 +393,9 @@ final class AppRouter {
             let form: SpokenForm = name == "rosaryAloudPrayer" ? .plain : .scriptural
             return (.scripturalRosaryPrayer(ScripturalRosaryLaunch(
                 category: c, form: form, startIndex: mystery, startBead: bead)), nil)
+        case ("novena", _) where parts.count > 1:
+            // `novena:<novena id>`, its own page
+            return (.novena(id: parts[1]), nil)
         case ("novenaDay", _) where parts.count > 2:
             // `novenaDay:<novena id>:<day>`, on today's mysteries;
             // `...:<day>:begun` first begins it with the days before
