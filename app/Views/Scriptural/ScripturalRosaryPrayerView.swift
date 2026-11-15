@@ -685,16 +685,20 @@ extension ScripturalRosaryPrayerView {
                         .foregroundColor(AppColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                Text(
-                    viewModel.isSilentNovena
-                        ? String(localized: "Read at your pace, then Next.", comment: "Novena day in the Rosary with no voice: under the day's meditation or closing prayer, which the reader moves past with Next")
-                        : viewModel.isHoldPaused
-                        ? String(localized: "Paused. Tap play to go on, or Next.", comment: "Novena day in the Rosary: under held words while paused")
-                        : String(localized: "Read at your pace. The voice goes on by itself.", comment: "Novena day in the Rosary: under words the voice has no recording of, which it waits on")
-                )
-                .font(AppFonts.italicFont(13))
-                .foregroundColor(AppColors.cream.opacity(0.7))
-                .fixedSize(horizontal: false, vertical: true)
+                // With no voice the offline notice beneath says why, and
+                // Next is the way on: no second line about it
+                if !(viewModel.isSilentNovena && viewModel.spokenFailure != nil) {
+                    Text(
+                        viewModel.isSilentNovena
+                            ? String(localized: "Read at your pace, then Next.", comment: "Novena day in the Rosary with no voice: under the day's meditation or closing prayer, which the reader moves past with Next")
+                            : viewModel.isHoldPaused
+                            ? String(localized: "Paused. Tap play to go on, or Next.", comment: "Novena day in the Rosary: under held words while paused")
+                            : String(localized: "Read at your pace. The voice goes on by itself.", comment: "Novena day in the Rosary: under words the voice has no recording of, which it waits on")
+                    )
+                    .font(AppFonts.italicFont(13))
+                    .foregroundColor(AppColors.cream.opacity(0.7))
+                    .fixedSize(horizontal: false, vertical: true)
+                }
             }
             .padding(.bottom, 32)
             }
