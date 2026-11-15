@@ -244,7 +244,7 @@ struct SpanishBetaSheet: View {
                         .fixedSize(horizontal: false, vertical: true)
                         // Under the row's name, as the line under Use the
                         // app in English stands, not under its glyph
-                        .padding(.leading, SheetMetrics.gutter + 44)
+                        .padding(.leading, SheetMetrics.gutter + 36)
                         .padding(.trailing, SheetMetrics.gutter)
                         .padding(.bottom, 10)
                         .transition(.opacity)
