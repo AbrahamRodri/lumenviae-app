@@ -96,4 +96,12 @@ struct RosaryWordsTests {
         #expect(triduum.spokenTitle == triduum.name)
         #expect(StreakMilestone.all.allSatisfy { !$0.spokenTitle.contains("·") })
     }
+
+    @Test func aShortWordIsHeldToTheWordAfterIt() {
+        #expect(
+            OneRosaryColumn<EmptyView>.keepingShortWordsWithNext("La Ascensión del Señor a los Cielos")
+                == "La Ascensión del Señor a\u{00A0}los Cielos")
+        #expect(OneRosaryColumn<EmptyView>.keepingShortWordsWithNext("The Annunciation") == "The Annunciation")
+        #expect(OneRosaryColumn<EmptyView>.keepingShortWordsWithNext("Of") == "Of")
+    }
 }

@@ -45,8 +45,12 @@ struct MysteryCard: View {
                     LinearGradient(
                         stops: [
                             .init(color: .black.opacity(0.05), location: 0),
-                            .init(color: .black.opacity(0.18), location: 0.5),
-                            .init(color: .black.opacity(0.68), location: 1)
+                            .init(color: .black.opacity(0.18), location: 0.42),
+                            // Dark enough under the title and its line that
+                            // they read on the lightest painting (the Joyful
+                            // card's, which lost both)
+                            .init(color: .black.opacity(0.62), location: 0.72),
+                            .init(color: .black.opacity(0.82), location: 1)
                         ],
                         startPoint: .top,
                         endPoint: .bottom
@@ -62,7 +66,9 @@ struct MysteryCard: View {
             .overlay(alignment: .topTrailing) {
                 ZStack {
                     Circle()
-                        .fill(AppColors.background.opacity(0.25))
+                        // A dark disc under the arrow, so it shows on any
+                        // painting
+                        .fill(Color.black.opacity(0.45))
                         .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.8), lineWidth: AppLine.hairline))
                         .frame(width: 28, height: 28)
                     AppIcon("ph-arrow-right", size: 12)
@@ -79,7 +85,7 @@ struct MysteryCard: View {
                         .minimumScaleFactor(0.85)
                     Text(subtitle)
                         .font(AppFonts.italicFont(12))
-                        .foregroundColor(AppColors.cream.opacity(0.75))
+                        .foregroundColor(AppColors.cream.opacity(0.85))
                 }
                 .padding(14)
             }
@@ -93,7 +99,7 @@ struct MysteryCard: View {
 #Preview {
     MysteryCard(
         title: "Joyful",
-        subtitle: "Jesus' birth and childhood",
+        subtitle: "Jesus’ birth and childhood",
         gradientColors: MysteryCategory.joyful.gradientColors,
         cardImageName: "joyful_annunciation"
     )

@@ -99,7 +99,7 @@ enum MysteryData {
             name: "The Crowning with Thorns",
             category: "sorrowful",
             order: 3,
-            description: "Soldiers place a crown of thorns on Jesus' head and mock Him.",
+            description: "Soldiers place a crown of thorns on Jesus’ head and mock Him.",
             scriptureReference: "Matthew 27:27-31"
         ),
         Mystery(

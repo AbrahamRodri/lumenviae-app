@@ -748,7 +748,8 @@ extension ScripturalRosaryPrayerView {
             let reading = viewModel.reading
             OneRosaryColumn(
                 title: viewModel.currentMystery?.name ?? "",
-                place: OneRosaryColumn<EmptyView>.place(mystery: viewModel.currentMysteryIndex, of: viewModel.strand.decades),
+                // The pill at the top already says "Mystery 2 of 5"
+                place: "",
                 bead: viewModel.beadLabel,
                 wordsKey: "\(viewModel.beadPosition.mystery).\(viewModel.beadPosition.bead).\(isAnnouncing)",
                 showsWords: showsWordsAndBeads
