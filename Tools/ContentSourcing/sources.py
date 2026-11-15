@@ -166,6 +166,14 @@ PAINTINGS += [
          commons_file="File:Crucifixion Diptych (Rogier van der Weyden).jpg",
          why="Mary swooning into St John's arms beside the Cross: the sorrow is hers, where Velázquez's Christ Crucified (sorrowful_crucifixion) shows Him alone. Commons holds the diptych at 1195×1128, below the 1600 target, so it is pinned.",
          alternate=None, **PD_ART),
+    dict(imageset="novena_undoer_of_knots", slot="Novenas: Our Lady, Undoer of Knots: the end of a novena day",
+         features=["Novenas"],
+         work="Mary, Untier of Knots (Maria Knotenlöserin)", creator="Johann Georg Melchior Schmidtner", date="c. 1700",
+         collection="St. Peter am Perlach, Augsburg",
+         source_page="https://commons.wikimedia.org/wiki/File:Mary-Untier-of-Knots-1.jpg",
+         commons_file="File:Mary-Untier-of-Knots-1.jpg",
+         why="The novena's own image. Cropped inside its arched frame (600 x 960), so no arch or frame shows (Abraham, 14 Nov: \"you can see the arches in the undoer of knots image find a better image\"); Commons has no larger arch-free copy.",
+         alternate=None, **PD_ART),
 ]
 
 # ------------------------------------------- the Prayer Book's topics, Oct 2026

@@ -98,6 +98,7 @@ enum SourcesAndCredits {
         CreditedWork(title: "The Sistine Madonna", maker: "Raphael (1483–1520)", detail: "1512–13, Gemäldegalerie Alte Meister, Dresden", licence: "Public domain"),
         CreditedWork(title: "The Virgin in Prayer", maker: "Giovanni Battista Salvi da Sassoferrato (1609–1685)", detail: "1640–50, The National Gallery, London", licence: "Public domain"),
         CreditedWork(title: "The Adoration of the Mystic Lamb (Ghent Altarpiece, central panel)", maker: "Hubert and Jan van Eyck (d. 1426 and 1441)", detail: "1432, St Bavo's Cathedral, Ghent", licence: "Public domain"),
+        CreditedWork(title: "Mary, Untier of Knots (Maria Knotenlöserin)", maker: "Johann Georg Melchior Schmidtner", detail: "c. 1700, St. Peter am Perlach, Augsburg", licence: "Public domain (PD-Art: faithful 2D reproduction of a work whose author died more than 100 years ago)"),
         CreditedWork(title: "The Raising of Lazarus", maker: "Sebastiano del Piombo (c. 1485–1547)", detail: "1517–19, The National Gallery, London", licence: "Public domain"),
         CreditedWork(title: "Pentecost", maker: "Juan Bautista Maíno (1581–1649)", detail: "1620–25, Museo del Prado, Madrid", licence: "Public domain"),
         CreditedWork(title: "Christ Healing the Paralytic at the Pool of Bethesda", maker: "Bartolomé Esteban Murillo (1617–1682)", detail: "1667–70, The National Gallery, London", licence: "Public domain"),

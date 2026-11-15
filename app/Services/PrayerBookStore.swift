@@ -357,7 +357,15 @@ final class PrayerNotificationRouter: NSObject, UNUserNotificationCenterDelegate
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse
     ) async {
-        guard response.notification.request.content.categoryIdentifier == Self.angelusCategory else { return }
+        let content = response.notification.request.content
+        if content.categoryIdentifier == NovenaStore.category,
+            let id = content.userInfo[NovenaStore.novenaKey] as? String
+        {
+            let day = content.userInfo[NovenaStore.dayKey] as? Int ?? 0
+            await MainActor.run { NovenaStore.shared.requested = NovenaRequest(novenaID: id, day: day) }
+            return
+        }
+        guard content.categoryIdentifier == Self.angelusCategory else { return }
         await MainActor.run { PrayerBookStore.shared.angelusRequested = true }
     }
 

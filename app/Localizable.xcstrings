@@ -1382,6 +1382,18 @@
         }
       }
     },
+    "%@. %lld of %lld days prayed." : {
+      "comment" : "Novena, after a day is prayed: what VoiceOver says on arrival, like Day 4 prayed. 4 of 9 days prayed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@. %2$lld de %3$lld días rezados."
+          }
+        }
+      }
+    },
     "%@. Open the calendar" : {
       "localizations" : {
         "es" : {
@@ -3089,6 +3101,18 @@
         }
       }
     },
+    "%lld to %lld" : {
+      "comment" : "Novena dashes, VoiceOver: a run of days, as in 1 to 3",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld a %2$lld"
+          }
+        }
+      }
+    },
     "%lld%%" : {
       "localizations" : {
         "es" : {
@@ -4050,6 +4074,18 @@
         }
       }
     },
+    "A reminder each day" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un recordatorio cada día"
+          }
+        }
+      }
+    },
     "A renewal of the promises of your baptism" : {
       "localizations" : {
         "es" : {
@@ -4463,6 +4499,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Agregar una reflexión"
+          }
+        }
+      }
+    },
+    "Add an intention" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agregar una intención"
           }
         }
       }
@@ -5507,6 +5555,18 @@
         }
       }
     },
+    "BEGIN A NOVENA" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "COMENZAR UNA NOVENA"
+          }
+        }
+      }
+    },
     "BEGIN READING" : {
       "comment" : "True Devotion's book page: small capitals, kicker of the gold act before the book is opened",
       "localizations" : {
@@ -5525,6 +5585,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "COMIENZA EL %@"
+          }
+        }
+      }
+    },
+    "BEGINS TOMORROW" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "COMIENZA MAÑANA"
           }
         }
       }
@@ -5777,6 +5849,30 @@
         }
       }
     },
+    "Began %@" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comenzó el %@"
+          }
+        }
+      }
+    },
+    "Began %@ · Day %lld today" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comenzó el %1$@ · Hoy, día %2$lld"
+          }
+        }
+      }
+    },
     "Begin" : {
       "comment" : "Chant practice, the path's act on a first visit\nChapel, Consecration tile: the act at the foot before a preparation has been chosen (shown in capitals)\nChapel, Consecration tile: the act at the foot when today's day is not yet begun (shown in capitals)\nChapel, Today tile: small gold act at the end of a daily prayer's row, for one not yet begun (shown in capitals)\nGuided Rosary welcome: the gold button that begins the first Rosary\nHow to Pray, Your First Rosary: the gold act, beginning the guided Rosary\nHow to Pray, last lesson's foot: the gold act, beginning the guided Rosary\nOnboarding, first slide: the gold button that starts the introduction",
       "localizations" : {
@@ -5795,6 +5891,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Comenzar: %@"
+          }
+        }
+      }
+    },
+    "Begin Again" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar de nuevo"
           }
         }
       }
@@ -5821,6 +5929,18 @@
         }
       }
     },
+    "Begin Today" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comenzar hoy"
+          }
+        }
+      }
+    },
     "Begin a Rosary at the Resurrection tonight." : {
       "comment" : "Daily prayer reminder notification in the Easter season: its text under the title. Warm and inviting, never scolding; under about 75 characters",
       "localizations" : {
@@ -5839,6 +5959,30 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Comenzar de nuevo"
+          }
+        }
+      }
+    },
+    "Begin again from Day 1? The days you have prayed will be cleared." : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Empezar de nuevo desde el día 1? Se borrarán los días que ya rezaste."
+          }
+        }
+      }
+    },
+    "Begin any day" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comienza cuando quieras"
           }
         }
       }
@@ -5920,6 +6064,18 @@
         }
       }
     },
+    "Begin tomorrow" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comenzar mañana"
+          }
+        }
+      }
+    },
     "Begin whenever it suits; the beads keep no clock." : {
       "comment" : "Daily prayer reminder notification for readers building a daily habit: its text under the title. Warm and inviting, never scolding; under about 75 characters",
       "localizations" : {
@@ -5927,6 +6083,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Empieza cuando puedas; las cuentas no tienen reloj."
+          }
+        }
+      }
+    },
+    "Begin without a reminder" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comenzar sin recordatorio"
           }
         }
       }
@@ -5947,6 +6115,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Empieza una reflexión con esta pregunta como título"
+          }
+        }
+      }
+    },
+    "Begins tomorrow, %@" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comienza mañana, %@"
           }
         }
       }
@@ -6217,6 +6397,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "CERRAR"
+          }
+        }
+      }
+    },
+    "CLOSING" : {
+      "comment" : "Pray-along page, a novena read as text: the button after its days, showing how each day goes and the prayer said every day",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CIERRE"
           }
         }
       }
@@ -6850,6 +7042,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Elegir los misterios"
+          }
+        }
+      }
+    },
+    "Choose the time." : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige la hora."
           }
         }
       }
@@ -7795,6 +7999,18 @@
         }
       }
     },
+    "DAILY REMINDER" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RECORDATORIO DIARIO"
+          }
+        }
+      }
+    },
     "DAY %lld" : {
       "comment" : "Consecration day page: small capitals in the header naming the day of the preparation",
       "localizations" : {
@@ -7824,6 +8040,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DÍA 1"
+          }
+        }
+      }
+    },
+    "DAY OF THE NOVENA" : {
+      "comment" : "Pray-along page, a novena read as text: the label over its day buttons",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DÍA DE LA NOVENA"
           }
         }
       }
@@ -8013,6 +8241,90 @@
         }
       }
     },
+    "Day %lld is on %@, with the %@." : {
+      "comment" : "Novena, after a day is prayed: the weekday the next day falls on and its mysteries",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El día %1$lld es el %2$@, con los %3$@."
+          }
+        }
+      }
+    },
+    "Day %lld is open, with the %@." : {
+      "comment" : "Novena, after a day is prayed: the next day can be prayed now; the second part names its mysteries, like the Glorious Mysteries",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El día %1$lld quedó sin rezar; se reza con los %2$@."
+          }
+        }
+      }
+    },
+    "Day %lld is still open. You can pray it now, or go on with Day %lld." : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El día %1$lld quedó sin rezar. Puedes rezarlo ahora o seguir con el día %2$lld."
+          }
+        }
+      }
+    },
+    "Day %lld is still open. You can pray it now." : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El día %lld quedó sin rezar. Puedes rezarlo ahora."
+          }
+        }
+      }
+    },
+    "Day %lld is tomorrow, with the %@." : {
+      "comment" : "Novena, after a day is prayed: when the next day falls and its mysteries, like the Glorious Mysteries",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El día %1$lld es mañana, con los %2$@."
+          }
+        }
+      }
+    },
+    "Day %lld of %lld" : {
+      "comment" : "Novena: which day of how many, like Day 4 of 9",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Día %1$lld de %2$lld"
+          }
+        }
+      }
+    },
+    "Day %lld of %lld · %@" : {
+      "comment" : "Novena reminder: its title, the day and the novena's short name",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Día %1$lld de %2$lld · %3$@"
+          }
+        }
+      }
+    },
     "Day %lld of 33" : {
       "comment" : "Chapel, Today tile: the consecration row's second line, the day of the 33-day preparation\nConsecration: label of one day of the 33-day preparation, like Day 7 of 33",
       "localizations" : {
@@ -8035,6 +8347,30 @@
         }
       }
     },
+    "Day %lld of the Novena" : {
+      "comment" : "Novena day, Go to sheet: its title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Día %lld de la novena"
+          }
+        }
+      }
+    },
+    "Day %lld prayed" : {
+      "comment" : "Novena, after a day is prayed in the Rosary: the title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Día %lld rezado"
+          }
+        }
+      }
+    },
     "Day %lld · %@" : {
       "comment" : "Consecration reflection editor: kicker naming the day and its period of the preparation, like Day 14 · Week 1",
       "localizations" : {
@@ -8052,12 +8388,48 @@
         }
       }
     },
+    "Day %lld, read at your pace" : {
+      "comment" : "Novena day, Go to: under the day's meditation, which the voice holds on rather than reads",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Día %lld, a tu ritmo"
+          }
+        }
+      }
+    },
     "Day 1 is %@" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "El día 1 es el %@"
+          }
+        }
+      }
+    },
+    "Days %@ are still open. You can pray them now, or go on with Day %lld." : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los días %1$@ quedaron sin rezar. Puedes rezarlos ahora o seguir con el día %2$lld."
+          }
+        }
+      }
+    },
+    "Days %@ are still open. You can pray them now." : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los días %@ quedaron sin rezar. Puedes rezarlos ahora."
           }
         }
       }
@@ -8817,6 +9189,18 @@
         }
       }
     },
+    "Edit your intention" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar tu intención"
+          }
+        }
+      }
+    },
     "Editor's note" : {
       "comment" : "A book's footnote sheet: kicker over the title",
       "localizations" : {
@@ -8894,6 +9278,18 @@
         }
       }
     },
+    "End Novena" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminar novena"
+          }
+        }
+      }
+    },
     "End as you began, with the Sign of the Cross." : {
       "comment" : "Guided Rosary, last step: what to do before the final Sign of the Cross",
       "localizations" : {
@@ -8923,6 +9319,30 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Termina el día con María"
+          }
+        }
+      }
+    },
+    "End this novena" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminar esta novena"
+          }
+        }
+      }
+    },
+    "End this novena? Its reminders will stop. You can begin it again any day." : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Terminar esta novena? Sus recordatorios se detendrán. Puedes comenzarla de nuevo cuando quieras."
           }
         }
       }
@@ -9786,6 +10206,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Por una intención tuya. Arde durante un día y se queda en tu dispositivo."
+          }
+        }
+      }
+    },
+    "For each of the nine days, at the time you choose." : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para cada uno de los nueve días, a la hora que elijas."
           }
         }
       }
@@ -11706,6 +12138,18 @@
         }
       }
     },
+    "It will show on your lock screen." : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se verá en la pantalla de bloqueo."
+          }
+        }
+      }
+    },
     "Its chants stay in the library; only the set goes." : {
       "localizations" : {
         "es" : {
@@ -13297,6 +13741,18 @@
         }
       }
     },
+    "Mary, Undoer of Knots, pray for me." : {
+      "comment" : "Undoer of Knots novena: the invocation said after its meditation and its closing prayer (Spanish: María, Desatanudos, Abraham 14 Nov)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "María, Desatanudos, ruega por mí."
+          }
+        }
+      }
+    },
     "Mary’s feasts, titles and saints" : {
       "comment" : "Chapel, Library tile: line under the Marian Library door",
       "localizations" : {
@@ -13965,6 +14421,30 @@
         }
       }
     },
+    "NOVENA · %lld DAYS" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NOVENA · %lld DÍAS"
+          }
+        }
+      }
+    },
+    "NOVENA · NINE DAYS" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NOVENA · NUEVE DÍAS"
+          }
+        }
+      }
+    },
     "NOW" : {
       "localizations" : {
         "es" : {
@@ -14523,6 +15003,30 @@
         }
       }
     },
+    "Nine days prayed" : {
+      "comment" : "Novena, after its last day is prayed: the title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueve días rezados"
+          }
+        }
+      }
+    },
+    "Nine days with the Rosary; the app keeps your day" : {
+      "comment" : "Pray-along page, a novena read as text: the line under PRAY IT AS A NOVENA",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueve días con el Rosario; la app lleva la cuenta de tu día"
+          }
+        }
+      }
+    },
     "Nineteenth Day" : {
       "comment" : "Consecration: heading naming day 19 of the preparation by its ordinal",
       "localizations" : {
@@ -14664,6 +15168,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aún no hay reflexiones"
+          }
+        }
+      }
+    },
+    "No reminder" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin recordatorio"
           }
         }
       }
@@ -15028,6 +15544,30 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Las notificaciones están desactivadas para Lumen Viae"
+          }
+        }
+      }
+    },
+    "Notifications are turned off for Lumen Viae, so there can be no reminder. Your novena will be here each day all the same." : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las notificaciones están desactivadas para Lumen Viae, así que no puede haber recordatorio. Tu novena estará aquí cada día de todos modos."
+          }
+        }
+      }
+    },
+    "Novenas" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novenas"
           }
         }
       }
@@ -15549,6 +16089,18 @@
         }
       }
     },
+    "Open Settings" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir Configuración"
+          }
+        }
+      }
+    },
     "Open Today’s Mass" : {
       "comment" : "Chapel focus block: the gold act under the next daily prayer's name, for Today's Mass",
       "localizations" : {
@@ -15944,6 +16496,18 @@
         }
       }
     },
+    "Optional. Only you see it, and it stays on this phone." : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opcional. Solo tú la ves y se queda en este teléfono."
+          }
+        }
+      }
+    },
     "Or press and hold anywhere." : {
       "localizations" : {
         "es" : {
@@ -16141,6 +16705,18 @@
         }
       }
     },
+    "Our Lady, Undoer of Knots" : {
+      "comment" : "Undoer of Knots novena: its name (Spanish: La Virgen Desatanudos, Abraham 14 Nov)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Virgen Desatanudos"
+          }
+        }
+      }
+    },
     "Our Lord" : {
       "comment" : "Image picker: the heading over a group of paintings of Jesus",
       "localizations" : {
@@ -16242,6 +16818,30 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "REZAR DE NUEVO"
+          }
+        }
+      }
+    },
+    "PRAY DAY 1 TODAY" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "REZAR HOY EL DÍA 1"
+          }
+        }
+      }
+    },
+    "PRAY IT AS A NOVENA" : {
+      "comment" : "Pray-along page, a novena read as text: the row leading to the novena prayed day by day",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "REZARLA COMO NOVENA"
           }
         }
       }
@@ -16527,6 +17127,18 @@
         }
       }
     },
+    "Paused. Tap play to go on, or Next." : {
+      "comment" : "Novena day in the Rosary: under held words while paused",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En pausa. Toca reproducir para seguir, o toca Siguiente."
+          }
+        }
+      }
+    },
     "Peace begins with a single Hail Mary." : {
       "comment" : "Daily prayer reminder notification for readers who gave no reason: its text under the title. Warm and inviting, never scolding; under about 75 characters",
       "localizations" : {
@@ -16570,6 +17182,18 @@
         }
       }
     },
+    "Pick Up at Day %lld" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retomar en el día %lld"
+          }
+        }
+      }
+    },
     "Pick the colors you find easiest to pray with. The whole app changes as you tap." : {
       "comment" : "Onboarding, Choose Your Colors slide: the line under its title",
       "localizations" : {
@@ -16599,6 +17223,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Retómalas cuando el día te lo permita."
+          }
+        }
+      }
+    },
+    "Picked up on %@ · Day %lld today" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La retomaste el %1$@ · Hoy, día %2$lld"
           }
         }
       }
@@ -17001,6 +17637,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Botón Rezar"
+          }
+        }
+      }
+    },
+    "Pray Day %lld" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezar el día %lld"
+          }
+        }
+      }
+    },
+    "Pray Day 1 today instead" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezar hoy el día 1"
+          }
+        }
+      }
+    },
+    "Pray It Again" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezarla de nuevo"
           }
         }
       }
@@ -18119,6 +18791,18 @@
         }
       }
     },
+    "Read at your pace. The voice goes on by itself." : {
+      "comment" : "Novena day in the Rosary: under words the voice has no recording of, which it waits on",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lee a tu ritmo. La voz sigue sola."
+          }
+        }
+      }
+    },
     "Read in Silence" : {
       "comment" : "A Rosary choice's option, short, set in a two-part pill: Audio is Meditation Only, Read in Silence or Whole Rosary; Counting is On My Rosary or On the Screen",
       "localizations" : {
@@ -18524,6 +19208,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hora del recordatorio"
+          }
+        }
+      }
+    },
+    "Reminder at %@." : {
+      "comment" : "Novena, after a day is prayed: the daily reminder's time",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recordatorio a las %@."
           }
         }
       }
@@ -20115,6 +20811,18 @@
         }
       }
     },
+    "Show my intention in the reminder" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar mi intención en el recordatorio"
+          }
+        }
+      }
+    },
     "Show the %lld earlier chapters" : {
       "comment" : "VoiceOver, a book's chapter list: opens the folded earlier chapters",
       "localizations" : {
@@ -21432,6 +22140,18 @@
         }
       }
     },
+    "THE DAYS" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LOS DÍAS"
+          }
+        }
+      }
+    },
     "THE DAYS YOU HAVE PRAYED" : {
       "localizations" : {
         "es" : {
@@ -21480,6 +22200,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "LA NOCHE Y EL ALBA"
+          }
+        }
+      }
+    },
+    "THE NINE DAYS" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LOS NUEVE DÍAS"
           }
         }
       }
@@ -22617,6 +23349,18 @@
         }
       }
     },
+    "The Hail, Holy Queen, then %@" : {
+      "comment" : "Novena day, Go to: under The Closing Prayer, what is said there; the second part is the novena's closing prayer's title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Salve, y luego %@"
+          }
+        }
+      }
+    },
     "The Holy Bible" : {
       "localizations" : {
         "es" : {
@@ -22798,6 +23542,30 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "El misterio"
+          }
+        }
+      }
+    },
+    "The Novena" : {
+      "comment" : "Prayer screen, novena day: caption over a part of the novena with no title of its own",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La novena"
+          }
+        }
+      }
+    },
+    "The Opening" : {
+      "comment" : "Novena day, Go to: the row going to the opening prayers",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El inicio"
           }
         }
       }
@@ -23190,6 +23958,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La Señal de la Cruz y el Acto de contrición"
+          }
+        }
+      }
+    },
+    "The Sign of the Cross, %@, then the Creed, an Our Father, three Hail Marys and a Glory Be" : {
+      "comment" : "Novena day, Go to: under The Opening; the middle names the novena's own opening prayers, such as The Act of Contrition",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La Señal de la Cruz, %@, y luego el Credo, un Padrenuestro, tres Ave Marías y un Gloria"
           }
         }
       }
@@ -24972,6 +25752,18 @@
         }
       }
     },
+    "This novena could not be found." : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontró esta novena."
+          }
+        }
+      }
+    },
     "This order of prayer could not be found." : {
       "localizations" : {
         "es" : {
@@ -25297,6 +26089,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La Misa de hoy y las Horas de oración"
+          }
+        }
+      }
+    },
+    "Today's Meditation" : {
+      "comment" : "Prayer screen, novena day: caption over the day's meditation",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meditación de hoy"
           }
         }
       }
@@ -25711,6 +26515,18 @@
         }
       }
     },
+    "Turn off the reminder" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactivar el recordatorio"
+          }
+        }
+      }
+    },
     "Turn off the timer" : {
       "comment" : "Sleep timer sheet: a choice that cancels the sleep timer",
       "localizations" : {
@@ -25881,6 +26697,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En curso, %@"
+          }
+        }
+      }
+    },
+    "Undoer of Knots" : {
+      "comment" : "Undoer of Knots novena: its short name, under each step and in reminders (Spanish: Virgen Desatanudos)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Virgen Desatanudos"
           }
         }
       }
@@ -26196,6 +27024,18 @@
         }
       }
     },
+    "Welcome back" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qué bueno que volviste"
+          }
+        }
+      }
+    },
     "What Brings You to the Rosary" : {
       "comment" : "Settings, What Brings You to the Rosary sheet: its title\nSettings: a row's name",
       "localizations" : {
@@ -26302,6 +27142,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "¿Cuáles son las tinajas vacías que llevarías a Caná?"
+          }
+        }
+      }
+    },
+    "What are you praying for?" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Cuál es tu intención?"
           }
         }
       }
@@ -26824,6 +27676,18 @@
         }
       }
     },
+    "With the Rosary. Begin any day." : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con el Rosario. Comienza cuando quieras."
+          }
+        }
+      }
+    },
     "With your iPhone in Spanish: the screens, the Rosary, the prayers, the meditations, the Consecration and the Divine Office. The voice that reads is still English" : {
       "comment" : "What's New sheet: one plain line under Lumen Viae in Spanish (beta), saying what is in Spanish and what is not",
       "localizations" : {
@@ -27245,6 +28109,18 @@
         }
       }
     },
+    "You were on Day %lld of %lld." : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ibas en el día %1$lld de %2$lld."
+          }
+        }
+      }
+    },
     "You're offline. The Rosary's voice needs the internet the first time." : {
       "comment" : "Prayer screen notice when the Rosary cannot be said aloud: no connection and the recordings were never downloaded",
       "localizations" : {
@@ -27347,6 +28223,30 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tus notas"
+          }
+        }
+      }
+    },
+    "Your Novena" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu novena"
+          }
+        }
+      }
+    },
+    "Your Novenas" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus novenas"
           }
         }
       }
@@ -27496,6 +28396,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tu intención (opcional)"
+          }
+        }
+      }
+    },
+    "Your intention, optional" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu intención, opcional"
           }
         }
       }
@@ -27896,6 +28808,30 @@
         }
       }
     },
+    "day %lld open" : {
+      "comment" : "Novena dashes, VoiceOver: one past day not yet prayed",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "día %lld sin rezar"
+          }
+        }
+      }
+    },
+    "day %lld today" : {
+      "comment" : "Novena dashes, VoiceOver: the day being prayed, as in Days 1 to 3 prayed, day 4 today",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "día %lld hoy"
+          }
+        }
+      }
+    },
     "day so far" : {
       "comment" : "Chapel, Prayer Streak tile: italic words beside the figure 1 (1 day so far); the figure is drawn apart in a larger face",
       "localizations" : {
@@ -27914,6 +28850,30 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "días"
+          }
+        }
+      }
+    },
+    "days %@ open" : {
+      "comment" : "Novena dashes, VoiceOver: past days not yet prayed",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "días %@ sin rezar"
+          }
+        }
+      }
+    },
+    "days %@ prayed" : {
+      "comment" : "Novena dashes, VoiceOver: days prayed, as in days 1 to 3 prayed",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "días %@ rezados"
           }
         }
       }
@@ -28038,6 +28998,252 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "aún no"
+          }
+        }
+      }
+    },
+    "novena.dashes.oneDayPrayed" : {
+      "comment" : "Novena dashes, VoiceOver: one day prayed",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "day %lld prayed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "día %lld rezado"
+          }
+        }
+      }
+    },
+    "novena.intention.title" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your intention"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu intención"
+          }
+        }
+      }
+    },
+    "novena.reminder.day1" : {
+      "comment" : "Novena reminder, day 1 of 9",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your novena begins today. Come when you are ready."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy comienza tu novena. Ven cuando puedas."
+          }
+        }
+      }
+    },
+    "novena.reminder.day2" : {
+      "comment" : "Novena reminder, day 2 of 9",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Today's prayer is here for you."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La oración de hoy está aquí para ti."
+          }
+        }
+      }
+    },
+    "novena.reminder.day3" : {
+      "comment" : "Novena reminder, day 3 of 9",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "A quiet moment with Our Lady."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un momento de calma con Nuestra Señora."
+          }
+        }
+      }
+    },
+    "novena.reminder.day4.knots" : {
+      "comment" : "Undoer of Knots novena reminder, day 4",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Bring her the knot you carry today."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tráele el nudo que cargas hoy."
+          }
+        }
+      }
+    },
+    "novena.reminder.day5" : {
+      "comment" : "Novena reminder, day 5 of 9",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The middle day. Today's prayer is ready."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vas a la mitad. La oración de hoy está lista."
+          }
+        }
+      }
+    },
+    "novena.reminder.day6.knots" : {
+      "comment" : "Undoer of Knots novena reminder, day 6",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Bring Mary what you cannot untie."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tráele a María lo que no puedes desatar."
+          }
+        }
+      }
+    },
+    "novena.reminder.day7" : {
+      "comment" : "Novena reminder, day 7 of 9",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Come as you are. Day 7 is here."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ven como estés. Aquí está el día 7."
+          }
+        }
+      }
+    },
+    "novena.reminder.last" : {
+      "comment" : "Novena reminder, the last day",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Today is the last day of your novena."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy es el último día de tu novena."
+          }
+        }
+      }
+    },
+    "novena.reminder.nextToLast" : {
+      "comment" : "Novena reminder, the next-to-last day",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "One more day after this one."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Después de hoy, solo falta un día."
+          }
+        }
+      }
+    },
+    "novena.reminder.stillHere.body" : {
+      "comment" : "Novena reminder the day after the last date, while days are open: its body",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Pick it up where you left off, whenever you like."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retómala donde la dejaste, cuando quieras."
+          }
+        }
+      }
+    },
+    "novena.reminder.stillHere.title" : {
+      "comment" : "Novena reminder the day after the last date, while days are open: its title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your novena is still here"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu novena sigue aquí"
+          }
+        }
+      }
+    },
+    "open" : {
+      "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sin rezar"
           }
         }
       }

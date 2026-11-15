@@ -180,6 +180,9 @@ struct OneRosaryRail: Equatable {
         case hailMary
         /// The last bead of a Rosary with no closing prayers shown
         case end
+        /// A novena day's own part (its meditation between two decades,
+        /// its closing prayer): a small diamond, never a bead
+        case novena
     }
 
     /// What a tap on a position takes the hand to
@@ -206,11 +209,23 @@ struct OneRosaryRail: Equatable {
     private let opening: [Group]
     private let closing: [Group]
 
+    /// A novena day's diamonds: between decades, by the decade they
+    /// follow, and after the closing prayers
+    private let novenaBetween: [Int: Int]
+    let novenaClosingIndex: Int?
+
     /// - Parameters:
     ///   - showsPendant: Whether the opening and closing prayers are
     ///     prayed on this Rosary (shown in Settings, or said aloud);
     ///     without them the rail is the strand alone, as it was
-    init(strand: RosaryStrand, pendant: SilentPendant, showsPendant: Bool) {
+    ///   - novenaAfter: The decades a novena day says words after, each
+    ///     given a diamond before the next decade's Our Father
+    ///   - novenaCloses: Whether a novena day's closing prayer follows
+    ///     the Rosary's, given a diamond after the closing medal
+    init(
+        strand: RosaryStrand, pendant: SilentPendant, showsPendant: Bool,
+        novenaAfter: Set<Int> = [], novenaCloses: Bool = false
+    ) {
         self.strand = strand
         guard showsPendant else {
             kinds = (0..<strand.count).map { Self.kind(of: strand.bead(at: $0)) }
@@ -218,6 +233,8 @@ struct OneRosaryRail: Equatable {
             strandRail = Array(0..<strand.count)
             opening = []
             closing = []
+            novenaBetween = [:]
+            novenaClosingIndex = nil
             return
         }
 
@@ -235,6 +252,7 @@ struct OneRosaryRail: Equatable {
 
         let isChaplet = strand.hailMarys != 10
         var kinds: [Kind] = []
+        var novenaBetween: [Int: Int] = [:]
         var opening = groups(pendant.opening)
         // The opening's Glory Be is said where the hand comes to the first
         // mystery's Our Father bead (the pendant's second large bead), not
@@ -267,6 +285,13 @@ struct OneRosaryRail: Equatable {
             // second large bead, below the medal: the medal stands
             // between it and the first Hail Mary
             if index == 0, !isChaplet { kinds.append(.centrepiece) }
+            // A novena day's words between this decade and the next
+            if index + 1 < strand.count, case .ourFather(let next) = strand.bead(at: index + 1),
+                novenaAfter.contains(next - 1)
+            {
+                novenaBetween[next - 1] = kinds.count
+                kinds.append(.novena)
+            }
         }
         let returnsToCross = opening.first?.place == .cross
         for index in closing.indices {
@@ -283,6 +308,13 @@ struct OneRosaryRail: Equatable {
             }
         }
 
+        if novenaCloses {
+            novenaClosingIndex = kinds.count
+            kinds.append(.novena)
+        } else {
+            novenaClosingIndex = nil
+        }
+        self.novenaBetween = novenaBetween
         self.kinds = kinds
         self.strandStart = strandStart
         self.strandRail = strandRail
@@ -291,6 +323,9 @@ struct OneRosaryRail: Equatable {
     }
 
     var count: Int { kinds.count }
+
+    /// The diamond of a novena day's words after `decade`
+    func novenaIndex(after decade: Int) -> Int? { novenaBetween[decade] }
 
     /// The position of a bead of the strand
     func index(strandIndex: Int) -> Int {

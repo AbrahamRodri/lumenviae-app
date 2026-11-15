@@ -551,9 +551,109 @@ final class ScripturalRosaryViewModel {
     /// The whole Rosary said aloud
     private(set) var spoken: SpokenRosaryPlayer?
 
+    // MARK: A Novena Day
+
+    /// A novena day prayed in this Rosary (design plan, "The continuous
+    /// day"): its parts are laid into the spoken script. Set before the
+    /// Rosary begins.
+    var novena: NovenaDayContext?
+
+    /// The words being held while the voice waits on them, if any
+    var heldWords: HeldWords? { spoken?.currentSegment?.held }
+
+    /// How much of the hold has run, 0 to 1, for the ring around play
+    func holdProgress(at now: Date) -> Double? { spoken?.holdProgress(at: now) }
+
+    /// Whether the hold is paused (the ring stands still)
+    var isHoldPaused: Bool { spoken?.holdPausedRemaining != nil }
+
+    /// What the pill says in a novena day: the day on the opening
+    /// prayers, and the novena's own parts by name; nil elsewhere
+    var novenaPillTitle: String? {
+        guard let novena, let segment = spoken?.currentSegment else { return nil }
+        switch (segment.phase, segment.held != nil) {
+        case (.opening, _): return novena.dayLine
+        case (.decade, true): return SpokenNovenaDay.caption(forKind: "meditation")
+        case (.closing, true): return SpokenNovenaDay.caption(forKind: "closing")
+        default: return nil
+        }
+    }
+
+    /// The novena's nine days under the pill, the day in hand lit
+    var novenaDays: NovenaDays? {
+        guard let novena else { return nil }
+        return NovenaDays.of(
+            NovenaStore.shared.progress[novena.novenaID], length: novena.length, here: novena.dayNumber)
+    }
+
+    /// Go to's rows said for a novena day: the opening with its own
+    /// prayers, the day's meditation, and the closing with the novena's
+    /// closing prayer (design frame f-c6)
+    var novenaStopRows: [RosaryStop: (name: String, detail: String?, icon: String)] {
+        guard let novena, let spoken else { return [:] }
+        var rows: [RosaryStop: (name: String, detail: String?, icon: String)] = [:]
+        // The novena's own opening prayers, said after the Sign of the Cross
+        let own = novena.day.opening.map { insert -> String in
+            switch insert {
+            case .prayer(_, let caption), .words(let caption, _): return caption
+            }
+        }
+        rows[.opening] = (
+            String(localized: "The Opening", comment: "Novena day, Go to: the row going to the opening prayers"),
+            String(
+                localized: "The Sign of the Cross, \(own.formatted(.list(type: .and))), then the Creed, an Our Father, three Hail Marys and a Glory Be",
+                comment: "Novena day, Go to: under The Opening; the middle names the novena's own opening prayers, such as The Act of Contrition"),
+            "lv-rosary"
+        )
+        for stop in stops {
+            guard case .between(let n) = stop else { continue }
+            let held = spoken.script.first { $0.held != nil && $0.phase == .decade && $0.mystery == n }
+            rows[stop] = (
+                held?.caption ?? SpokenNovenaDay.caption(forKind: "meditation"),
+                String(localized: "Day \(novena.dayNumber), read at your pace", comment: "Novena day, Go to: under the day's meditation, which the voice holds on rather than reads"),
+                "lv-lozenge"
+            )
+        }
+        let closingWords = spoken.script.last { $0.held != nil && $0.phase == .closing }
+        rows[.closing] = (
+            SpokenNovenaDay.caption(forKind: "closing"),
+            closingWords.map {
+                String(localized: "The Hail, Holy Queen, then \($0.caption)", comment: "Novena day, Go to: under The Closing Prayer, what is said there; the second part is the novena's closing prayer's title")
+            },
+            "lv-lozenge"
+        )
+        return rows
+    }
+
+    /// In a novena day, Next and Back step a prayer at a time around the
+    /// novena's own parts, which sit on no bead: on held words, at a
+    /// decade's end that words follow, at the start of the decade after
+    /// them, and on the pendant
+    func novenaMovesByPrayer(forward: Bool) -> Bool {
+        guard novena != nil, let spoken, let segment = spoken.currentSegment else { return false }
+        if segment.held != nil || segment.phase != .decade { return true }
+        let script = spoken.script
+        let heldAfter = { (decade: Int) in
+            script.contains { $0.held != nil && $0.phase == .decade && $0.mystery == decade }
+        }
+        return forward
+            ? segment.bead >= hailMarys && heldAfter(segment.mystery)
+            : segment.bead == 0 && segment.mystery > 0 && heldAfter(segment.mystery - 1)
+    }
+
     /// The step of the spoken script an interrupted Rosary stopped on,
     /// taken from the resume snapshot and used once, by the first start
     fileprivate var resumeStep: SpokenStep?
+
+    /// Takes a novena day up where it was left today: the hand on the
+    /// step's bead, and the voice at the step itself
+    func resumeNovena(at step: SpokenStep) {
+        currentMysteryIndex = step.mystery
+        currentBeadIndex = step.bead
+        // Off the pendant, the hand is on the decades
+        if step.mystery > 0 || step.bead > 0 { pendantStep = nil }
+        resumeStep = step
+    }
 
     /// Fires when the voice moves the mystery, so the resume snapshot
     /// follows it with the phone locked
@@ -604,7 +704,8 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
                 mysteryKeys: keys,
                 hailMarys: hailMarys,
                 style: isPlain ? .plain : .scriptural,
-                extras: UserSettings.shared.closingExtras
+                extras: UserSettings.shared.closingExtras,
+                novena: novena?.day
             )
             let player = SpokenRosaryPlayer(script: script, host: self)
             spoken = player
@@ -625,7 +726,7 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
             spoken.stop()
             self.spoken = nil
             // The hand keeps the place from here
-            PrayerResumeService.shared.endSpokenSteps(forgettingStep: true)
+            if novena == nil { PrayerResumeService.shared.endSpokenSteps(forgettingStep: true) }
         }
     }
 
@@ -638,7 +739,7 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
         spoken.stop()
         self.spoken = nil
         // The step it reached stays on the snapshot to resume at
-        PrayerResumeService.shared.endSpokenSteps(forgettingStep: false)
+        if novena == nil { PrayerResumeService.shared.endSpokenSteps(forgettingStep: false) }
         AudioService.shared.deactivateSession()
     }
 
@@ -821,6 +922,11 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
     }
 
     func spokenRosaryReached(_ step: SpokenStep) {
+        // A novena day keeps its own place, never the Rosary's snapshot
+        if let novena {
+            NovenaStore.shared.keep(step, novenaID: novena.novenaID, day: novena.dayNumber)
+            return
+        }
         PrayerResumeService.shared.updateSpokenStep(
             step,
             kind: resumeKind,
@@ -836,7 +942,9 @@ extension ScripturalRosaryViewModel {
 
     /// The parts of this Rosary the pill at the top goes to
     var stops: [RosaryStop] {
-        RosaryStop.all(decades: strand.decades, includesPendant: spoken != nil || pendantShown)
+        let stops = RosaryStop.all(decades: strand.decades, includesPendant: spoken != nil || pendantShown)
+        guard novena != nil, let spoken else { return stops }
+        return RosaryStop.withNovenaParts(stops, in: spoken.script)
     }
 
     /// The part the hand is on
@@ -866,6 +974,9 @@ extension ScripturalRosaryViewModel {
         case .mystery(let n):
             guard n >= 0, n < strand.decades else { return }
             currentMysteryIndex = n
+        case .between:
+            // Only a spoken novena day has parts between the decades
+            return
         case .closing:
             currentMysteryIndex = max(strand.decades - 1, 0)
             currentBeadIndex = strand.gloryBe

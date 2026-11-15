@@ -61,6 +61,9 @@ struct PrayAlongView: View {
 
     /// A prayer named in a direction ("Our Father, Hail Mary"), opened to read
     @State private var saidPrayer: PrayerPage.SaidPrayer?
+    /// A novena's twin read a day at a time: the page chosen, nil until
+    /// a button is tapped (then the reader's day, or Day 1)
+    @State private var twinPage: NovenaTwinPage?
 
     /// Whether the page is on screen. Recordings still being fetched when
     /// it closes, or a prayer still turning in, must not go on to speak
@@ -519,7 +522,18 @@ struct PrayAlongView: View {
 
     private func pageScroll(_ prayer: BookPrayer) -> some View {
         let stanzas = Self.stanzas(prayer.content(for: displayLanguage))
-        let page = PrayerPage(stanzas: stanzas)
+        let whole = PrayerPage(stanzas: stanzas)
+        // A novena's twin is read one day at a time (Abraham, 15 Nov
+        // 2026: "A"); a twin whose headings do not name every day is read
+        // whole, as before
+        let novena = Self.novena(twinOf: prayer)
+        let twin = novena.flatMap { NovenaTwin(stanzas: stanzas, length: $0.length) }
+        let shown = twinPage ?? novena.map(Self.openingPage(of:)) ?? .day(1)
+        let page = twin.map { twin in
+            let kept = twin.stanzas(day: shown.day)
+            return PrayerPage(
+                filtering: whole, keeping: { section in section.stanzas.contains { kept.contains($0.index) } })
+        } ?? whole
         let following = aloud && voice.isPlaying
 
         return ScrollViewReader { proxy in
@@ -570,11 +584,27 @@ struct PrayAlongView: View {
                             // book credits every prayer it prints
                             // English only for now: hidden on a Spanish page
                             // until the book gives the origin in Spanish
-                            if let origin = prayer.origin, !origin.isEmpty, !SpanishContent.isActive {
+                            // A novena's author is always credited, in
+                            // English until its Spanish credit is served
+                            if let origin = prayer.origin, !origin.isEmpty,
+                                !SpanishContent.isActive || novena != nil
+                            {
                                 Text(origin)
                                     .font(AppFonts.readingItalicFont(15))
                                     .foregroundColor(AppColors.textSecondary)
                                     .fixedSize(horizontal: false, vertical: true)
+                            }
+
+                            if let novena, let twin {
+                                VStack(alignment: .leading, spacing: 18) {
+                                    NovenaDayButtons(
+                                        length: twin.days.count,
+                                        hasClosing: !twin.closing.isEmpty,
+                                        page: Binding(get: { shown }, set: { twinPage = $0 })
+                                    )
+                                    PrayAsNovenaRow { router.push(.novena(id: novena.id)) }
+                                }
+                                .padding(.top, 14)
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -640,9 +670,28 @@ struct PrayAlongView: View {
                 }
             }
             .onChange(of: index) { _, _ in
+                twinPage = nil
+                proxy.scrollTo("top", anchor: .top)
+            }
+            .onChange(of: twinPage) { _, _ in
                 proxy.scrollTo("top", anchor: .top)
             }
         }
+    }
+
+    // MARK: - A novena's twin
+
+    /// The novena whose twin this prayer is: the Prayer Book prayer
+    /// holding the whole novena as text
+    static func novena(twinOf prayer: BookPrayer) -> PrayerBookDocument.Novena? {
+        LibraryContent.prayerBook.novenas.first { $0.prayerID == prayer.id }
+    }
+
+    /// The day a twin opens on: the reader's own day while the novena is
+    /// under way, else Day 1
+    static func openingPage(of novena: PrayerBookDocument.Novena) -> NovenaTwinPage {
+        guard let progress = NovenaStore.shared.progress[novena.id] else { return .day(1) }
+        return .day(min(max(progress.dayNumber(on: PrayerDay.now), 1), novena.length))
     }
 
     /// A point under the reading size, so more of each line of a prayer fits the measure

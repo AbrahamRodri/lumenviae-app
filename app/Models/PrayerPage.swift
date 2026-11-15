@@ -129,6 +129,12 @@ nonisolated struct PrayerPage: Equatable {
         self.sections = sections
     }
 
+    /// The sections of `page` that `keeping` keeps: a novena's day, its
+    /// stanzas read as the whole twin reads them
+    init(filtering page: PrayerPage, keeping: (Section) -> Bool) {
+        sections = page.sections.filter(keeping)
+    }
+
     private static func lines(of stanza: String) -> [String] {
         stanza.components(separatedBy: "\n")
             .map { $0.trimmingCharacters(in: .whitespaces) }

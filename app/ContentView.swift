@@ -245,6 +245,20 @@ struct ContentView: View {
                   AppRouter.angelusTapOpens(over: router.routes) else { return }
             perform(.angelus)
         }
+        // A novena reminder, tapped: straight to that day in the Rosary,
+        // when it may be prayed today; never over a prayer under way
+        .onChange(of: NovenaStore.shared.requested, initial: true) { _, request in
+            guard let request else { return }
+            NovenaStore.shared.requested = nil
+            guard AppRouter.angelusTapOpens(over: router.routes),
+                let progress = NovenaStore.shared.progress[request.novenaID],
+                case .underWay(let today, let open) = progress.standing(on: PrayerDay.now),
+                let day = today ?? open.first
+            else { return }
+            router.push(.scripturalRosaryPrayer(ScripturalRosaryLaunch(
+                category: ScheduleService.categoryForToday(), form: .plain,
+                novenaID: request.novenaID, novenaDay: day)))
+        }
         .task {
             // Cleared before the wait, as it is taken, so no later
             // appearance — another window on the same app state — finds a
@@ -561,7 +575,9 @@ struct ContentView: View {
             }
 
         case .completion:
-            if let completed = router.completedPrayer {
+            if let completed = router.completedPrayer, let novena = completed.novena {
+                NovenaPrayedView(completed: completed, prayed: novena)
+            } else if let completed = router.completedPrayer {
                 PrayerCompletionView(completed: completed)
             } else {
                 ProgressView("Loading...")
@@ -674,6 +690,9 @@ struct ContentView: View {
 
         case .prayerBookSaved:
             PrayerBookSavedView()
+
+        case .novena(let id):
+            NovenaPageView(novenaID: id)
 
         case .myPrayers:
             MyPrayersView()

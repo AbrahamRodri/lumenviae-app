@@ -133,6 +133,9 @@ enum AppRoute: Hashable {
     /// menu, reached from the Saved shortcut on Prayers
     case prayerBookSaved
 
+    /// A novena's own page: begin it, its intention and reminder, its days
+    case novena(id: String)
+
     /// The reader's own prayers and playlists, from the My Prayers shelf
     /// on Prayers, and one playlist's page
     case myPrayers
@@ -209,6 +212,10 @@ struct ScripturalRosaryLaunch: Hashable {
 
     /// When the devotion originally began (display/snapshot continuity)
     var startedAt: Date = Date()
+
+    /// A novena day prayed in this Rosary: the novena and the day
+    var novenaID: String? = nil
+    var novenaDay: Int? = nil
 }
 
 // MARK: - SpokenForm
@@ -241,6 +248,17 @@ struct CompletedPrayer {
 
     /// Seconds actually spent praying, or nil when not timed
     let durationSeconds: Int?
+
+    /// A novena day prayed in this Rosary: its AMEN ends on "Day 4
+    /// prayed" rather than the Rosary's own screen
+    var novena: NovenaPrayed? = nil
+}
+
+/// The novena day a Rosary's AMEN marked prayed
+struct NovenaPrayed: Hashable {
+    let novenaID: String
+    let dayNumber: Int
+    let length: Int
 }
 
 // MARK: - PrayerLaunch
@@ -341,6 +359,9 @@ final class AppRouter {
     }
 
     #if DEBUG
+    /// Whether a `novena:` launch route has set its novena's state yet
+    private static var novenaStateSet = false
+
     /// A page named at launch by `LUMEN_VIAE_ROUTE`, for the App Store
     /// screenshots (`Tools/AppStore/screenshots`): `missal`, `office`,
     /// `howToPray`, `explore`, `spiritualReading`, `allMysteries`,
@@ -375,6 +396,49 @@ final class AppRouter {
             let form: SpokenForm = name == "rosaryAloudPrayer" ? .plain : .scriptural
             return (.scripturalRosaryPrayer(ScripturalRosaryLaunch(
                 category: c, form: form, startIndex: mystery, startBead: bead)), nil)
+        case ("novena", _) where parts.count > 1:
+            // `novena:<novena id>`, its own page; `novena:<id>:<today's
+            // day>:<days prayed, comma-separated>` first begins it so that
+            // today is that day (0: it begins tomorrow), for the page's shots;
+            // `novena:<id>:none` ends any under way, to shoot it not begun
+            // Set once a launch: the router can be built more than once,
+            // and a second pass undid what was begun since
+            if novenaStateSet {
+            } else if parts.count > 2, parts[2] == "none" {
+                novenaStateSet = true
+                NovenaStore.shared.end(parts[1])
+            } else if parts.count > 2, let day = Int(parts[2]), let novena = NovenaDayContext.novena(parts[1]) {
+                let start = PrayerDay.adding(days: 1 - day, to: PrayerDay.today()).addingTimeInterval(12 * 3600)
+                NovenaStore.shared.begin(
+                    novena, on: start,
+                    intention: SpanishContent.isActive ? "Por el nuevo trabajo de mi hermano" : "For my brother's new job",
+                    reminder: DateComponents(hour: 20, minute: 0))
+                let prayed = parts.count > 3 ? parts[3].split(separator: ",").compactMap { Int($0) } : []
+                novenaStateSet = true
+                for earlier in prayed { NovenaStore.shared.markPrayed(earlier, of: novena) }
+                NovenaStore.shared.forgetKept(novenaID: novena.id)
+            }
+            return (.novena(id: parts[1]), nil)
+        case ("novenaDay", _) where parts.count > 2:
+            // `novenaDay:<novena id>:<day>`, on today's mysteries;
+            // `...:<day>:begun` first begins it with the days before
+            // prayed and an 8 PM reminder, for the end screen's shots
+            if parts.count > 3, parts[3] == "begun", let day = Int(parts[2]),
+                let novena = NovenaDayContext.novena(parts[1])
+            {
+                // Noon of the first day: a prayer day's midnight name
+                // reads as the evening before
+                let start = PrayerDay.adding(days: 1 - day, to: PrayerDay.today()).addingTimeInterval(12 * 3600)
+                NovenaStore.shared.begin(
+                    novena, on: start,
+                    intention: SpanishContent.isActive ? "Por el nuevo trabajo de mi hermano" : "For my brother's new job",
+                    reminder: DateComponents(hour: 20, minute: 0))
+                for earlier in 1..<max(day, 1) { NovenaStore.shared.markPrayed(earlier, of: novena) }
+                NovenaStore.shared.forgetKept(novenaID: novena.id)
+            }
+            return (.scripturalRosaryPrayer(ScripturalRosaryLaunch(
+                category: ScheduleService.categoryForToday(), form: .plain,
+                novenaID: parts[1], novenaDay: Int(parts[2]) ?? 1)), nil)
         case ("prayer", let c?):
             guard let set = BundledMeditationSets.all.first(where: { $0.category == c.rawValue }) else { return nil }
             return (.prayerSession(meditationSetId: set.id),
@@ -605,6 +669,16 @@ final class AppRouter {
     }
 
     /// Returns to the home screen and clears stored navigation state.
+    /// Pops back to the latest `route` on the stack and says whether it
+    /// was there: a novena day's × goes back to the novena's page
+    @discardableResult
+    func popBack(to route: AppRoute) -> Bool {
+        guard let index = routes.lastIndex(where: { $0 == route }) else { return false }
+        let drop = path.count - index - 1
+        if drop > 0 { path.removeLast(drop) }
+        return true
+    }
+
     func popToRoot() {
         // Mutate in place rather than replacing the NavigationPath object;
         // swapping the whole path mid-transition can desync the stack's
