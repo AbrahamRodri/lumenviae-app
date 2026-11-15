@@ -33,6 +33,10 @@ struct ScripturalRosaryPrayerView: View {
     /// `playerMaximum` (Abraham's yes, 10 Nov: "Yes, build it"); at the
     /// accessibility sizes it makes room for the larger words
     private var playerIsLarge: Bool { min(phoneTypeSize, .playerMaximum).isAccessibilitySize }
+
+    /// Back's and Next's width in the footer, so the row beneath sets
+    /// VOICE and MORE under them
+    @State private var footWayWidth: CGFloat = OneRosaryFooter.wayWidth
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var viewModel: ScripturalRosaryViewModel
 
@@ -873,13 +877,15 @@ extension ScripturalRosaryPrayerView {
             )
             .padding(.horizontal, 22)
             .padding(.top, 16)
+            .onPreferenceChange(OneRosaryWayWidthKey.self) { footWayWidth = $0 }
 
             // The meditation's player's row, the same three
             OneRosaryUtilityRow(items: [
                 OneRosaryUtilityRow.voice { activeSheet = .playback },
                 OneRosaryUtilityRow.text { activeSheet = .text },
                 OneRosaryUtilityRow.more { activeSheet = .tray },
-            ])
+            ], columnWidth: footWayWidth)
+            .padding(.horizontal, 22)
             .padding(.top, 10)
             .padding(.bottom, 8)
         }

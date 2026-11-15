@@ -179,6 +179,9 @@ struct ContentView: View {
                     // rather than sliding below the glass
                     .offset(y: shouldShowTabBar || reduceMotion ? 0 : 100)
                     .animation(Motion.panel, value: shouldShowTabBar)
+                    // Faded and slid away under a prayer, it was still in
+                    // VoiceOver's reach off the foot of the glass
+                    .accessibilityHidden(!shouldShowTabBar)
                     .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { tabBarHeight = $0 }
             }
             // The bar stays at the foot of the glass while a keyboard is
