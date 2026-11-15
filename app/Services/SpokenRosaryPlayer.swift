@@ -350,6 +350,15 @@ final class SpokenRosaryPlayer {
             ?? SpokenRosaryScript.startIndex(in: script, mystery: mystery, bead: bead, includingOpening: true)
         phase = .preparing(done: 0, total: 0)
 
+        #if DEBUG
+            // `-LVNoVoice YES`: the recordings cannot be had, for walking
+            // a Rosary or a novena day with no voice in the simulator
+            if UserDefaults.standard.bool(forKey: "LVNoVoice") {
+                phase = .failed(.offline)
+                return
+            }
+        #endif
+
         let offline: Bool
         do {
             let prepared = try await pack.prepare(

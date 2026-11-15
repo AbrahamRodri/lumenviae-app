@@ -502,3 +502,50 @@ struct NovenaWithTheRosaryTests {
         #expect(NovenaStore.unreachable(progress, book: book) == ["st_jude"])
     }
 }
+
+@Suite("A novena day with no voice")
+struct SilentNovenaDayTests {
+    /// With no voice, the day's meditation and closing prayer are steps:
+    /// Next from a Glory Be they follow goes to them, Next past them goes
+    /// on, and AMEN stands only on the day's last words (the mission:
+    /// "with the voice off every step is read and moved with Next")
+    @Test func theDaysWordsAreStepsBeforeAmen() throws {
+        let day = try #require(NovenaDayContext.resolve(novenaID: "undoer_of_knots", day: 1))
+        let vm = ScripturalRosaryViewModel(category: .joyful, form: .plain, showsOpeningPrayers: false)
+        vm.novena = day
+        #expect(vm.isSilentNovena)
+        let words = vm.novenaWordsParts
+        #expect(!words.isEmpty)
+        #expect(words.contains { $0.phase == .closing })
+
+        // Walk the whole Rosary with Next, counting the words reached
+        var seen: [String] = []
+        var guardSteps = 0
+        while !vm.isLastBeadOfRosary, guardSteps < 500 {
+            #expect(vm.prayForward())
+            if let held = vm.heldWords { seen.append(held.id) }
+            guardSteps += 1
+        }
+        #expect(seen == words.compactMap { $0.held?.id })
+        #expect(vm.silentNovenaSegment?.phase == .closing)
+
+        // Back from the last words goes to the words before them after the
+        // same Glory Be, or to that Glory Be
+        let lastRun = words.filter { $0.phase == .closing || $0.mystery == vm.currentMysteryIndex }.count
+        vm.prayBack()
+        #expect(vm.heldWords?.id == (lastRun > 1 ? seen[seen.count - 2] : nil))
+        #expect(!vm.isLastBeadOfRosary)
+        #expect(vm.isDecadePrayed)
+    }
+
+    /// An ordinary Rosary with no voice is unchanged: AMEN on the last
+    /// Glory Be
+    @Test func anOrdinaryRosaryEndsOnItsGloryBe() {
+        let vm = ScripturalRosaryViewModel(category: .joyful, form: .plain, showsOpeningPrayers: false)
+        #expect(!vm.isSilentNovena)
+        var steps = 0
+        while !vm.isLastBeadOfRosary, steps < 500 { _ = vm.prayForward(); steps += 1 }
+        #expect(vm.isLastMystery && vm.isDecadePrayed)
+        #expect(vm.heldWords == nil)
+    }
+}
