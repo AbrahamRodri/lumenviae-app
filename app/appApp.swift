@@ -20,7 +20,6 @@ struct appApp: App {
 
     /// Whether the app has finished loading (splash screen complete)
     @State private var isLaunched = false
-    @State private var showsTranslationNotice = false
 
     /// True after the user completes onboarding once
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
@@ -83,25 +82,15 @@ struct appApp: App {
                     }
                 }
             }
-            // The first time the app opens in Spanish, a short notice that
-            // its words were translated with AI (Settings keeps the same
-            // line under the language row). Never in English. A new reader
-            // meets it over the introduction; anyone past it, on the home
-            // page, ahead of What's New (ContentView.presentFirstLook)
+            // The Spanish notice is never laid over the introduction: a new
+            // reader meets it on the home page once the welcome is done,
+            // ahead of the tour (ContentView.presentFirstLook), where it
+            // once stood over the welcome's first slide and the tour
+            // followed straight after, three introductions in a row
             .onChange(of: isLaunched) { _, launched in
                 // A new install reads at the phone's own text size
                 if launched, !hasSeenOnboarding {
                     userSettings.startTextSizeFromPhone(UIApplication.shared.preferredContentSizeCategory)
-                }
-                if launched, !hasSeenOnboarding, SpanishBeta.owesSheet() {
-                    showsTranslationNotice = true
-                }
-            }
-            // Seen however it leaves, a swipe included
-            .sheet(isPresented: $showsTranslationNotice, onDismiss: { SpanishBeta.markSheetSeen() }) {
-                SpanishBetaSheet {
-                    SpanishBeta.markSheetSeen()
-                    showsTranslationNotice = false
                 }
             }
             // The phone's Larger Text is followed up to the app's cap and

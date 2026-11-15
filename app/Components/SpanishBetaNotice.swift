@@ -81,6 +81,9 @@ struct SpanishBetaStrip: View {
     let onOpen: () -> Void
     let onClose: () -> Void
 
+    /// The strip's height under the clock
+    static let height: CGFloat = 44
+
     var body: some View {
         HStack(spacing: 10) {
             Button(action: onOpen) {
@@ -138,7 +141,7 @@ struct SpanishBetaStrip: View {
         }
         .padding(.leading, 20)
         .padding(.trailing, 4)
-        .frame(height: 44)
+        .frame(height: Self.height)
         .background {
             Color.black
                 .ignoresSafeArea(edges: .top)
