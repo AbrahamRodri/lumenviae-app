@@ -100,7 +100,7 @@ struct RosaryWordsTests {
     @Test func aShortWordIsHeldToTheWordAfterIt() {
         #expect(
             OneRosaryColumn<EmptyView>.keepingShortWordsWithNext("La Ascensión del Señor a los Cielos")
-                == "La Ascensión del Señor a\u{00A0}los Cielos")
+                == "La\u{00A0}Ascensión del Señor a\u{00A0}los Cielos")
         #expect(OneRosaryColumn<EmptyView>.keepingShortWordsWithNext("The Annunciation") == "The Annunciation")
         #expect(OneRosaryColumn<EmptyView>.keepingShortWordsWithNext("Of") == "Of")
     }
