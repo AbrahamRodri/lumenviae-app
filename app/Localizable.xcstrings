@@ -12799,7 +12799,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mira cómo funciona"
+            "value" : "Ver cómo funciona"
           }
         }
       }
@@ -16876,7 +16876,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "REZA ESTAS"
+            "value" : "REZAR ESTAS"
           }
         }
       }
@@ -17708,7 +17708,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reza el Rosario de hoy"
+            "value" : "Rezar el Rosario de hoy"
           }
         }
       }
