@@ -6405,7 +6405,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "CANTO"
+            "value" : "CANTOS"
           }
         }
       }
@@ -24017,7 +24017,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La Señal de la Cruz, %@, y luego el Credo, un Padrenuestro, tres Ave Marías y un Gloria"
+            "value" : "La Señal de la Cruz, %@ y luego el Credo, un Padrenuestro, tres Ave Marías y un Gloria"
           }
         }
       }
