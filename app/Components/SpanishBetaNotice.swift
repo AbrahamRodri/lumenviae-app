@@ -242,7 +242,10 @@ struct SpanishBetaSheet: View {
                         .font(AppFonts.italicFont(15))
                         .foregroundColor(AppColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
-                        .padding(.horizontal, SheetMetrics.gutter)
+                        // Under the row's name, as the line under Use the
+                        // app in English stands, not under its glyph
+                        .padding(.leading, SheetMetrics.gutter + 44)
+                        .padding(.trailing, SheetMetrics.gutter)
                         .padding(.bottom, 10)
                         .transition(.opacity)
                     }
