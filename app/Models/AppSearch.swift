@@ -305,27 +305,54 @@ enum AppSearch {
     /// "angelus") is never the best: a card says "this is what you
     /// meant". It once looked at each kind's first hit alone, and that
     /// topic, standing first, gave "angelus" from Prayers a chant's card.
+    ///
+    /// No card either when several names answer only by a word inside
+    /// them, equally: "novena" is a word of all ten novenas' names, and
+    /// the card named whichever stood first, as if the app knew which
+    /// was meant. A name that begins with the words, or is them, still
+    /// wins a tie ("hail" finds the Hail Mary's card).
     static func bestMatch(
         in found: [Kind: [Hit]], needle: String, order: [Kind], origin: Origin, on date: Date = Date()
     ) -> Hit? {
         if let lead = origin.leadingKind, let closest = closest(in: found[lead] ?? [], to: needle, on: date) {
-            return closest.hit
+            return closest.isClear ? closest.hit : nil
         }
-        var best: (hit: Hit, closeness: Closeness)?
+        var best: Closest?
         for kind in order {
             guard let closest = closest(in: found[kind] ?? [], to: needle, on: date) else { continue }
-            if closest.closeness > (best?.closeness ?? .none) { best = closest }
+            if closest.closeness > (best?.closeness ?? .none) {
+                best = closest
+            } else if let held = best, closest.closeness == held.closeness {
+                best = Closest(hit: held.hit, closeness: held.closeness, ties: held.ties + closest.ties)
+            }
         }
-        return best?.hit
+        guard let best, best.isClear else { return nil }
+        return best.hit
+    }
+
+    /// The hit whose name answers closest, and how many answer as closely
+    struct Closest {
+        let hit: Hit
+        let closeness: Closeness
+        /// The hits whose names answer as closely, this one included
+        let ties: Int
+
+        /// One hit answers best, or the best answer begins the name
+        var isClear: Bool { ties == 1 || closeness >= .start }
     }
 
     /// The hit whose name answers closest, the first winning a tie; nil
     /// when no name answers at all
-    private static func closest(in hits: [Hit], to needle: String, on date: Date) -> (hit: Hit, closeness: Closeness)? {
-        var best: (hit: Hit, closeness: Closeness)?
+    private static func closest(in hits: [Hit], to needle: String, on date: Date) -> Closest? {
+        var best: Closest?
         for hit in hits {
             let closeness = closenessOfBest(hit, to: needle, on: date)
-            if closeness > (best?.closeness ?? .none) { best = (hit, closeness) }
+            guard closeness > .none else { continue }
+            if closeness > (best?.closeness ?? .none) {
+                best = Closest(hit: hit, closeness: closeness, ties: 1)
+            } else if let held = best, closeness == held.closeness {
+                best = Closest(hit: held.hit, closeness: held.closeness, ties: held.ties + 1)
+            }
         }
         return best
     }
