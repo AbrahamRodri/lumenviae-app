@@ -971,9 +971,9 @@ final class UserSettings {
             let content = UNMutableNotificationContent()
             content.title = message.title
             content.body = message.body
-            content.sound = UNNotificationSound(
-                named: UNNotificationSoundName(reminderSound.fileName)
-            )
+            content.sound =
+                SilentTesting.isOn
+                ? nil : UNNotificationSound(named: UNNotificationSoundName(reminderSound.fileName))
 
             var dateComponents = DateComponents()
             dateComponents.weekday = weekday
