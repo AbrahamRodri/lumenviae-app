@@ -36,6 +36,17 @@ struct BookPrayer: Identifiable, Hashable {
     /// Bernard of Clairvaux · 12th century"
     let origin: String?
 
+    /// A long origin cut short for under the title; the whole origin then
+    /// stands at the prayer's foot. Nil where the origin is short
+    var shortCredit: String? = nil
+
+    /// The credit under the title: the short one where there is one
+    var creditUnderTitle: String? { shortCredit ?? origin }
+
+    /// The whole origin at the foot, only where the title carries a cut
+    /// of it, so nothing is said twice
+    var creditAtFoot: String? { shortCredit == nil ? nil : origin }
+
     /// When or how it is said, in one plain sentence
     let note: String?
 
@@ -375,7 +386,8 @@ enum PrayerBook {
         LibraryContent.prayerBook.prayers.map { prayer in
             (prayer.id, inSpanish(BookPrayer(
                 id: prayer.id, title: prayer.title, latinTitle: prayer.latinTitle,
-                origin: prayer.origin, note: prayer.note, english: prayer.english, latin: prayer.latin
+                origin: prayer.origin, shortCredit: prayer.shortCredit, note: prayer.note,
+                english: prayer.english, latin: prayer.latin
             )))
         },
         uniquingKeysWith: { first, _ in first }

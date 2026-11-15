@@ -34,6 +34,10 @@ nonisolated struct PrayerBookDocument: Codable, Equatable, Sendable {
         var title: String
         var latinTitle: String?
         var origin: String?
+        /// A long origin's cut for under the title ("Fr. Lawrence G.
+        /// Lovasik, S.V.D. · as printed by EWTN"); nil where the origin is
+        /// short enough to stand there itself
+        var shortCredit: String?
         var note: String?
         var english: String
         var latin: String?
@@ -43,6 +47,7 @@ nonisolated struct PrayerBookDocument: Codable, Equatable, Sendable {
 
         enum CodingKeys: String, CodingKey {
             case id, title, origin, note, english, latin
+            case shortCredit = "short_credit"
             case latinTitle = "latin_title"
             case listTitle = "list_title"
             case englishName = "english_name"
@@ -51,8 +56,10 @@ nonisolated struct PrayerBookDocument: Codable, Equatable, Sendable {
 
         init(
             id: String, title: String, latinTitle: String?, origin: String?, note: String?,
-            english: String, latin: String?, listTitle: String?, englishName: String?, searchWords: [String]
+            english: String, latin: String?, listTitle: String?, englishName: String?, searchWords: [String],
+            shortCredit: String? = nil
         ) {
+            self.shortCredit = shortCredit
             self.id = id
             self.title = title
             self.latinTitle = latinTitle
@@ -71,6 +78,7 @@ nonisolated struct PrayerBookDocument: Codable, Equatable, Sendable {
             title = try c.decode(String.self, forKey: .title)
             latinTitle = try c.decodeIfPresent(String.self, forKey: .latinTitle)
             origin = try c.decodeIfPresent(String.self, forKey: .origin)
+            shortCredit = try c.decodeIfPresent(String.self, forKey: .shortCredit)
             note = try c.decodeIfPresent(String.self, forKey: .note)
             english = try c.decode(String.self, forKey: .english)
             latin = try c.decodeIfPresent(String.self, forKey: .latin)
@@ -85,6 +93,7 @@ nonisolated struct PrayerBookDocument: Codable, Equatable, Sendable {
             try c.encode(title, forKey: .title)
             try c.encode(latinTitle, forKey: .latinTitle)
             try c.encode(origin, forKey: .origin)
+            try c.encodeIfPresent(shortCredit, forKey: .shortCredit)
             try c.encode(note, forKey: .note)
             try c.encode(english, forKey: .english)
             try c.encode(latin, forKey: .latin)
