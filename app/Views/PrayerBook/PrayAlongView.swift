@@ -581,14 +581,10 @@ struct PrayAlongView: View {
                                 .accessibilityAddTraits(.isHeader)
 
                             // Where the prayer comes from, quietly: the
-                            // book credits every prayer it prints
-                            // English only for now: hidden on a Spanish page
-                            // until the book gives the origin in Spanish
-                            // A novena's author is always credited, in
-                            // English until its Spanish credit is served
-                            if let origin = prayer.origin, !origin.isEmpty,
-                                !SpanishContent.isActive || novena != nil
-                            {
+                            // book credits every prayer it prints. On a
+                            // Spanish page the prayer carries the book's
+                            // Spanish credit, or none
+                            if let origin = prayer.origin, !origin.isEmpty {
                                 NovenaCreditLine(
                                     origin: origin, url: novena?.sourceURL(spanish: SpanishContent.isActive), size: 15,
                                     color: AppColors.textSecondary)
