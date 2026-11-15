@@ -1395,6 +1395,7 @@ private struct PrayAlongVerseLine: View {
             .font(AppFonts.bodyFont(size))
             .foregroundColor(AppColors.cream.opacity(0.92))
             .lineSpacing(ReadingTypography.quoteLineSpacing(for: size))
+            .spokenRubrics(text)
         if #available(iOS 18.0, *) {
             // Measured an indent short, then every line after the first
             // drawn an indent in, so the overflow still fits the measure

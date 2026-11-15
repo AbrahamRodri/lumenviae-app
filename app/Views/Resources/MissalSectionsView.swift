@@ -434,6 +434,7 @@ struct MissalPassageText: View {
                             .foregroundColor(color)
                             .lineSpacing(ReadingTypography.lineSpacing(for: bodySize))
                             .fixedSize(horizontal: false, vertical: true)
+                            .spokenRubrics(lines)
                     }
                 }
             }
@@ -528,6 +529,7 @@ struct MissalPairedPassageText: View {
                     .foregroundColor(AppColors.cream.opacity(0.92))
                     .lineSpacing((size * 0.3).rounded())
                     .fixedSize(horizontal: false, vertical: true)
+                    .spokenRubrics(pair.primary)
             }
 
             // The translation steps in from the margin — set under its
@@ -539,6 +541,7 @@ struct MissalPairedPassageText: View {
                 .lineSpacing((size * 0.25).rounded())
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.leading, 20)
+                .spokenRubrics(pair.secondary)
         }
     }
 }
@@ -595,6 +598,7 @@ struct MissalColumnPassageText: View {
                     .font(AppFonts.readingFont(columnSize))
                     .foregroundColor(AppColors.cream.opacity(0.92))
                     .lineSpacing((columnSize * 0.35).rounded())
+                    .spokenRubrics(text)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -608,6 +612,7 @@ struct MissalColumnPassageText: View {
             .lineSpacing((columnSize * 0.3).rounded())
             .frame(maxWidth: .infinity, alignment: .leading)
             .fixedSize(horizontal: false, vertical: true)
+            .spokenRubrics(text)
     }
 }
 

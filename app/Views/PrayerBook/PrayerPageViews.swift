@@ -138,6 +138,7 @@ struct PrayerPagePartView: View {
                 .foregroundColor(AppColors.cream.opacity(0.92))
                 .lineSpacing(ReadingTypography.lineSpacing(for: size))
                 .fixedSize(horizontal: false, vertical: true)
+                .spokenRubrics(text)
         }
     }
 
@@ -169,6 +170,7 @@ struct PrayerPageLineView: View {
                 .foregroundColor(AppColors.cream.opacity(0.92))
                 .lineSpacing(ReadingTypography.quoteLineSpacing(for: size))
                 .fixedSize(horizontal: false, vertical: true)
+                .spokenRubrics(text)
         case .rubric(let text):
             Text(text)
                 .font(AppFonts.readingItalicFont(max(12, size - 2)))
@@ -180,6 +182,7 @@ struct PrayerPageLineView: View {
                 + Text(response).font(AppFonts.readingItalicFont(size)).foregroundColor(Rubric.text))
                 .lineSpacing(ReadingTypography.quoteLineSpacing(for: size))
                 .fixedSize(horizontal: false, vertical: true)
+                .spokenRubrics("\(invocation) ℟ \(response)")
         }
     }
 
@@ -331,6 +334,7 @@ struct PrayerLitanyGroup: View {
         (Rubric.markText("℟ ").foregroundColor(Rubric.red) + Text(response).foregroundColor(Rubric.text))
             .font(AppFonts.readingItalicFont(max(15, size - 1)))
             .fixedSize(horizontal: false, vertical: true)
+            .spokenRubrics("℟ \(response)")
     }
 
     private var calls: some View {
@@ -340,6 +344,7 @@ struct PrayerLitanyGroup: View {
                     .font(AppFonts.bodyFont(size))
                     .foregroundColor(AppColors.cream.opacity(0.92))
                     .fixedSize(horizontal: false, vertical: true)
+                    .spokenRubrics(call)
             }
         }
     }

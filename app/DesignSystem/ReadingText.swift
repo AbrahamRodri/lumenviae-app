@@ -257,17 +257,18 @@ enum Rubric {
         return attributed
     }
 
-    /// `string` rubricated, as `Text`, and heard the way the website
-    /// says it: a ℣ as "Leader:", a ℟ as "All:", the cross silent.
-    /// VoiceOver otherwise reads the bare symbols' names.
+    /// `string` rubricated, as `Text`. VoiceOver would read the bare
+    /// symbols' names; `spokenRubrics(_:)` gives it the website's
+    /// words, a ℣ as "Leader:", a ℟ as "All:", the cross silent.
+    /// Pair with `spokenRubrics(_:)` on the finished view: a label on
+    /// a Text inside a larger Text or a combined element goes unheard.
     static func line(_ string: String) -> Text {
-        let text = Text(rubricated(string))
-        return string.contains(where: { glyphs.contains($0) }) ? text.accessibilityLabel(spoken(string)) : text
+        Text(rubricated(string))
     }
 
-    /// A mark set on its own ("℟", " ℟. "), heard as its word
+    /// A mark set on its own ("℟", " ℟. ") inside a line
     static func markText(_ glyph: String) -> Text {
-        Text(glyph).accessibilityLabel(spoken(glyph))
+        Text(glyph)
     }
 
     /// What VoiceOver says for `paragraph(lines, size:)`: a direction
@@ -320,6 +321,14 @@ enum Rubric {
             }
         }
         return paragraph
+    }
+}
+
+extension View {
+    /// What VoiceOver hears for a line that carries ℣ ℟ ✠: the line
+    /// with the marks said as "Leader:" and "All:" (`Rubric.spoken`)
+    func spokenRubrics(_ string: String) -> some View {
+        accessibilityLabel(Rubric.spoken(string))
     }
 }
 
@@ -632,6 +641,7 @@ struct PrayerText: View {
             styled(text, role: role)
                 .lineSpacing(ReadingTypography.quoteLineSpacing(for: size))
                 .fixedSize(horizontal: false, vertical: true)
+                .spokenRubrics(text)
         }
     }
 
@@ -648,6 +658,7 @@ struct PrayerText: View {
                         : (secondarySize * 0.4).rounded()
                 )
                 .fixedSize(horizontal: false, vertical: true)
+                .spokenRubrics(text)
         }
     }
 
@@ -662,6 +673,7 @@ struct PrayerText: View {
         return (styled(parts.invocation, role: role) + mark(" ℟. ", role: role) + response)
             .lineSpacing(ReadingTypography.quoteLineSpacing(for: size))
             .fixedSize(horizontal: false, vertical: true)
+            .spokenRubrics(text)
     }
 
     /// "Magníficat * ánima mea Dóminum." — broken at the mediant, the
@@ -672,10 +684,12 @@ struct PrayerText: View {
             (styled(parts.first, role: role) + mark(" *", role: role))
                 .lineSpacing(ReadingTypography.quoteLineSpacing(for: size))
                 .fixedSize(horizontal: false, vertical: true)
+                .spokenRubrics(parts.first)
 
             styled(parts.second, role: role)
                 .lineSpacing(ReadingTypography.quoteLineSpacing(for: size))
                 .fixedSize(horizontal: false, vertical: true)
+                .spokenRubrics(parts.second)
                 .padding(.leading, mediantIndent)
         }
     }
