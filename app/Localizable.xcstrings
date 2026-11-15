@@ -4640,6 +4640,17 @@
         }
       }
     },
+    "Address copied" : {
+      "comment" : "Spanish beta notice sheet: VoiceOver announcement when the support address was copied because no mail app could open",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dirección copiada"
+          }
+        }
+      }
+    },
     "Adds it again at the end of the set" : {
       "localizations" : {
         "es" : {
@@ -13513,6 +13524,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "MOVIENDO"
+          }
+        }
+      }
+    },
+    "Mail couldn't open, so we copied our address: %@. Paste it in your email app." : {
+      "comment" : "Spanish beta notice sheet, under Report a mistake when no mail app could open: the support address was copied to the clipboard",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo abrir el correo, así que copiamos nuestra dirección: %@. Pégala en tu app de correo."
           }
         }
       }

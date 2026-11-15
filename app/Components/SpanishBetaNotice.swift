@@ -162,6 +162,10 @@ struct SpanishBetaSheet: View {
 
     @Environment(\.openURL) private var openURL
 
+    /// Set when no mail app took the report's `mailto:` and the address
+    /// was copied instead: a phone without Apple Mail, or with none set up
+    @State private var copiedAddress = false
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -204,7 +208,20 @@ struct SpanishBetaSheet: View {
                         .frame(height: AppLine.hairline)
                         .padding(.horizontal, SheetMetrics.gutter)
                     Button {
-                        if let url = SpanishBeta.reportURL { openURL(url) }
+                        guard let url = SpanishBeta.reportURL else { return }
+                        // With no mail app to take it, the tap once did
+                        // nothing at all: the address is copied instead,
+                        // and the sheet says so beneath the row
+                        openURL(url) { accepted in
+                            guard !accepted else { return }
+                            UIPasteboard.general.string = Constants.supportEmail
+                            withAnimation(Motion.crossfade) { copiedAddress = true }
+                            AccessibilityNotification.Announcement(
+                                String(
+                                    localized: "Address copied",
+                                    comment: "Spanish beta notice sheet: VoiceOver announcement when the support address was copied because no mail app could open")
+                            ).post()
+                        }
                     } label: {
                         SheetRow(
                             String(
@@ -216,6 +233,19 @@ struct SpanishBetaSheet: View {
                         ) { SheetRowAccessoryView(accessory: .caret) }
                     }
                     .buttonStyle(.plain)
+                    if copiedAddress {
+                        Text(
+                            "Mail couldn't open, so we copied our address: \(Constants.supportEmail). Paste it in your email app.",
+                            comment:
+                                "Spanish beta notice sheet, under Report a mistake when no mail app could open: the support address was copied to the clipboard"
+                        )
+                        .font(AppFonts.italicFont(15))
+                        .foregroundColor(AppColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal, SheetMetrics.gutter)
+                        .padding(.bottom, 10)
+                        .transition(.opacity)
+                    }
                     Button {
                         AppLanguage.openLanguageSettings()
                     } label: {
