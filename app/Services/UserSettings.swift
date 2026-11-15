@@ -679,6 +679,9 @@ final class UserSettings {
             // as its own choice; an install that has been read in keeps the
             // middle it has always had
             textSizeScale = Self.textSizeScale(forPhone: UIApplication.shared.preferredContentSizeCategory)
+            // didSet does not run in init: kept now, or the next launch,
+            // past the introduction, would read the middle again
+            d.set(textSizeScale, forKey: "userSettings.textSizeScale")
         }
         if d.object(forKey: "userSettings.prayerLanguage") != nil {
             prayerLanguagePreference = d.string(forKey: "userSettings.prayerLanguage") ?? PrayerLanguage.english.rawValue
