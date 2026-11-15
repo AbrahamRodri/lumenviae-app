@@ -577,7 +577,7 @@ struct DropCapText: View {
                 .accessibilityHidden(true)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(text)
+        .spokenRubrics(text)
     }
 
     /// A paragraph that opens on a quotation: the opening mark itself
@@ -593,7 +593,7 @@ struct DropCapText: View {
             .lineSpacing(ReadingTypography.lineSpacing(for: bodySize))
             .gildedQuotationMark(cut.lead, bodySize: bodySize)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(text)
+            .spokenRubrics(text)
     }
 
     /// The advance of a run — a quotation mark, a space — in the body face
