@@ -24,7 +24,7 @@
 //  The Angelus rings the church bell as it begins and as it ends — when
 //  it is prayed aloud. In silence the book makes no sound at all, and
 //  until the reader has once said which it is to be, it asks before it
-//  makes any (`PrayAloudChoiceSheet`).
+//  makes any, in the foot where NEXT will stand (`howToPrayQuestion`).
 //
 
 import SwiftUI
@@ -205,20 +205,8 @@ struct PrayAlongView: View {
         }
         .navigationBarHidden(true)
         .animation(Motion.crossfade, value: finished)
-        // Asked once, before the book's first sound; undismissable, since
-        // answering is the only way through, and ALOUD or SILENT at the
-        // head of the page owns the choice afterward
         .sheet(item: $saidPrayer) { said in
             PrayerSaidSheet(said: said, language: displayLanguage, size: textSize)
-        }
-        .sheet(isPresented: $asksHowToPray, onDismiss: startSounding) {
-            PrayAloudChoiceSheet(painting: painting) { chosen in
-                store.chooseAloud(chosen)
-                asksHowToPray = false
-            }
-            .presentationBackground(AppColors.background)
-            .dynamicTypeSize(...DynamicTypeSize.appMaximum)
-            .interactiveDismissDisabled()
         }
         .onAppear(perform: begin)
         .onDisappear(perform: end)
@@ -636,7 +624,7 @@ struct PrayAlongView: View {
 
                     // Clear of the foot, so the last line can be read
                     // above NEXT
-                    Color.clear.frame(height: 220)
+                    Color.clear.frame(height: asksHowToPray ? 280 : 220)
                 }
                 .opacity(pageOpacity)
             }
@@ -714,6 +702,98 @@ struct PrayAlongView: View {
     /// or when a prayer has none.
     private var foot: some View {
         VStack(spacing: 12) {
+            if asksHowToPray {
+                howToPrayQuestion
+                    .transition(.opacity)
+            } else {
+                way
+                    .transition(.opacity)
+            }
+        }
+        .animation(Motion.crossfade, value: asksHowToPray)
+        .padding(.horizontal, 22)
+        .padding(.top, 64)
+        .padding(.bottom, 34)
+        .frame(maxWidth: .infinity)
+        .background(
+            // While it asks, the ground is whole under the question's own
+            // words, which no prayer line may show through
+            LinearGradient(
+                stops: [
+                    .init(color: AppColors.background.opacity(0), location: 0),
+                    .init(color: AppColors.background.opacity(0.92), location: asksHowToPray ? 0.2 : 0.4),
+                    .init(color: AppColors.background, location: asksHowToPray ? 0.3 : 0.7)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            // A view set as a background stops at the safe area; the words
+            // must not show beneath the act, under the home indicator
+            .ignoresSafeArea(edges: .bottom)
+            .allowsHitTesting(false)
+        )
+    }
+
+    /// The book's one question, asked the first time it would speak, in
+    /// the foot where NEXT will stand: the prayer it is about stays on the
+    /// page above it. A sheet once asked it over the lower half of the
+    /// prayer. Answering is the way on; VOICE or SILENT at the head of the
+    /// page owns the choice afterward.
+    private var howToPrayQuestion: some View {
+        VStack(spacing: 12) {
+            VStack(spacing: 4) {
+                Text(String(
+                    localized: "With a voice, or in silence?",
+                    comment: "The pray-along's foot, the first time the Prayers tab's book would speak: its question"
+                ))
+                .font(AppFonts.readingFont(18))
+                .foregroundColor(AppColors.cream)
+                .multilineTextAlignment(.center)
+                .accessibilityAddTraits(.isHeader)
+                footNote(String(
+                    localized: "Change this any time with VOICE or SILENT at the top of the page, or in Settings.",
+                    comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the note under the question; VOICE and SILENT are the words on the pray-along screen's switch and must match them"
+                ))
+            }
+            HStack(spacing: 12) {
+                howToPrayAnswer(
+                    String(localized: "In silence", comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the answer that keeps the book silent"),
+                    icon: "ph-book-open", aloud: false)
+                howToPrayAnswer(
+                    String(localized: "With a voice", comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the answer that has a voice read the prayers"),
+                    icon: "ph-speaker-high", aloud: true)
+            }
+        }
+    }
+
+    private func howToPrayAnswer(_ title: String, icon: String, aloud chosen: Bool) -> some View {
+        Button {
+            setAloud(chosen)
+        } label: {
+            HStack(spacing: 8) {
+                AppIcon(icon, size: 16)
+                    .foregroundColor(AppColors.gold)
+                Text(title)
+                    .font(AppFonts.readingFont(17))
+                    .foregroundColor(AppColors.cream)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .padding(.horizontal, 14)
+            .frame(maxWidth: .infinity, minHeight: 56)
+            .background(Capsule().fill(AppColors.background.opacity(0.35)))
+            .overlay(
+                Capsule()
+                    .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline)
+            )
+            .contentShape(Capsule())
+        }
+        .buttonStyle(SacredCardButtonStyle())
+    }
+
+    /// NEXT or AMEN, the pause disc beside it aloud
+    private var way: some View {
+        VStack(spacing: 12) {
             if aloud {
                 aloudNote
             }
@@ -738,25 +818,6 @@ struct PrayAlongView: View {
             }
             .animation(Motion.crossfade, value: showsPlayDisc)
         }
-        .padding(.horizontal, 22)
-        .padding(.top, 64)
-        .padding(.bottom, 34)
-        .frame(maxWidth: .infinity)
-        .background(
-            LinearGradient(
-                stops: [
-                    .init(color: AppColors.background.opacity(0), location: 0),
-                    .init(color: AppColors.background.opacity(0.92), location: 0.4),
-                    .init(color: AppColors.background, location: 0.7)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            // A view set as a background stops at the safe area; the words
-            // must not show beneath the act, under the home indicator
-            .ignoresSafeArea(edges: .bottom)
-            .allowsHitTesting(false)
-        )
     }
 
     /// The voice can pause this prayer: the recordings are in, and this
@@ -1040,13 +1101,26 @@ struct PrayAlongView: View {
         turn.arrived()
     }
 
+    /// VOICE or SILENT at the head: while the foot still asks, a tap on
+    /// it is the answer
     private func toggleAloud() {
-        store.chooseAloud(!aloud)
+        setAloud(!aloud)
+    }
+
+    /// The one way the page's choice is made, from the head's switch or
+    /// the foot's question: the question is answered, and the voice
+    /// starts or stops to match, whichever place was tapped first
+    private func setAloud(_ chosen: Bool) {
+        let answering = asksHowToPray
+        asksHowToPray = false
+        store.chooseAloud(chosen)
         advanceTask?.cancel()
         advanceTask = nil
         turn.reset()
         if aloud {
-            startVoice()
+            // The page's first sound, the Angelus's bell included, when
+            // this is the answer; the voice again otherwise
+            if answering { startSounding() } else { startVoice() }
         } else {
             voice.stop()
             litStanza = nil
@@ -1341,111 +1415,6 @@ private struct HangingIndentRenderer: TextRenderer {
             if i > 0 { lineContext.translateBy(x: indent, y: 0) }
             lineContext.draw(line)
         }
-    }
-}
-
-// MARK: - Aloud, or in silence
-
-/// The book's one question, asked the first time it would speak: read
-/// aloud, or kept to the page. The order's painting at its head, then two
-/// rows and nothing to confirm — the row is the answer. It cannot be
-/// dragged away, so it shows no grabber.
-///
-/// Answering is the only way out, so both answers must always be in
-/// reach: at the accessibility text sizes the sheet stands full height,
-/// and it scrolls. Held to 340 points there, its header was cut off and
-/// the two rows were drawn over each other.
-struct PrayAloudChoiceSheet: View {
-    let painting: PrayerBookPainting?
-    let onChoose: (Bool) -> Void
-
-    @Environment(\.dynamicTypeSize) private var typeSize
-
-    private var voices = NarrationVoiceCatalog.shared
-
-    init(painting: PrayerBookPainting? = nil, onChoose: @escaping (Bool) -> Void) {
-        self.painting = painting
-        self.onChoose = onChoose
-    }
-
-    var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 0) {
-                if let painting {
-                    Color.clear
-                        .frame(height: 112)
-                        .overlay {
-                            CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
-                        }
-                        .clipped()
-                        .mask(
-                            LinearGradient(
-                                stops: [
-                                    .init(color: .black, location: 0.25),
-                                    .init(color: .clear, location: 1)
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                        .padding(.bottom, -18)
-                        .accessibilityHidden(true)
-                }
-
-                SheetHeader(
-                    kicker: String(localized: "Prayers", comment: "Sheet asked before the Prayers tab's book first speaks: the kicker naming the book"),
-                    title: String(
-                        localized: "With a voice, or in silence?",
-                        comment: "Sheet asked before the Prayers tab's book first speaks: its question"
-                    ),
-                    lead: String(
-                        localized: "A voice can read each prayer to you, or you can say the words yourself.",
-                        comment: "Sheet asked before the Prayers tab's book first speaks: the line under the question"
-                    )
-                )
-
-                Button { onChoose(true) } label: {
-                    SheetRow(
-                        String(localized: "With a voice", comment: "Sheet asked before the Prayers tab's book first speaks: the answer that has a voice read the prayers"),
-                        detail: String(
-                            localized: "Read to you in the \(voices.chosenVoice.nameInSentence) voice",
-                            comment: "Sheet asked before the Prayers tab's book first speaks: under With a voice; the name is the chosen narration voice's, in lower case, like male or female"
-                        ),
-                        icon: "ph-speaker-high",
-                        detailLineLimit: nil
-                    )
-                }
-                .buttonStyle(SacredCardButtonStyle())
-
-                Button { onChoose(false) } label: {
-                    SheetRow(
-                        String(localized: "In silence", comment: "Sheet asked before the Prayers tab's book first speaks: the answer that keeps the book silent"),
-                        detail: String(
-                            localized: "No sound. The words stay on screen for you to say.",
-                            comment: "Sheet asked before the Prayers tab's book first speaks: under In silence"
-                        ),
-                        icon: "ph-book-open",
-                        showsDivider: false,
-                        detailLineLimit: nil
-                    )
-                }
-                .buttonStyle(SacredCardButtonStyle())
-
-                SheetNote(
-                    String(
-                        localized: "Change this any time with VOICE or SILENT at the top of the page, or in Settings.",
-                        comment: "Sheet asked before the Prayers tab's book first speaks: the note at its foot; VOICE and SILENT are the words on the pray-along screen's switch and must match them"
-                    )
-                )
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .scrollBounceBehavior(.basedOnSize)
-        // The sheets' ground without `sheetGround()`'s indicator, as the
-        // missal's first question is set
-        .background(AppColors.appGradient.ignoresSafeArea())
-        .presentationDetents(typeSize.isAccessibilitySize ? [.large] : [.height(painting == nil ? 340 : 436)])
-        .presentationDragIndicator(.hidden)
     }
 }
 

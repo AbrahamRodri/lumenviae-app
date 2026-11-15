@@ -933,7 +933,7 @@ enum PrayerBookAudio {
 
     /// What the chosen option does. Until the reader has answered, the
     /// pill shows the default, Aloud, but the book has not yet spoken:
-    /// it asks the first time (`PrayAloudChoiceSheet`), so the line
+    /// it asks the first time (`PrayAlongView.howToPrayQuestion`), so the line
     /// says that instead.
     static func note(for aloud: Bool, answered: Bool = true) -> String {
         guard answered else {

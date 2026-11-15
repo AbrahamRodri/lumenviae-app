@@ -2541,14 +2541,13 @@ write concurrent code here:
   must not come back), DONE,
   Save this prayer (one prayer, not yet saved) and Pray again.
   **The book asks before its first sound**
-  (`PrayAloudChoiceSheet`, once, until `hasChosenAloud`, the order's
-  painting at its head): these are
+  (`howToPrayQuestion`, once, until `hasChosenAloud`): these are
   prayers for the pew, the tabernacle and the bedside, and it once began
   reading the examination of conscience aloud the moment PRAY was
-  touched. It cannot be dragged away, so both answers must always be in
-  reach: it scrolls, and would stand full height at the accessibility
-  text sizes the app no longer reaches (held to 340 points there, its
-  rows were drawn over each other). It is asked
+  touched. The question stands in the foot where NEXT will stand, In
+  silence beside With a voice, so the prayer it is about stays on the
+  page above it; a sheet with the order's painting asked it over the
+  lower half of the first prayer until Nov 2026. It is asked
   on the pray-along screen itself, from every door, while the reader has
   not chosen: the order page's PRAY and the holy card's PRAY answered it
   once, from a speaker and a line beside them, both gone since the
@@ -3606,10 +3605,8 @@ transition entirely.
   header only. The chant's score sheet is the one exception to the
   header: it opens on the chant's own painting with the title over it
   and DONE on a dark capsule (`ChantScoreSheet`, see The Chant Library).
-  The Missal's one-time layout question and the Prayer
-  Book's question before it first speaks (`PrayAloudChoiceSheet`) keep
-  their indicators hidden, because neither can be dragged away and a
-  grabber would say it could.
+  The Missal's one-time layout question keeps its indicator hidden,
+  because it cannot be dragged away and a grabber would say it could.
 
 ### Visual Style
 - Dark, contemplative theme on the page gradient (`AppColors.appGradient`)
