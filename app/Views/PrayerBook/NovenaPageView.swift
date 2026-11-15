@@ -182,10 +182,9 @@ struct NovenaPageView: View {
                 .font(AppFonts.readingItalicFont(16))
                 .foregroundColor(AppColors.textSecondary)
                 if let origin = novena.origin {
-                    Text(origin)
-                        .font(AppFonts.readingItalicFont(14))
-                        .foregroundColor(AppColors.textSecondary.opacity(0.85))
-                        .fixedSize(horizontal: false, vertical: true)
+                    NovenaCreditLine(
+                        origin: origin, url: novena.sourceURL(spanish: SpanishContent.isActive), size: 14,
+                        color: AppColors.textSecondary.opacity(0.85))
                 }
             }
         }
