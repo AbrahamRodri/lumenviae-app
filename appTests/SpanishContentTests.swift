@@ -154,6 +154,33 @@ struct SpanishContentTests {
             ).title == "English title")
     }
 
+    /// A Spanish page credits a prayer in Spanish where the book does, and
+    /// never in English: no Spanish credit, no line
+    @Test func aPrayerIsCreditedInSpanishOrNotAtAll() {
+        var english = bookPrayer("undoer_of_knots_novena")
+        english = BookPrayer(
+            id: english.id, title: english.title, latinTitle: nil, origin: "Novena by Fr. Juan Ramón Celeiro",
+            note: nil, english: english.english, latin: nil)
+        var translation = PrayerBookTranslations.Translation(
+            id: english.id, title: "Novena", text: "Palabras", aiTranslated: nil)
+        #expect(
+            PrayerBook.inSpanish(english, translations: [english.id: translation], spanish: true).origin == nil)
+        translation.origin = "Novena del P. Juan Ramón Celeiro, según la publica Ascension Press"
+        #expect(
+            PrayerBook.inSpanish(english, translations: [english.id: translation], spanish: true).origin
+                == translation.origin)
+        #expect(
+            PrayerBook.inSpanish(english, translations: [english.id: translation], spanish: false).origin
+                == "Novena by Fr. Juan Ramón Celeiro")
+    }
+
+    /// The shipped Spanish book credits the Undoer of Knots novena in Spanish
+    @Test func theShippedSpanishBookCarriesTheNovenasCredit() {
+        #expect(
+            LibraryContent.prayerBookSpanishStore.seed?.translations
+                .first { $0.id == "undoer_of_knots_novena" }?.origin?.hasPrefix("Novena del P.") == true)
+    }
+
     /// Before the server's book has Spanish, the Rosary's prayers the book
     /// prints still read in the Rosary's bundled Spanish
     @Test func theRosarysPrayersInTheBookUseTheBundledSpanish() {

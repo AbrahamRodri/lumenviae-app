@@ -524,9 +524,12 @@ nonisolated struct PrayerBookTranslations: Codable, Sendable, Equatable {
         let text: String
         /// Part of its Spanish is the team's own translation
         var aiTranslated: Bool?
+        /// Where the prayer comes from, in Spanish (api #269); nil where
+        /// the book gives none in Spanish, and then none is shown
+        var origin: String?
 
         enum CodingKeys: String, CodingKey {
-            case id, title, text
+            case id, title, text, origin
             case aiTranslated = "ai_translated"
         }
     }
@@ -723,7 +726,7 @@ nonisolated struct ChantLibraryTranslations: Codable, Sendable, Equatable {
             guard let name = groups[group.id] else { return group }
             var group = group
             group.title = name.title
-            if let note = name.note { group.note = note }
+            if let note = name.note, group.note != nil { group.note = note }
             // By position, the server's parts in the English parts' order
             for (index, part) in name.parts.enumerated() where group.parts.indices.contains(index) {
                 if let title = part.title, group.parts[index].title != nil { group.parts[index].title = title }
