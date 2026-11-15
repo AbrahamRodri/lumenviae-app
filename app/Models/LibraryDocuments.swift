@@ -577,20 +577,44 @@ nonisolated struct PrayerBookTranslations: Codable, Sendable, Equatable {
         }
     }
 
+    /// A topic's Spanish (`fields[prayer_book]=…,chapter_translations`, api
+    /// #275): its names, its line, its sub-headings in the English's order
+    /// and the words it is looked for by. The numeral and the Latin stay.
+    nonisolated struct ChapterTranslation: Codable, Sendable, Equatable {
+        let id: String
+        let title: String
+        var topic: String?
+        /// Nil where the English has no line either
+        var note: String?
+        /// One per sub-heading of the English chapter, in its order
+        var sectionTitles: [String]?
+        var searchWords: [String]?
+
+        enum CodingKeys: String, CodingKey {
+            case id, title, topic, note
+            case sectionTitles = "section_titles"
+            case searchWords = "search_words"
+        }
+    }
+
+    var chapterTranslations: [ChapterTranslation] = []
+
     enum CodingKeys: String, CodingKey {
         case version, translations
         case updatedAt = "updated_at"
         case novenaTranslations = "novena_translations"
+        case chapterTranslations = "chapter_translations"
     }
 
     init(
         version: String? = nil, updatedAt: String? = nil, translations: [Translation] = [],
-        novenaTranslations: [NovenaTranslation] = []
+        novenaTranslations: [NovenaTranslation] = [], chapterTranslations: [ChapterTranslation] = []
     ) {
         self.version = version
         self.updatedAt = updatedAt
         self.translations = translations
         self.novenaTranslations = novenaTranslations
+        self.chapterTranslations = chapterTranslations
     }
 
     init(from decoder: Decoder) throws {
@@ -600,6 +624,10 @@ nonisolated struct PrayerBookTranslations: Codable, Sendable, Equatable {
         translations = try container.decodeIfPresent([Translation].self, forKey: .translations) ?? []
         novenaTranslations =
             try container.decodeIfPresent([NovenaTranslation].self, forKey: .novenaTranslations) ?? []
+        // A topic's Spanish that cannot be read leaves the topics in English,
+        // never the prayers unread
+        chapterTranslations =
+            (try? container.decodeIfPresent([ChapterTranslation].self, forKey: .chapterTranslations)) ?? []
     }
 
     func encode(to encoder: Encoder) throws {
@@ -608,6 +636,12 @@ nonisolated struct PrayerBookTranslations: Codable, Sendable, Equatable {
         try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
         try container.encode(translations, forKey: .translations)
         if !novenaTranslations.isEmpty { try container.encode(novenaTranslations, forKey: .novenaTranslations) }
+        if !chapterTranslations.isEmpty { try container.encode(chapterTranslations, forKey: .chapterTranslations) }
+    }
+
+    /// The topics' Spanish by chapter id
+    var chaptersByID: [String: ChapterTranslation] {
+        Dictionary(chapterTranslations.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
     }
 
     /// The novenas' Spanish by novena id

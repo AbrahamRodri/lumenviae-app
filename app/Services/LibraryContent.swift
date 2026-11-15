@@ -291,6 +291,13 @@ nonisolated enum LibraryContent {
         return prayerBookSpanishStore.current()?.novenasByID ?? [:]
     }()
 
+    /// The topics' Spanish as this launch reads it, by chapter id: empty in
+    /// English, in the tests, and until the server has sent some
+    static let chapterSpanish: [String: PrayerBookTranslations.ChapterTranslation] = {
+        guard SpanishContent.isActive, !hostsTests else { return [:] }
+        return prayerBookSpanishStore.current()?.chaptersByID ?? [:]
+    }()
+
     /// The Consecration's Spanish as this launch reads it: empty in
     /// English, in the tests, and until the server has sent some. Read
     /// once, as the days it is laid over are built once.
@@ -436,7 +443,7 @@ final class LibraryContentSync {
         if spanish {
             _ = try? await refresh(
                 prayerBookSpanishStore, path: "prayer-book", type: "prayer_book",
-                fields: "version,updated_at,translations,novena_translations", lang: "es")
+                fields: "version,updated_at,translations,novena_translations,chapter_translations", lang: "es")
             // The Consecration's Spanish, laid over the bundled English
             // at the next launch
             _ = try? await refresh(
