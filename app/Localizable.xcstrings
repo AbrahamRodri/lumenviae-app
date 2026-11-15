@@ -11069,6 +11069,24 @@
         }
       }
     },
+    "Hail Mary %lld of %lld" : {
+      "comment" : "Home, the Continue card: the Hail Mary the Rosary stopped on, after the form's name, like The Audio Rosary · Hail Mary 8 of 10",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hail Mary %1$lld of %2$lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ave María %1$lld de %2$lld"
+          }
+        }
+      }
+    },
     "Hail Mary · %lld of %lld" : {
       "comment" : "Prayer screen: name of a Hail Mary bead and which of the decade's Hail Marys it is, like Hail Mary · 4 of 10",
       "localizations" : {
