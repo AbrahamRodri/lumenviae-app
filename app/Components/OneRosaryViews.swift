@@ -1086,6 +1086,9 @@ struct OneRosaryFooter: View {
                 .tracking(dynamicTypeSize.isAccessibilitySize ? 1 : 2)
                 .lineLimit(1)
                 .minimumScaleFactor(dynamicTypeSize.isAccessibilitySize ? 0.75 : 0.85)
+                // Held at xxLarge: past it SIGUIENTE shrank to fit while
+                // ATRÁS beside it did not, two sizes in one row
+                .dynamicTypeSize(...DynamicTypeSize.xxLarge)
             if let trailing { AppIcon(trailing, size: min(caretSize, 14)) }
         }
         .padding(.horizontal, wayPadding)
@@ -1359,8 +1362,10 @@ struct OneRosaryUtilityRow: View {
                 cell(items[2]).frame(width: columnWidth)
             }
         } else {
-            HStack(spacing: 8) {
-                ForEach(items) { item in cell(item) }
+            // Four (READ first) share the width evenly: at 80 apiece
+            // with gaps they ran 344 points, past a 375 pt phone's room
+            HStack(spacing: 0) {
+                ForEach(items) { item in cell(item).frame(maxWidth: .infinity) }
             }
         }
     }
@@ -1377,7 +1382,7 @@ struct OneRosaryUtilityRow: View {
                             .lineLimit(1)
                     }
                     .foregroundColor(item.isAccent ? AppColors.goldLight : AppColors.cream.opacity(0.72))
-                    .frame(minWidth: 80, minHeight: 50)
+                    .frame(minWidth: 72, minHeight: 50)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(GoldCTAButtonStyle())
