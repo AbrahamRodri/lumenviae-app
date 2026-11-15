@@ -4269,17 +4269,6 @@
         }
       }
     },
-    "A voice can read each prayer to you, or you can say the words yourself." : {
-      "comment" : "Sheet asked before the Prayers tab's book first speaks: the line under the question",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una voz puede leerte cada oración, o puedes decir tú las palabras."
-          }
-        }
-      }
-    },
     "A voice leads every prayer, with no readings between." : {
       "comment" : "The Audio Rosary's own page: the italic line under its name",
       "localizations" : {
@@ -6667,7 +6656,7 @@
       }
     },
     "Change this any time with VOICE or SILENT at the top of the page, or in Settings." : {
-      "comment" : "Sheet asked before the Prayers tab's book first speaks: the note at its foot; VOICE and SILENT are the words on the pray-along screen's switch and must match them",
+      "comment" : "The pray-along's foot, the first time the Prayers tab's book would speak: the note under the question; VOICE and SILENT are the words on the pray-along screen's switch and must match them",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -11957,7 +11946,7 @@
       }
     },
     "In silence" : {
-      "comment" : "Sheet asked before the Prayers tab's book first speaks: the answer that keeps the book silent",
+      "comment" : "The pray-along's foot, the first time the Prayers tab's book would speak: the answer that keeps the book silent",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -15246,17 +15235,6 @@
         }
       }
     },
-    "No sound. The words stay on screen for you to say." : {
-      "comment" : "Sheet asked before the Prayers tab's book first speaks: under In silence",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sin sonido. Las palabras se quedan en la pantalla para que las digas."
-          }
-        }
-      }
-    },
     "No thanks, I'll choose" : {
       "comment" : "Simple Rosary, the beginner's path: the quiet button that declines and opens the day's mysteries' page",
       "localizations" : {
@@ -18110,7 +18088,7 @@
       }
     },
     "Prayers" : {
-      "comment" : "Explore page and search: the name of a door to a page of the app\nExplore page: heading of a section of the browse page\nFirst-use tour: small capitals naming the Prayers tab\nLock Screen, a prayer from the Prayers tab read aloud: the book's name as the album line\nPlaylist editor: the heading over the playlist's prayers, while it has none\nPray-along screen, head: names the Prayers tab's book when a single prayer is open; shown in capitals\nPray-along screen: the kicker when a prayer's own title cannot be found\nPrayers tab, the page's title at its head; shown in capitals\nSearch results: the heading of a section of results, and the word on its chip under the search field\nSheet asked before the Prayers tab's book first speaks: the kicker naming the book\nThe Chapel: name of a section (tile) of the page, on its title line, its folded row while arranging and its chip in the hidden-sections tray\nWhat's New sheet: name of a new feature, Prayers, the Prayer Book tab",
+      "comment" : "Explore page and search: the name of a door to a page of the app\nExplore page: heading of a section of the browse page\nFirst-use tour: small capitals naming the Prayers tab\nLock Screen, a prayer from the Prayers tab read aloud: the book's name as the album line\nPlaylist editor: the heading over the playlist's prayers, while it has none\nPray-along screen, head: names the Prayers tab's book when a single prayer is open; shown in capitals\nPray-along screen: the kicker when a prayer's own title cannot be found\nPrayers tab, the page's title at its head; shown in capitals\nSearch results: the heading of a section of results, and the word on its chip under the search field\nThe Chapel: name of a section (tile) of the page, on its title line, its folded row while arranging and its chip in the hidden-sections tray\nWhat's New sheet: name of a new feature, Prayers, the Prayer Book tab",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -18960,17 +18938,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lee la meditación y luego toca para la primera Ave María"
-          }
-        }
-      }
-    },
-    "Read to you in the %@ voice" : {
-      "comment" : "Sheet asked before the Prayers tab's book first speaks: under With a voice; the name is the chosen narration voice's, in lower case, like male or female",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Leída para ti con la voz %@"
           }
         }
       }
@@ -27718,7 +27685,7 @@
       }
     },
     "With a voice" : {
-      "comment" : "Sheet asked before the Prayers tab's book first speaks: the answer that has a voice read the prayers",
+      "comment" : "The pray-along's foot, the first time the Prayers tab's book would speak: the answer that has a voice read the prayers",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -27729,7 +27696,7 @@
       }
     },
     "With a voice, or in silence?" : {
-      "comment" : "Sheet asked before the Prayers tab's book first speaks: its question",
+      "comment" : "The pray-along's foot, the first time the Prayers tab's book would speak: its question",
       "localizations" : {
         "es" : {
           "stringUnit" : {

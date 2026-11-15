@@ -748,7 +748,7 @@ struct PrayAlongView: View {
             VStack(spacing: 4) {
                 Text(String(
                     localized: "With a voice, or in silence?",
-                    comment: "Sheet asked before the Prayers tab's book first speaks: its question"
+                    comment: "The pray-along's foot, the first time the Prayers tab's book would speak: its question"
                 ))
                 .font(AppFonts.readingFont(18))
                 .foregroundColor(AppColors.cream)
@@ -756,15 +756,15 @@ struct PrayAlongView: View {
                 .accessibilityAddTraits(.isHeader)
                 footNote(String(
                     localized: "Change this any time with VOICE or SILENT at the top of the page, or in Settings.",
-                    comment: "Sheet asked before the Prayers tab's book first speaks: the note at its foot; VOICE and SILENT are the words on the pray-along screen's switch and must match them"
+                    comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the note under the question; VOICE and SILENT are the words on the pray-along screen's switch and must match them"
                 ))
             }
             HStack(spacing: 12) {
                 howToPrayAnswer(
-                    String(localized: "In silence", comment: "Sheet asked before the Prayers tab's book first speaks: the answer that keeps the book silent"),
+                    String(localized: "In silence", comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the answer that keeps the book silent"),
                     icon: "ph-book-open", aloud: false)
                 howToPrayAnswer(
-                    String(localized: "With a voice", comment: "Sheet asked before the Prayers tab's book first speaks: the answer that has a voice read the prayers"),
+                    String(localized: "With a voice", comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the answer that has a voice read the prayers"),
                     icon: "ph-speaker-high", aloud: true)
             }
         }
@@ -772,9 +772,7 @@ struct PrayAlongView: View {
 
     private func howToPrayAnswer(_ title: String, icon: String, aloud chosen: Bool) -> some View {
         Button {
-            store.chooseAloud(chosen)
-            asksHowToPray = false
-            startSounding()
+            setAloud(chosen)
         } label: {
             HStack(spacing: 8) {
                 AppIcon(icon, size: 16)
@@ -1107,13 +1105,26 @@ struct PrayAlongView: View {
         turn.arrived()
     }
 
+    /// VOICE or SILENT at the head: while the foot still asks, a tap on
+    /// it is the answer
     private func toggleAloud() {
-        store.chooseAloud(!aloud)
+        setAloud(!aloud)
+    }
+
+    /// The one way the page's choice is made, from the head's switch or
+    /// the foot's question: the question is answered, and the voice
+    /// starts or stops to match, whichever place was tapped first
+    private func setAloud(_ chosen: Bool) {
+        let answering = asksHowToPray
+        asksHowToPray = false
+        store.chooseAloud(chosen)
         advanceTask?.cancel()
         advanceTask = nil
         turn.reset()
         if aloud {
-            startVoice()
+            // The page's first sound, the Angelus's bell included, when
+            // this is the answer; the voice again otherwise
+            if answering { startSounding() } else { startVoice() }
         } else {
             voice.stop()
             litStanza = nil
