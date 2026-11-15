@@ -140,8 +140,13 @@ struct BookCover: View {
                 // shrink to four and a half points. Gold light at 0.9
                 // reaches 5.4–6.7:1, and the floor is now 7.2pt.
                 .foregroundColor(AppColors.goldLight.opacity(0.9))
-                .lineLimit(1)
+                // A saint's long name takes a second line rather than an
+                // ellipsis: "ST. LOUIS DE MON…" named no one
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .lineSpacing(1)
                 .minimumScaleFactor(0.8)
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, 8)
     }
 
