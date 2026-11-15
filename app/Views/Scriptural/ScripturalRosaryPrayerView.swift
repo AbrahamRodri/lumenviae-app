@@ -214,7 +214,8 @@ struct ScripturalRosaryPrayerView: View {
                     current: viewModel.currentStop,
                     mysteryNames: MysteryData.mysteries(for: viewModel.category).map(\.name),
                     isChaplet: viewModel.category == .sevenSorrows,
-                    rows: viewModel.novenaStopRows
+                    rows: viewModel.novenaStopRows,
+                    category: viewModel.category
                 ) { stop in
                     travel = .forward
                     viewModel.jump(to: stop)

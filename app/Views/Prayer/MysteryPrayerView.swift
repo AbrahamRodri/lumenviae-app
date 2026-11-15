@@ -344,7 +344,8 @@ struct MysteryPrayerView: View {
                             ?? (fallback.indices.contains(index) ? fallback[index].name : "")
                     },
                     meditationTitles: (meditationSet.meditations ?? []).map(\.displayTitle),
-                    isChaplet: meditationSet.mysteryCategory == .sevenSorrows
+                    isChaplet: meditationSet.mysteryCategory == .sevenSorrows,
+                    category: meditationSet.mysteryCategory
                 ) { stop in
                     travel = .forward
                     viewModel.jump(to: stop)

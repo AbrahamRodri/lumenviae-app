@@ -683,7 +683,7 @@ final class ScripturalRosaryViewModel {
             rows[stop] = (
                 held?.caption ?? SpokenNovenaDay.caption(forKind: "meditation"),
                 String(localized: "Day \(novena.dayNumber), read at your pace", comment: "Novena day, Go to: under the day's meditation, which the voice holds on rather than reads"),
-                "lv-lozenge"
+                NovenaDayContext.meditationIcon
             )
         }
         let closingWords = spoken.script.last { $0.held != nil && $0.phase == .closing }
@@ -692,7 +692,7 @@ final class ScripturalRosaryViewModel {
             closingWords.map {
                 String(localized: "The Hail, Holy Queen, then \(Self.midSentence($0.caption))", comment: "Novena day, Go to: under The Closing Prayer, what is said there; the second part is the novena's closing prayer's title")
             },
-            "lv-lozenge"
+            "lv-rosary"
         )
         return rows
     }
