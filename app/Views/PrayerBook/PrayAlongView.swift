@@ -542,10 +542,6 @@ struct PrayAlongView: View {
                     Color.clear.frame(height: 0).id("top")
 
                     VStack(alignment: .leading, spacing: 0) {
-                        if let novena, twin != nil {
-                            NovenaTwinBand(painting: Self.painting(of: novena, twin: prayer))
-                        }
-
                         VStack(alignment: .leading, spacing: 10) {
                             if isAngelus {
                                 // Hangs upright, and swings only while it
@@ -588,7 +584,11 @@ struct PrayAlongView: View {
                             // book credits every prayer it prints
                             // English only for now: hidden on a Spanish page
                             // until the book gives the origin in Spanish
-                            if let origin = prayer.origin, !origin.isEmpty, !SpanishContent.isActive {
+                            // A novena's author is always credited, in
+                            // English until its Spanish credit is served
+                            if let origin = prayer.origin, !origin.isEmpty,
+                                !SpanishContent.isActive || novena != nil
+                            {
                                 Text(origin)
                                     .font(AppFonts.readingItalicFont(15))
                                     .foregroundColor(AppColors.textSecondary)
@@ -611,7 +611,7 @@ struct PrayAlongView: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 24)
-                        .padding(.top, twin == nil ? 22 : 6)
+                        .padding(.top, 22)
 
                         VStack(alignment: .leading, spacing: ReadingTypography.stanzaSpacing(for: textSize)) {
                             if page.hasLitanyGroups {
@@ -694,12 +694,6 @@ struct PrayAlongView: View {
     static func openingPage(of novena: PrayerBookDocument.Novena) -> NovenaTwinPage {
         guard let progress = NovenaStore.shared.progress[novena.id] else { return .day(1) }
         return .day(min(max(progress.dayNumber(on: PrayerDay.now), 1), novena.length))
-    }
-
-    /// The novena's own painting over its days, else the prayer's
-    static func painting(of novena: PrayerBookDocument.Novena, twin prayer: BookPrayer) -> PrayerBookPainting {
-        novena.painting.map { PrayerBookPainting.chosen($0, caption: novena.title) }
-            ?? PrayerBookPainting.prayer(prayer.id)
     }
 
     /// PRAY IT AS A NOVENA, while the novena is under way: today's day

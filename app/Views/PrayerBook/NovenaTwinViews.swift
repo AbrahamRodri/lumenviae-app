@@ -4,8 +4,7 @@
 //
 //  What a novena's twin carries on the pray-along page, one day at a time
 //  (design option A, frames reports/design/prayer-format/frames/n-a-day.png
-//  and n-a-how.png): the novena's painting as a band over the title, the
-//  days as buttons with CLOSING after them, and a quiet row to pray it as a
+//  and n-a-how.png, on the dark page with no painting): the days as buttons with CLOSING after them, and a quiet row to pray it as a
 //  novena, the app keeping the day.
 //
 
@@ -21,25 +20,6 @@ enum NovenaTwinPage: Equatable, Hashable {
     var day: Int? {
         if case .day(let n) = self { return n }
         return nil
-    }
-}
-
-/// The novena's painting, a band across the page dissolving into it
-struct NovenaTwinBand: View {
-    let painting: PrayerBookPainting
-
-    var body: some View {
-        Color.clear
-            .frame(height: 200)
-            .overlay {
-                CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
-            }
-            .clipped()
-            .overlay(alignment: .bottom) {
-                LinearGradient(colors: [.clear, AppColors.background], startPoint: .top, endPoint: .bottom)
-                    .frame(height: 70)
-            }
-            .accessibilityHidden(true)
     }
 }
 
@@ -69,6 +49,12 @@ struct NovenaDayButtons: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         buttons(filling: false)
                     }
+                    // The trailing edge fades, so the row reads as more
+                    .mask(
+                        LinearGradient(
+                            stops: [.init(color: .black, location: 0.85), .init(color: .clear, location: 1)],
+                            startPoint: .leading, endPoint: .trailing)
+                    )
                     .onAppear { proxy.scrollTo(page, anchor: .center) }
                 }
             }
