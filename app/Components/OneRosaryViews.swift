@@ -1002,7 +1002,13 @@ struct OneRosaryFooter: View {
     /// the word scales a little rather than run under the disc
     private var wayWidth: CGFloat { min(max(Self.wayWidth, sharedWidth), wayCap) }
 
-    private var wayPadding: CGFloat { dynamicTypeSize.isAccessibilitySize ? 8 : 12 }
+    /// Room inside the capsule either side of the word: at the
+    /// accessibility sizes SIGUIENTE once ran to the capsule's edge at 8,
+    /// so the word scales a little further instead
+    private var wayPadding: CGFloat { dynamicTypeSize.isAccessibilitySize ? 16 : 12 }
+
+    /// The carets beside Back and Next, grown with the word
+    @ScaledMetric(relativeTo: .caption) private var caretSize: CGFloat = 10
 
     var body: some View {
         HStack(spacing: 0) {
@@ -1069,15 +1075,15 @@ struct OneRosaryFooter: View {
         title: String, leading: String?, trailing: String?, isWayOn: Bool, action: @escaping () -> Void
     ) -> some View {
         let label = HStack(spacing: 8) {
-            if let leading { AppIcon(leading, size: 10) }
+            if let leading { AppIcon(leading, size: min(caretSize, 14)) }
             Text(title.uppercased())
                 .font(AppFonts.labelFont(12))
                 // Tracked a little closer at the accessibility sizes, so
                 // SIGUIENTE stands whole on a 375 pt phone
                 .tracking(dynamicTypeSize.isAccessibilitySize ? 1 : 2)
                 .lineLimit(1)
-                .minimumScaleFactor(0.85)
-            if let trailing { AppIcon(trailing, size: 10) }
+                .minimumScaleFactor(dynamicTypeSize.isAccessibilitySize ? 0.75 : 0.85)
+            if let trailing { AppIcon(trailing, size: min(caretSize, 14)) }
         }
         .padding(.horizontal, wayPadding)
         return Button(action: action) {
@@ -1324,12 +1330,33 @@ struct OneRosaryUtility: Identifiable {
 struct OneRosaryUtilityRow: View {
     let items: [OneRosaryUtility]
 
+    /// The glyphs grow with their names: at the accessibility sizes a
+    /// 20 pt glyph stood small over a name twice its old size
+    @ScaledMetric(relativeTo: .caption) private var glyphSize: CGFloat = 20
+
     var body: some View {
-        HStack(spacing: 8) {
-            ForEach(items) { item in
+        if items.count == 3 {
+            // Three: each stands under the control above it, VOICE under
+            // Back, TEXT under play, MORE under Next, in the footer's own
+            // columns; set evenly in the middle they stood inside them
+            HStack(spacing: 0) {
+                cell(items[0]).frame(width: OneRosaryFooter.wayWidth)
+                Spacer(minLength: 0)
+                cell(items[1])
+                Spacer(minLength: 0)
+                cell(items[2]).frame(width: OneRosaryFooter.wayWidth)
+            }
+        } else {
+            HStack(spacing: 8) {
+                ForEach(items) { item in cell(item) }
+            }
+        }
+    }
+
+    private func cell(_ item: OneRosaryUtility) -> some View {
                 Button(action: item.action) {
                     VStack(spacing: 4) {
-                        AppIcon(item.icon, size: 20)
+                        AppIcon(item.icon, size: min(glyphSize, 28))
                         Text(item.title.uppercased())
                             .font(AppFonts.labelFont(12))
                             // Four names to a row hold to one line at
@@ -1338,13 +1365,11 @@ struct OneRosaryUtilityRow: View {
                             .lineLimit(1)
                     }
                     .foregroundColor(item.isAccent ? AppColors.goldLight : AppColors.cream.opacity(0.72))
-                    .frame(width: 80, height: 50)
+                    .frame(minWidth: 80, minHeight: 50)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(GoldCTAButtonStyle())
                 .accessibilityLabel(item.label)
-            }
-        }
     }
 
     /// The mystery's meditation, opened as text over the player
