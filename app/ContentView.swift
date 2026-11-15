@@ -251,6 +251,8 @@ struct ContentView: View {
             guard let request else { return }
             NovenaStore.shared.requested = nil
             guard AppRouter.angelusTapOpens(over: router.routes),
+                // Only a novena prayed with the Rosary opens a day
+                NovenaDayContext.novena(request.novenaID) != nil,
                 let progress = NovenaStore.shared.progress[request.novenaID],
                 case .underWay(let today, let open) = progress.standing(on: PrayerDay.now),
                 let day = today ?? open.first

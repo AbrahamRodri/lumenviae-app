@@ -602,7 +602,11 @@ struct PrayAlongView: View {
                                         hasClosing: !twin.closing.isEmpty,
                                         page: Binding(get: { shown }, set: { twinPage = $0 })
                                     )
-                                    PrayAsNovenaRow { router.push(.novena(id: novena.id)) }
+                                    // Only a novena prayed with the Rosary is
+                                    // begun day by day; the rest stay here
+                                    if NovenaDayContext.novena(novena.id) != nil {
+                                        PrayAsNovenaRow { router.push(.novena(id: novena.id)) }
+                                    }
                                 }
                                 .padding(.top, 14)
                             }

@@ -115,6 +115,12 @@ extension PrayerBookDocument {
             try c.encode(days, forKey: .days)
         }
 
+        /// Whether every day prays the Rosary: only such a novena is begun
+        /// and prayed day by day (today, the Undoer of Knots)
+        var praysTheRosary: Bool {
+            !days.isEmpty && days.allSatisfy { day in day.parts.contains { $0.kind == "rosary" } }
+        }
+
         /// The day numbered `number`, 1 to `length`
         func day(_ number: Int) -> Day? {
             days.first { $0.number == number }
