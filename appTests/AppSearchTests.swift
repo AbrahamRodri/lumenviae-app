@@ -105,6 +105,38 @@ struct AppSearchTests {
         }
     }
 
+    @Test func aWordEveryNovenaSharesGivesNoCard() {
+        // "novena" is a word inside all ten novenas' names: none is the
+        // one meant, so the list stands alone, every novena in it
+        for origin in [AppSearch.Origin.prayers, .everywhere] {
+            let results = AppSearch.results(for: "novena", from: origin)
+            #expect(results.best == nil, "gave \(results.best?.id ?? "")")
+            let ids = results.sections.flatMap(\.hits).map(\.id)
+            #expect(ids.contains("prayer:st_jude_novena"))
+            #expect(ids.contains("prayer:holy_spirit_novena"))
+        }
+        // A saint's name that only one novena carries still finds its card
+        let jude = AppSearch.results(for: "novena to st jude", from: .prayers)
+        #expect(jude.best?.id == "prayer:st_jude_novena")
+    }
+
+    @Test func aWordThatIsNoKindOfPrayerKeepsTheFirstOfATie() {
+        // "hail" begins the Hail Mary and Hail, Holy Queen, "mary" is a word
+        // of many names: each keeps its card, as before
+        for word in ["hail", "mary", "salve"] {
+            #expect(AppSearch.results(for: word, from: .prayers).best != nil, "\(word) lost its card")
+        }
+    }
+
+    @Test func theKindWordsAreReadInBothLanguages() {
+        // In Spanish every novena's name begins "Novena", every litany's "Letanía"
+        for word in ["Novena", "novenas", "Letanía", "letanias", "Litany", "Coronilla", "Oración"] {
+            #expect(AppSearch.kindWords.contains(SearchText.fold(word)), "\(word)")
+        }
+        let litanies = AppSearch.results(for: "litany", from: .prayers)
+        #expect(litanies.best == nil || litanies.best?.names(on: litanies.date).contains { SearchText.fold($0) == "litany" } == true)
+    }
+
     @Test func inEastertideTheAngelusIsFoundAndNamedAsQueenOfHeaven() {
         let calendar = Calendar(identifier: .gregorian)
         let easterSeason = calendar.date(from: DateComponents(year: 2027, month: 4, day: 10, hour: 12))!
