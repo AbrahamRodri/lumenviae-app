@@ -1031,7 +1031,7 @@ TEXTS = [
     dict(title="Novena to Our Lady, Undoer of Knots", maker="Fr. Juan Ramón Celeiro, as printed by Ascension Press",
          detail="The Undoer of Knots novena, in English and Spanish", source="ascensionpress.com", licence="Used with credit"),
     dict(title="Novenas from EWTN", maker="EWTN; the Novena to St Joseph by Fr. Lawrence G. Lovasik, S.V.D. (1956); the Novena to the Holy Spirit by the Holy Ghost Fathers",
-         detail="The Efficacious Novena to the Sacred Heart, the Novena to the Holy Spirit, the Novena to St Joseph and the Guadalupe novena (its Spanish from EWTN Español)", source="ewtn.com", licence="Used with credit"),
+         detail="The Efficacious Novena to the Sacred Heart, the Novena to the Holy Spirit, the Novena to St Joseph and the Guadalupe novena (its Spanish from EWTN Español); the St Jude novena's Spanish from EWTN Español and ACI Prensa", source="ewtn.com; aciprensa.com", licence="Used with credit"),
     dict(title="The Litany of St Joseph, 2021 invocations", maker="USCCB",
          detail="The English of the invocations added in 2021 (Congregation for Divine Worship, Prot. N. 133/21)", source="usccb.org", licence="Used with credit"),
     dict(title="Cinzel and EB Garamond", maker="Natanael Gama; Georg Duffner and Octavio Pardo",
