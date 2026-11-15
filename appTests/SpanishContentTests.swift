@@ -189,6 +189,15 @@ struct SpanishContentTests {
         #expect(named.chants.count == english.chants.count)
     }
 
+    /// The app ships the server's Spanish names, every chant and section
+    @Test func theShippedChantNamesCoverTheLibrary() throws {
+        let spanish = try #require(LibraryContent.chantLibrarySpanishStore.seed)
+        let english = try #require(LibraryContent.chantLibraryStore.seed)
+        #expect(spanish.problem == nil)
+        #expect(Set(spanish.translations.chants.map(\.id)) == Set(english.chants.map(\.id)))
+        #expect(Set(spanish.translations.groups.map(\.id)) == Set(english.groups.map(\.id)))
+    }
+
     @Test func aChantLibraryWithoutSpanishDecodesAsNone() throws {
         let empty = try JSONDecoder().decode(
             ChantLibraryTranslations.self, from: Data(#"{"version":"v","translations":[]}"#.utf8))
@@ -237,6 +246,12 @@ extension LibraryContentSyncTests {
             prayerBookSpanishStore: LibraryDocumentStore(
                 name: "prayer_book.es", seedURL: nil,
                 cacheURL: directory.appendingPathComponent("prayer_book.es.json")),
+            consecrationSpanishStore: LibraryDocumentStore(
+                name: "consecration.es", seedURL: nil,
+                cacheURL: directory.appendingPathComponent("consecration.es.json")),
+            chantLibrarySpanishStore: LibraryDocumentStore(
+                name: "chant_library.es", seedURL: nil,
+                cacheURL: directory.appendingPathComponent("chant_library.es.json")),
             spanish: spanish
         )
     }
