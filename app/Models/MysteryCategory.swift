@@ -147,10 +147,10 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     /// the name on every card, so it is the explanation a newcomer reads
     var subtitle: String {
         switch self {
-        case .joyful:      return String(localized: "Jesus' birth and childhood", comment: "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about")
-        case .sorrowful:   return String(localized: "Jesus' suffering and death", comment: "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about")
+        case .joyful:      return String(localized: "Jesus’ birth and childhood", comment: "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about")
+        case .sorrowful:   return String(localized: "Jesus’ suffering and death", comment: "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about")
         case .glorious:    return String(localized: "Jesus risen, and Mary in glory", comment: "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about")
-        case .luminous:    return String(localized: "Jesus' public life", comment: "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about")
+        case .luminous:    return String(localized: "Jesus’ public life", comment: "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about")
         case .sevenSorrows: return String(localized: "Mary in her grief", comment: "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about")
         }
     }

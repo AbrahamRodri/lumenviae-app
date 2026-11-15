@@ -646,7 +646,7 @@ struct ReaderTextOptionsSheet: View {
                         comment: "The Rosary's player, text sheet: switch that shows the prayer's words and the beads at the edge"
                     ),
                     detail: String(
-                        localized: "Off, only the prayer's name stays",
+                        localized: "When off, only the prayer’s name stays.",
                         comment: "The Rosary's player, text sheet: the line under Show Words and Beads, saying what is left when it is off"
                     ),
                     icon: "lv-rosary",

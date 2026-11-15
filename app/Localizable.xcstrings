@@ -12233,7 +12233,7 @@
         }
       }
     },
-    "Jesus' birth and childhood" : {
+    "Jesus’ birth and childhood" : {
       "comment" : "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about",
       "localizations" : {
         "es" : {
@@ -12244,7 +12244,7 @@
         }
       }
     },
-    "Jesus' public life" : {
+    "Jesus’ public life" : {
       "comment" : "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about",
       "localizations" : {
         "es" : {
@@ -12255,7 +12255,7 @@
         }
       }
     },
-    "Jesus' suffering and death" : {
+    "Jesus’ suffering and death" : {
       "comment" : "One line under a set of mysteries' name on cards and banners, saying in everyday words what the set is about",
       "localizations" : {
         "es" : {
@@ -15720,17 +15720,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Desactivado"
-          }
-        }
-      }
-    },
-    "Off, only the prayer's name stays" : {
-      "comment" : "The Rosary's player, text sheet: the line under Show Words and Beads, saying what is left when it is off",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Si lo apagas, solo queda el nombre de la oración"
           }
         }
       }
@@ -27413,6 +27402,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sea cual sea el día que tuviste, las cuentas son las mismas."
+          }
+        }
+      }
+    },
+    "When off, only the prayer’s name stays." : {
+      "comment" : "The Rosary's player, text sheet: the line under Show Words and Beads, saying what is left when it is off",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si lo apagas, solo queda el nombre de la oración."
           }
         }
       }

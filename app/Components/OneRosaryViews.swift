@@ -217,16 +217,8 @@ struct OneRosaryRailView: View {
         return HStack(spacing: 0) {
             Spacer(minLength: 0)
 
-            if let label = rail.label(at: index) {
-                Text(label.uppercased())
-                    .font(label.count > 1 ? AppFonts.labelFont(11) : AppFonts.headlineFont(19))
-                    .tracking(1.2)
-                    .foregroundColor(AppColors.goldLight)
-                    .lineLimit(1)
-                    .fixedSize()
-                    .shadow(color: .black.opacity(0.8), radius: 3)
-                    .padding(.trailing, 12)
-            }
+            // No decade's numeral beside its Our Father: a bare "2" said
+            // nothing the pill at the top does not (design, 15 Nov)
 
             bead(kind, state: state)
                 .frame(width: Self.beadColumn, height: Self.rowHeight)
@@ -693,7 +685,7 @@ struct OneRosaryColumn<Words: View>: View {
             // title on two lines grows up into the painting and the words
             // never move
             VStack(alignment: .leading, spacing: 0) {
-                Text(title)
+                Text(Self.keepingShortWordsWithNext(title))
                     .font(AppFonts.headlineFont(21))
                     .foregroundColor(AppColors.cream)
                     .lineLimit(2)
@@ -701,7 +693,10 @@ struct OneRosaryColumn<Words: View>: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .contentTransition(.opacity)
 
-                Text(place)
+                // Empty on a mystery, whose pill says where it stands; kept
+                // as a line so the words begin at one height on every step
+                Text(place.isEmpty ? " " : place)
+                    .accessibilityHidden(place.isEmpty)
                     .font(AppFonts.italicFont(15))
                     .foregroundColor(AppColors.cream.opacity(0.9))  // Held over the brightest paintings
                     .lineLimit(1)
@@ -753,6 +748,22 @@ struct OneRosaryColumn<Words: View>: View {
         .animation(Motion.crossfade, value: help)
         .animation(Motion.crossfade, value: tapHint)
         .animation(Motion.crossfade, value: showsWords)
+    }
+
+    /// A word of one or two letters ("a", "de", "of") held to the word
+    /// after it, so a title never ends a line on one: "LA ASCENSIÓN DEL
+    /// SEÑOR A / LOS CIELOS" left a lone "A"
+    static func keepingShortWordsWithNext(_ title: String) -> String {
+        var words = title.split(separator: " ", omittingEmptySubsequences: false).map(String.init)
+        guard words.count > 1 else { return title }
+        var joined = ""
+        while !words.isEmpty {
+            let word = words.removeFirst()
+            joined += word
+            if words.isEmpty { break }
+            joined += (word.count <= 2 && !word.isEmpty) ? "\u{00A0}" : " "
+        }
+        return joined
     }
 
     /// Where the Rosary stands, in plain words, under the title: a

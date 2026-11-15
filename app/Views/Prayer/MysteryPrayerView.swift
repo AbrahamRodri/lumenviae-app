@@ -942,7 +942,8 @@ extension MysteryPrayerView {
             let locked = beadsLocked
             OneRosaryColumn(
                 title: viewModel.currentMystery?.name ?? viewModel.currentMeditation?.displayTitle ?? "",
-                place: OneRosaryColumn<EmptyView>.place(mystery: viewModel.currentMysteryIndex, of: viewModel.strand.decades),
+                // The pill at the top already says "Mystery 2 of 5"
+                place: "",
                 // The step line names the bead even while it waits; the
                 // words under it say why
                 bead: viewModel.beadLabel,
@@ -1150,6 +1151,9 @@ struct PrayerHeaderButton: View {
                 .padding(13)
                 .background(Color.black.opacity(0.3))
                 .clipShape(Circle())
+                // A faint rim, so the circle shows on a dark painting too
+                // (the novena's lost it)
+                .overlay(Circle().strokeBorder(Color.white.opacity(0.22), lineWidth: AppLine.hairline))
                 // Keep the hit area at the 44pt minimum even for small glyphs
                 .frame(minWidth: 44, minHeight: 44)
                 .contentShape(Circle())
