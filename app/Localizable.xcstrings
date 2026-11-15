@@ -5172,14 +5172,14 @@
         }
       }
     },
-    "Answer each line with the words in red beside it." : {
+    "Answer each call with the words in red." : {
       "comment" : "Pray-along page: the line over a litany, saying how to answer its calls",
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Responde a cada línea con las palabras en rojo a su lado."
+            "value" : "Responde a cada invocación con las palabras en rojo."
           }
         }
       }

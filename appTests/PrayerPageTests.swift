@@ -82,6 +82,10 @@ struct PrayerPageTests {
         #expect(page("[Here name your request.]").sections[0].stanzas[0].parts == [.intention])
         #expect(PrayerPage.isIntention("Here name the favour asked."))
         #expect(!PrayerPage.isIntention("Here all kneel."))
+        #expect(PrayerPage.isIntention("Here make your request."))
+        #expect(PrayerPage.isIntention("Aquí nombra tu petición."))
+        #expect(PrayerPage.isIntention("Aquí se pide la gracia que se desea alcanzar."))
+        #expect(!PrayerPage.isIntention("Aquí todos se arrodillan."))
     }
 
     @Test func partsAreHeadingsWithTheirReference() {
@@ -89,6 +93,7 @@ struct PrayerPageTests {
             PrayerPage.heading("The first shedding of His Blood: the Circumcision. Luke 2:21.")
                 == .heading(title: "The first shedding of His Blood: the Circumcision", reference: "Luke 2:21"))
         #expect(PrayerPage.heading("The First Day.") == .heading(title: "The First Day", reference: nil))
+        #expect(PrayerPage.heading("Primer día.") == .heading(title: "Primer día", reference: nil))
         #expect(
             PrayerPage.heading("The Precepts of the Church")
                 == .heading(title: "The Precepts of the Church", reference: nil))
