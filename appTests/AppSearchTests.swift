@@ -120,9 +120,21 @@ struct AppSearchTests {
         #expect(jude.best?.id == "prayer:st_jude_novena")
     }
 
-    @Test func aNameThatBeginsWithTheWordsStillWinsATie() {
-        // "hail" begins the Hail Mary and Hail, Holy Queen: the first keeps the card
-        #expect(AppSearch.results(for: "hail", from: .prayers).best != nil)
+    @Test func aWordThatIsNoKindOfPrayerKeepsTheFirstOfATie() {
+        // "hail" begins the Hail Mary and Hail, Holy Queen, "mary" is a word
+        // of many names: each keeps its card, as before
+        for word in ["hail", "mary", "salve"] {
+            #expect(AppSearch.results(for: word, from: .prayers).best != nil, "\(word) lost its card")
+        }
+    }
+
+    @Test func theKindWordsAreReadInBothLanguages() {
+        // In Spanish every novena's name begins "Novena", every litany's "Letanía"
+        for word in ["Novena", "novenas", "Letanía", "letanias", "Litany", "Coronilla", "Oración"] {
+            #expect(AppSearch.kindWords.contains(SearchText.fold(word)), "\(word)")
+        }
+        let litanies = AppSearch.results(for: "litany", from: .prayers)
+        #expect(litanies.best == nil || litanies.best?.names(on: litanies.date).contains { SearchText.fold($0) == "litany" } == true)
     }
 
     @Test func inEastertideTheAngelusIsFoundAndNamedAsQueenOfHeaven() {

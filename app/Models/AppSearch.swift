@@ -306,16 +306,17 @@ enum AppSearch {
     /// meant". It once looked at each kind's first hit alone, and that
     /// topic, standing first, gave "angelus" from Prayers a chant's card.
     ///
-    /// No card either when several names answer only by a word inside
-    /// them, equally: "novena" is a word of all ten novenas' names, and
-    /// the card named whichever stood first, as if the app knew which
-    /// was meant. A name that begins with the words, or is them, still
-    /// wins a tie ("hail" finds the Hail Mary's card).
+    /// No card either when the words name a kind of prayer that several
+    /// names answer equally: "novena" answers all ten novenas (in
+    /// Spanish each name begins with it), and the card named whichever
+    /// stood first, as if the app knew which was meant. A name that is
+    /// the words still takes the card, and any other word keeps the
+    /// first of a tie ("hail", "mary").
     static func bestMatch(
         in found: [Kind: [Hit]], needle: String, order: [Kind], origin: Origin, on date: Date = Date()
     ) -> Hit? {
         if let lead = origin.leadingKind, let closest = closest(in: found[lead] ?? [], to: needle, on: date) {
-            return closest.isClear ? closest.hit : nil
+            return closest.isClear(for: needle) ? closest.hit : nil
         }
         var best: Closest?
         for kind in order {
@@ -326,7 +327,7 @@ enum AppSearch {
                 best = Closest(hit: held.hit, closeness: held.closeness, ties: held.ties + closest.ties)
             }
         }
-        guard let best, best.isClear else { return nil }
+        guard let best, best.isClear(for: needle) else { return nil }
         return best.hit
     }
 
@@ -337,9 +338,19 @@ enum AppSearch {
         /// The hits whose names answer as closely, this one included
         let ties: Int
 
-        /// One hit answers best, or the best answer begins the name
-        var isClear: Bool { ties == 1 || closeness >= .start }
+        /// One hit answers best, the name is the words, or the words are
+        /// not a kind of prayer
+        func isClear(for needle: String) -> Bool {
+            ties == 1 || closeness == .exact || !AppSearch.kindWords.contains(SearchText.fold(needle).trimmingCharacters(in: .whitespaces))
+        }
     }
+
+    /// Words that name a kind of prayer rather than one prayer, folded
+    static let kindWords: Set<String> = [
+        "novena", "novenas", "litany", "litanies", "letania", "letanias",
+        "prayer", "prayers", "oracion", "oraciones", "act", "acts", "acto", "actos",
+        "chaplet", "chaplets", "coronilla", "coronillas",
+    ]
 
     /// The hit whose name answers closest, the first winning a tie; nil
     /// when no name answers at all
