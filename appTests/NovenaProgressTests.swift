@@ -549,3 +549,42 @@ struct SilentNovenaDayTests {
         #expect(vm.heldWords == nil)
     }
 }
+
+@MainActor @Suite("A novena day, as the Android walk found it")
+struct NovenaWalkFindingsTests {
+    private let calendar: Calendar = {
+        var c = Calendar(identifier: .gregorian)
+        c.timeZone = TimeZone(identifier: "America/Chicago")!
+        return c
+    }()
+
+    /// At half past one on a Saturday the novena's day is Friday's, so
+    /// its Rosary prays Friday's mysteries, not Saturday's
+    @Test func betweenMidnightAndFourTheDayPraysThePrayerDaysMysteries() throws {
+        let saturday = try #require(calendar.date(from: DateComponents(year: 2026, month: 11, day: 14, hour: 1, minute: 30)))
+        let friday = try #require(calendar.date(from: DateComponents(year: 2026, month: 11, day: 13, hour: 12)))
+        #expect(
+            NovenaProgress.mysteriesToday(now: saturday, calendar: calendar)
+                == ScheduleService.category(for: friday, calendar: calendar))
+        let noon = try #require(calendar.date(from: DateComponents(year: 2026, month: 11, day: 14, hour: 12)))
+        #expect(
+            NovenaProgress.mysteriesToday(now: noon, calendar: calendar)
+                == ScheduleService.category(for: noon, calendar: calendar))
+    }
+
+    /// The pause for the intention is the book page's gold pause in the
+    /// player, never a red direction
+    @Test func theRequestLineIsThePause() {
+        #expect(ScripturalRosaryPrayerView.isIntentionPause("[Here name your request.]"))
+        #expect(ScripturalRosaryPrayerView.isIntentionPause("[Aquí nombra tu petición.]"))
+        #expect(!ScripturalRosaryPrayerView.isIntentionPause("[Let us pray.]"))
+        #expect(!ScripturalRosaryPrayerView.isIntentionPause("Here name your request."))
+    }
+
+    /// Go to names the opening's prayers after the first in lower case
+    @Test func aPrayerNamedMidSentenceTakesALowerCaseArticle() {
+        #expect(ScripturalRosaryViewModel.midSentence("The Act of Contrition") == "the Act of Contrition")
+        #expect(ScripturalRosaryViewModel.midSentence("El Acto de Contrición") == "el Acto de Contrición")
+        #expect(ScripturalRosaryViewModel.midSentence("Memorare") == "Memorare")
+    }
+}

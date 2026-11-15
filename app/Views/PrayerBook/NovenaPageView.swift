@@ -619,7 +619,7 @@ struct NovenaPageView: View {
         router.push(
             .scripturalRosaryPrayer(
                 ScripturalRosaryLaunch(
-                    category: ScheduleService.categoryForToday(), form: .plain, novenaID: novena.id, novenaDay: day)))
+                    category: NovenaProgress.mysteriesToday(), form: .plain, novenaID: novena.id, novenaDay: day)))
     }
 
     @ViewBuilder

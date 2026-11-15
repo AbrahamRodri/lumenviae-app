@@ -437,7 +437,7 @@ final class AppRouter {
                 NovenaStore.shared.forgetKept(novenaID: novena.id)
             }
             return (.scripturalRosaryPrayer(ScripturalRosaryLaunch(
-                category: ScheduleService.categoryForToday(), form: .plain,
+                category: NovenaProgress.mysteriesToday(), form: .plain,
                 novenaID: parts[1], novenaDay: Int(parts[2]) ?? 1)), nil)
         case ("prayer", let c?):
             guard let set = BundledMeditationSets.all.first(where: { $0.category == c.rawValue }) else { return nil }

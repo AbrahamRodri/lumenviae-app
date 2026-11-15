@@ -350,6 +350,14 @@ extension NovenaDayContext {
 // MARK: - After a Novena Day
 
 extension NovenaProgress {
+    /// The mysteries a novena day prays now: the prayer day's, as the
+    /// novena counts its days by the prayer day. Between midnight and four
+    /// a Rosary begun for the evening's day prays that day's mysteries, so
+    /// the next day's line never names the mysteries just prayed.
+    static func mysteriesToday(now: Date = PrayerDay.now, calendar: Calendar = .current) -> MysteryCategory {
+        ScheduleService.category(for: PrayerDay.today(now: now, calendar: calendar), calendar: calendar)
+    }
+
     /// The line under "Day 4 prayed": when the next day falls and the
     /// mysteries it prays ("Day 5 is tomorrow, with the Glorious
     /// Mysteries."); nil once every day is prayed
