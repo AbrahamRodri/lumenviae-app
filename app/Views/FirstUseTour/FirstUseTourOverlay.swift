@@ -18,6 +18,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct FirstUseTourOverlay: View {
 
@@ -34,6 +35,15 @@ struct FirstUseTourOverlay: View {
 
     /// Room left around a control inside the light
     private static let margin: CGFloat = 8
+
+    /// The key window's inset under the clock
+    private static var windowTopInset: CGFloat {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap(\.windows)
+            .first(where: \.isKeyWindow)?
+            .safeAreaInsets.top ?? 0
+    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -59,7 +69,10 @@ struct FirstUseTourOverlay: View {
 
                 // The Spanish strip's band, under the clock, keeps its
                 // touches: its ✕ once answered nothing while the tour ran
-                let passThrough = passesTopBand > 0 ? geometry.safeAreaInsets.top + passesTopBand : 0
+                // The overlay ignores the safe area, so its own reading of
+                // the inset under the clock is 0: the window's is used
+                let passThrough = passesTopBand > 0
+                    ? max(geometry.safeAreaInsets.top, Self.windowTopInset) + passesTopBand : 0
 
                 Group {
                     if reduceMotion {
@@ -83,7 +96,7 @@ struct FirstUseTourOverlay: View {
         ZStack(alignment: .topLeading) {
             dimming(around: hole, stop: stop, passThrough: passThrough)
 
-            card(for: stop, near: hole, in: size)
+            card(for: stop, near: hole, in: size, below: passThrough)
         }
     }
 
@@ -114,7 +127,7 @@ struct FirstUseTourOverlay: View {
     private static let cardWidth: CGFloat = 320
     private static let gap: CGFloat = 16
 
-    private func card(for stop: FirstUseTourStop, near hole: CGRect, in size: CGSize) -> some View {
+    private func card(for stop: FirstUseTourStop, near hole: CGRect, in size: CGSize, below band: CGFloat) -> some View {
         let width = min(Self.cardWidth, size.width - 32)
         // Beneath the control when it stands in the top half of the
         // screen, above it otherwise
@@ -184,7 +197,8 @@ struct FirstUseTourOverlay: View {
             let top = below ? hole.maxY + Self.gap : hole.minY - Self.gap - card.height
             // Kept on the glass, clear of the island and the home
             // indicator, whatever the control's place or the text size
-            return -min(max(top, 60), size.height - card.height - 40)
+            // and clear of the Spanish strip, whose ✕ stays in reach
+            return -min(max(top, max(60, band + 8)), size.height - card.height - 40)
         }
         .offset(x: x)
         .accessibilityElement(children: .contain)
