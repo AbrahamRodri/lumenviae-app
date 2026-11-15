@@ -697,7 +697,10 @@ struct NovenaIntentionSheet: View {
                             ? String(localized: "Continue", comment: "Intention sheet: go on to the reminder")
                             : String(localized: "Save", comment: "Intention sheet: keep the edited intention")
                     ) {
-                        onDone(text)
+                        // The keyboard lets go first, so a word still
+                        // marked by its suggestions is kept whole
+                        focused = false
+                        DispatchQueue.main.async { onDone(text) }
                     }
                     if isBeginning {
                         QuietGoldButton(
