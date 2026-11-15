@@ -61,53 +61,76 @@ struct NovenaDayButtons: View {
             .foregroundColor(AppColors.gold)
             .accessibilityAddTraits(.isHeader)
 
-            ScrollViewReader { proxy in
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(1...max(length, 1), id: \.self) { day in
-                            chip(Text(verbatim: "\(day)"), lit: page == .day(day)) { page = .day(day) }
-                                .accessibilityLabel(
-                                    String(
-                                        localized: "Day \(day)",
-                                        comment: "Pray-along page, a novena's day button, to VoiceOver")
-                                )
-                                .id(NovenaTwinPage.day(day))
-                        }
-                        if hasClosing {
-                            chip(
-                                Text(
-                                    String(
-                                        localized: "CLOSING",
-                                        comment:
-                                            "Pray-along page, a novena read as text: the button after its days, showing how each day goes and the prayer said every day"
-                                    )
-                                )
-                                .font(AppFonts.labelFont(10))
-                                .tracking(1.6),
-                                lit: page == .closing
-                            ) { page = .closing }
-                            .id(NovenaTwinPage.closing)
-                        }
+            // One row across the measure, as drawn; at a larger text size
+            // that will not fit, the same row scrolls
+            ViewThatFits(in: .horizontal) {
+                buttons(filling: true)
+                ScrollViewReader { proxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        buttons(filling: false)
                     }
+                    .onAppear { proxy.scrollTo(page, anchor: .center) }
                 }
-                .onAppear { proxy.scrollTo(page, anchor: .center) }
             }
         }
     }
 
-    private func chip(_ label: Text, lit: Bool, action: @escaping () -> Void) -> some View {
+    private func buttons(filling: Bool) -> some View {
+        HStack(spacing: filling ? 4 : 8) {
+            ForEach(1...max(length, 1), id: \.self) { day in
+                chip(lit: page == .day(day), filling: filling, inset: 12) {
+                    Text(verbatim: "\(day)")
+                        .font(AppFonts.bodyFont(17))
+                } action: {
+                    page = .day(day)
+                }
+                .accessibilityLabel(
+                    String(
+                        localized: "Day \(day)",
+                        comment: "Pray-along page, a novena's day button, to VoiceOver")
+                )
+                .id(NovenaTwinPage.day(day))
+            }
+            if hasClosing {
+                chip(lit: page == .closing, filling: false, inset: filling ? 8 : 12) {
+                    Text(
+                        String(
+                            localized: "CLOSING",
+                            comment:
+                                "Pray-along page, a novena read as text: the button after its days, showing how each day goes and the prayer said every day"
+                        )
+                    )
+                    .font(AppFonts.labelFont(10))
+                    .tracking(1.4)
+                    .lineLimit(1)
+                    .fixedSize()
+                } action: {
+                    page = .closing
+                }
+                // Its word whole; the days share what is left
+                .layoutPriority(1)
+                .id(NovenaTwinPage.closing)
+            }
+        }
+    }
+
+    /// A day fills its share of the row (never under 24 points across,
+    /// and 44 tall); CLOSING keeps its word's width
+    private func chip<Label: View>(
+        lit: Bool, filling: Bool, inset: CGFloat, @ViewBuilder label: () -> Label, action: @escaping () -> Void
+    ) -> some View {
         Button(action: action) {
-            label
-                .font(AppFonts.bodyFont(17))
+            label()
                 .foregroundColor(lit ? AppColors.background : AppColors.cream)
-                .padding(.horizontal, 12)
-                .frame(minWidth: 44, minHeight: 44)
+                .padding(.horizontal, filling ? 0 : inset)
+                .frame(minWidth: filling ? 24 : 44, idealWidth: filling ? 26 : nil, maxWidth: filling ? .infinity : nil)
+                .frame(minHeight: 44)
                 .background(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
                         .fill(lit ? AppColors.gold : Color.clear)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
                         .strokeBorder(AppColors.textSecondary.opacity(lit ? 0 : 0.3), lineWidth: AppLine.hairline)
                 )
         }

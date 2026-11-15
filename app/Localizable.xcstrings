@@ -6245,6 +6245,18 @@
         }
       }
     },
+    "CLOSING" : {
+      "comment" : "Pray-along page, a novena read as text: the button after its days, showing how each day goes and the prayer said every day",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CIERRE"
+          }
+        }
+      }
+    },
     "CONSECRATED" : {
       "localizations" : {
         "es" : {
@@ -7848,6 +7860,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DÍA 1"
+          }
+        }
+      }
+    },
+    "DAY OF THE NOVENA" : {
+      "comment" : "Pray-along page, a novena read as text: the label over its day buttons",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DÍA DE LA NOVENA"
           }
         }
       }
@@ -14667,6 +14691,18 @@
         }
       }
     },
+    "Nine days with the Rosary; the app keeps your day" : {
+      "comment" : "Pray-along page, a novena read as text: the line under PRAY IT AS A NOVENA",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueve días con el Rosario; la app lleva la cuenta de tu día"
+          }
+        }
+      }
+    },
     "Nineteenth Day" : {
       "comment" : "Consecration: heading naming day 19 of the preparation by its ordinal",
       "localizations" : {
@@ -16398,6 +16434,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "REZAR DE NUEVO"
+          }
+        }
+      }
+    },
+    "PRAY IT AS A NOVENA" : {
+      "comment" : "Pray-along page, a novena read as text: the row leading to the novena prayed day by day",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "REZARLA COMO NOVENA"
           }
         }
       }
