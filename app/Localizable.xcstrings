@@ -11759,6 +11759,17 @@
         }
       }
     },
+    "If you don't see Language, add English in Settings > General > Language & Region." : {
+      "comment" : "Spanish beta notice sheet, under Use the app in English: what to do when Settings shows no Language row (a phone with one language)",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si no ves Idioma, agrega inglés en Ajustes > General > Idioma y región."
+          }
+        }
+      }
+    },
     "If you find a mistake, tell us." : {
       "localizations" : {
         "es" : {
