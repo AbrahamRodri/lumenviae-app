@@ -105,6 +105,16 @@ struct RosaryStrand: Hashable {
         )
     }
 
+    /// The same name read in a sentence's run, as Home's Continue card
+    /// sets it after the form's name and a point: "Hail Mary 8 of 10"
+    func runningLabel(bead: Int) -> String {
+        guard bead > 0, bead <= hailMarys else { return label(bead: bead) }
+        return String(
+            localized: "Hail Mary \(bead) of \(hailMarys)",
+            comment: "Home, the Continue card: the Hail Mary the Rosary stopped on, after the form's name, like The Audio Rosary · Hail Mary 8 of 10"
+        )
+    }
+
     /// The same name broken for the strand's margin, where a line is a
     /// dozen characters: the prayer, then its count or its companion.
     func labelLines(bead: Int) -> [String] {

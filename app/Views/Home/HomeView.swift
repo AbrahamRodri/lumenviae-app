@@ -223,6 +223,16 @@ struct ResumePrayerCard: View {
     /// "First Joyful Mystery", as the card reads it in running text
     private var mysteryLabel: String { session.placeLabel }
 
+    /// What is being prayed and the bead it stopped on: "The Audio
+    /// Rosary · Hail Mary 8 of 10". A form is named by its kind, never by
+    /// the English name it was stored under; a meditation set by its own
+    /// name
+    private var resumeLine: String {
+        let name = session.spokenForm.map(ScripturalRosaryViewModel.formName(for:)) ?? session.setName
+        guard let bead = session.beadLabel else { return name }
+        return "\(name) · \(bead)"
+    }
+
     /// The door's own glyph for what is being resumed
     private var resumeGlyph: String {
         switch session.spokenForm {
@@ -285,14 +295,11 @@ struct ResumePrayerCard: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
 
-                        // A form is named by its kind, never by the English
-                        // name it was stored under (an Audio Rosary saved
-                        // as The Rosary Aloud, a Scriptural Rosary in any
-                        // language); a meditation set by its own name
-                        Text(session.spokenForm.map(ScripturalRosaryViewModel.displayName(for:)) ?? session.setName)
+                        // A set's long name and its bead may take two lines
+                        Text(resumeLine)
                             .font(AppFonts.italicFont(12))
                             .foregroundColor(AppColors.textSecondary)
-                            .lineLimit(1)
+                            .lineLimit(2)
                     }
 
                     Spacer()

@@ -53,7 +53,21 @@ final class ScripturalRosaryViewModel {
     /// Screen, a share, the resume card. Every page that names a form
     /// reads it here, so the name is said one way everywhere.
     var displayName: String {
-        Self.displayName(for: form)
+        Self.formName(for: form)
+    }
+
+    /// A form's own name, wherever the form is under way or waiting to
+    /// be taken up: the player, its Go to and ⋯ sheets, a share, Home's
+    /// Continue card. "No Meditation" is how the mysteries' page offers
+    /// the choice (Abraham, 5 Nov 2026), and read anywhere else it named
+    /// nothing being prayed.
+    static func formName(for form: SpokenForm) -> String {
+        form == .plain
+            ? String(
+                localized: "The Audio Rosary",
+                comment: "Name of the form of the Rosary in which every prayer is said aloud and the listener prays along"
+            )
+            : displayName(for: form)
     }
 
     /// A form's name, for a page that has no model of its own: the

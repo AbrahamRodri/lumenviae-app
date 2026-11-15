@@ -114,6 +114,18 @@ extension InProgressPrayer {
         self.act == act && PrayerDay.isSameDay(savedAt, now, calendar: calendar)
     }
 
+    /// The bead the hand stopped on, "Hail Mary 8 of 10", or nil for a
+    /// snapshot that kept none or an unknown set
+    var beadLabel: String? {
+        guard let beadIndex, let mysteries = MysteryCategory(fromAPIString: category) else { return nil }
+        let chaplet = mysteries == .sevenSorrows
+        return RosaryStrand(
+            decades: chaplet ? 7 : 5,
+            hailMarys: chaplet ? 7 : 10,
+            saysFatimaPrayer: !chaplet
+        ).runningLabel(bead: beadIndex)
+    }
+
     /// Where it stopped, as running text: "Third Joyful Mystery",
     /// "Third Sorrow of Mary"
     var placeLabel: String {
