@@ -195,6 +195,7 @@ struct HomeView: View {
     private var featuredMysterySection: some View {
         FeaturedMysteryCard(
             category: viewModel.todaysCategory,
+            yieldsGold: PrayerResumeService.shared.inProgress != nil,
             onBeginPrayer: {
                 // The simple Rosary's learner begins on the beginner's
                 // path, whose page lets them say no
@@ -416,6 +417,11 @@ struct FeaturedMysteryCard: View {
     /// The day's mystery category (Joyful, Sorrowful, etc.)
     let category: MysteryCategory
 
+    /// While a Rosary left part-way stands above it, the Continue card's
+    /// disc is the screen's one filled gold act, and this button is
+    /// outlined
+    var yieldsGold: Bool = false
+
     /// Opens the day's mysteries' page, where the Rosary's three forms
     /// are chosen
     var onBeginPrayer: () -> Void = {}
@@ -473,6 +479,7 @@ struct FeaturedMysteryCard: View {
         // Goes on to the mysteries' page, so a chevron, not play
         GoldCTAButton(
             title: String(localized: "Pray the Rosary", comment: "Home: the featured card's button, opening today's mysteries"),
+            fill: yieldsGold ? .outline : .solid,
             glyph: .chevron,
             action: onBeginPrayer
         )
