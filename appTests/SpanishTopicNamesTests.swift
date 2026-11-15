@@ -31,7 +31,8 @@ struct SpanishTopicNamesTests {
 
     @Test func aTopicIsLaidOverInSpanish() throws {
         let english = try #require(LibraryContent.prayerBook.chapters.first { $0.id == "day" })
-        let spanish = try #require(try #require(seed).chaptersByID["day"])
+        let translations = try #require(seed)
+        let spanish = try #require(translations.chaptersByID["day"])
         let chapter = PrayerBook.inSpanish(english, spanish)
         #expect(chapter.title == spanish.title)
         #expect(chapter.topic == spanish.topic)
