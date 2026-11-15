@@ -284,7 +284,7 @@ final class NovenaStore {
                 let content = UNMutableNotificationContent()
                 content.title = reminder.title
                 content.body = reminder.body
-                content.sound = .default
+                content.sound = SilentTesting.isOn ? nil : .default
                 content.categoryIdentifier = Self.category
                 content.userInfo = [Self.novenaKey: id, Self.dayKey: reminder.day ?? 0]
                 let trigger = UNCalendarNotificationTrigger(dateMatching: reminder.fire, repeats: false)
