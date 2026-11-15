@@ -640,7 +640,7 @@ struct PrayerText: View {
             .font(AppFonts.readingItalicFont(role == .primary ? secondarySize : max(11, size - 4)))
             // A direction is read, so it takes the red lifted for
             // sentences; the vestment red stays for ℣ ℟ ✠
-            .foregroundColor(Rubric.text.opacity(role == .primary ? 1 : 0.8))
+            .foregroundColor(Rubric.text)
             .fixedSize(horizontal: false, vertical: true)
     }
 
