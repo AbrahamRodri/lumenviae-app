@@ -183,13 +183,11 @@ struct ScripturalRosaryPrayerView: View {
                     showsNarrationOptions: false,
                     showsPartsToggle: true
                 )
-                    // At the accessibility sizes its rows outgrow the
-                    // measured height, so it opens full
-                    .presentationDetents(playerIsLarge ? [.large] : [
-                        .height(ReaderTextOptionsSheet.height(
-                            showsNarrationOptions: false,
-                            showsPartsToggle: true))
-                    ])
+                    // As tall as its rows measure, at every text size: opened full
+                    // at the accessibility sizes, it stood over a band of empty ground
+                    .fittedSheetDetent(estimate: ReaderTextOptionsSheet.height(
+                        showsNarrationOptions: false,
+                        showsPartsToggle: true))
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
                     .dynamicTypeSize(...DynamicTypeSize.playerMaximum)

@@ -254,10 +254,13 @@ struct SpanishBetaSheet: View {
                 .padding(.top, 12)
                 .padding(.bottom, 24)
             }
+            .sheetContentMeasure()
         }
         .scrollBounceBehavior(.basedOnSize)
         .sheetGround()
-        .presentationDetents([.large])
+        // As tall as its words and its button, where it once opened full
+        // over a band of empty ground
+        .fittedScrollingSheet()
         .dynamicTypeSize(...DynamicTypeSize.appMaximum)
     }
 }
