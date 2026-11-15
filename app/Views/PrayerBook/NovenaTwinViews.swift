@@ -16,6 +16,12 @@ import SwiftUI
 enum NovenaTwinPage: Equatable, Hashable {
     case day(Int)
     case closing
+
+    /// The day shown, nil on the closing page
+    var day: Int? {
+        if case .day(let n) = self { return n }
+        return nil
+    }
 }
 
 /// The novena's painting, a band across the page dissolving into it

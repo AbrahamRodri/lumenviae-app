@@ -61,6 +61,9 @@ struct PrayAlongView: View {
 
     /// A prayer named in a direction ("Our Father, Hail Mary"), opened to read
     @State private var saidPrayer: PrayerPage.SaidPrayer?
+    /// A novena's twin read a day at a time: the page chosen, nil until
+    /// a button is tapped (then the reader's day, or Day 1)
+    @State private var twinPage: NovenaTwinPage?
 
     /// Whether the page is on screen. Recordings still being fetched when
     /// it closes, or a prayer still turning in, must not go on to speak
@@ -519,7 +522,18 @@ struct PrayAlongView: View {
 
     private func pageScroll(_ prayer: BookPrayer) -> some View {
         let stanzas = Self.stanzas(prayer.content(for: displayLanguage))
-        let page = PrayerPage(stanzas: stanzas)
+        let whole = PrayerPage(stanzas: stanzas)
+        // A novena's twin is read one day at a time (Abraham, 15 Nov
+        // 2026: "A"); a twin whose headings do not name every day is read
+        // whole, as before
+        let novena = Self.novena(twinOf: prayer)
+        let twin = novena.flatMap { NovenaTwin(stanzas: stanzas, length: $0.length) }
+        let shown = twinPage ?? novena.map(Self.openingPage(of:)) ?? .day(1)
+        let page = twin.map { twin in
+            let kept = twin.stanzas(day: shown.day)
+            return PrayerPage(
+                filtering: whole, keeping: { section in section.stanzas.contains { kept.contains($0.index) } })
+        } ?? whole
         let following = aloud && voice.isPlaying
 
         return ScrollViewReader { proxy in
@@ -528,6 +542,10 @@ struct PrayAlongView: View {
                     Color.clear.frame(height: 0).id("top")
 
                     VStack(alignment: .leading, spacing: 0) {
+                        if let novena, twin != nil {
+                            NovenaTwinBand(painting: Self.painting(of: novena, twin: prayer))
+                        }
+
                         VStack(alignment: .leading, spacing: 10) {
                             if isAngelus {
                                 // Hangs upright, and swings only while it
@@ -576,10 +594,24 @@ struct PrayAlongView: View {
                                     .foregroundColor(AppColors.textSecondary)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
+
+                            if let novena, let twin {
+                                VStack(alignment: .leading, spacing: 18) {
+                                    NovenaDayButtons(
+                                        length: twin.days.count,
+                                        hasClosing: !twin.closing.isEmpty,
+                                        page: Binding(get: { shown }, set: { twinPage = $0 })
+                                    )
+                                    if let launch = Self.novenaDayLaunch(of: novena) {
+                                        PrayAsNovenaRow { router.push(.scripturalRosaryPrayer(launch)) }
+                                    }
+                                }
+                                .padding(.top, 14)
+                            }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 24)
-                        .padding(.top, 22)
+                        .padding(.top, twin == nil ? 22 : 6)
 
                         VStack(alignment: .leading, spacing: ReadingTypography.stanzaSpacing(for: textSize)) {
                             if page.hasLitanyGroups {
@@ -640,9 +672,47 @@ struct PrayAlongView: View {
                 }
             }
             .onChange(of: index) { _, _ in
+                twinPage = nil
+                proxy.scrollTo("top", anchor: .top)
+            }
+            .onChange(of: twinPage) { _, _ in
                 proxy.scrollTo("top", anchor: .top)
             }
         }
+    }
+
+    // MARK: - A novena's twin
+
+    /// The novena whose twin this prayer is: the Prayer Book prayer
+    /// holding the whole novena as text
+    static func novena(twinOf prayer: BookPrayer) -> PrayerBookDocument.Novena? {
+        LibraryContent.prayerBook.novenas.first { $0.prayerID == prayer.id }
+    }
+
+    /// The day a twin opens on: the reader's own day while the novena is
+    /// under way, else Day 1
+    static func openingPage(of novena: PrayerBookDocument.Novena) -> NovenaTwinPage {
+        guard let progress = NovenaStore.shared.progress[novena.id] else { return .day(1) }
+        return .day(min(max(progress.dayNumber(on: PrayerDay.now), 1), novena.length))
+    }
+
+    /// The novena's own painting over its days, else the prayer's
+    static func painting(of novena: PrayerBookDocument.Novena, twin prayer: BookPrayer) -> PrayerBookPainting {
+        novena.painting.map { PrayerBookPainting.chosen($0, caption: novena.title) }
+            ?? PrayerBookPainting.prayer(prayer.id)
+    }
+
+    /// PRAY IT AS A NOVENA, while the novena is under way: today's day
+    /// (or the first one left open) in the Rosary, as its reminder opens
+    /// it. Until the novena's own page is built (row 3f0c9f14) a novena
+    /// not begun shows no row, since nothing here could keep its day.
+    static func novenaDayLaunch(of novena: PrayerBookDocument.Novena) -> ScripturalRosaryLaunch? {
+        guard let progress = NovenaStore.shared.progress[novena.id],
+            case .underWay(let today, let open) = progress.standing(on: PrayerDay.now),
+            let day = today ?? open.first
+        else { return nil }
+        return ScripturalRosaryLaunch(
+            category: ScheduleService.categoryForToday(), form: .plain, novenaID: novena.id, novenaDay: day)
     }
 
     /// A point under the reading size, so more of each line of a prayer fits the measure
