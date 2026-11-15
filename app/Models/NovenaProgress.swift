@@ -352,7 +352,7 @@ extension NovenaDayContext {
 extension NovenaProgress {
     /// The line under "Day 4 prayed": when the next day falls and the
     /// mysteries it prays ("Day 5 is tomorrow, with the Glorious
-    /// Mysteries.", or "Day 2 is open." for a past day not yet prayed); nil
+    /// Mysteries.", or "Day 2 is open." for a day not yet prayed whose date has come); nil
     /// once every day is prayed
     func nextDayLine(after day: Int, now: Date = PrayerDay.now, calendar: Calendar = .current) -> String? {
         guard let next = (1...length).first(where: { $0 > day && !prayed.contains($0) })
@@ -363,7 +363,7 @@ extension NovenaProgress {
         // An open day is prayed with the mysteries of the day it is prayed
         // on, so its line names none
         if date <= today {
-            return String(localized: "Day \(next) is open.", comment: "Novena, after a day is prayed: the next day is a past day not yet prayed, which can be prayed now")
+            return String(localized: "Day \(next) is open.", comment: "Novena, after a day is prayed: the next day is one not yet prayed whose date has come (today or before), which can be prayed now")
         }
         let mysteries = ScheduleService.category(for: date, calendar: calendar).devotionTitle
         if PrayerDay.isSameDay(date, PrayerDay.adding(days: 1, to: today, calendar: calendar), calendar: calendar) {
