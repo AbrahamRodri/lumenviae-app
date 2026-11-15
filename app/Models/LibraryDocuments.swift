@@ -536,10 +536,15 @@ nonisolated struct PrayerBookTranslations: Codable, Sendable, Equatable {
         /// Where the prayer comes from, in Spanish (api #269); nil where
         /// the book gives none in Spanish, and then none is shown
         var origin: String?
+        /// A long Spanish origin cut short for under the title (api #277),
+        /// the whole origin then standing at the foot, as English does;
+        /// absent where the origin is short
+        var shortCredit: String?
 
         enum CodingKeys: String, CodingKey {
             case id, title, text, origin
             case aiTranslated = "ai_translated"
+            case shortCredit = "short_credit"
         }
     }
 
