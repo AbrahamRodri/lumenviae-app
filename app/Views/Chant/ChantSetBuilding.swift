@@ -82,10 +82,12 @@ struct ChantAddRow: View {
                         .font(AppFonts.readingFont(16.5))
                         .foregroundColor(count > 0 ? AppColors.goldLight : AppColors.cream)
                         .lineLimit(1)
-                    Text(chant.settingMidLine.map { "\(chant.englishTitle) · \($0)" } ?? chant.englishTitle)
-                        .font(AppFonts.readingItalicFont(13.5))
-                        .foregroundColor(AppColors.textSecondary)
-                        .lineLimit(1)
+                    if let line = chant.subtitleLine {
+                        Text(line)
+                            .font(AppFonts.readingItalicFont(13.5))
+                            .foregroundColor(AppColors.textSecondary)
+                            .lineLimit(1)
+                    }
                 }
 
                 Spacer(minLength: 8)

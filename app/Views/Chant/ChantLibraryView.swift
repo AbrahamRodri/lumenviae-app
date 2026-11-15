@@ -473,10 +473,12 @@ struct ChantSongRow: View {
                             .font(AppFonts.readingFont(16.5))
                             .foregroundColor(sounding ? AppColors.goldLight : AppColors.cream)
                             .lineLimit(1)
-                        Text(chant.settingMidLine.map { "\(chant.englishTitle) · \($0)" } ?? chant.englishTitle)
-                            .font(AppFonts.readingItalicFont(13.5))
-                            .foregroundColor(AppColors.textSecondary)
-                            .lineLimit(1)
+                        if let line = chant.subtitleLine {
+                            Text(line)
+                                .font(AppFonts.readingItalicFont(13.5))
+                                .foregroundColor(AppColors.textSecondary)
+                                .lineLimit(1)
+                        }
                     }
                     Spacer(minLength: 8)
                     if sounding {
@@ -594,11 +596,13 @@ struct ChantSquareCard: View {
                         .font(AppFonts.readingFont(15.5))
                         .foregroundColor(player.isPlaying(chant) ? AppColors.goldLight : AppColors.cream)
                         .lineLimit(1)
-                    Text(chant.settingMidLine.map { "\(chant.englishTitle) · \($0)" } ?? chant.englishTitle)
-                        .font(AppFonts.readingItalicFont(13))
-                        .foregroundColor(AppColors.textSecondary)
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
+                    if let line = chant.subtitleLine {
+                        Text(line)
+                            .font(AppFonts.readingItalicFont(13))
+                            .foregroundColor(AppColors.textSecondary)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
                 .frame(width: 142, alignment: .leading)
                 .contentShape(Rectangle())

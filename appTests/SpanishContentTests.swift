@@ -162,6 +162,70 @@ struct SpanishContentTests {
         #expect(prayer.english.hasPrefix("Acordaos, oh piadosísima Virgen María"))
     }
 
+    /// The chant library's Spanish names stand over the English title and
+    /// the setting by id; the Latin stays, and a chant without Spanish keeps
+    /// its English
+    @Test func theChantLibrarysSpanishNamesAreLaidOver() throws {
+        let english = LibraryContent.chantLibraryStore.seed!
+        let first = try #require(english.chants.first(where: { $0.setting != nil }))
+        let other = try #require(english.chants.first(where: { $0.id != first.id }))
+        let group = try #require(english.groups.first)
+        let spanish = try JSONDecoder().decode(
+            ChantLibraryTranslations.self,
+            from: Data(
+                """
+                {"version":"v","updated_at":"2026-11-15T06:20:00Z","translations":{
+                "chants":[{"id":"\(first.id)","title":"Título","setting":"Melodía sencilla"}],
+                "groups":[{"id":"\(group.id)","title":"Sección"}]}}
+                """.utf8))
+        #expect(spanish.problem == nil)
+        let named = spanish.laidOver(english)
+        let chant = try #require(named.chants.first(where: { $0.id == first.id }))
+        #expect(chant.englishTitle == "Título")
+        #expect(chant.setting == "Melodía sencilla")
+        #expect(chant.latinTitle == first.latinTitle)
+        #expect(named.chants.first(where: { $0.id == other.id })?.englishTitle == other.englishTitle)
+        #expect(named.groups.first?.title == "Sección")
+        #expect(named.chants.count == english.chants.count)
+    }
+
+    /// The app ships the server's Spanish names, every chant and section
+    @Test func theShippedChantNamesCoverTheLibrary() throws {
+        let spanish = try #require(LibraryContent.chantLibrarySpanishStore.seed)
+        let english = try #require(LibraryContent.chantLibraryStore.seed)
+        #expect(spanish.problem == nil)
+        #expect(Set(spanish.translations.chants.map(\.id)) == Set(english.chants.map(\.id)))
+        #expect(Set(spanish.translations.groups.map(\.id)) == Set(english.groups.map(\.id)))
+    }
+
+    /// Where the Spanish name is the Latin (Salve Regina, Ave María), the
+    /// chant is named once: no second title under it, and VoiceOver says
+    /// it once (ios-review, 15 Nov)
+    @Test func aChantWhoseSpanishNameIsItsLatinIsNamedOnce() throws {
+        let english = LibraryContent.chantLibraryStore.seed!
+        let spanish = try #require(LibraryContent.chantLibrarySpanishStore.seed)
+        let named = spanish.laidOver(english).chants.map(Chant.init(document:))
+        let salve = try #require(named.first { $0.latinTitle == "Salve Regina" && $0.setting != nil })
+        #expect(salve.secondTitle == nil)
+        #expect(salve.spokenName == "Salve Regina")
+        #expect(salve.englishWithLatin == "Salve Regina")
+        #expect(salve.subtitleLine == salve.distinctSetting)
+        // Folded, so "Ave María" over "Ave Maria" is one name too
+        #expect(named.filter { SearchText.fold($0.englishTitle) == SearchText.fold($0.latinTitle) }.allSatisfy { $0.secondTitle == nil })
+        // English keeps both names
+        let englishSalve = try #require(english.chants.first { $0.latinTitle == "Salve Regina" }.map(Chant.init(document:)))
+        #expect(englishSalve.secondTitle == "Hail, Holy Queen")
+        #expect(englishSalve.spokenName.contains("Hail, Holy Queen"))
+    }
+
+    @Test func aChantLibraryWithoutSpanishDecodesAsNone() throws {
+        let empty = try JSONDecoder().decode(
+            ChantLibraryTranslations.self, from: Data(#"{"version":"v","translations":[]}"#.utf8))
+        #expect(empty.translations.chants.isEmpty)
+        let english = LibraryContent.chantLibraryStore.seed!
+        #expect(empty.laidOver(english) == english)
+    }
+
     @Test func aDocumentWithoutTranslationsDecodesAsNone() throws {
         let document = try JSONDecoder().decode(
             PrayerBookTranslations.self, from: Data(#"{"version":"abc","updated_at":"2026-11-03T00:00:00Z"}"#.utf8))
@@ -202,6 +266,12 @@ extension LibraryContentSyncTests {
             prayerBookSpanishStore: LibraryDocumentStore(
                 name: "prayer_book.es", seedURL: nil,
                 cacheURL: directory.appendingPathComponent("prayer_book.es.json")),
+            consecrationSpanishStore: LibraryDocumentStore(
+                name: "consecration.es", seedURL: nil,
+                cacheURL: directory.appendingPathComponent("consecration.es.json")),
+            chantLibrarySpanishStore: LibraryDocumentStore(
+                name: "chant_library.es", seedURL: nil,
+                cacheURL: directory.appendingPathComponent("chant_library.es.json")),
             spanish: spanish
         )
     }

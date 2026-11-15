@@ -583,18 +583,19 @@ private struct ChantShelfNames: View {
                 .lineLimit(2)
                 .fixedSize(horizontal: false, vertical: true)
                 .animation(Motion.crossfade, value: sounding)
-            Text(Self.subtitle(of: chant, showsSetting: showsSetting))
-                .font(AppFonts.readingItalicFont(13.5))
-                .foregroundColor(AppColors.textSecondary)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
+            if let line = Self.subtitle(of: chant, showsSetting: showsSetting) {
+                Text(line)
+                    .font(AppFonts.readingItalicFont(13.5))
+                    .foregroundColor(AppColors.textSecondary)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    static func subtitle(of chant: Chant, showsSetting: Bool) -> String {
-        guard showsSetting, let setting = chant.settingMidLine else { return chant.englishTitle }
-        return "\(chant.englishTitle) · \(setting)"
+    static func subtitle(of chant: Chant, showsSetting: Bool) -> String? {
+        showsSetting ? chant.subtitleLine : chant.secondTitle
     }
 }
 
@@ -717,15 +718,17 @@ private struct ChantShelfRow: ViewModifier {
     }
 
     static func spoken(_ chant: Chant, showsSetting: Bool, sounding: Bool) -> String {
-        let subtitle = ChantShelfNames.subtitle(of: chant, showsSetting: showsSetting)
+        // The name once where the reader's name for it is the Latin
+        let subtitle = [chant.latinTitle, ChantShelfNames.subtitle(of: chant, showsSetting: showsSetting)]
+            .compactMap { $0 }.joined(separator: ", ")
         guard sounding else {
             return String(
-                localized: "\(chant.latinTitle), \(subtitle), \(chant.spokenLength)",
+                localized: "\(subtitle), \(chant.spokenLength)",
                 comment: "VoiceOver: a chant on a shelf: its Latin name, its English name, how long it plays"
             )
         }
         return String(
-            localized: "\(chant.latinTitle), \(subtitle), playing now",
+            localized: "\(subtitle), playing now",
             comment: "VoiceOver: a chant on a shelf, the one sounding: its Latin name, then its English name"
         )
     }
