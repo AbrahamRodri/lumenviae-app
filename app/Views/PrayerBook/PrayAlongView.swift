@@ -59,6 +59,9 @@ struct PrayAlongView: View {
     @State private var measures = StanzaMeasures()
     @State private var asksHowToPray = false
 
+    /// A prayer named in a direction ("Our Father, Hail Mary"), opened to read
+    @State private var saidPrayer: PrayerPage.SaidPrayer?
+
     /// Whether the page is on screen. Recordings still being fetched when
     /// it closes, or a prayer still turning in, must not go on to speak
     /// from a page nobody can see: the first fetch can take a while, and
@@ -202,6 +205,9 @@ struct PrayAlongView: View {
         // Asked once, before the book's first sound; undismissable, since
         // answering is the only way through, and ALOUD or SILENT at the
         // head of the page owns the choice afterward
+        .sheet(item: $saidPrayer) { said in
+            PrayerSaidSheet(said: said, language: displayLanguage)
+        }
         .sheet(isPresented: $asksHowToPray, onDismiss: startSounding) {
             PrayAloudChoiceSheet(painting: painting) { chosen in
                 store.chooseAloud(chosen)
@@ -513,6 +519,7 @@ struct PrayAlongView: View {
 
     private func pageScroll(_ prayer: BookPrayer) -> some View {
         let stanzas = Self.stanzas(prayer.content(for: displayLanguage))
+        let page = PrayerPage(stanzas: stanzas)
         let following = aloud && voice.isPlaying
 
         return ScrollViewReader { proxy in
@@ -558,22 +565,36 @@ struct PrayAlongView: View {
                                 .minimumScaleFactor(0.7)
                                 .fixedSize(horizontal: false, vertical: true)
                                 .accessibilityAddTraits(.isHeader)
+
+                            // Where the prayer comes from, quietly: the
+                            // book credits every prayer it prints
+                            if let origin = prayer.origin, !origin.isEmpty {
+                                Text(origin)
+                                    .font(AppFonts.readingItalicFont(15))
+                                    .foregroundColor(AppColors.textSecondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 24)
                         .padding(.top, 22)
 
                         VStack(alignment: .leading, spacing: ReadingTypography.stanzaSpacing(for: textSize)) {
-                            ForEach(Array(stanzas.enumerated()), id: \.offset) { i, stanza in
-                                PrayAlongStanza(
-                                    content: stanza,
+                            if page.hasLitanyGroups {
+                                Text(String(localized: "Answer each line with the words in red beside it.", comment: "Pray-along page: the line over a litany, saying how to answer its calls"))
+                                    .font(AppFonts.readingItalicFont(max(14, textSize - 3)))
+                                    .foregroundColor(AppColors.textSecondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+
+                            ForEach(Array(page.sections.enumerated()), id: \.offset) { _, section in
+                                PrayerPageSectionView(
+                                    section: section,
                                     size: textSize,
-                                    showsDropCap: i == 0,
-                                    opacity: stanzaOpacity(i, following: following)
+                                    opacity: { stanzaOpacity($0, following: following) },
+                                    open: { saidPrayer = $0 }
                                 )
-                                .frame(maxWidth: .infinity, alignment: .leading)
                                 .animation(Motion.crossfade, value: litStanza)
-                                .id(i)
                             }
 
                             AITranslationNote(prayerID: prayer.id)
@@ -1175,7 +1196,7 @@ final class StanzaMeasures {
 /// rubrics stand apart from the verse, at full strength while the verse
 /// beside them is dimmed under the voice. Every other stanza is
 /// `PrayerText`'s, dimmed whole.
-private struct PrayAlongStanza: View {
+struct PrayAlongStanza: View {
     let content: String
     let size: CGFloat
     let showsDropCap: Bool
