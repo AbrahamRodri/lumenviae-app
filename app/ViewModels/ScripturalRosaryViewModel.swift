@@ -650,7 +650,7 @@ final class ScripturalRosaryViewModel {
         rows[.closing] = (
             SpokenNovenaDay.caption(forKind: "closing"),
             closingWords.map {
-                String(localized: "The Hail, Holy Queen, then \($0.caption)", comment: "Novena day, Go to: under The Closing Prayer, what is said there; the second part is the novena's closing prayer's title")
+                String(localized: "The Hail, Holy Queen, then \(Self.midSentence($0.caption))", comment: "Novena day, Go to: under The Closing Prayer, what is said there; the second part is the novena's closing prayer's title")
             },
             "lv-lozenge"
         )
