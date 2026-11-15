@@ -5,8 +5,10 @@
 //  Prayers said one after another on a screen of their own — an order
 //  of prayer (Morning Prayers, Before Confession) or a single prayer.
 //
-//  The order's painting hangs behind the words, veiled, as the Prayers
-//  page hangs it on the order's card; the page is the prayer, a quiet
+//  The words stand on the dark page all the way up, with no painting
+//  behind them (Abraham, 15 Nov 2026: "it cuts at the top and that
+//  doesnt look good it might as well be all dark"); the order's painting
+//  comes forward at the Amen. The page is the prayer, a quiet
 //  head (×, the order, its beads, ALOUD or SILENT) and one way on at the
 //  foot: NEXT with the next prayer's name, or AMEN on the last.
 //
@@ -167,10 +169,6 @@ struct PrayAlongView: View {
             AppColors.background.ignoresSafeArea()
 
             if let prayer {
-                // Fixed behind the scroll, so a long prayer runs over it
-                // and never carries it away
-                PrayAlongGround(painting: painting)
-
                 // Under the Amen's veil the page is still drawn, but
                 // VoiceOver should find only the Amen
                 VStack(spacing: 0) {
@@ -263,9 +261,6 @@ struct PrayAlongView: View {
 
                 moreMenu
             }
-            // A soft shadow of the ground under the head's words, so they
-            // hold over a dove's wing or a cherub's cloud
-            .shadow(color: AppColors.background.opacity(0.85), radius: 6)
 
             if prayers.count > 1 {
                 beads
@@ -586,9 +581,6 @@ struct PrayAlongView: View {
                         .padding(.horizontal, 24)
                         .padding(.top, 20)
                     }
-                    // The veil goes with the words, so the painting reads
-                    // clear in the room a short prayer leaves beneath it
-                    .background(WordsVeil())
 
                     // Clear of the foot, so the last line can be read
                     // above NEXT
@@ -636,8 +628,7 @@ struct PrayAlongView: View {
     }
 
     /// The verse under the voice full, what has been said dimmed, what is
-    /// to come a little brighter — only while the voice is reading. Over
-    /// the painting the dimmed verses stay readable.
+    /// to come a little brighter — only while the voice is reading.
     private func stanzaOpacity(_ i: Int, following: Bool) -> Double {
         guard following, let lit = litStanza else { return 1 }
         if i == lit { return 1 }
@@ -1172,68 +1163,6 @@ final class StanzaMeasures {
         )
         kept[key] = measure
         return measure
-    }
-}
-
-// MARK: - The ground
-
-/// The page's ground: the order's painting veiled, as Chant practice sets
-/// its chant's, and a scrim of the theme's own ground, light at the head
-/// where the painting shows and even below it. The words carry a veil of
-/// their own (`WordsVeil`), so they read over the brightest sky while the
-/// room a short prayer leaves beneath it shows the painting rather than a
-/// flat dark field. Hidden from VoiceOver, which reads the words.
-private struct PrayAlongGround: View {
-    let painting: PrayerBookPainting
-
-    var body: some View {
-        ZStack {
-            // The painting hangs off a clear view, so its fill never
-            // widens the page it stands behind
-            Color.clear
-                .overlay {
-                    CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
-                }
-                .clipped()
-                .opacity(0.55)
-
-            LinearGradient(
-                stops: [
-                    // Deeper behind the head, so its labels read over the
-                    // brightest sky
-                    .init(color: AppColors.background.opacity(0.62), location: 0),
-                    .init(color: AppColors.background.opacity(0.42), location: 0.1),
-                    .init(color: AppColors.background.opacity(0.15), location: 0.16),
-                    .init(color: AppColors.background.opacity(0.45), location: 0.22),
-                    .init(color: AppColors.background.opacity(0.55), location: 0.4),
-                    .init(color: AppColors.background.opacity(0.55), location: 1)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        }
-        .ignoresSafeArea()
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
-    }
-}
-
-/// The veil behind the title and the prayer, scrolling with them: the
-/// theme's ground, feathered above and below so it has no edge. The top
-/// feather lies within the words' own frame: hung above it, the scroll's
-/// edge cut it off in a hard line under the head.
-private struct WordsVeil: View {
-    var body: some View {
-        VStack(spacing: 0) {
-            LinearGradient(colors: [.clear, AppColors.background.opacity(0.62)], startPoint: .top, endPoint: .bottom)
-                .frame(height: 56)
-            AppColors.background.opacity(0.62)
-            LinearGradient(colors: [AppColors.background.opacity(0.62), .clear], startPoint: .top, endPoint: .bottom)
-                .frame(height: 72)
-        }
-        .padding(.bottom, -72)
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
     }
 }
 

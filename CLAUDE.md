@@ -2491,13 +2491,17 @@ write concurrent code here:
   **Praying** is `PrayAlongView` (`.prayAlong(PrayAlongLaunch)`, a
   player: bar hidden, its own ×): one prayer at a time, aloud or in
   silence (`PrayerBookStore.praysAloud`, remembered). **The page is the
-  prayer** (the "simplify Pray Along" pick, option A, Oct 2026): the
+  prayer** (the "simplify Pray Along" pick, option A, Oct 2026), set on
+  the dark page all the way up (Abraham, 15 Nov 2026: "it cuts at the
+  top and that doesnt look good it might as well be all dark"): the
   painting the Prayers page hangs over the order (`PrayerBookPainting.
   order`; the Angelus's read from its prayer, the Resurrection for the
   Queen of Heaven and the Annunciation otherwise; `.prayer` for one
-  opened alone) fixed
-  behind the scroll and veiled by a scrim of the theme's own ground,
-  deepest from the title down (`PrayAlongGround`); a quiet head — ×, the
+  opened alone) is kept for the Amen and the question before the first
+  sound, never behind the words. It once hung veiled behind the scroll
+  (`PrayAlongGround`) with a feathered veil riding on the words
+  (`WordsVeil`), and the two met in a hard band under the head; don't
+  bring either back. A quiet head — ×, the
   order's name, and VOICE or SILENT as a word in an outlined capsule
   (the speaker glyph it replaced read as a volume control) — over the
   order's beads, each a door answering to 44 points where the width
@@ -2512,15 +2516,10 @@ write concurrent code here:
   between × and the two, no longer centred on the glass. The head names what
   was opened: the order, or PRAYERS for a prayer opened alone, and for an
   order of one prayer bearing its name (the Angelus), so it never repeats
-  the title beneath it; the Angelus's once named its hours. The ground
-  deepens behind the head and its words carry a soft shadow, so they hold
-  over a bright sky, and the scroll dissolves a whole line (`topChromeFade`,
-  38 points) before it reaches the head. The Latin name
-  stands small over the title, the Angelus's bell above both. The words
-  carry a feathered veil of their own (`WordsVeil`) that scrolls with
-  them, so the ground under the head and under a short prayer stays
-  light enough for the painting to show, where one fixed scrim left a
-  flat dark field. A stanza of plain verse is set a line at a time
+  the title beneath it; the Angelus's once named its hours. The scroll
+  dissolves a whole line (`topChromeFade`, 38 points) before it reaches
+  the head. The Latin name
+  stands small over the title, the Angelus's bell above both. A stanza of plain verse is set a line at a time
   (`PrayAlongStanza`): a line too long for the measure hangs its
   overflow in by about an em (`HangingIndentRenderer`, iOS 18; flush on
   17), since wrapped flush it read as a line of its own, and its rubrics
