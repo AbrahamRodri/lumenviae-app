@@ -22,11 +22,11 @@ struct ShortCreditTests {
         #expect((prayer.origin ?? "").count > short.count)
     }
 
-    @Test func aShortSourceStandsUnderTheTitleAlone() throws {
+    @Test func anOriginWithNoAuthorStandsAtTheFootAlone() throws {
         let prayer = try #require(PrayerBook.prayer("memorare"))
         #expect(prayer.shortCredit == nil)
-        #expect(prayer.creditUnderTitle == prayer.origin)
-        #expect(prayer.creditAtFoot == nil)
+        #expect(prayer.creditUnderTitle == nil)
+        #expect(prayer.creditAtFoot == prayer.origin)
     }
 
     @Test func theDocumentReadsTheShortCredit() throws {

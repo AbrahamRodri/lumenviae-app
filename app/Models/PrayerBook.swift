@@ -40,12 +40,14 @@ struct BookPrayer: Identifiable, Hashable {
     /// stands at the prayer's foot. Nil where the origin is short
     var shortCredit: String? = nil
 
-    /// The credit under the title: the short one where there is one
-    var creditUnderTitle: String? { shortCredit ?? origin }
+    /// The credit under the title: only a short credit naming an author,
+    /// who must be credited on the page; a general origin ("Western
+    /// Church · 13th–16th century") is not said there (Abraham, 16 Nov
+    /// 2026: "no need to say western church 13-16th century")
+    var creditUnderTitle: String? { shortCredit }
 
-    /// The whole origin at the foot, only where the title carries a cut
-    /// of it, so nothing is said twice
-    var creditAtFoot: String? { shortCredit == nil ? nil : origin }
+    /// The whole origin, once, quietly at the prayer's foot
+    var creditAtFoot: String? { origin }
 
     /// When or how it is said, in one plain sentence
     let note: String?
