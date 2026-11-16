@@ -4,9 +4,8 @@
 //
 //  Writes the widgets' snapshot (`WidgetSnapshot`) into the App Group's
 //  container and asks WidgetKit to redraw the widgets, only when the
-//  snapshot has changed. Until the app carries the App Groups entitlement
-//  (it waits on the developer account; see the widgets-setup slice) the
-//  container is not there, and nothing is written.
+//  snapshot has changed. Without the App Groups entitlement (a build
+//  signed without it) the container is not there, and nothing is written.
 //
 
 import Foundation
@@ -27,6 +26,10 @@ final class WidgetSnapshotStore {
 
     /// The last snapshot written, so an unchanged one is not written again
     private(set) var lastWritten: WidgetSnapshot?
+
+    /// Counts the refreshes asked for, so a slow one never writes over a
+    /// newer one: only the latest asked writes
+    private var generation = 0
 
     init(
         directory: URL? = FileManager.default.containerURL(
@@ -78,13 +81,18 @@ final class WidgetSnapshotStore {
             liturgicalDay: Self.liturgicalDay(on:),
             now: now
         )
+        generation += 1
         guard snapshot != lastWritten else { return }
         let names = snapshot.paintingNames
+        let asked = generation
         // The paintings first, so a widget redrawn for the new snapshot
-        // finds every painting it names
+        // finds every painting it names; a refresh asked since writes instead
         Task.detached(priority: .utility) {
             Self.copyPaintings(names, into: directory.appendingPathComponent(WidgetSnapshot.paintingsFolder))
-            await MainActor.run { _ = self.write(snapshot) }
+            await MainActor.run {
+                guard asked == self.generation else { return }
+                _ = self.write(snapshot)
+            }
         }
     }
 

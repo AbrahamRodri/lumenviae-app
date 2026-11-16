@@ -729,7 +729,8 @@ final class AppRouter {
                 navigateToMeditationSelection(category: ScheduleService.categoryForToday())
             }
         case .novena(let id):
-            push(.novena(id: id))
+            // A novena the app does not know stays Home, as a prayer does
+            if NovenaDayContext.novena(id) != nil { push(.novena(id: id)) }
         case .missalToday:
             push(.missal)
         case .prayer(let id):

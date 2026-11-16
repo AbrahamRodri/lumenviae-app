@@ -118,9 +118,13 @@ extension WidgetSnapshot {
             prayLine: eastertide
                 ? String(localized: "Pray the Queen of Heaven", comment: "Widgets, the Angelus at its hour in the Easter season: the invitation, when the Regina Caeli is said in its place")
                 : String(localized: "Pray the Angelus", comment: "Widgets, the Angelus at its hour: the invitation"),
-            atLines: angelusTimes.map {
-                String(localized: "\(shortName) at \($0)", comment: "Widgets, the Angelus on the Lock Screen's line above the clock: the next bell, like Angelus at 12:00")
-            }
+            // Each bell said as the app says it, so the morning's and the
+            // evening's 6 are told apart on a line with no word beneath
+            atLines: [
+                String(localized: "\(shortName) at 6 AM", comment: "Widgets, the Angelus on the Lock Screen's line above the clock: the morning bell"),
+                String(localized: "\(shortName) at noon", comment: "Widgets, the Angelus on the Lock Screen's line above the clock: the noon bell"),
+                String(localized: "\(shortName) at 6 PM", comment: "Widgets, the Angelus on the Lock Screen's line above the clock: the evening bell"),
+            ]
         )
     }
 

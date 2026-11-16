@@ -132,7 +132,7 @@ nonisolated struct WidgetSnapshot: Codable, Equatable, Sendable {
         var firstLine: String
         /// "Pray the Angelus"
         var prayLine: String
-        /// "Angelus at 12:00", one for each bell
+        /// "Angelus at 6 AM", "at noon", "at 6 PM": one for each bell
         var atLines: [String]
     }
 

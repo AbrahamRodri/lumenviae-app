@@ -201,13 +201,35 @@
         }
       }
     },
-    "%@ at %@" : {
-      "comment" : "Widgets, the Angelus on the Lock Screen's line above the clock: the next bell, like Angelus at 12:00",
+    "%@ at 6 AM" : {
+      "comment" : "Widgets, the Angelus on the Lock Screen's line above the clock: the morning bell",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ a las %2$@"
+            "value" : "%@ a las 6 a. m."
+          }
+        }
+      }
+    },
+    "%@ at 6 PM" : {
+      "comment" : "Widgets, the Angelus on the Lock Screen's line above the clock: the evening bell",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ a las 6 p. m."
+          }
+        }
+      }
+    },
+    "%@ at noon" : {
+      "comment" : "Widgets, the Angelus on the Lock Screen's line above the clock: the noon bell",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ al mediodía"
           }
         }
       }
@@ -17883,7 +17905,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reza el Ángelus"
+            "value" : "Rezar el Ángelus"
           }
         }
       }
@@ -17905,7 +17927,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reza la Reina del Cielo"
+            "value" : "Rezar la Reina del Cielo"
           }
         }
       }
