@@ -26,7 +26,7 @@ struct ConsecrationChooserTests {
         #expect(
             ConsecrationDateSelectionView.movedNote(try preparation("annunciation", feastYear: 2027))
                 == "Moved from March 25, which is Holy Thursday in 2027")
-        // 2029: Palm Sunday; 2035: Easter Sunday; 2046: a Sunday of Lent
+        // 2029: Palm Sunday; 2035: Easter Sunday; 2057: a Sunday of Lent (2046 is Easter itself)
         #expect(
             ConsecrationDateSelectionView.movedNote(try preparation("annunciation", feastYear: 2029))
                 == "Moved from March 25, which is Palm Sunday in 2029")
@@ -34,8 +34,8 @@ struct ConsecrationChooserTests {
             ConsecrationDateSelectionView.movedNote(try preparation("annunciation", feastYear: 2035))
                 == "Moved from March 25, which is Easter Sunday in 2035")
         #expect(
-            ConsecrationDateSelectionView.movedNote(try preparation("annunciation", feastYear: 2046))
-                == "Moved from March 25, which is a Sunday of Lent in 2046")
+            ConsecrationDateSelectionView.movedNote(try preparation("annunciation", feastYear: 2057))
+                == "Moved from March 25, which is a Sunday of Lent in 2057")
         // 2008: the Tuesday after Easter, said with its own template
         #expect(
             ConsecrationDateSelectionView.movedNote(try preparation("annunciation", feastYear: 2008))
