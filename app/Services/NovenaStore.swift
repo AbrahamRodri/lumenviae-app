@@ -108,12 +108,22 @@ final class NovenaStore {
         p.markPrayed(number)
         if p.isFinished {
             progress[novena.id] = nil
-            history.insert(FinishedNovena(novenaID: novena.id, finished: now, intention: p.intention), at: 0)
+            history.insert(
+                FinishedNovena(
+                    novenaID: novena.id, finished: now, intention: p.intention, firstDay: p.firstDay,
+                    lastDay: p.date(ofDay: p.length)),
+                at: 0)
         } else {
             progress[novena.id] = p
         }
         save()
         reschedule(novena, now: now)
+    }
+
+    /// The last time this novena was finished, the newest first in the
+    /// history
+    func lastFinished(_ novenaID: String) -> FinishedNovena? {
+        history.first { $0.novenaID == novenaID }
     }
 
     func pickUp(_ novena: PrayerBookDocument.Novena, now: Date = PrayerDay.now) {
