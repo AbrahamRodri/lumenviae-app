@@ -262,6 +262,20 @@ struct SpanishBetaSheet: View {
                         ) { SheetRowAccessoryView(accessory: .caret) }
                     }
                     .buttonStyle(.plain)
+                    // iOS shows the app's Language row only once the phone
+                    // has a second language: a Spanish-only phone opened
+                    // Settings with nothing to choose
+                    Text(
+                        "If you don't see Language, add English in Settings > General > Language & Region.",
+                        comment:
+                            "Spanish beta notice sheet, under Use the app in English: what to do when Settings shows no Language row (a phone with one language)"
+                    )
+                    .font(AppFonts.italicFont(15))
+                    .foregroundColor(AppColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.leading, SheetMetrics.gutter + 36)
+                    .padding(.trailing, SheetMetrics.gutter)
+                    .padding(.bottom, 10)
                 }
                 .padding(.top, 18)
 
