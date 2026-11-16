@@ -3,20 +3,25 @@
 //  Lumen Viae
 //
 //  The final onboarding step: choosing the consecration day (Abraham's
-//  pick, option A with the one-sentence panel, 16 Nov 2026). The feasts
+//  pick, option A, 16 Nov 2026, as revised the same night). The feasts
 //  stand in one list in the order they come, the soonest first, and
-//  never move: a tap lights a row in place. A feast moved this time says
-//  so under its name. Above the one act, one sentence says what the
-//  choice means ("33 days, from Saturday, January 9 to Thursday,
-//  February 11."), and only it and the act change with the choice. The
-//  act begins on the chosen feast's Day 1: today, or a later day the
-//  consecration then waits for on a page of its own
+//  never move: a tap lights a row in place. A row is the feast's name
+//  and the day it is kept this year, SOONEST under the first row's date.
+//  Above the one act, two dates side by side say what the choice means,
+//  YOU BEGIN and YOU CONSECRATE, each on one line, stacked where they
+//  cannot stand side by side; only they and the act change with the
+//  choice. The act begins on the chosen feast's Day 1: today, or a later
+//  day the consecration then waits for on a page of its own
 //  (`ConsecrationScheduledView`).
 //
 //  It once lifted the chosen feast into a card of its own over the
 //  others, so the list reshuffled at every tap, and stood a panel of
 //  dates, a countdown and a note above the act; Abraham found both hard
 //  to follow ("its kind of confusing with how the dates move around").
+//  Then a sentence over the act, a SOONEST pill beside the name and a
+//  line saying why the Annunciation had moved: "looks cluttered the text
+//  above the begin should not be two lines and the soonest looks weirdly
+//  places and the moved from march 25 is also clutter".
 //
 //  Only a preparation that can still begin on its Day 1 is offered, so
 //  each one runs its full 33 days and ends on its feast. Joining partway
@@ -154,9 +159,7 @@ struct ConsecrationDateSelectionView: View {
     }
 
     private func feastRow(_ preparation: FeastPreparation, isChosen: Bool, isSoonest: Bool) -> some View {
-        let moved = Self.movedNote(preparation)
-
-        return Button {
+        Button {
             withAnimation(Motion.choice) {
                 selectedID = preparation.id
             }
@@ -165,28 +168,7 @@ struct ConsecrationDateSelectionView: View {
                 FeastRadio(isOn: isChosen)
                     .frame(width: 22)
 
-                VStack(alignment: .leading, spacing: 3) {
-                    // The badge beside the name where both fit, beneath it
-                    // where they do not (a long name, Spanish, large text)
-                    ViewThatFits(in: .horizontal) {
-                        HStack(spacing: 10) {
-                            feastName(preparation)
-                            if isSoonest { soonestBadge }
-                        }
-                        VStack(alignment: .leading, spacing: 5) {
-                            feastName(preparation)
-                            if isSoonest { soonestBadge }
-                        }
-                    }
-
-                    if let moved {
-                        Text(moved)
-                            .font(AppFonts.readingItalicFont(15))
-                            .foregroundColor(AppColors.goldLight)
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                }
+                feastName(preparation)
                 // The name takes the width up to 12 pt before the date before
                 // it wraps; beside a Spacer it was given only half the room
                 // left, and "Nuestra Señora de Lourdes" broke after Señora
@@ -194,11 +176,15 @@ struct ConsecrationDateSelectionView: View {
                 .padding(.trailing, 12)
                 .layoutPriority(1)
 
-                Text(Self.rowDate(preparation.feastDate))
-                    .font(AppFonts.bodyFont(16))
-                    .foregroundColor(isChosen ? AppColors.cream : AppColors.accentSoft)
-                    .lineLimit(1)
-                    .fixedSize()
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text(Self.rowDate(preparation.feastDate))
+                        .font(AppFonts.bodyFont(16))
+                        .foregroundColor(isChosen ? AppColors.cream : AppColors.accentSoft)
+                        .lineLimit(1)
+                        .fixedSize()
+
+                    if isSoonest { soonestWord }
+                }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -218,7 +204,7 @@ struct ConsecrationDateSelectionView: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Self.rowLabel(preparation, isSoonest: isSoonest, moved: moved))
+        .accessibilityLabel(Self.rowLabel(preparation, isSoonest: isSoonest))
         .accessibilityAddTraits(isChosen ? [.isButton, .isSelected] : [.isButton])
     }
 
@@ -230,50 +216,45 @@ struct ConsecrationDateSelectionView: View {
             .fixedSize(horizontal: false, vertical: true)
     }
 
-    /// Outlined, not filled: the page's one filled gold shape is its act
-    private var soonestBadge: some View {
+    /// A small word under the first row's date, with no pill, so the
+    /// feast's name stands alone on its line
+    private var soonestWord: some View {
         Text("SOONEST")
-            .font(AppFonts.labelFont(10))
-            .tracking(2.5)
-            .foregroundColor(AppColors.goldLight)
+            .font(AppFonts.labelFont(8))
+            .tracking(1.6)
+            .foregroundColor(AppColors.gold)
             .lineLimit(1)
             .fixedSize()
-            .padding(.horizontal, 10)
-            .padding(.vertical, 4)
-            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.6), lineWidth: AppLine.hairline))
     }
 
-    /// The feast, its date, and why it moved; "the soonest" when it is
-    static func rowLabel(_ preparation: FeastPreparation, isSoonest: Bool, moved: String?) -> String {
+    /// The feast and its date; "the soonest" when it is. A moved feast is
+    /// read by the day it is kept, with nothing said of its own day
+    static func rowLabel(_ preparation: FeastPreparation, isSoonest: Bool) -> String {
         let feast = preparation.feast.name
-        let date = spanDate(preparation.feastDate)
-        let named = isSoonest
+        let date = footDate(preparation.feastDate)
+        return isSoonest
             ? String(
                 localized: "\(feast), \(date), the soonest.",
                 comment: "VoiceOver, consecration feast chooser: a feast's row (name, then date), the soonest of the feasts")
             : String(
                 localized: "\(feast), \(date).",
                 comment: "VoiceOver, consecration feast chooser: a feast's row (name, then date)")
-        guard let moved else { return named }
-        return named + " " + moved + "."
     }
 
     // MARK: - Foot
 
-    /// One sentence saying what the choice means, the page's one act, and
-    /// the way to begin partway. Only the sentence and the act change
-    /// with the feast chosen.
+    /// The two dates the choice means, the page's one act, and the way to
+    /// begin partway. Only the dates and the act change with the feast
+    /// chosen.
     private func foot(_ preparation: FeastPreparation) -> some View {
         let days = preparation.daysUntilStart()
 
-        return VStack(spacing: 14) {
-            spanSentence(preparation)
-                .font(AppFonts.bodyFont(17))
-                .foregroundColor(AppColors.textSecondary)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .contentTransition(.opacity)
-                .animation(Motion.crossfade, value: preparation.id)
+        return VStack(spacing: 16) {
+            FeastSpan(
+                begin: Self.footDate(preparation.start),
+                consecrate: Self.footDate(preparation.feastDate)
+            )
+            .animation(Motion.crossfade, value: preparation.id)
 
             VStack(spacing: 4) {
                 GoldCTAButton(title: Self.beginTitle(preparation, days: days), glyph: .chevron) {
@@ -287,19 +268,6 @@ struct ConsecrationDateSelectionView: View {
         .padding(.horizontal, 20)
         .padding(.top, 10)
         .padding(.bottom, bottomClearance)
-    }
-
-    /// "33 days, from Saturday, January 9 to Thursday, February 11", the
-    /// two days in the page's brighter cream
-    private func spanSentence(_ preparation: FeastPreparation) -> Text {
-        // Each date on one line: its spaces do not break
-        let start = Text(Self.spanDate(preparation.start).replacingOccurrences(of: " ", with: "\u{00A0}"))
-            .foregroundColor(AppColors.cream)
-        let end = Text(Self.spanDate(preparation.feastDate).replacingOccurrences(of: " ", with: "\u{00A0}"))
-            .foregroundColor(AppColors.cream)
-        return Text(
-            "33 days, from \(start) to \(end)",
-            comment: "Consecration feast chooser, over Begin: what the chosen feast means, Day 1's date then the feast's, each with its weekday, like 33 days, from Saturday, January 9 to Thursday, February 11.")
     }
 
     // MARK: - Custom Start Link
@@ -371,56 +339,15 @@ struct ConsecrationDateSelectionView: View {
         date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day())
     }
 
-    /// A day in the sentence over Begin: "Saturday, January 9"; in
-    /// Spanish "sábado 9 de enero", without the comma the system puts
-    /// after the weekday, as the sentence reads ("del sábado 9 de enero")
-    static func spanDate(_ date: Date) -> String {
+    /// A day in the foot, standing alone under its label: "Saturday,
+    /// January 9"; in Spanish "Miércoles 3 de marzo", without the comma
+    /// the system puts after the weekday and with a capital, since it
+    /// begins its line
+    static func footDate(_ date: Date) -> String {
         let words = date.formatted(.dateTime.weekday(.wide).month(.wide).day())
-        guard AppLanguage.isSpanish, let comma = words.range(of: ", ") else { return words }
-        return words.replacingCharacters(in: comma, with: " ")
-    }
-
-    /// Why a feast falls off its own day this time, under its name:
-    /// "Moved from March 25, which is Holy Thursday in 2027". Only the
-    /// Annunciation moves (`MarianFeastDay.date(for:)`); nil for a feast
-    /// on its own day.
-    static func movedNote(_ preparation: FeastPreparation, calendar: Calendar = .current) -> String? {
-        let feast = preparation.feast
-        // Only the Annunciation is moved (MarianFeastDay.date(for:))
-        guard feast.id == "annunciation" else { return nil }
-        let year = calendar.component(.year, from: preparation.feastDate)
-        guard let ownDay = calendar.date(from: DateComponents(year: year, month: feast.month, day: feast.day)),
-              !calendar.isDate(ownDay, inSameDayAs: preparation.feastDate),
-              let easter = ScheduleService.easterSunday(year: year, calendar: calendar)
-        else { return nil }
-        let fromEaster = calendar.dateComponents(
-            [.day], from: calendar.startOfDay(for: easter), to: calendar.startOfDay(for: ownDay)
-        ).day ?? 0
-        let from = ownDay.formatted(.dateTime.month(.wide).day())
-        if (1...6).contains(fromEaster) {
-            // Its own template: Spanish says the date "cae en" the week, not
-            // "es" it (ios-review, PR #186)
-            return String(
-                localized: "Moved from \(from), which is in Easter Week in \(String(year))",
-                comment: "Consecration feast chooser, under a feast's name: its own date falls in the week after Easter Sunday that year, like Moved from March 25, which is in Easter Week in 2008")
-        }
-        let day: String
-        switch fromEaster {
-        case -7: day = String(localized: "Palm Sunday", comment: "Consecration feast chooser, why a feast moved: the day its own date falls on that year")
-        case -6: day = String(localized: "Monday of Holy Week", comment: "Consecration feast chooser, why a feast moved: the day its own date falls on that year")
-        case -5: day = String(localized: "Tuesday of Holy Week", comment: "Consecration feast chooser, why a feast moved: the day its own date falls on that year")
-        case -4: day = String(localized: "Wednesday of Holy Week", comment: "Consecration feast chooser, why a feast moved: the day its own date falls on that year")
-        case -3: day = String(localized: "Holy Thursday", comment: "Consecration feast chooser, why a feast moved: the day its own date falls on that year")
-        case -2: day = String(localized: "Good Friday", comment: "Consecration feast chooser, why a feast moved: the day its own date falls on that year")
-        case -1: day = String(localized: "Holy Saturday", comment: "Consecration feast chooser, why a feast moved: the day its own date falls on that year")
-        case 0: day = String(localized: "Easter Sunday", comment: "Consecration feast chooser, why a feast moved: the day its own date falls on that year")
-        case 7: day = String(localized: "the Sunday after Easter", comment: "Consecration feast chooser, why a feast moved: the day its own date falls on that year")
-        default: day = String(localized: "a Sunday of Lent", comment: "Consecration feast chooser, why a feast moved: the day its own date falls on that year")
-        }
-        return String(
-            localized: "Moved from \(from), which is \(day) in \(String(year))",
-            comment: "Consecration feast chooser, under a feast's name: its own date, the day that date falls on, and the year, like Moved from March 25, which is Holy Thursday in 2027"
-        )
+        guard AppLanguage.isSpanish else { return words }
+        let joined = words.replacingOccurrences(of: ", ", with: " ")
+        return joined.prefix(1).uppercased() + joined.dropFirst()
     }
 
     // MARK: - Custom Start Sheet
@@ -491,6 +418,68 @@ struct ConsecrationDateSelectionView: View {
             value: 34 - day,
             to: Calendar.current.startOfDay(for: Date())
         ) ?? Date()
+    }
+}
+
+// MARK: - FeastSpan
+
+/// YOU BEGIN over Day 1's date, a thin gold arrow, YOU CONSECRATE over the
+/// feast's, right-aligned. Each date stays on one line; where the two
+/// cannot stand side by side (the largest text, a narrow phone) they are
+/// stacked, left-aligned, and the arrow is left out.
+private struct FeastSpan: View {
+    let begin: String
+    let consecrate: String
+
+    private var beginLabel: String {
+        String(localized: "You begin", comment: "Consecration feast chooser, over Begin: small capitals over Day 1's date")
+    }
+
+    private var consecrateLabel: String {
+        String(localized: "You consecrate", comment: "Consecration feast chooser, over Begin: small capitals over the feast's date, the day of consecration")
+    }
+
+    var body: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(alignment: .lastTextBaseline, spacing: 12) {
+                part(beginLabel, begin, alignment: .leading)
+                Spacer(minLength: 0)
+                AppIcon("ph-arrow-right", size: 22)
+                    .foregroundColor(AppColors.gold.opacity(0.8))
+                    .alignmentGuide(.lastTextBaseline) { $0[.bottom] - 2 }
+                Spacer(minLength: 0)
+                part(consecrateLabel, consecrate, alignment: .trailing)
+            }
+
+            VStack(alignment: .leading, spacing: 12) {
+                part(beginLabel, begin, alignment: .leading)
+                part(consecrateLabel, consecrate, alignment: .leading)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(
+            String(
+                localized: "You begin \(begin). You consecrate \(consecrate).",
+                comment: "VoiceOver, consecration feast chooser: the two dates over Begin, Day 1's then the feast's"))
+    }
+
+    private func part(_ label: String, _ date: String, alignment: HorizontalAlignment) -> some View {
+        VStack(alignment: alignment, spacing: 6) {
+            Text(label.uppercased())
+                .font(AppFonts.labelFont(9.5))
+                .tracking(2.1)
+                .foregroundColor(AppColors.gold)
+                .lineLimit(1)
+                .fixedSize()
+
+            Text(date)
+                .font(AppFonts.bodyFont(17))
+                .foregroundColor(AppColors.cream)
+                .lineLimit(1)
+                .fixedSize()
+                .contentTransition(.opacity)
+        }
     }
 }
 

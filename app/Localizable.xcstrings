@@ -28162,6 +28162,42 @@
         }
       }
     },
+    "You begin" : {
+      "comment" : "Consecration feast chooser, over Begin: small capitals over Day 1's date",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comienzas"
+          }
+        }
+      }
+    },
+    "You begin %@. You consecrate %@." : {
+      "comment" : "VoiceOver, consecration feast chooser: the two dates over Begin, Day 1's then the feast's",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comienzas el %1$@. Te consagras el %2$@."
+          }
+        }
+      }
+    },
+    "You consecrate" : {
+      "comment" : "Consecration feast chooser, over Begin: small capitals over the feast's date, the day of consecration",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te consagras"
+          }
+        }
+      }
+    },
     "You can change the time or turn it off in Settings." : {
       "localizations" : {
         "es" : {
