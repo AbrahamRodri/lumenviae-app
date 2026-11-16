@@ -1389,11 +1389,20 @@ write concurrent code here:
   was page 4's). The handoff titled page 3 "About fifteen quiet minutes";
   it says "The same three steps each day" instead, because the app gives
   no estimate of time, and the second week adds a whole Rosary to every
-  day. The chooser (`ConsecrationDateSelectionView`) holds the chosen
-  feast in one card — the soonest by default, marked SOONEST in an
-  outlined badge (the design drew it filled gold; the page's one filled
-  gold shape is its act) — over three other feasts and "Show more
-  feasts", and its act is BEGIN ON OCTOBER 19 or BEGIN TODAY. Only a
+  day. The chooser (`ConsecrationDateSelectionView`, Abraham's pick,
+  option A with the one-sentence panel, 16 Nov 2026) lists all nine feasts
+  in the order they come, scrolling under a fixed foot (no Show more,
+  which made rows appear), and **never moves them**: a tap lights the row where it
+  stands (the soonest chosen first and marked SOONEST in an outlined
+  badge). A feast moved this time says why under its name ("Moved from
+  March 25, which is Holy Thursday in 2027", `movedNote`). Over the act,
+  one sentence and nothing else: "33 days, from Saturday, January 9 to
+  Thursday, February 11", each date kept on one line; the act is BEGIN ON JANUARY 9 or BEGIN TODAY,
+  and "Start at any day instead" beneath it. No year on the page: every
+  feast offered falls within the year ahead. It once lifted the chosen
+  feast into a card over the others, so the list reshuffled at each tap,
+  and stood a panel of dates, a countdown and a note over the act;
+  neither should come back. Only a
   preparation that can still begin on its Day 1 is offered
   (`MarianFeastDay.upcomingPreparations`), so each runs its 33 days to
   its feast; joining partway is "Start at any day instead". A start in

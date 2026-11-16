@@ -858,11 +858,29 @@
         }
       }
     },
+    "%@, %@, the soonest." : {
+      "comment" : "VoiceOver, consecration feast chooser: a feast's row (name, then date), the soonest of the feasts",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %2$@, la más próxima."
+          }
+        }
+      }
+    },
     "%@, %@." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "%1$@, %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "%1$@, %2$@."
           }
         }
@@ -3329,6 +3347,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "33 DÍAS CON MARÍA"
+          }
+        }
+      }
+    },
+    "33 days, from %@ to %@" : {
+      "comment" : "Consecration feast chooser, over Begin: what the chosen feast means, Day 1's date then the feast's, each with its weekday, like 33 days, from Saturday, January 9 to Thursday, February 11",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "33 días, del %1$@ al %2$@"
           }
         }
       }
@@ -7142,84 +7172,6 @@
         }
       }
     },
-    "Chooses this feast" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elige esta fiesta"
-          }
-        }
-      }
-    },
-    "Chosen: %@, %@. Day 1 is %@, %@." : {
-      "comment" : "VoiceOver, consecration feast chooser: the chosen feast (name, then date), then the date Day 1 falls on and how far off it is, like in 12 days",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Chosen: %1$@, %2$@. Day 1 is %3$@, %4$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elegida: %1$@, %2$@. El día 1 es %3$@, %4$@."
-          }
-        }
-      }
-    },
-    "Chosen: %@, %@. Day 1 is today." : {
-      "comment" : "VoiceOver, consecration feast chooser: the chosen feast (name, then date), beginning today",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Chosen: %1$@, %2$@. Day 1 is today."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elegida: %1$@, %2$@. El día 1 es hoy."
-          }
-        }
-      }
-    },
-    "Chosen: %@, %@. the soonest. Day 1 is %@, %@." : {
-      "comment" : "VoiceOver, consecration feast chooser: the chosen feast (name, then date), the soonest of the feasts, then the date Day 1 falls on and how far off it is, like in 12 days",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Chosen: %1$@, %2$@. the soonest. Day 1 is %3$@, %4$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elegida: %1$@, %2$@. La más próxima. El día 1 es %3$@, %4$@."
-          }
-        }
-      }
-    },
-    "Chosen: %@, %@. the soonest. Day 1 is today." : {
-      "comment" : "VoiceOver, consecration feast chooser: the chosen feast (name, then date), the soonest of the feasts, beginning today",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Chosen: %1$@, %2$@. the soonest. Day 1 is today."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elegida: %1$@, %2$@. La más próxima. El día 1 es hoy."
-          }
-        }
-      }
-    },
     "Classic Catholic books to read, or to listen to" : {
       "localizations" : {
         "es" : {
@@ -9134,6 +9086,18 @@
         }
       }
     },
+    "Easter Sunday" : {
+      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Domingo de Pascua"
+          }
+        }
+      }
+    },
     "Easter is not one day. Keep it with a decade." : {
       "comment" : "Daily prayer reminder notification in the Easter season: its text under the title. Warm and inviting, never scolding; under about 75 characters",
       "localizations" : {
@@ -10864,6 +10828,18 @@
         }
       }
     },
+    "Good Friday" : {
+      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viernes Santo"
+          }
+        }
+      }
+    },
     "Gospel" : {
       "comment" : "A kind of meditation: the Gospel passage of the mystery\nThe Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it",
       "localizations" : {
@@ -11494,6 +11470,30 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pausa tu turno"
+          }
+        }
+      }
+    },
+    "Holy Saturday" : {
+      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sábado Santo"
+          }
+        }
+      }
+    },
+    "Holy Thursday" : {
+      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jueves Santo"
           }
         }
       }
@@ -14105,6 +14105,18 @@
         }
       }
     },
+    "Monday of Holy Week" : {
+      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lunes Santo"
+          }
+        }
+      }
+    },
     "Montfort calls it an easy, short, perfect and secure way to union with Our Lord. What follows is his teaching, a part at a time." : {
       "localizations" : {
         "es" : {
@@ -14272,6 +14284,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mover, cambiar de tamaño u ocultar secciones"
+          }
+        }
+      }
+    },
+    "Moved from %@, which is %@ in %@" : {
+      "comment" : "Consecration feast chooser, under a feast's name: its own date, the day that date falls on, and the year, like Moved from March 25, which is Holy Thursday in 2027",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trasladada del %1$@, que en %3$@ es %2$@"
           }
         }
       }
@@ -15698,16 +15722,6 @@
         }
       }
     },
-    "OTHER FEASTS" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OTRAS FIESTAS"
-          }
-        }
-      }
-    },
     "October, the month of the Rosary" : {
       "comment" : "Daily prayer reminder notification in October, the month of the Rosary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters",
       "localizations" : {
@@ -17001,6 +17015,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pintura elegida"
+          }
+        }
+      }
+    },
+    "Palm Sunday" : {
+      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Domingo de Ramos"
           }
         }
       }
@@ -20848,16 +20874,6 @@
         }
       }
     },
-    "Show more feasts" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar más fiestas"
-          }
-        }
-      }
-    },
     "Show my intention in the reminder" : {
       "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
       "extractionState" : "manual",
@@ -20927,16 +20943,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostrar la partitura"
-          }
-        }
-      }
-    },
-    "Shows %lld more" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Muestra %lld más"
           }
         }
       }
@@ -21813,7 +21819,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mejor comenzar en cualquier día"
+            "value" : "Empezar en cualquier día"
           }
         }
       }
@@ -23014,12 +23020,14 @@
         }
       }
     },
-    "The 33 days end on a feast of Mary: your Consecration Day." : {
+    "The 33 days end on a feast of Mary." : {
+      "comment" : "Consecration feast chooser: the line under Choose your feast",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los 33 días terminan en una fiesta de María: tu día de consagración."
+            "value" : "Los 33 días terminan en una fiesta de María."
           }
         }
       }
@@ -26562,6 +26570,18 @@
         }
       }
     },
+    "Tuesday of Holy Week" : {
+      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Martes Santo"
+          }
+        }
+      }
+    },
     "Turn On in iPhone Settings" : {
       "comment" : "Settings: a row's name",
       "localizations" : {
@@ -27034,6 +27054,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "miércoles"
+          }
+        }
+      }
+    },
+    "Wednesday of Holy Week" : {
+      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Miércoles Santo"
           }
         }
       }
@@ -28007,16 +28039,6 @@
         }
       }
     },
-    "You can choose another feast until Day 1 begins." : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puedes elegir otra fiesta hasta que comience el día 1."
-          }
-        }
-      }
-    },
     "You completed this consecration. Many renew it each year." : {
       "localizations" : {
         "es" : {
@@ -28439,16 +28461,6 @@
         }
       }
     },
-    "Your first day's prayers open right away." : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las oraciones de tu primer día se abren enseguida."
-          }
-        }
-      }
-    },
     "Your iPhone will then ask once whether Lumen Viae may send reminders. You can change the time or turn it off in Settings." : {
       "localizations" : {
         "es" : {
@@ -28735,6 +28747,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "una novena del Rosario"
+          }
+        }
+      }
+    },
+    "a Sunday of Lent" : {
+      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un domingo de Cuaresma"
           }
         }
       }
@@ -29034,6 +29058,18 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "in Easter Week" : {
+      "comment" : "Consecration feast chooser, why a feast moved: its own date falls in the week after Easter Sunday that year; stands after which is, like which is in Easter Week in 2035",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "la semana de Pascua"
           }
         }
       }
@@ -29497,6 +29533,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "iniciales"
+          }
+        }
+      }
+    },
+    "the Sunday after Easter" : {
+      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "el domingo después de Pascua"
           }
         }
       }
