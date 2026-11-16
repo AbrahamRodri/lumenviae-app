@@ -62,8 +62,10 @@ struct TodaysMysteriesView: View {
                     LumenMark().frame(width: 15, height: 22)
                     Kicker(text: day.todayLine)
                 }
-                Title(text: day.mysteries.title, size: 23).padding(.top, 10)
-                ItalicLine(text: day.mysteries.firstLine).padding(.top, 6)
+                // A step down, so a title on two lines leaves the first
+                // mystery its two lines too (Misterios / Gozosos)
+                Title(text: day.mysteries.title, size: 21).padding(.top, 8)
+                ItalicLine(text: day.mysteries.firstLine).padding(.top, 4)
                 Spacer(minLength: 0)
                 GoLink(text: entry.snapshot?.labels.begin ?? "")
             }
