@@ -478,7 +478,7 @@ struct NovenaSpanishTests {
 @Suite("Which novenas are prayed day by day")
 struct NovenaWithTheRosaryTests {
     /// Only a novena whose days pray the Rosary has a page of its own and
-    /// PRAY IT AS A NOVENA; the rest are read a day at a time in the book
+    /// PRAY IT WITH THE ROSARY; the rest are read a day at a time in the book
     @Test func onlyANovenaPrayedWithTheRosaryHasItsPage() throws {
         let book = LibraryContent.prayerBook.novenas
         let knots = try #require(book.first { $0.id == "undoer_of_knots" })

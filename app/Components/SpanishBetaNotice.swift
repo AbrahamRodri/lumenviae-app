@@ -81,6 +81,9 @@ struct SpanishBetaStrip: View {
     let onOpen: () -> Void
     let onClose: () -> Void
 
+    /// The strip's height under the clock
+    static let height: CGFloat = 44
+
     var body: some View {
         HStack(spacing: 10) {
             Button(action: onOpen) {
@@ -138,7 +141,7 @@ struct SpanishBetaStrip: View {
         }
         .padding(.leading, 20)
         .padding(.trailing, 4)
-        .frame(height: 44)
+        .frame(height: Self.height)
         .background {
             Color.black
                 .ignoresSafeArea(edges: .top)
@@ -161,6 +164,10 @@ struct SpanishBetaSheet: View {
     let onDone: () -> Void
 
     @Environment(\.openURL) private var openURL
+
+    /// Set when no mail app took the report's `mailto:` and the address
+    /// was copied instead: a phone without Apple Mail, or with none set up
+    @State private var copiedAddress = false
 
     var body: some View {
         ScrollView {
@@ -204,7 +211,20 @@ struct SpanishBetaSheet: View {
                         .frame(height: AppLine.hairline)
                         .padding(.horizontal, SheetMetrics.gutter)
                     Button {
-                        if let url = SpanishBeta.reportURL { openURL(url) }
+                        guard let url = SpanishBeta.reportURL else { return }
+                        // With no mail app to take it, the tap once did
+                        // nothing at all: the address is copied instead,
+                        // and the sheet says so beneath the row
+                        openURL(url) { accepted in
+                            guard !accepted else { return }
+                            UIPasteboard.general.string = Constants.supportEmail
+                            withAnimation(Motion.crossfade) { copiedAddress = true }
+                            AccessibilityNotification.Announcement(
+                                String(
+                                    localized: "Address copied",
+                                    comment: "Spanish beta notice sheet: VoiceOver announcement when the support address was copied because no mail app could open")
+                            ).post()
+                        }
                     } label: {
                         SheetRow(
                             String(
@@ -216,6 +236,22 @@ struct SpanishBetaSheet: View {
                         ) { SheetRowAccessoryView(accessory: .caret) }
                     }
                     .buttonStyle(.plain)
+                    if copiedAddress {
+                        Text(
+                            "Mail couldn't open, so we copied our address: \(Constants.supportEmail). Paste it in your email app.",
+                            comment:
+                                "Spanish beta notice sheet, under Report a mistake when no mail app could open: the support address was copied to the clipboard"
+                        )
+                        .font(AppFonts.italicFont(15))
+                        .foregroundColor(AppColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        // Under the row's name, as the line under Use the
+                        // app in English stands, not under its glyph
+                        .padding(.leading, SheetMetrics.gutter + 36)
+                        .padding(.trailing, SheetMetrics.gutter)
+                        .padding(.bottom, 10)
+                        .transition(.opacity)
+                    }
                     Button {
                         AppLanguage.openLanguageSettings()
                     } label: {
@@ -229,6 +265,20 @@ struct SpanishBetaSheet: View {
                         ) { SheetRowAccessoryView(accessory: .caret) }
                     }
                     .buttonStyle(.plain)
+                    // iOS shows the app's Language row only once the phone
+                    // has a second language: a Spanish-only phone opened
+                    // Settings with nothing to choose
+                    Text(
+                        "If you don't see Language, add English in Settings > General > Language & Region.",
+                        comment:
+                            "Spanish beta notice sheet, under Use the app in English: what to do when Settings shows no Language row (a phone with one language)"
+                    )
+                    .font(AppFonts.italicFont(15))
+                    .foregroundColor(AppColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.leading, SheetMetrics.gutter + 36)
+                    .padding(.trailing, SheetMetrics.gutter)
+                    .padding(.bottom, 10)
                 }
                 .padding(.top, 18)
 
