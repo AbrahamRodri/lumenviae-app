@@ -9,7 +9,7 @@
 //  behind them (Abraham, 15 Nov 2026: "it cuts at the top and that
 //  doesnt look good it might as well be all dark"); the order's painting
 //  comes forward at the Amen. The page is the prayer, a quiet
-//  head (×, the order, its beads, ALOUD or SILENT) and one way on at the
+//  head (×, the order, its beads, the Silent | Audio switch) and one way on at the
 //  foot: NEXT with the next prayer's name, or AMEN on the last.
 //
 //  Aloud, the voice reads each prayer (the server's ElevenLabs
@@ -23,8 +23,9 @@
 //
 //  The Angelus rings the church bell as it begins and as it ends — when
 //  it is prayed aloud. In silence the book makes no sound at all, and
-//  until the reader has once said which it is to be, it asks before it
-//  makes any, in the foot where NEXT will stand (`howToPrayQuestion`).
+//  it is silent until the reader taps Audio on the head's switch: it
+//  never asks, and never speaks unbidden (Abraham's pick, option B,
+//  16 Nov 2026).
 //
 
 import SwiftUI
@@ -57,7 +58,9 @@ struct PrayAlongView: View {
 
     /// Each prayer's stanzas measured once, for following the voice
     @State private var measures = StanzaMeasures()
-    @State private var asksHowToPray = false
+    /// Whether the page has made its first sound, the Angelus's bell
+    /// with it; a later Audio only takes the voice up again
+    @State private var hasSounded = false
 
     /// A prayer named in a direction ("Our Father, Hail Mary"), opened to read
     @State private var saidPrayer: PrayerPage.SaidPrayer?
@@ -227,9 +230,10 @@ struct PrayAlongView: View {
 
     // MARK: - Header
 
-    /// ×, the order's name, ALOUD or SILENT and the menu; and beneath,
-    /// the beads. The name stands in the room between the two sides,
-    /// which the menu made too narrow to keep it centred on the glass.
+    /// ×, the order's name, the Silent | Audio switch and the menu; and
+    /// beneath, the beads. The name stands in the room between the two
+    /// sides, and gives way first when there is not room for all: the
+    /// switch keeps its whole width at any text size and in Spanish.
     private var header: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
@@ -249,12 +253,15 @@ struct PrayAlongView: View {
                     .tracking(2.5)
                     .foregroundColor(AppColors.goldLight)
                     .lineLimit(1)
+                    .truncationMode(.tail)
                     .minimumScaleFactor(0.75)
                     .padding(.horizontal, 8)
                     .frame(maxWidth: .infinity)
                     .accessibilityAddTraits(.isHeader)
 
                 voiceSwitch
+                    .fixedSize()
+                    .layoutPriority(1)
 
                 moreMenu
             }
@@ -267,38 +274,64 @@ struct PrayAlongView: View {
         .padding(.top, 2)
     }
 
-    /// The way of praying, said in a word: a tap switches it. A speaker
-    /// glyph read as a volume control and said nothing of silence.
+    /// The way of praying: one capsule of two halves, Silent and Audio,
+    /// the chosen half filled gold. Silent until Audio is tapped. Each
+    /// half answers to 44 points though drawn 30 tall. It was a single
+    /// pill reading VOICE or SILENT, with a question in the foot the
+    /// first time; Abraham found that cluttered.
     private var voiceSwitch: some View {
-        Button {
-            toggleAloud()
-        } label: {
-            HStack(spacing: 7) {
-                if aloud {
-                    Circle()
-                        .fill(AppColors.gold)
-                        .frame(width: 6, height: 6)
-                        .shadow(color: AppColors.gold.opacity(0.8), radius: 3)
-                }
-                Text(aloud ? "VOICE" : "SILENT")
-                    .font(AppFonts.labelFont(9.5))
-                    .tracking(2)
-                    .foregroundColor(aloud ? AppColors.goldLight : AppColors.cream.opacity(0.85))
-            }
-            .padding(.horizontal, 12)
-            .frame(height: 30)
-            .overlay(
-                Capsule()
-                    .strokeBorder(AppColors.gold.opacity(aloud ? 0.55 : 0.4), lineWidth: AppLine.hairline)
-            )
-            .frame(minHeight: 44)
-            .contentShape(Rectangle())
+        HStack(spacing: 0) {
+            voiceHalf(Self.silentWord, chosen: !aloud) { if aloud { setAloud(false) } }
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.55))
+                .frame(width: AppLine.hairline, height: 30)
+            voiceHalf(Self.audioWord, chosen: aloud) { if !aloud { setAloud(true) } }
         }
-        .buttonStyle(QuietGlyphButtonStyle())
-        .animation(Motion.crossfade, value: aloud)
-        .accessibilityLabel(aloud ? Text("Praying with a voice") : Text("Praying in silence"))
-        .accessibilityHint(aloud ? Text("Double-tap to pray in silence") : Text("Double-tap to hear a voice read the prayers"))
+        .frame(height: 30)
+        .overlay(
+            Capsule()
+                .strokeBorder(AppColors.gold.opacity(0.55), lineWidth: AppLine.hairline)
+        )
+        .clipShape(Capsule())
+        .frame(minHeight: 44)
+        .contentShape(Rectangle())
+        .animation(Motion.choice, value: aloud)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(Text(PrayerBookAudio.title))
     }
+
+    private func voiceHalf(_ word: String, chosen: Bool, choose: @escaping () -> Void) -> some View {
+        Button(action: choose) {
+            Text(word.uppercased())
+                .font(AppFonts.labelFont(9.5))
+                .tracking(9.5 * 0.16)
+                .lineLimit(1)
+                .foregroundColor(chosen ? AppColors.background : AppColors.cream.opacity(0.9))
+                .padding(.horizontal, 14)
+                .frame(height: 30)
+                .background {
+                    if chosen {
+                        LinearGradient(
+                            colors: [AppColors.goldLight, AppColors.gold],
+                            startPoint: .leading, endPoint: .trailing)
+                    }
+                }
+                // Drawn 30 tall, touched 44
+                .padding(.vertical, 7)
+                .contentShape(Rectangle())
+                .padding(.vertical, -7)
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityAddTraits(chosen ? [.isSelected] : [])
+    }
+
+    /// The switch's two words, as Settings says them too
+    static let silentWord = String(
+        localized: "Silent",
+        comment: "The pray-along screen's switch, and Settings' Prayers Tab Audio: the half that keeps the book silent, beside Audio")
+    static let audioWord = String(
+        localized: "Audio",
+        comment: "The pray-along screen's switch, and Settings' Prayers Tab Audio: the half that has a voice read the prayers, beside Silent; also Settings' row name")
 
     /// What the page does less often, for the prayer on it: its
     /// language, Save, Share, Learn by heart and Hear it sung. The prayer's own
@@ -632,7 +665,7 @@ struct PrayAlongView: View {
 
                     // Clear of the foot, so the last line can be read
                     // above NEXT
-                    Color.clear.frame(height: asksHowToPray ? 280 : 220)
+                    Color.clear.frame(height: 220)
                 }
                 .opacity(pageOpacity)
             }
@@ -710,27 +743,20 @@ struct PrayAlongView: View {
     /// or when a prayer has none.
     private var foot: some View {
         VStack(spacing: 12) {
-            if asksHowToPray {
-                howToPrayQuestion
-                    .transition(.opacity)
-            } else {
-                way
-                    .transition(.opacity)
-            }
+            way
         }
-        .animation(Motion.crossfade, value: asksHowToPray)
         .padding(.horizontal, 22)
         .padding(.top, 64)
         .padding(.bottom, 34)
         .frame(maxWidth: .infinity)
         .background(
-            // While it asks, the ground is whole under the two choices,
-            // which no prayer line may show through
+            // The ground is whole under NEXT and AMEN, which no prayer
+            // line may show through
             LinearGradient(
                 stops: [
                     .init(color: AppColors.background.opacity(0), location: 0),
-                    .init(color: AppColors.background.opacity(0.92), location: asksHowToPray ? 0.2 : 0.4),
-                    .init(color: AppColors.background, location: asksHowToPray ? 0.3 : 0.7)
+                    .init(color: AppColors.background.opacity(0.92), location: 0.4),
+                    .init(color: AppColors.background, location: 0.7)
                 ],
                 startPoint: .top,
                 endPoint: .bottom
@@ -740,52 +766,6 @@ struct PrayAlongView: View {
             .ignoresSafeArea(edges: .bottom)
             .allowsHitTesting(false)
         )
-    }
-
-    /// The book's one choice, offered the first time it would speak, in
-    /// the foot where NEXT will stand: the prayer it is about stays on the
-    /// page above it. Two answers and no question (Abraham, 16 Nov 2026:
-    /// "id rather it just say silent , audio"); a sentence once asked "With
-    /// a voice, or in silence?" over them, and a sheet before that asked it
-    /// over the lower half of the prayer. Answering is the way on; VOICE or
-    /// SILENT at the head of the page owns the choice afterward.
-    private var howToPrayQuestion: some View {
-        HStack(spacing: 12) {
-            howToPrayAnswer(
-                String(localized: "Silent", comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the choice that keeps the book silent, beside Audio"),
-                icon: "ph-book-open", aloud: false,
-                hint: String(localized: "Prays these prayers in silence, with no voice", comment: "VoiceOver hint on the pray-along's first-time Silent choice: what choosing it does"))
-            howToPrayAnswer(
-                String(localized: "Audio", comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the choice that has a voice read the prayers, beside Silent; also Settings' row name"),
-                icon: "ph-speaker-high", aloud: true,
-                hint: String(localized: "A voice reads these prayers aloud", comment: "VoiceOver hint on the pray-along's first-time Audio choice: what choosing it does"))
-        }
-    }
-
-    private func howToPrayAnswer(_ title: String, icon: String, aloud chosen: Bool, hint: String) -> some View {
-        Button {
-            setAloud(chosen)
-        } label: {
-            HStack(spacing: 8) {
-                AppIcon(icon, size: 16)
-                    .foregroundColor(AppColors.gold)
-                Text(title)
-                    .font(AppFonts.readingFont(17))
-                    .foregroundColor(AppColors.cream)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-            }
-            .padding(.horizontal, 14)
-            .frame(maxWidth: .infinity, minHeight: 56)
-            .background(Capsule().fill(AppColors.background.opacity(0.35)))
-            .overlay(
-                Capsule()
-                    .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline)
-            )
-            .contentShape(Capsule())
-        }
-        .buttonStyle(SacredCardButtonStyle())
-        .accessibilityHint(hint)
     }
 
     /// NEXT or AMEN, the pause disc beside it aloud
@@ -1032,17 +1012,16 @@ struct PrayAlongView: View {
         voice.onPrevious = { if index > 0 { goTo(index - 1) } }
         voice.onTransport = { transport($0) }
 
-        if store.hasChosenAloud {
-            startSounding()
-        } else {
-            asksHowToPray = true
-        }
+        // Silent until Audio is tapped; a reader who chose Audio before
+        // is read to at once, as they asked
+        startSounding()
     }
 
     /// The page's first sound, once the reader has said the book may
     /// make one: the Angelus's bell, then the voice. In silence, nothing.
     private func startSounding() {
         guard isShowing, aloud, !finished else { return }
+        hasSounded = true
         if isAngelus { ringBell() }
         startVoice()
     }
@@ -1098,18 +1077,10 @@ struct PrayAlongView: View {
         turn.arrived()
     }
 
-    /// VOICE or SILENT at the head: while the foot still asks, a tap on
-    /// it is the answer
-    private func toggleAloud() {
-        setAloud(!aloud)
-    }
-
-    /// The one way the page's choice is made, from the head's switch or
-    /// the foot's question: the question is answered, and the voice
-    /// starts or stops to match, whichever place was tapped first
+    /// The one way the page's choice is made, from the head's switch: the
+    /// voice starts or stops to match
     private func setAloud(_ chosen: Bool) {
-        let answering = asksHowToPray
-        asksHowToPray = false
+        let firstSound = !hasSounded
         store.chooseAloud(chosen)
         advanceTask?.cancel()
         advanceTask = nil
@@ -1117,7 +1088,7 @@ struct PrayAlongView: View {
         if aloud {
             // The page's first sound, the Angelus's bell included, when
             // this is the answer; the voice again otherwise
-            if answering { startSounding() } else { startVoice() }
+            if firstSound { startSounding() } else { startVoice() }
         } else {
             voice.stop()
             litStanza = nil

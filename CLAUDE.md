@@ -858,14 +858,14 @@ the page they serve):
   Then **After the Rosary**, one row ("None chosen", or the chosen
   names) opening the prayers said after the closing prayer (For the
   Pope's intentions, Memorare, Saint Michael), never in the chaplet
-- **Prayers Tab** — the Prayer Book's one choice, its **Audio**, In
-  Silence | With a Voice, in the same row and pill (`PrayerBookAudio`), which
-  sets `PrayerBookStore.praysAloud`. It is kept apart from the
+- **Prayers Tab** — the Prayer Book's one choice, its **Audio**,
+  Silent | Audio, the pray-along switch's own words, in the same row and
+  pill (`PrayerBookAudio`), which sets `PrayerBookStore.praysAloud`. It is kept apart from the
   Rosary's Audio on purpose: the Rosary's choice decides whether the
   voice leads every prayer or reads the meditation alone, the book's
-  whether it speaks at all. Until the reader answers, the pill shows
-  the default, With a Voice, and its line says the book will ask. Drawing the
-  row answers nothing; a tap on either segment does, the lit one too
+  whether it speaks at all. Until the reader chooses, the pill shows
+  Silent, as the book is. Drawing the row chooses nothing; a tap on
+  either segment does, the lit one too
 - **Devotion** — Daily Prayers (→ `RuleEditorSheet`; hidden while the
   Chapel is archived), Prayer Record, Journal,
   Daily Mysteries (Traditional | Modern → `MysteryScheduleSheet`, the row
@@ -2504,11 +2504,15 @@ write concurrent code here:
   (`PrayAlongGround`) with a feathered veil riding on the words
   (`WordsVeil`), and the two met in a hard band under the head; don't
   bring either back. A quiet head — ×, the
-  order's name, and VOICE or SILENT as a word in an outlined capsule
-  (the speaker glyph it replaced read as a volume control) — over the
+  order's name, and the **Silent | Audio switch**, one capsule of two
+  halves (Abraham's pick, option B, 16 Nov 2026), the chosen half filled
+  gold with dark text, drawn 30 points tall and touched at 44, one
+  control to VoiceOver with the chosen half selected; the name gives
+  way first (it shrinks and truncates), never the switch, at large text
+  or in Spanish (En silencio | Audio). A speaker glyph, then VOICE or
+  SILENT as one word in a capsule, stood there before — over the
   order's beads, each a door answering to 44 points where the width
-  allows ("6 of 9, The Act of Faith" to VoiceOver). Beside VOICE or
-  SILENT a ··· (`ph-dots-three`, "More" to VoiceOver) is a `Menu` of
+  allows ("6 of 9, The Act of Faith" to VoiceOver). Beside the switch a ··· (`ph-dots-three`, "More" to VoiceOver) is a `Menu` of
   what is done less often with the prayer on the page: its language
   (English, Latin, Both, only where it has Latin, written to the app's
   prayer language), Save or Remove from Saved (its words said for three
@@ -2542,21 +2546,16 @@ write concurrent code here:
   small-print trim — "The day is given back. Rest in His peace." — and
   must not come back), DONE,
   Save this prayer (one prayer, not yet saved) and Pray again.
-  **The book asks before its first sound**
-  (`howToPrayQuestion`, once, until `hasChosenAloud`): these are
-  prayers for the pew, the tabernacle and the bedside, and it once began
-  reading the examination of conscience aloud the moment PRAY was
-  touched. The question stands in the foot where NEXT will stand, In
-  silence beside With a voice, so the prayer it is about stays on the
-  page above it; a sheet with the order's painting asked it over the
-  lower half of the first prayer until Nov 2026. It is asked
-  on the pray-along screen itself, from every door, while the reader has
-  not chosen: the order page's PRAY and the holy card's PRAY answered it
-  once, from a speaker and a line beside them, both gone since the
-  "Chant shelves and prayer cards" pick; afterwards VOICE or SILENT at
-  the head of the page owns the choice. The
-  same choice stands in Settings → Prayer Experience as the Prayers
-  Tab row, and a choice made there answers the question before it is asked;
+  **The book is silent until Audio is tapped**: these are prayers for
+  the pew, the tabernacle and the bedside, and it once began reading the
+  examination of conscience aloud the moment PRAY was touched. A reader
+  who has never chosen (`hasChosenAloud`) prays in silence, and nothing
+  asks: the first time, a question stood in the foot where NEXT stands
+  (`howToPrayQuestion`, two answers, In silence and With a voice), and a
+  sheet over the first prayer before that; Abraham found both cluttered
+  ("id rather it just say silent , audio"), and neither should come
+  back. The same choice stands in Settings → Prayers Tab as its Audio
+  row, in the same two words;
   it never follows the Rosary's Audio. Aloud,
   each prayer is the server's ElevenLabs
   recording in the chosen narration voice (below), the stanza being said

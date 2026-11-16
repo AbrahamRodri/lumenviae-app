@@ -4291,17 +4291,6 @@
         }
       }
     },
-    "A voice reads these prayers aloud" : {
-      "comment" : "VoiceOver hint on the pray-along's first-time Audio choice: what choosing it does",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una voz lee estas oraciones en voz alta"
-          }
-        }
-      }
-    },
     "A warm, reverent voice" : {
       "comment" : "Settings, narration voice: the line under the man's voice describing it",
       "localizations" : {
@@ -5523,7 +5512,7 @@
       }
     },
     "Audio" : {
-      "comment" : "The pray-along's foot, the first time the Prayers tab's book would speak: the choice that has a voice read the prayers, beside Silent; also Settings' row name",
+      "comment" : "The pray-along screen's switch, and Settings' Prayers Tab Audio: the half that has a voice read the prayers, beside Silent; also Settings' row name",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -11896,17 +11885,6 @@
         }
       }
     },
-    "In Silence" : {
-      "comment" : "Prayers Tab Audio option: no sound",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En silencio"
-          }
-        }
-      }
-    },
     "In Time of Trouble" : {
       "comment" : "Prayers tab: the name of an order of prayer, a few prayers said together",
       "localizations" : {
@@ -15062,14 +15040,14 @@
         }
       }
     },
-    "Nine days with the Rosary; the app keeps your day" : {
-      "comment" : "Pray-along page, a novena read as text: the line under PRAY IT AS A NOVENA",
+    "Nine days, one day at a time. The app keeps your day." : {
+      "comment" : "Pray-along page, a novena read as text: the line under PRAY IT WITH THE ROSARY",
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nueve días con el Rosario; la app lleva la cuenta de tu día"
+            "value" : "Nueve días, uno a la vez. La app lleva la cuenta de tu día."
           }
         }
       }
@@ -15367,17 +15345,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sin comenzar"
-          }
-        }
-      }
-    },
-    "Not chosen yet. You'll be asked the first time you pray from the Prayers tab." : {
-      "comment" : "Settings, Prayers Tab Audio: the line before the reader has chosen",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aún sin elegir. Se te preguntará la primera vez que reces desde la pestaña Oraciones."
           }
         }
       }
@@ -16870,14 +16837,14 @@
         }
       }
     },
-    "PRAY IT AS A NOVENA" : {
+    "PRAY IT WITH THE ROSARY" : {
       "comment" : "Pray-along page, a novena read as text: the row leading to the novena prayed day by day",
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "REZARLA COMO NOVENA"
+            "value" : "RÉZALA CON EL ROSARIO"
           }
         }
       }
@@ -18338,17 +18305,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Los reza como tu primer Rosario"
-          }
-        }
-      }
-    },
-    "Prays these prayers in silence, with no voice" : {
-      "comment" : "VoiceOver hint on the pray-along's first-time Silent choice: what choosing it does",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reza estas oraciones en silencio, sin voz"
           }
         }
       }
@@ -21047,7 +21003,7 @@
       }
     },
     "Silent" : {
-      "comment" : "The pray-along's foot, the first time the Prayers tab's book would speak: the choice that keeps the book silent, beside Audio",
+      "comment" : "The pray-along screen's switch, and Settings' Prayers Tab Audio: the half that keeps the book silent, beside Audio",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -27719,17 +27675,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Con María, contemplamos el rostro de Cristo en cada misterio."
-          }
-        }
-      }
-    },
-    "With a Voice" : {
-      "comment" : "Prayers Tab Audio option: a voice reads the prayers",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con voz"
           }
         }
       }

@@ -125,7 +125,8 @@ struct NovenaDayButtons: View {
     }
 }
 
-/// PRAY IT AS A NOVENA: the quiet way to the novena itself
+/// PRAY IT WITH THE ROSARY: the quiet way to the novena itself, prayed
+/// day by day (Abraham's pick, option 2, 16 Nov 2026)
 struct PrayAsNovenaRow: View {
     let action: () -> Void
 
@@ -135,7 +136,7 @@ struct PrayAsNovenaRow: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(
                         String(
-                            localized: "PRAY IT AS A NOVENA",
+                            localized: "PRAY IT WITH THE ROSARY",
                             comment:
                                 "Pray-along page, a novena read as text: the row leading to the novena prayed day by day"
                         )
@@ -145,8 +146,8 @@ struct PrayAsNovenaRow: View {
                     .foregroundColor(AppColors.gold)
                     Text(
                         String(
-                            localized: "Nine days with the Rosary; the app keeps your day",
-                            comment: "Pray-along page, a novena read as text: the line under PRAY IT AS A NOVENA")
+                            localized: "Nine days, one day at a time. The app keeps your day.",
+                            comment: "Pray-along page, a novena read as text: the line under PRAY IT WITH THE ROSARY")
                     )
                     .font(AppFonts.readingItalicFont(15))
                     .foregroundColor(AppColors.cream.opacity(0.85))
