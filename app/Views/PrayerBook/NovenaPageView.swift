@@ -420,13 +420,65 @@ struct NovenaPageView: View {
                         comment: "Novena page: the heading over the days of a novena not nine days long")
             )
             .padding(.bottom, 6)
-            ForEach(1...max(novena.length, 1), id: \.self) { day in
-                dayRow(day, novena: novena)
-                if day < novena.length {
-                    Rectangle().fill(AppColors.gold.opacity(0.14)).frame(height: AppLine.hairline)
+            if progress == nil, let finished = store.lastFinished(novena.id) {
+                finishedDays(finished, length: novena.length)
+            } else if progress == nil {
+                // Not begun: nine bare DAY rows read as unfinished, so the
+                // days are their dashes, as on the begun page and the
+                // Prayers card, and one line says what the rows become
+                VStack(alignment: .leading, spacing: 12) {
+                    NovenaDashes(days: NovenaDays.of(nil, length: novena.length, here: 0))
+                        .accessibilityHidden(true)
+                    Text(Self.notBegunDaysLine(length: novena.length))
+                        .font(AppFonts.readingItalicFont(16))
+                        .foregroundColor(AppColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.top, 6)
+            } else {
+                ForEach(1...max(novena.length, 1), id: \.self) { day in
+                    dayRow(day, novena: novena)
+                    if day < novena.length {
+                        Rectangle().fill(AppColors.gold.opacity(0.14)).frame(height: AppLine.hairline)
+                    }
                 }
             }
         }
+    }
+
+    /// A novena finished and not begun again (design's FINISHED.md): its
+    /// days all gold, when they were prayed, and the intention kept, in
+    /// place of the line a novena never begun carries
+    private func finishedDays(_ finished: FinishedNovena, length: Int) -> some View {
+        let range = NovenaSpan.range(from: finished.firstDate(length: length), to: finished.lastDate())
+        return VStack(alignment: .leading, spacing: 12) {
+            NovenaDashes(days: NovenaDays(length: length, prayed: Set(1...max(length, 1)), here: 0, open: []))
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(NovenaSpan.spoken(length: length, range: range))
+            Text(NovenaSpan.prayedLine(range))
+                .font(AppFonts.readingItalicFont(16))
+                .foregroundColor(AppColors.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+            if let intention = finished.intention {
+                Text(intention)
+                    .font(AppFonts.readingItalicFont(19))
+                    .foregroundColor(AppColors.cream)
+                    .lineLimit(3)
+                    .truncationMode(.tail)
+            }
+        }
+        .padding(.top, 6)
+    }
+
+    /// The line under the days of a novena not yet begun
+    static func notBegunDaysLine(length: Int) -> String {
+        length == 9
+            ? String(
+                localized: "Nine days in a row. Once you begin, each day shows its date here.",
+                comment: "Novena page, not begun: under THE NINE DAYS and their nine dashes")
+            : String(
+                localized: "Once you begin, each day shows its date here.",
+                comment: "Novena page, not begun: under THE DAYS of a novena not nine days long")
     }
 
     private func dayRow(_ day: Int, novena: PrayerBookDocument.Novena) -> some View {
@@ -1141,6 +1193,9 @@ struct NovenaShelfCard: View {
 
     private var line: String {
         guard let progress else {
+            if let finished = NovenaStore.shared.lastFinished(novena.id) {
+                return NovenaSpan.lastPrayed(finished.lastDate())
+            }
             return String(localized: "Begin any day", comment: "Prayers tab, novena card: a novena not begun")
         }
         switch progress.standing(on: now) {

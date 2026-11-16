@@ -146,10 +146,13 @@ struct ContentView: View {
                 // without any alpha over the stack
                 .transition(.identity)
                 .overlay {
+                    // At rest the veil is clear: a launch that opens on the
+                    // tab (no turn to it) once left it standing, the page
+                    // blank. Each turn to the tab raises it and lifts it
                     AppColors.appGradient
                         .ignoresSafeArea()
                         .allowsHitTesting(false)
-                        .keyframeAnimator(initialValue: 1.0, trigger: consecrationArrivals) { view, opacity in
+                        .keyframeAnimator(initialValue: 0.0, trigger: consecrationArrivals) { view, opacity in
                             view.opacity(opacity)
                         } keyframes: { _ in
                             MoveKeyframe(1)

@@ -238,6 +238,33 @@ struct MarianFeastDayTests {
         #expect(MarianFeastDay.feast(endingPreparationFrom: day(2026, 6, 1)) == nil, "a start on no feast's count")
     }
 
+    @Test func theAnnunciationIsKeptWhereThe1960CalendarKeepsIt() throws {
+        let annunciation = try #require(MarianFeastDay.find("annunciation"))
+        // 2027: 25 March is Holy Thursday, so the Monday after Low Sunday
+        #expect(monthDay(annunciation.date(for: 2027)) == [4, 5])
+        #expect(monthDay(annunciation.startDate(for: 2027)) == [3, 3])
+        // 2029: 25 March is Palm Sunday; 2035: Easter Sunday (25 March)
+        #expect(monthDay(annunciation.date(for: 2029)) == [4, 9])
+        #expect(monthDay(annunciation.date(for: 2035)) == [4, 2])
+        // 2018: 25 March is Palm Sunday, so Monday after Low Sunday (9 April)
+        #expect(monthDay(annunciation.date(for: 2018)) == [4, 9])
+        // 2012: a Sunday of Lent, so the Monday
+        #expect(monthDay(annunciation.date(for: 2012)) == [3, 26])
+        // 2026: a Wednesday, kept on the day
+        #expect(monthDay(annunciation.date(for: 2026)) == [3, 25])
+        // Another feast is never moved, even on a Sunday (15 Aug 2027)
+        #expect(monthDay(try #require(MarianFeastDay.find("assumption")).date(for: 2027)) == [8, 15])
+    }
+
+    @Test func aPreparationForAMovedAnnunciationEndsOnTheDayItIsKept() throws {
+        let annunciation = try #require(MarianFeastDay.find("annunciation"))
+        let preparation = try #require(annunciation.upcomingPreparation(from: day(2026, 12, 1)))
+        #expect(monthDay(preparation.feastDate) == [4, 5])
+        #expect(monthDay(preparation.start) == [3, 3])
+        #expect(MarianFeastDay.feast(endingPreparationFrom: preparation.start) == annunciation)
+        #expect(MarianFeastDay.feast(keptOn: day(2027, 3, 25)) == nil, "Holy Thursday keeps no Marian feast")
+    }
+
     @Test func everyFeastIsFoundByItsId() {
         let ids = MarianFeastDay.all.map(\.id)
         #expect(Set(ids).count == ids.count)
