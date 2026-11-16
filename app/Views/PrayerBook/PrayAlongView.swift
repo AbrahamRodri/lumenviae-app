@@ -665,7 +665,7 @@ struct PrayAlongView: View {
 
                     // Clear of the foot, so the last line can be read
                     // above NEXT
-                    Color.clear.frame(height: 220)
+                    Color.clear.frame(height: aloud ? 280 : 220)
                 }
                 .opacity(pageOpacity)
             }
@@ -750,17 +750,20 @@ struct PrayAlongView: View {
         .padding(.bottom, 34)
         .frame(maxWidth: .infinity)
         .background(
-            // The ground is whole under NEXT and AMEN, which no prayer
-            // line may show through
-            LinearGradient(
-                stops: [
-                    .init(color: AppColors.background.opacity(0), location: 0),
-                    .init(color: AppColors.background.opacity(0.92), location: 0.4),
-                    .init(color: AppColors.background, location: 0.7)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+            // The words fade out over the foot's first 64 points, and
+            // beneath them the ground is whole: under NEXT and AMEN, and
+            // under the note above them aloud, which no prayer line may
+            // show through. It faded by proportion, and a note made the
+            // foot taller, so the note sat on fading words.
+            VStack(spacing: 0) {
+                LinearGradient(
+                    colors: [AppColors.background.opacity(0), AppColors.background],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 64)
+                AppColors.background
+            }
             // A view set as a background stops at the safe area; the words
             // must not show beneath the act, under the home indicator
             .ignoresSafeArea(edges: .bottom)
