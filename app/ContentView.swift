@@ -50,6 +50,7 @@ struct ContentView: View {
     @AppStorage(SpanishBeta.closedOnKey) private var spanishStripClosedOn = ""
     /// Read on coming to the front, so a strip closed yesterday returns
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.modelContext) private var modelContext
     @State private var spanishStripDay = SpanishBeta.dayStamp(Date())
     @State private var pendingWhatsNewRoute: AppRoute?
 
@@ -334,6 +335,23 @@ struct ContentView: View {
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { spanishStripDay = SpanishBeta.dayStamp(Date()) }
+            // The widgets' snapshot, on coming and going: a day prayed in
+            // a page that keeps no hook of its own is caught here
+            WidgetSnapshotStore.shared.refresh(modelContext: modelContext)
+        }
+        // And as soon as what the widgets show changes: the Rosary's place,
+        // a novena's days, a prayer finished, a tab left
+        .onChange(of: PrayerResumeService.shared.inProgress) { _, _ in
+            WidgetSnapshotStore.shared.refresh(modelContext: modelContext)
+        }
+        .onChange(of: NovenaStore.shared.progress) { _, _ in
+            WidgetSnapshotStore.shared.refresh(modelContext: modelContext)
+        }
+        .onChange(of: router.completedPrayer == nil) { _, _ in
+            WidgetSnapshotStore.shared.refresh(modelContext: modelContext)
+        }
+        .onChange(of: router.selectedTab) { _, _ in
+            WidgetSnapshotStore.shared.refresh(modelContext: modelContext)
         }
         .sheet(item: $whatsNewRelease, onDismiss: {
             guard let route = pendingWhatsNewRoute else { return }
