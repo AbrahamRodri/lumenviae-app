@@ -1378,10 +1378,6 @@ private struct PrayAlongVerseLine: View {
 private struct HangingIndentRenderer: TextRenderer {
     let indent: CGFloat
 
-    var displayPadding: EdgeInsets {
-        EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: indent)
-    }
-
     func draw(layout: Text.Layout, in context: inout GraphicsContext) {
         for (i, line) in layout.enumerated() {
             var lineContext = context
