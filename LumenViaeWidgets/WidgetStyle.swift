@@ -77,13 +77,29 @@ struct Title: View {
     var color: Color = WidgetColors.cream
     var lines = 2
 
+    /// Never cut a name short (design): the title wraps whole at its size,
+    /// or a step down, or two, in the room it has; only past those is it
+    /// held to its lines and scaled
     var body: some View {
+        ViewThatFits(in: .vertical) {
+            whole(size)
+            whole(size * 0.9)
+            whole(size * 0.8)
+            set(size * 0.8)
+                .lineLimit(lines)
+                .minimumScaleFactor(0.75)
+        }
+    }
+
+    private func whole(_ size: CGFloat) -> some View {
+        set(size).fixedSize(horizontal: false, vertical: true)
+    }
+
+    private func set(_ size: CGFloat) -> some View {
         Text(text)
             .font(WidgetFonts.cinzel(size))
             .tracking(size * 0.01)
             .foregroundStyle(color)
-            .lineLimit(lines)
-            .minimumScaleFactor(0.75)
             .lineSpacing(size * 0.02)
     }
 }

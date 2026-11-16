@@ -185,7 +185,8 @@ struct ContinueRosaryView: View {
             HalfPainting(name: rosary.painting)
             BesidePainting {
                 Kicker(text: "\(labels.continueWord) · \(rosary.shortTitle)")
-                Title(text: rosary.mysteryName, size: 19, lines: 3).padding(.top, 8)
+                // Three lines a step down, so a long name stands whole (design)
+                Title(text: rosary.mysteryName, size: 17, lines: 3).padding(.top, 8)
                 Spacer(minLength: 0)
                 // Two lines, as the small one sets them, never "of 10" alone
                 Text(rosary.placeLine)
