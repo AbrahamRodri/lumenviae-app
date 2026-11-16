@@ -2502,17 +2502,22 @@ write concurrent code here:
   **Praying** is `PrayAlongView` (`.prayAlong(PrayAlongLaunch)`, a
   player: bar hidden, its own ×): one prayer at a time, aloud or in
   silence (`PrayerBookStore.praysAloud`, remembered). **The page is the
-  prayer** (the "simplify Pray Along" pick, option A, Oct 2026), set on
-  the dark page all the way up (Abraham, 15 Nov 2026: "it cuts at the
-  top and that doesnt look good it might as well be all dark"): the
-  painting the Prayers page hangs over the order (`PrayerBookPainting.
+  prayer** (the "simplify Pray Along" pick, option A, Oct 2026), over
+  the painting the Prayers page hangs over the order (`PrayerBookPainting.
   order`; the Angelus's read from its prayer, the Resurrection for the
   Queen of Heaven and the Annunciation otherwise; `.prayer` for one
-  opened alone) is kept for the Amen and the question before the first
-  sound, never behind the words. It once hung veiled behind the scroll
-  (`PrayAlongGround`) with a feathered veil riding on the words
-  (`WordsVeil`), and the two met in a hard band under the head; don't
-  bring either back. A quiet head — ×, the
+  opened alone), fixed behind the whole page from the top edge to the
+  foot under one veil of the page's ground with no edge anywhere
+  (`PrayAlongGround`: 0.55 at the top, 0.80 a third down, 0.88 from the
+  middle; Abraham, 16 Nov 2026: "i like having the picture behind"). The
+  plain dark page under Reduce Transparency and for a prayer of the
+  reader's own with no picture. On 15 Nov a feathered veil riding on the
+  words (`WordsVeil`) met the ground in a hard band under the head ("it
+  cuts at the top and that doesnt look good"); don't bring it back.
+  Under the title stands only a short credit naming an author
+  (`creditUnderTitle`); the prayer's origin stands once at the foot
+  (`creditAtFoot`), never "Western Church · 13th–16th century" under the
+  title ("no need to say western church 13-16th century"). A quiet head — ×, the
   order's name, and the **Silent | Audio switch**, one capsule of two
   halves (Abraham's pick, option B, 16 Nov 2026), the chosen half filled
   gold with dark text, drawn 30 points tall and touched at 44, one
