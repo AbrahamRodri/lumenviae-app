@@ -201,6 +201,39 @@
         }
       }
     },
+    "%@ at 6 AM" : {
+      "comment" : "Widgets, the Angelus on the Lock Screen's line above the clock: the morning bell",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ a las 6 a. m."
+          }
+        }
+      }
+    },
+    "%@ at 6 PM" : {
+      "comment" : "Widgets, the Angelus on the Lock Screen's line above the clock: the evening bell",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ a las 6 p. m."
+          }
+        }
+      }
+    },
+    "%@ at noon" : {
+      "comment" : "Widgets, the Angelus on the Lock Screen's line above the clock: the noon bell",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ al mediodía"
+          }
+        }
+      }
+    },
     "%@ colors" : {
       "localizations" : {
         "es" : {
@@ -287,6 +320,17 @@
         }
       }
     },
+    "%@ mystery" : {
+      "comment" : "Widgets, Continue Your Rosary: which mystery the hand is on, its number as an ordinal figure, like 4th mystery",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ misterio"
+          }
+        }
+      }
+    },
     "%@ of %@" : {
       "comment" : "Chant player: time sung so far of the recording's length, like 0:55 of 4:12\nVoiceOver value, the reading's scrubber: time heard of the whole, as clock times like 3:05 of 27:40\nVoiceOver, chant player: time sung so far of the recording's length, both in words, like 55 seconds of 4 minutes 12 seconds",
       "localizations" : {
@@ -300,6 +344,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ de %2$@"
+          }
+        }
+      }
+    },
+    "%@ sorrow" : {
+      "comment" : "Widgets, Continue Your Rosary: which sorrow of the chaplet the hand is on, its number as an ordinal figure, like 4th sorrow",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ dolor"
           }
         }
       }
@@ -3666,6 +3721,17 @@
         }
       }
     },
+    "A Word for Today" : {
+      "comment" : "Widgets: the title of the daily quotation widget",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una palabra para hoy"
+          }
+        }
+      }
+    },
     "A beginner's Rosary is a Rosary. Pray it as you can." : {
       "comment" : "Daily prayer reminder notification for readers learning the Rosary: its text under the title. Warm and inviting, never scolding; under about 75 characters",
       "localizations" : {
@@ -5252,6 +5318,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Y lo que te dijo…"
+          }
+        }
+      }
+    },
+    "Angelus" : {
+      "comment" : "Widgets, the Angelus on the Lock Screen: its short name, in a small circle and in Angelus at 12:00",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ángelus"
           }
         }
       }
@@ -10083,6 +10160,17 @@
         }
       }
     },
+    "First, %@" : {
+      "comment" : "Widgets, Today's Mysteries: the first mystery to be prayed, its article in lower case, like First, the Annunciation",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero, %@"
+          }
+        }
+      }
+    },
     "Five hundred days in a row: a candle kept burning before her, day after day." : {
       "comment" : "Streak milestone: the line of blessing shown when it is reached, saying what the run of days means",
       "localizations" : {
@@ -10254,6 +10342,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Por las intenciones del Papa"
+          }
+        }
+      }
+    },
+    "For the feast of %@" : {
+      "comment" : "Widgets, Consecration chosen ahead: the feast its 33 days end on, by its date, like For the feast of 2 February",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para la fiesta del %@"
           }
         }
       }
@@ -15703,6 +15802,17 @@
         }
       }
     },
+    "O God, come to my assistance." : {
+      "comment" : "Widgets, Hours of Prayer: the first words of every hour of the Divine Office (Deus in adjutorium), in the breviary's English",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dios mío, ven en mi auxilio."
+          }
+        }
+      }
+    },
     "OF MARY, NEVER ENOUGH" : {
       "localizations" : {
         "es" : {
@@ -17849,6 +17959,17 @@
         }
       }
     },
+    "Pray the Angelus" : {
+      "comment" : "Widgets, the Angelus at its hour: the invitation",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezar el Ángelus"
+          }
+        }
+      }
+    },
     "Pray the Litany of Loreto" : {
       "comment" : "Marian Library, her titles: door praying the Litany of Loreto",
       "localizations" : {
@@ -17856,6 +17977,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rezar la Letanía de Loreto"
+          }
+        }
+      }
+    },
+    "Pray the Queen of Heaven" : {
+      "comment" : "Widgets, the Angelus at its hour in the Easter season: the invitation, when the Regina Caeli is said in its place",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezar la Reina del Cielo"
           }
         }
       }
@@ -19228,6 +19360,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reflexiones"
+          }
+        }
+      }
+    },
+    "Regina Cæli" : {
+      "comment" : "Widgets, the Angelus on the Lock Screen: the Easter season's song, the Regina Caeli, in a small circle; keep the Latin",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regina Cæli"
           }
         }
       }
@@ -29928,6 +30071,150 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "donde vas"
+          }
+        }
+      }
+    },
+    "widget.angelus.atEighteen" : {
+      "comment" : "Widgets, the Angelus through the hour of its 6 PM bell: the kicker over Pray the Angelus",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It is six in the evening"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son las seis de la tarde"
+          }
+        }
+      }
+    },
+    "widget.angelus.atNoon" : {
+      "comment" : "Widgets, the Angelus through the hour of its noon bell: the kicker over Pray the Angelus",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It is noon"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es mediodía"
+          }
+        }
+      }
+    },
+    "widget.angelus.atSix" : {
+      "comment" : "Widgets, the Angelus through the hour of its 6 AM bell: the kicker over Pray the Angelus",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It is six in the morning"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son las seis de la mañana"
+          }
+        }
+      }
+    },
+    "widget.angelus.evening" : {
+      "comment" : "Widgets, the Angelus: the 6 PM bell's name, under its time",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evening"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarde"
+          }
+        }
+      }
+    },
+    "widget.angelus.morning" : {
+      "comment" : "Widgets, the Angelus: the 6 AM bell's name, under its time",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Morning"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mañana"
+          }
+        }
+      }
+    },
+    "widget.novena" : {
+      "comment" : "Widgets, Novena: the kicker over the novena's name",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novena"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novena"
+          }
+        }
+      }
+    },
+    "widget.novena.notYet" : {
+      "comment" : "Widgets, Novena: today's day of the novena is still to pray; never a reproach",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not yet prayed today"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy aún sin rezar"
+          }
+        }
+      }
+    },
+    "widget.novena.prayedToday" : {
+      "comment" : "Widgets, Novena: today's day of the novena has been prayed",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prayed today"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezada hoy"
           }
         }
       }
