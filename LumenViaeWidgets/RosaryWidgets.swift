@@ -187,7 +187,11 @@ struct ContinueRosaryView: View {
                 Kicker(text: "\(labels.continueWord) · \(rosary.shortTitle)")
                 Title(text: rosary.mysteryName, size: 19, lines: 3).padding(.top, 8)
                 Spacer(minLength: 0)
-                ItalicLine(text: "\(rosary.placeLine) · \(rosary.beadLine)", lines: 2).padding(.bottom, 8)
+                // Two lines, as the small one sets them, never "of 10" alone
+                Text(rosary.placeLine)
+                    .font(WidgetFonts.garamond(15))
+                    .foregroundStyle(WidgetColors.cream)
+                ItalicLine(text: rosary.beadLine, lines: 1).padding(.top, 2).padding(.bottom, 8)
                 DecadeBeads(rosary: rosary)
             }
         }

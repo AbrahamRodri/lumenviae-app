@@ -246,13 +246,13 @@ struct HoursOfPrayerView: View {
                     ZStack(alignment: .topLeading) {
                         HalfPainting(name: hour.painting)
                         BesidePainting {
+                            // The small one's label on one line: NOW · SEXT (design)
                             HStack(spacing: 6) {
                                 LumenMark().frame(width: 15, height: 22)
-                                Kicker(text: "\(labels.hoursOfPrayer) · \(labels.now)")
+                                Kicker(text: "\(labels.now) · \(hour.churchName)")
                             }
                             Spacer(minLength: 0)
                             Title(text: hour.name, size: 23)
-                            Kicker(text: hour.churchName, color: WidgetColors.muted).padding(.top, 4)
                             ItalicLine(text: hour.firstLine, size: 16).padding(.top, 6)
                         }
                     }
@@ -260,9 +260,9 @@ struct HoursOfPrayerView: View {
                     ZStack(alignment: .bottomLeading) {
                         FullPainting(name: hour.painting, strongFade: true)
                         VStack(alignment: .leading, spacing: 0) {
+                            // The label and the name alone, low over the fade
                             Kicker(text: "\(labels.now) · \(hour.churchName)")
                             Title(text: hour.name).padding(.top, 5)
-                            ItalicLine(text: hour.firstLine, size: 13).padding(.top, 4)
                         }
                         .padding(16)
                     }
