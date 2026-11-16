@@ -208,7 +208,9 @@ struct ContentView: View {
             .ignoresSafeArea(.keyboard)
 
             if firstUseTour.isRunning {
-                FirstUseTourOverlay(tour: firstUseTour)
+                FirstUseTourOverlay(
+                    tour: firstUseTour,
+                    passesTopBand: showsSpanishStrip ? SpanishBetaStrip.height : 0)
                     .transition(.opacity)
             }
         }
