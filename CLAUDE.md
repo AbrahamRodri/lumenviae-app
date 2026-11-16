@@ -3376,7 +3376,12 @@ the same mark on other grounds (`AppIconMarianBlue`, `AppIconMidnight`,
 `AppIconSorrowful`, `AppIconVellum`, named in
 `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES`), each with a 180px
 `icon-preview-*` for the picker. The art is the designer's, final: it is
-copied in, never redrawn or recoloured. The Gothic, Monstrance and
+copied in, never redrawn or recoloured. A fifth alternate,
+`AppIconGilded`, is in the binary only for an App Store Product Page
+Optimization test against the painting (Abraham, 16 Nov 2026): the
+picker never offers it, and the launch reset that puts any other
+alternate back leaves it alone (`appApp.storeTestIcons`), since a
+reader who installs from the test's page arrives with it set. The Gothic, Monstrance and
 Wreath alternates are retired, and so are the scripts that made the
 painted icon; its original stays in `Tools/IconAudit/app-icon/` for the
 audit's contact sheet.

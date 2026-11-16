@@ -144,9 +144,20 @@ struct appApp: App {
     /// While the icon picker is disabled, devices that previously chose an
     /// alternate icon fall back to the primary one. Removing this once
     /// `AppIconPickerRows.isEnabled` is true restores their choice.
+    ///
+    /// An icon the App Store sets is left alone: the gilded icon is a
+    /// Product Page Optimization treatment (Abraham, 16 Nov 2026: "Yes,
+    /// test this against the painting icon"), and someone who installs
+    /// from the treatment's page gets the app with it already set. Put
+    /// back, their icon would change on first launch under iOS's alert.
     private func resetAlternateIconIfNeeded() {
         guard !AppIconPickerRows.isEnabled,
-              UIApplication.shared.alternateIconName != nil else { return }
+              let name = UIApplication.shared.alternateIconName,
+              !Self.storeTestIcons.contains(name) else { return }
         UIApplication.shared.setAlternateIconName(nil)
     }
+
+    /// Alternate icons in the binary for an App Store product page test,
+    /// never offered by the picker and never reset at launch
+    static let storeTestIcons: Set<String> = ["AppIconGilded"]
 }
