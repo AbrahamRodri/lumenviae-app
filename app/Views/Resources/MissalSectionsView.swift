@@ -429,7 +429,7 @@ struct MissalPassageText: View {
                         DropCapText(text: lines, bodySize: bodySize, textColor: color)
                             .fixedSize(horizontal: false, vertical: true)
                     } else {
-                        Rubric.line(lines)
+                        Rubric.line(lines, noteSize: max(11, bodySize - 3))
                             .font(font)
                             .foregroundColor(color)
                             .lineSpacing(ReadingTypography.lineSpacing(for: bodySize))
@@ -524,7 +524,7 @@ struct MissalPairedPassageText: View {
                 )
                 .fixedSize(horizontal: false, vertical: true)
             } else {
-                Rubric.line(pair.primary)
+                Rubric.line(pair.primary, noteSize: max(11, size - 3))
                     .font(AppFonts.readingFont(size))
                     .foregroundColor(AppColors.cream.opacity(0.92))
                     .lineSpacing((size * 0.3).rounded())
@@ -535,7 +535,7 @@ struct MissalPairedPassageText: View {
             // The translation steps in from the margin — set under its
             // line the way the handoff recommends, so the eye keeps the
             // Latin as the text and the English as its shadow.
-            Rubric.line(pair.secondary)
+            Rubric.line(pair.secondary, noteSize: max(11, size - 4))
                 .font(AppFonts.readingItalicFont(max(12, size - 2)))
                 .foregroundColor(AppColors.accentSoft)
                 .lineSpacing((size * 0.25).rounded())
@@ -594,7 +594,7 @@ struct MissalColumnPassageText: View {
                     textColor: AppColors.cream.opacity(0.92)
                 )
             } else {
-                Rubric.line(text)
+                Rubric.line(text, noteSize: max(11, columnSize - 3))
                     .font(AppFonts.readingFont(columnSize))
                     .foregroundColor(AppColors.cream.opacity(0.92))
                     .lineSpacing((columnSize * 0.35).rounded())
@@ -606,7 +606,7 @@ struct MissalColumnPassageText: View {
     }
 
     private func secondaryCell(_ text: String) -> some View {
-        Rubric.line(text)
+        Rubric.line(text, noteSize: max(11, columnSize - 3))
             .font(AppFonts.readingItalicFont(columnSize))
             .foregroundColor(AppColors.accentSoft)
             .lineSpacing((columnSize * 0.3).rounded())

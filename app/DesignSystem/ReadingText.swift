@@ -266,6 +266,28 @@ enum Rubric {
         Text(rubricated(string))
     }
 
+    /// `string` rubricated, with every small rubric the Hours set inside
+    /// a line in braces ("word and deed: {strikes his breast} through my
+    /// fault") drawn as the book prints it: out of its braces, small,
+    /// italic and in the red lifted for words, so it no longer reads as
+    /// part of the prayer. `noteSize` is the note's point size.
+    static func line(_ string: String, noteSize: CGFloat) -> Text {
+        guard string.contains("{") else { return line(string) }
+        var result = AttributedString()
+        var rest = Substring(string)
+        while let open = rest.firstIndex(of: "{"),
+              let close = rest[open...].firstIndex(of: "}") {
+            result += rubricated(String(rest[..<open]))
+            var note = AttributedString(rest[rest.index(after: open)..<close].trimmingCharacters(in: .whitespaces))
+            note.font = AppFonts.readingItalicFont(noteSize)
+            note.foregroundColor = text
+            result += note
+            rest = rest[rest.index(after: close)...]
+        }
+        result += rubricated(String(rest))
+        return Text(result)
+    }
+
     /// A mark set on its own ("℟", " ℟. ") inside a line
     static func markText(_ glyph: String) -> Text {
         Text(glyph)
@@ -293,7 +315,8 @@ enum Rubric {
                 i += 1
                 if i < chars.count, chars[i] == "." { i += 1 }
                 if i >= chars.count || chars[i] != " " { out += " " }
-            } else if c == "✠" {
+            } else if c == "✠" || c == "{" || c == "}" {
+                // The cross is silent; a small rubric's braces too
                 i += 1
             } else {
                 out.append(c)
