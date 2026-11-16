@@ -172,7 +172,7 @@ struct WidgetSnapshotTests {
         #expect(snap.day(at: day(2), calendar: calendar)?.date == "2026-11-20")
         #expect(snap.day(at: day(30), calendar: calendar)?.date == "2026-11-25", "past the last day, the last one kept")
         #expect(snap.prayerDay(at: day(1, hour: 2), calendar: calendar)?.date == "2026-11-18")
-        #expect(snap.hour(at: day(0, hour: 19), calendar: calendar)?.churchName == "Vespers")
+        #expect(snap.hour(at: day(0, hour: 17), calendar: calendar)?.churchName == "Vespers")
         #expect(snap.hour(at: day(0, hour: 2), calendar: calendar)?.churchName == "Matins")
     }
 
