@@ -187,8 +187,12 @@ struct ConsecrationDateSelectionView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
-
-                Spacer(minLength: 8)
+                // The name takes the width up to 12 pt before the date before
+                // it wraps; beside a Spacer it was given only half the room
+                // left, and "Nuestra Señora de Lourdes" broke after Señora
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.trailing, 12)
+                .layoutPriority(1)
 
                 Text(Self.rowDate(preparation.feastDate))
                     .font(AppFonts.bodyFont(16))
