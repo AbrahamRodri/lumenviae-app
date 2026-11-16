@@ -267,7 +267,7 @@ struct OfficeSectionView: View {
 
     private func text(of cell: OfficeCell?) -> String? {
         guard let cell, !cell.lines.isEmpty else { return nil }
-        return cell.lines.joined(separator: "\n")
+        return cell.shownLines.joined(separator: "\n")
     }
 
     private func canPair(_ latin: OfficeCell?, _ vernacular: OfficeCell?) -> Bool {
