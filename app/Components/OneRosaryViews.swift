@@ -1740,7 +1740,10 @@ struct NovenaDashes: View {
         case .prayed:
             Capsule().fill(AppColors.gold).frame(width: width, height: 4)
         case .here:
-            Capsule().fill(AppColors.goldLight).frame(width: width, height: fills ? 5 : 4)
+            // Today, not yet prayed: an outline, since filled means prayed
+            // (a wider light fill read as one more day done); it fills
+            // once today is prayed
+            Capsule().strokeBorder(AppColors.goldLight, lineWidth: 1.5).frame(width: width, height: 6)
         case .open:
             Capsule().strokeBorder(AppColors.gold.opacity(0.75), lineWidth: 1).frame(width: width, height: 5)
         case .ahead:
