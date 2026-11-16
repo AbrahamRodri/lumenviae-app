@@ -420,7 +420,9 @@ struct NovenaPageView: View {
                         comment: "Novena page: the heading over the days of a novena not nine days long")
             )
             .padding(.bottom, 6)
-            if progress == nil {
+            if progress == nil, let finished = store.lastFinished(novena.id) {
+                finishedDays(finished, length: novena.length)
+            } else if progress == nil {
                 // Not begun: nine bare DAY rows read as unfinished, so the
                 // days are their dashes, as on the begun page and the
                 // Prayers card, and one line says what the rows become
@@ -442,6 +444,30 @@ struct NovenaPageView: View {
                 }
             }
         }
+    }
+
+    /// A novena finished and not begun again (design's FINISHED.md): its
+    /// days all gold, when they were prayed, and the intention kept, in
+    /// place of the line a novena never begun carries
+    private func finishedDays(_ finished: FinishedNovena, length: Int) -> some View {
+        let range = NovenaSpan.range(from: finished.firstDate(length: length), to: finished.lastDate())
+        return VStack(alignment: .leading, spacing: 12) {
+            NovenaDashes(days: NovenaDays(length: length, prayed: Set(1...max(length, 1)), here: 0, open: []))
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(NovenaSpan.spoken(length: length, range: range))
+            Text(NovenaSpan.prayedLine(range))
+                .font(AppFonts.readingItalicFont(16))
+                .foregroundColor(AppColors.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+            if let intention = finished.intention {
+                Text(intention)
+                    .font(AppFonts.readingItalicFont(19))
+                    .foregroundColor(AppColors.cream)
+                    .lineLimit(3)
+                    .truncationMode(.tail)
+            }
+        }
+        .padding(.top, 6)
     }
 
     /// The line under the days of a novena not yet begun
@@ -1167,6 +1193,9 @@ struct NovenaShelfCard: View {
 
     private var line: String {
         guard let progress else {
+            if let finished = NovenaStore.shared.lastFinished(novena.id) {
+                return NovenaSpan.lastPrayed(finished.lastDate())
+            }
             return String(localized: "Begin any day", comment: "Prayers tab, novena card: a novena not begun")
         }
         switch progress.standing(on: now) {

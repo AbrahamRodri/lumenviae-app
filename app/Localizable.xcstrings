@@ -29078,6 +29078,78 @@
         }
       }
     },
+    "novena.finished.lastPrayed" : {
+      "comment" : "Prayers tab, novena card, finished and not begun again: the last day's date, like Last prayed November 24",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Last prayed %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezada por última vez el %@"
+          }
+        }
+      }
+    },
+    "novena.finished.prayed" : {
+      "comment" : "Novena page, finished: under its filled dashes, when it was prayed, like Prayed November 16 to 24",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Prayed %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezada %@"
+          }
+        }
+      }
+    },
+    "novena.finished.spoken" : {
+      "comment" : "VoiceOver, a finished novena's dashes when it is not nine days long: like 7 days prayed, November 16 to 22.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld days prayed, %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld días rezados, %2$@."
+          }
+        }
+      }
+    },
+    "novena.finished.spokenNine" : {
+      "comment" : "VoiceOver, a finished novena's dashes: like Nine days prayed, November 16 to 24.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Nine days prayed, %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueve días rezados, %@."
+          }
+        }
+      }
+    },
     "novena.intention.title" : {
       "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
       "extractionState" : "manual",
@@ -29290,6 +29362,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tu novena sigue aquí"
+          }
+        }
+      }
+    },
+    "novena.span.sameMonth" : {
+      "comment" : "Novena finished: the days it was prayed within one month: the month, Day 1's day, the last day's, like November 16 to 24",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ to %3$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "del %2$@ al %3$@ de %1$@"
+          }
+        }
+      }
+    },
+    "novena.span.twoMonths" : {
+      "comment" : "Novena finished: the days it was prayed across two months, like November 28 to December 6",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ to %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "del %1$@ al %2$@"
           }
         }
       }

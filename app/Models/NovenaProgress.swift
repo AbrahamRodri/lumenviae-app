@@ -35,6 +35,10 @@ nonisolated struct NovenaProgress: Codable, Equatable, Sendable {
     var reminder: DateComponents?
     /// Whether the reminder may say the intention; off unless she turns it on
     var remindsWithIntention = false
+    /// The prayer day Day 1 fell on, kept through a pick-up (which moves the
+    /// anchor) so a finished novena can say when it was prayed; nil in a
+    /// novena begun before it was kept
+    var began: Date?
 
     /// Where a novena stands on a given day
     enum Standing: Equatable, Sendable {
@@ -55,9 +59,13 @@ nonisolated struct NovenaProgress: Codable, Equatable, Sendable {
         self.novenaID = novenaID
         self.length = length
         self.anchorDate = PrayerDay.day(of: day, calendar: calendar)
+        self.began = anchorDate
         self.intention = intention
         self.reminder = reminder
     }
+
+    /// Day 1's prayer day: kept, or the anchor while it is still Day 1
+    var firstDay: Date? { began ?? (anchorDay == 1 ? anchorDate : nil) }
 
     /// The prayer day day `number` falls on, for days from the anchor on;
     /// nil for an earlier day, which is always prayed or was before a
@@ -113,6 +121,7 @@ nonisolated struct NovenaProgress: Codable, Equatable, Sendable {
         prayed = []
         anchorDay = 1
         anchorDate = PrayerDay.day(of: day, calendar: calendar)
+        began = anchorDate
     }
 
     /// The days still to be reminded of, from `day` on, each with its
@@ -134,6 +143,77 @@ nonisolated struct FinishedNovena: Codable, Equatable, Sendable {
     var novenaID: String
     var finished: Date
     var intention: String?
+    /// Day 1's prayer day and the last day's own; nil in an entry kept
+    /// before they were
+    var firstDay: Date?
+    var lastDay: Date?
+
+    /// The last day's date: its own, else the prayer day it was finished on
+    func lastDate(calendar: Calendar = .current) -> Date {
+        lastDay ?? PrayerDay.day(of: finished, calendar: calendar)
+    }
+
+    /// Day 1's date: its own, else counted back from the last day
+    func firstDate(length: Int, calendar: Calendar = .current) -> Date {
+        firstDay ?? PrayerDay.adding(days: -(max(length, 1) - 1), to: lastDate(calendar: calendar), calendar: calendar)
+    }
+}
+
+// MARK: - When a Finished Novena Was Prayed
+
+/// The words that say when a finished novena was prayed (design's
+/// FINISHED.md, 16 Nov 2026): plain dates, no count, no praise
+nonisolated enum NovenaSpan {
+    /// "November 16 to 24", "November 28 to December 6"; in Spanish "del
+    /// 16 al 24 de noviembre", "del 28 de noviembre al 6 de diciembre"
+    static func range(from first: Date, to last: Date, calendar: Calendar = .current) -> String {
+        if calendar.isDate(first, equalTo: last, toGranularity: .month) {
+            let month = first.formatted(.dateTime.month(.wide))
+            let from = first.formatted(.dateTime.day())
+            let to = last.formatted(.dateTime.day())
+            return String(
+                localized: "novena.span.sameMonth", defaultValue: "\(month) \(from) to \(to)",
+                comment: "Novena finished: the days it was prayed within one month: the month, Day 1's day, the last day's, like November 16 to 24 (Spanish: del 16 al 24 de noviembre)")
+        }
+        let from = first.formatted(.dateTime.month(.wide).day())
+        let to = last.formatted(.dateTime.month(.wide).day())
+        return String(
+            localized: "novena.span.twoMonths", defaultValue: "\(from) to \(to)",
+            comment: "Novena finished: the days it was prayed across two months, like November 28 to December 6 (Spanish: del 28 de noviembre al 6 de diciembre)")
+    }
+
+    /// The novena page's line under its nine gold dashes: "Prayed November
+    /// 16 to 24"
+    static func prayedLine(_ range: String) -> String {
+        String(
+            localized: "novena.finished.prayed", defaultValue: "Prayed \(range)",
+            comment: "Novena page, finished: under its filled dashes, when it was prayed, like Prayed November 16 to 24 (Spanish: Rezada del 16 al 24 de noviembre)")
+    }
+
+    /// The finish page's line under its title: "November 16 to 24", "Del
+    /// 16 al 24 de noviembre"
+    static func finishLine(_ range: String) -> String {
+        range.prefix(1).uppercased() + range.dropFirst()
+    }
+
+    /// The filled dashes, to VoiceOver: "Nine days prayed, November 16 to 24."
+    static func spoken(length: Int, range: String) -> String {
+        length == 9
+            ? String(
+                localized: "novena.finished.spokenNine", defaultValue: "Nine days prayed, \(range).",
+                comment: "VoiceOver, a finished novena's dashes: like Nine days prayed, November 16 to 24.")
+            : String(
+                localized: "novena.finished.spoken", defaultValue: "\(length) days prayed, \(range).",
+                comment: "VoiceOver, a finished novena's dashes when it is not nine days long: like 7 days prayed, November 16 to 22.")
+    }
+
+    /// The Prayers card of a finished novena: "Last prayed November 24"
+    static func lastPrayed(_ last: Date) -> String {
+        let date = last.formatted(.dateTime.month(.wide).day())
+        return String(
+            localized: "novena.finished.lastPrayed", defaultValue: "Last prayed \(date)",
+            comment: "Prayers tab, novena card, finished and not begun again: the last day's date, like Last prayed November 24 (Spanish: Rezada por última vez el 24 de noviembre)")
+    }
 }
 
 /// What the Rosary player needs to pray a novena's day: the day laid out
