@@ -108,6 +108,24 @@ struct ItalicLine: View {
     }
 }
 
+/// A line shown only where it fits whole on one line, and left out
+/// rather than cut (design: no ellipsis on Today's Mysteries)
+struct WholeLineOrNothing: View {
+    let text: String
+    var size: CGFloat = 14.5
+
+    var body: some View {
+        ViewThatFits(in: .horizontal) {
+            Text(text)
+                .font(WidgetFonts.garamondItalic(size))
+                .foregroundStyle(WidgetColors.italic)
+                .lineLimit(1)
+                .fixedSize()
+            Color.clear.frame(width: 0, height: 0)
+        }
+    }
+}
+
 /// "BEGIN ›", the light-gold way in
 struct GoLink: View {
     let text: String

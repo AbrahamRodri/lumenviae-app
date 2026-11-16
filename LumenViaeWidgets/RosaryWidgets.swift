@@ -62,10 +62,10 @@ struct TodaysMysteriesView: View {
                     LumenMark().frame(width: 15, height: 22)
                     Kicker(text: day.todayLine)
                 }
-                // A step down, so a title on two lines leaves the first
-                // mystery its two lines too (Misterios / Gozosos)
+                // A step down, and the first mystery only where it fits whole
+                // on one line (design: English keeps it, Spanish leaves it out)
                 Title(text: day.mysteries.title, size: 21).padding(.top, 8)
-                ItalicLine(text: day.mysteries.firstLine).padding(.top, 4)
+                WholeLineOrNothing(text: day.mysteries.firstLine).padding(.top, 4)
                 Spacer(minLength: 0)
                 GoLink(text: entry.snapshot?.labels.begin ?? "")
             }
