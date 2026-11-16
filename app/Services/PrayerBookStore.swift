@@ -241,7 +241,7 @@ final class PrayerBookStore {
     /// The pray-along screens open, each by its own id: one, or none. The
     /// bell's notification opens the Angelus only when none is — it once
     /// pushed a second pray-along beneath one being prayed, or beneath its
-    /// first-time "Aloud, or in silence?" question, unseen until closed.
+    /// first-time choice of Silent or Audio, unseen until closed.
     /// A set rather than a count, so an appearance reported twice cannot
     /// leave the book believing a prayer open after it has closed
     private(set) var openPrayAlongs: Set<UUID> = []

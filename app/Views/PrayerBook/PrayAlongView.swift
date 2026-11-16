@@ -724,8 +724,8 @@ struct PrayAlongView: View {
         .padding(.bottom, 34)
         .frame(maxWidth: .infinity)
         .background(
-            // While it asks, the ground is whole under the question's own
-            // words, which no prayer line may show through
+            // While it asks, the ground is whole under the two choices,
+            // which no prayer line may show through
             LinearGradient(
                 stops: [
                     .init(color: AppColors.background.opacity(0), location: 0),
@@ -753,14 +753,16 @@ struct PrayAlongView: View {
         HStack(spacing: 12) {
             howToPrayAnswer(
                 String(localized: "Silent", comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the choice that keeps the book silent, beside Audio"),
-                icon: "ph-book-open", aloud: false)
+                icon: "ph-book-open", aloud: false,
+                hint: String(localized: "Prays these prayers in silence, with no voice", comment: "VoiceOver hint on the pray-along's first-time Silent choice: what choosing it does"))
             howToPrayAnswer(
                 String(localized: "Audio", comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the choice that has a voice read the prayers, beside Silent; also Settings' row name"),
-                icon: "ph-speaker-high", aloud: true)
+                icon: "ph-speaker-high", aloud: true,
+                hint: String(localized: "A voice reads these prayers aloud", comment: "VoiceOver hint on the pray-along's first-time Audio choice: what choosing it does"))
         }
     }
 
-    private func howToPrayAnswer(_ title: String, icon: String, aloud chosen: Bool) -> some View {
+    private func howToPrayAnswer(_ title: String, icon: String, aloud chosen: Bool, hint: String) -> some View {
         Button {
             setAloud(chosen)
         } label: {
@@ -783,6 +785,7 @@ struct PrayAlongView: View {
             .contentShape(Capsule())
         }
         .buttonStyle(SacredCardButtonStyle())
+        .accessibilityHint(hint)
     }
 
     /// NEXT or AMEN, the pause disc beside it aloud

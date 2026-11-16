@@ -4291,6 +4291,17 @@
         }
       }
     },
+    "A voice reads these prayers aloud" : {
+      "comment" : "VoiceOver hint on the pray-along's first-time Audio choice: what choosing it does",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una voz lee estas oraciones en voz alta"
+          }
+        }
+      }
+    },
     "A warm, reverent voice" : {
       "comment" : "Settings, narration voice: the line under the man's voice describing it",
       "localizations" : {
@@ -18327,6 +18338,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Los reza como tu primer Rosario"
+          }
+        }
+      }
+    },
+    "Prays these prayers in silence, with no voice" : {
+      "comment" : "VoiceOver hint on the pray-along's first-time Silent choice: what choosing it does",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reza estas oraciones en silencio, sin voz"
           }
         }
       }
