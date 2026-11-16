@@ -270,7 +270,9 @@ struct ConsecrationDateSelectionView: View {
             }
         }
         .padding(.horizontal, 20)
-        .padding(.top, 10)
+        // Air between where the list fades out and the two labels, so a
+        // half-faded row never crowds YOU BEGIN (design, 16 Nov)
+        .padding(.top, 24)
         .padding(.bottom, bottomClearance)
     }
 
@@ -295,7 +297,7 @@ struct ConsecrationDateSelectionView: View {
         VStack(spacing: 0) {
             Color.black
             LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom)
-                .frame(height: 24)
+                .frame(height: 36)
         }
     }
 
