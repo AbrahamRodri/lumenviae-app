@@ -654,18 +654,98 @@ final class AppRouter {
         !routes.contains { $0?.isPrayerUnderWay == true }
     }
 
-    /// Opens a `lumenviae://` link, as an App Store In-App Event does with
-    /// `lumenviae://home`. Such a link goes to Home, the way a tap on its
-    /// tab does; no link opens a particular page yet, so an unknown path
-    /// is Home too. Over a prayer (`isPrayerUnderWay`) it only brings the
-    /// app forward where it is, as the Angelus bell's notification does;
-    /// ContentView holds it back over a sheet or a consecration day. A
-    /// link of any other scheme is left alone.
+    /// Where a `lumenviae://` link goes. The widgets and the App Store's
+    /// In-App Events open these; any other path is Home.
+    enum LinkDestination: Equatable {
+        /// `home`, and every path not listed here
+        case home
+        /// `rosary/today`: today's mysteries' page
+        case todaysMysteries
+        /// `rosary/continue`: the Rosary left off today, where it stopped;
+        /// with none, today's mysteries' page
+        case continueRosary
+        /// `novena/<id>`: the novena's own page
+        case novena(id: String)
+        /// `missal/today`: today's Mass
+        case missalToday
+        /// `prayer/<id>`: the Angelus (`angelus`) as the bell opens it, any
+        /// other prayer on the pray-along screen
+        case prayer(id: String)
+        /// `record`: the Prayer Record
+        case record
+        /// `office/now`: the Hours of Prayer, on the hour it is
+        case officeNow
+        /// `consecration/today`: the Consecration tab, on today's day
+        case consecrationToday
+    }
+
+    /// Reads a link's path, `lumenviae://rosary/today` or
+    /// `lumenviae:rosary/today`; nil for a link of another scheme
+    static func destination(of url: URL) -> LinkDestination? {
+        guard url.scheme?.lowercased() == linkScheme else { return nil }
+        var parts = url.pathComponents.filter { $0 != "/" }
+        if let host = url.host(percentEncoded: false), !host.isEmpty { parts.insert(host, at: 0) }
+        if parts.isEmpty, let opaque = URLComponents(url: url, resolvingAgainstBaseURL: false)?.path {
+            parts = opaque.split(separator: "/").map(String.init)
+        }
+        let words = parts.map { $0.lowercased() }
+        switch words.first {
+        case "rosary" where words.count == 2 && words[1] == "today": return .todaysMysteries
+        case "rosary" where words.count == 2 && words[1] == "continue": return .continueRosary
+        case "novena" where parts.count == 2: return .novena(id: parts[1])
+        case "missal" where words.count == 2 && words[1] == "today": return .missalToday
+        case "prayer" where parts.count == 2: return .prayer(id: parts[1])
+        case "record" where words.count == 1: return .record
+        case "office" where words.count == 2 && words[1] == "now": return .officeNow
+        case "consecration" where words.count == 2 && words[1] == "today": return .consecrationToday
+        default: return .home
+        }
+    }
+
+    /// Opens a `lumenviae://` link, as a widget or an App Store In-App
+    /// Event does: Home is gone to first, the way a tap on its tab does,
+    /// and the link's page is opened over it (`destination(of:)`). Over a
+    /// prayer (`isPrayerUnderWay`) it only brings the app forward where it
+    /// is, as the Angelus bell's notification does; ContentView holds it
+    /// back over a sheet or a consecration day. A link of any other scheme
+    /// is left alone.
     func open(_ url: URL) {
-        guard url.scheme?.lowercased() == AppRouter.linkScheme,
+        guard let destination = Self.destination(of: url),
               !routes.contains(where: { $0?.isPrayerUnderWay == true }) else { return }
         popToRoot()
         selectedTab = .home
+        switch destination {
+        case .home:
+            break
+        case .todaysMysteries:
+            navigateToMeditationSelection(category: ScheduleService.categoryForToday())
+        case .continueRosary:
+            // The act whose Rosary was left off today takes it up, as the
+            // Pray button does; with none, today's mysteries' page
+            let acts: [PrayerShortcut] = [.todaysRosary, .scripturalRosary, .rosaryAloud, .sevenSorrows]
+            if let act = acts.first(where: { PrayerResumeService.shared.continuation(for: $0) != nil }) {
+                run(act)
+            } else {
+                navigateToMeditationSelection(category: ScheduleService.categoryForToday())
+            }
+        case .novena(let id):
+            push(.novena(id: id))
+        case .missalToday:
+            push(.missal)
+        case .prayer(let id):
+            // A prayer the app does not know stays Home
+            if id.lowercased() == "angelus" {
+                run(.angelus)
+            } else if PrayAlongLaunch.resolve(id) != nil {
+                push(.devotionPrayer(id: id))
+            }
+        case .record:
+            push(.prayerRecord)
+        case .officeNow:
+            push(.office)
+        case .consecrationToday:
+            switchTo(.consecration)
+        }
     }
 
     /// Returns to the home screen and clears stored navigation state.

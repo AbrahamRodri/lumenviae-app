@@ -3645,8 +3645,14 @@ transition entirely.
   (`CFBundleURLTypes` in `Config/Info.plist`), which the App Store's
   In-App Events open it with (`lumenviae://home`). `ContentView`'s
   `onOpenURL` hands the link to `AppRouter.open`, which goes to Home as
-  a tab tap does, whatever the path; no link opens a particular page
-  yet. Over a prayer or its completion screen
+  a tab tap does and opens the link's page over it
+  (`AppRouter.destination(of:)`, the paths the widgets use):
+  `rosary/today` (today's mysteries' page), `rosary/continue` (the
+  Rosary left off today, as the Pray button takes it up, else today's
+  mysteries' page), `novena/<id>`, `missal/today`, `prayer/<id>`
+  (`angelus` as the bell opens it; an unknown prayer stays Home),
+  `record`, `office/now`, `consecration/today` (the tab). `home` and any
+  other path is Home. Over a prayer or its completion screen
   (`AppRoute.isPrayerUnderWay`), a consecration day, or any sheet (an
   editor's words live only while it is up), a link only brings the app
   forward, as the Angelus notification does. There are no universal links.
