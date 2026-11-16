@@ -131,7 +131,14 @@ struct AppLinkTests {
     }
 
     @Test func novenaOpensItsPage() throws {
-        #expect(try opened("lumenviae://novena/st_joseph").routes == [.novena(id: "st_joseph")])
+        #expect(try opened("lumenviae://novena/undoer_of_knots").routes == [.novena(id: "undoer_of_knots")])
+    }
+
+    @Test func aNovenaWithNoPageStaysHome() throws {
+        // St Joseph's is in the book but not prayed with the Rosary: no page
+        let router = try opened("lumenviae://novena/st_joseph")
+        #expect(router.selectedTab == .home)
+        #expect(router.path.isEmpty)
     }
 
     @Test func missalTodayOpensTheMass() throws {
