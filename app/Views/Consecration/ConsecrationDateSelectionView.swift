@@ -176,15 +176,19 @@ struct ConsecrationDateSelectionView: View {
                 .padding(.trailing, 12)
                 .layoutPriority(1)
 
-                VStack(alignment: .trailing, spacing: 4) {
-                    Text(Self.rowDate(preparation.feastDate))
-                        .font(AppFonts.bodyFont(16))
-                        .foregroundColor(isChosen ? AppColors.cream : AppColors.accentSoft)
-                        .lineLimit(1)
-                        .fixedSize()
-
-                    if isSoonest { soonestWord }
-                }
+                Text(Self.rowDate(preparation.feastDate))
+                    .font(AppFonts.bodyFont(16))
+                    .foregroundColor(isChosen ? AppColors.cream : AppColors.accentSoft)
+                    .lineLimit(1)
+                    .fixedSize()
+                    // Hung under the date and given no width of its own,
+                    // so LA MÁS PRÓXIMA never narrows the feast's name
+                    .overlay(alignment: .topTrailing) {
+                        if isSoonest {
+                            soonestWord.offset(y: 26)
+                        }
+                    }
+                    .padding(.bottom, isSoonest ? 14 : 0)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
