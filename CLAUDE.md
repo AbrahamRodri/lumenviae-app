@@ -3208,6 +3208,34 @@ write concurrent code here:
   `OfflineContentService.retireUnlicensedChants()` deletes them once at
   launch (`appApp.init`) and corrects the saved library's size.
 
+- **Widgets** (`LumenViaeWidgets/`, the `LumenViaeWidgets` extension,
+  `com.lumenviae.app.widgets`; mission ios-widgets, Abraham's Yes on
+  design's frames 16 Nov 2026) — nine: Today's Mysteries, Continue Your
+  Rosary, Novena, Today in the Church, The Angelus, A Word for Today,
+  Prayer Record, Hours of Prayer and Consecration, on the Home Screen,
+  the Lock Screen and StandBy, each opening its page by a `lumenviae://`
+  link (see Links). **The widgets compute nothing and say nothing of
+  their own**: the app writes everything they show into
+  `WidgetSnapshot` (`Models/WidgetSnapshot.swift`, the one app file the
+  extension compiles, through the project's exception set), every word
+  already in the app's language, for today and the seven days after it
+  (`days`, each with its mysteries, quote, Angelus, feast, novenas,
+  record and consecration as that day finds them), the eight hours of
+  the Office and the Rosary left off. `WidgetSnapshot+App.swift` builds
+  it; `WidgetSnapshotStore` writes it into the App Group's container
+  (`group.com.lumenviae.app`) when it changes, with each painting it
+  names copied beside it at 900 px (`paintings/<name>.jpg`; the asset
+  catalog is never shared with the extension), and asks WidgetKit to
+  redraw; `ContentView` refreshes it on the scene's phase, the resume,
+  the novenas, a prayer finished and a change of tab. The extension has
+  no string catalog but its gallery names (`Widgets.xcstrings`) and
+  "Open Lumen Viae to begin", shown until the app has written one. Its
+  timeline turns at midnight, at four (the prayer day), at each
+  Angelus bell and the hour after, and at each hour of the Office. The
+  App Groups entitlement (`Config/app.entitlements`,
+  `Config/LumenViaeWidgets.entitlements`) needs the App ID and the
+  group in the developer account before any device or store build.
+
 ### Not built yet
 
 - A Divine Office version/language setting (Monastic, Dominican, and the
