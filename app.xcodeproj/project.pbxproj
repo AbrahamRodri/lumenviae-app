@@ -347,7 +347,7 @@
 		B1612DF22F3C13420002FC72 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIconMarianBlue AppIconMidnight AppIconSorrowful AppIconVellum";
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIconGilded AppIconMarianBlue AppIconMidnight AppIconSorrowful AppIconVellum";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
@@ -384,7 +384,7 @@
 		B1612DF32F3C13420002FC72 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIconMarianBlue AppIconMidnight AppIconSorrowful AppIconVellum";
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIconGilded AppIconMarianBlue AppIconMidnight AppIconSorrowful AppIconVellum";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
