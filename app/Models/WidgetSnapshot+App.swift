@@ -67,7 +67,7 @@ extension WidgetSnapshot {
         calendar: Calendar
     ) -> Day {
         let category = ScheduleService.category(for: date)
-        let quote = RosaryQuote.quote(spanish: spanish, on: date)
+        let quote = RosaryQuotes.quote(spanish: spanish, on: date)
         let weekday = weekdayName(of: date)
         return Day(
             date: dayKey(date, calendar: calendar),

@@ -15,6 +15,26 @@ import UserNotifications
 
 @main
 struct appApp: App {
+    /// The app's store, kept where it has always been. With the widgets'
+    /// App Group on, SwiftData's default puts a new store in the group's
+    /// container, and every install's prayer history, journal and reading
+    /// places would seem to vanish on the update. The widgets read their
+    /// own snapshot (`WidgetSnapshotStore`), never this store.
+    static let modelContainer: ModelContainer = {
+        let schema = Schema([
+            PrayerSession.self, JournalEntry.self, ConsecrationProgress.self, TrueDevotionReadingProgress.self,
+            BookReadingProgress.self,
+        ])
+        let configuration = ModelConfiguration(schema: schema, groupContainer: .none)
+        do {
+            return try ModelContainer(for: schema, configurations: configuration)
+        } catch {
+            // As the modifier did: the app opens rather than stop at launch
+            return try! ModelContainer(
+                for: schema, configurations: ModelConfiguration(schema: schema, isStoredInMemoryOnly: true))
+        }
+    }()
+
 
     @Environment(\.scenePhase) private var scenePhase
 
@@ -100,7 +120,7 @@ struct appApp: App {
             }
         }
         .environment(userSettings)
-        .modelContainer(for: [PrayerSession.self, JournalEntry.self, ConsecrationProgress.self, TrueDevotionReadingProgress.self, BookReadingProgress.self])
+        .modelContainer(Self.modelContainer)
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 resetAlternateIconIfNeeded()

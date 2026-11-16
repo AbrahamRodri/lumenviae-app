@@ -341,6 +341,9 @@ struct ContentView: View {
             // a page that keeps no hook of its own is caught here
             WidgetSnapshotStore.shared.refresh(modelContext: modelContext)
         }
+        // At launch too: the scene is already active by the time this view
+        // watches its phase, so a first launch wrote nothing
+        .task { WidgetSnapshotStore.shared.refresh(modelContext: modelContext) }
         // And as soon as what the widgets show changes: the Rosary's place,
         // a novena's days, a prayer finished, a tab left
         .onChange(of: PrayerResumeService.shared.inProgress) { _, _ in
