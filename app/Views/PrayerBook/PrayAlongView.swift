@@ -742,35 +742,21 @@ struct PrayAlongView: View {
         )
     }
 
-    /// The book's one question, asked the first time it would speak, in
+    /// The book's one choice, offered the first time it would speak, in
     /// the foot where NEXT will stand: the prayer it is about stays on the
-    /// page above it. A sheet once asked it over the lower half of the
-    /// prayer. Answering is the way on; VOICE or SILENT at the head of the
-    /// page owns the choice afterward.
+    /// page above it. Two answers and no question (Abraham, 16 Nov 2026:
+    /// "id rather it just say silent , audio"); a sentence once asked "With
+    /// a voice, or in silence?" over them, and a sheet before that asked it
+    /// over the lower half of the prayer. Answering is the way on; VOICE or
+    /// SILENT at the head of the page owns the choice afterward.
     private var howToPrayQuestion: some View {
-        VStack(spacing: 12) {
-            VStack(spacing: 4) {
-                Text(String(
-                    localized: "With a voice, or in silence?",
-                    comment: "The pray-along's foot, the first time the Prayers tab's book would speak: its question"
-                ))
-                .font(AppFonts.readingFont(18))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.center)
-                .accessibilityAddTraits(.isHeader)
-                footNote(String(
-                    localized: "Change this any time with VOICE or SILENT at the top of the page, or in Settings.",
-                    comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the note under the question; VOICE and SILENT are the words on the pray-along screen's switch and must match them"
-                ))
-            }
-            HStack(spacing: 12) {
-                howToPrayAnswer(
-                    String(localized: "In silence", comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the answer that keeps the book silent"),
-                    icon: "ph-book-open", aloud: false)
-                howToPrayAnswer(
-                    String(localized: "With a voice", comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the answer that has a voice read the prayers"),
-                    icon: "ph-speaker-high", aloud: true)
-            }
+        HStack(spacing: 12) {
+            howToPrayAnswer(
+                String(localized: "Silent", comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the choice that keeps the book silent, beside Audio"),
+                icon: "ph-book-open", aloud: false)
+            howToPrayAnswer(
+                String(localized: "Audio", comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the choice that has a voice read the prayers, beside Silent; also Settings' row name"),
+                icon: "ph-speaker-high", aloud: true)
         }
     }
 

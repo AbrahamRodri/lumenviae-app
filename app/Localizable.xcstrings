@@ -5512,7 +5512,7 @@
       }
     },
     "Audio" : {
-      "comment" : "Settings: a row's name",
+      "comment" : "The pray-along's foot, the first time the Prayers tab's book would speak: the choice that has a voice read the prayers, beside Silent; also Settings' row name",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -6662,17 +6662,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Oraciones católicas para cada necesidad, empezando por las de esta hora del día. Busca cualquier oración por su nombre o por dónde estás: en Misa, en la Confesión, en casa."
-          }
-        }
-      }
-    },
-    "Change this any time with VOICE or SILENT at the top of the page, or in Settings." : {
-      "comment" : "The pray-along's foot, the first time the Prayers tab's book would speak: the note under the question; VOICE and SILENT are the words on the pray-along screen's switch and must match them",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cámbialo cuando quieras con VOZ o SILENCIO en la parte de arriba de la página, o en Configuración."
           }
         }
       }
@@ -11958,17 +11947,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En honor de sus lágrimas · %lld de 3"
-          }
-        }
-      }
-    },
-    "In silence" : {
-      "comment" : "The pray-along's foot, the first time the Prayers tab's book would speak: the answer that keeps the book silent",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En silencio"
           }
         }
       }
@@ -21046,6 +21024,17 @@
         }
       }
     },
+    "Silent" : {
+      "comment" : "The pray-along's foot, the first time the Prayers tab's book would speak: the choice that keeps the book silent, beside Audio",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En silencio"
+          }
+        }
+      }
+    },
     "Silent prayer" : {
       "comment" : "A sung set of the reader's own: what a pause with no note of its own is called, a time of silent prayer between chants; red, also the placeholder of the pause's note field",
       "localizations" : {
@@ -27719,28 +27708,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Con voz"
-          }
-        }
-      }
-    },
-    "With a voice" : {
-      "comment" : "The pray-along's foot, the first time the Prayers tab's book would speak: the answer that has a voice read the prayers",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con voz"
-          }
-        }
-      }
-    },
-    "With a voice, or in silence?" : {
-      "comment" : "The pray-along's foot, the first time the Prayers tab's book would speak: its question",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Con voz o en silencio?"
           }
         }
       }
