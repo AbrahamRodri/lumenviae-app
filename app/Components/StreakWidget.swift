@@ -123,7 +123,12 @@ struct StreakWidget: View {
         .onAppear { dotsAppeared = true }
     }
 
-    private var streakLabel: String {
+    private var streakLabel: String { Self.figureLine(streak: streak) }
+
+    /// The figure's line for a run of days: "12 days in a row", "1 day so
+    /// far", or "Pray today to begin" — never "0 days". The widgets'
+    /// Prayer Record says it the same way.
+    static func figureLine(streak: Int) -> String {
         switch streak {
         case 0:
             return String(localized: "Pray today to begin", comment: "Streak card: the figure's line before any day is prayed")

@@ -24,14 +24,18 @@ extension MissalVestment {
     /// never compete with the gold — only ever a small dot, never a field
     /// of colour. Red is the rubric's red, so a red day's dot and the
     /// missal's ℣ ℟ ✠ are one colour.
-    var swatch: Color {
+    var swatch: Color { Color(hex: swatchHex) }
+
+    /// The swatch as a hex string, for the widgets, which draw it from
+    /// their snapshot. Red is `Rubric.red`'s.
+    var swatchHex: String {
         switch self {
-        case .white: return Color(hex: "#EDE7D6")
-        case .red: return Rubric.red
-        case .green: return Color(hex: "#4E6B4A")
-        case .violet: return Color(hex: "#6B5480")
-        case .black: return Color(hex: "#54545f")
-        case .rose: return Color(hex: "#c98a97")
+        case .white: return "#EDE7D6"
+        case .red: return "#A0473F"
+        case .green: return "#4E6B4A"
+        case .violet: return "#6B5480"
+        case .black: return "#54545f"
+        case .rose: return "#c98a97"
         }
     }
 }

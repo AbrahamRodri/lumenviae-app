@@ -1,0 +1,348 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "widget.gallery.angelus.description" : {
+      "comment" : "Widget gallery: what the Angelus widget shows",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The next Angelus bell, and an invitation at its hour."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La próxima campana del Ángelus y una invitación a su hora."
+          }
+        }
+      }
+    },
+    "widget.gallery.angelus.name" : {
+      "comment" : "Widget gallery: the name of the Angelus widget",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Angelus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El Ángelus"
+          }
+        }
+      }
+    },
+    "widget.gallery.church.description" : {
+      "comment" : "Widget gallery: what the Today in the Church widget shows",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The day's feast and the colour of its vestments."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fiesta del día y el color de sus ornamentos."
+          }
+        }
+      }
+    },
+    "widget.gallery.church.name" : {
+      "comment" : "Widget gallery: the name of the widget showing the day's feast",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today in the Church"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy en la Iglesia"
+          }
+        }
+      }
+    },
+    "widget.gallery.consecration.description" : {
+      "comment" : "Widget gallery: what the Consecration widget shows",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your day of the 33-day Consecration to Mary."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu día de la Consagración a María de 33 días."
+          }
+        }
+      }
+    },
+    "widget.gallery.consecration.name" : {
+      "comment" : "Widget gallery: the name of the consecration widget",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consecration"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consagración"
+          }
+        }
+      }
+    },
+    "widget.gallery.continue.description" : {
+      "comment" : "Widget gallery: what the Continue Your Rosary widget shows",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Where you left your Rosary today, or today's to begin."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dónde dejaste tu Rosario hoy, o el de hoy para comenzar."
+          }
+        }
+      }
+    },
+    "widget.gallery.continue.name" : {
+      "comment" : "Widget gallery: the name of the widget showing where the Rosary was left",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue Your Rosary"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continúa tu Rosario"
+          }
+        }
+      }
+    },
+    "widget.gallery.hours.description" : {
+      "comment" : "Widget gallery: what the Hours of Prayer widget shows",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The hour of the Divine Office it is now."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La hora del Oficio Divino que es ahora."
+          }
+        }
+      }
+    },
+    "widget.gallery.hours.name" : {
+      "comment" : "Widget gallery: the name of the Divine Office widget",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hours of Prayer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horas de oración"
+          }
+        }
+      }
+    },
+    "widget.gallery.mysteries.description" : {
+      "comment" : "Widget gallery: what the Today's Mysteries widget shows",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The day's mysteries and their painting."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los misterios del día y su pintura."
+          }
+        }
+      }
+    },
+    "widget.gallery.mysteries.name" : {
+      "comment" : "Widget gallery: the name of the widget showing the day's mysteries",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today's Mysteries"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Misterios de hoy"
+          }
+        }
+      }
+    },
+    "widget.gallery.novena.description" : {
+      "comment" : "Widget gallery: what the Novena widget shows",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your novena's day and the days prayed."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El día de tu novena y los días rezados."
+          }
+        }
+      }
+    },
+    "widget.gallery.novena.name" : {
+      "comment" : "Widget gallery: the name of the novena widget",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novena"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novena"
+          }
+        }
+      }
+    },
+    "widget.gallery.record.description" : {
+      "comment" : "Widget gallery: what the Prayer Record widget shows",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your days in a row and this week's Rosaries."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus días seguidos y los Rosarios de esta semana."
+          }
+        }
+      }
+    },
+    "widget.gallery.record.name" : {
+      "comment" : "Widget gallery: the name of the prayer record widget",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prayer Record"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registro de oración"
+          }
+        }
+      }
+    },
+    "widget.gallery.word.description" : {
+      "comment" : "Widget gallery: what the A Word for Today widget shows",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A saint's word on prayer, new each day."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una palabra de un santo sobre la oración, nueva cada día."
+          }
+        }
+      }
+    },
+    "widget.gallery.word.name" : {
+      "comment" : "Widget gallery: the name of the daily quotation widget",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A Word for Today"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una palabra para hoy"
+          }
+        }
+      }
+    },
+    "widget.openApp" : {
+      "comment" : "Any widget before the app has been opened: asks that it be opened once",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Lumen Viae to begin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre Lumen Viae para comenzar"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
