@@ -224,6 +224,9 @@ struct FocalImage: View {
 struct FullPainting: View {
     let name: String?
     var focusY: CGFloat = 0.25
+    /// A fade from 60 percent up, wholly dark at the foot, so cream reads
+    /// over any painting, the brightest included (design, the Hours small)
+    var strongFade = false
 
     var body: some View {
         ZStack {
@@ -231,11 +234,17 @@ struct FullPainting: View {
                 FocalImage(image: image, focusY: focusY)
             }
             LinearGradient(
-                stops: [
-                    .init(color: WidgetColors.ground.opacity(0.05), location: 0.2),
-                    .init(color: WidgetColors.ground.opacity(0.72), location: 0.62),
-                    .init(color: WidgetColors.ground.opacity(0.96), location: 1),
-                ],
+                stops: strongFade
+                    ? [
+                        .init(color: WidgetColors.ground.opacity(0), location: 0.4),
+                        .init(color: WidgetColors.ground.opacity(0.85), location: 0.7),
+                        .init(color: WidgetColors.ground, location: 1),
+                    ]
+                    : [
+                        .init(color: WidgetColors.ground.opacity(0.05), location: 0.2),
+                        .init(color: WidgetColors.ground.opacity(0.72), location: 0.62),
+                        .init(color: WidgetColors.ground.opacity(0.96), location: 1),
+                    ],
                 startPoint: .top, endPoint: .bottom)
         }
     }

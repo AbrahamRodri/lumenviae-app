@@ -149,8 +149,10 @@ struct PrayerRecordView: View {
                             Flame(lit: record.prayedToday)
                             Kicker(text: labels.currentStreak, size: 8.5)
                         }
-                        Title(text: record.line).padding(.top, 12)
-                        Spacer(minLength: 0)
+                        // A size under the others, and never closer than 8 pt
+                        // to the week: PRAY TODAY TO BEGIN ran into it
+                        Title(text: record.line, size: 17).padding(.top, 10)
+                        Spacer(minLength: 8)
                         WeekBeads(record: record, initials: labels.weekInitials)
                     }
                     .padding(16)
@@ -256,7 +258,7 @@ struct HoursOfPrayerView: View {
                     }
                 default:
                     ZStack(alignment: .bottomLeading) {
-                        FullPainting(name: hour.painting)
+                        FullPainting(name: hour.painting, strongFade: true)
                         VStack(alignment: .leading, spacing: 0) {
                             Kicker(text: "\(labels.now) · \(hour.churchName)")
                             Title(text: hour.name).padding(.top, 5)

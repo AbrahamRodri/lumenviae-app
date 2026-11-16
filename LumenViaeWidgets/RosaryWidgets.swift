@@ -150,6 +150,7 @@ struct ContinueRosaryView: View {
                     }
                 case .accessoryRectangular:
                     LockRectangle(title: day.mysteries.title, lines: [snapshot.labels.todaysRosary, day.mysteries.firstLine])
+                case .systemMedium: beginMedium(day, labels: snapshot.labels)
                 default: begin(day, labels: snapshot.labels)
                 }
             } else {
@@ -188,6 +189,20 @@ struct ContinueRosaryView: View {
                 Spacer(minLength: 0)
                 ItalicLine(text: "\(rosary.placeLine) · \(rosary.beadLine)", lines: 2).padding(.bottom, 8)
                 DecadeBeads(rosary: rosary)
+            }
+        }
+    }
+
+    /// Nothing open, medium: the medium pattern the other widgets wear,
+    /// the painting at the left and the words beside it (design)
+    private func beginMedium(_ day: WidgetSnapshot.Day, labels: WidgetSnapshot.Labels) -> some View {
+        ZStack(alignment: .topLeading) {
+            HalfPainting(name: day.mysteries.paintings.first)
+            BesidePainting {
+                Kicker(text: labels.todaysRosary)
+                Title(text: day.mysteries.title, size: 23).padding(.top, 10)
+                Spacer(minLength: 0)
+                GoLink(text: labels.begin)
             }
         }
     }
