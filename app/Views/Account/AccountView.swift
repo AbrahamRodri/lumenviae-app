@@ -129,25 +129,18 @@ struct AccountView: View {
                     // The Prayer Book's own: whether it speaks at all.
                     // Apart from the Rosary's Audio on purpose — that one
                     // says what the voice reads, this one whether the book
-                    // makes a sound. Before any answer it shows the default
-                    // and says the book will ask; only a tap here answers
-                    // the question
+                    // makes a sound. Silent until Audio is chosen, here or
+                    // on the pray-along page's switch
                     AccountSection(title: String(localized: "Prayers Tab", comment: "Settings: a section heading"), icon: "lv-prayer-book") {
                         RosaryChoiceSettingsRow(
                             icon: PrayerBookAudio.icon,
                             title: String(localized: "Audio", comment: "Settings: a row\'s name"),
                             options: PrayerBookAudio.options,
                             value: Binding(
-                                get: { PrayerBookStore.shared.praysAloud },
+                                get: { PrayerBookStore.shared.hasChosenAloud && PrayerBookStore.shared.praysAloud },
                                 set: { PrayerBookStore.shared.chooseAloud($0) }
                             ),
-                            isAnswered: PrayerBookStore.shared.hasChosenAloud,
-                            note: { aloud in
-                                PrayerBookAudio.note(
-                                    for: aloud,
-                                    answered: PrayerBookStore.shared.hasChosenAloud
-                                )
-                            }
+                            note: { aloud in PrayerBookAudio.note(for: aloud) }
                         )
                     }
                     .padding(.top, 30)

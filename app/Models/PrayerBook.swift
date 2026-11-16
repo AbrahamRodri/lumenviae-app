@@ -951,30 +951,16 @@ enum PrayerBookAudio {
     static let icon = "lv-prayer-book"
 
     /// The quieter way first, as the setting's `false`, as the Rosary's
-    /// pills set theirs
+    /// pills set theirs, in the pray-along switch's own words
     static let options: [RosaryChoice.Option] = [
-        RosaryChoice.Option(value: false, name: String(
-            localized: "In Silence",
-            comment: "Prayers Tab Audio option: no sound"
-        )),
-        RosaryChoice.Option(value: true, name: String(
-            localized: "With a Voice",
-            comment: "Prayers Tab Audio option: a voice reads the prayers"
-        )),
+        RosaryChoice.Option(value: false, name: PrayAlongView.silentWord),
+        RosaryChoice.Option(value: true, name: PrayAlongView.audioWord),
     ]
 
-    /// What the chosen option does. Until the reader has answered, the
-    /// pill shows the default, Aloud, but the book has not yet spoken:
-    /// it asks the first time (`PrayAlongView.howToPrayQuestion`), so the line
-    /// says that instead.
-    static func note(for aloud: Bool, answered: Bool = true) -> String {
-        guard answered else {
-            return String(
-                localized: "Not chosen yet. You'll be asked the first time you pray from the Prayers tab.",
-                comment: "Settings, Prayers Tab Audio: the line before the reader has chosen"
-            )
-        }
-        return aloud
+    /// What the chosen option does. The book is silent until Audio is
+    /// tapped, here or on the pray-along page's switch.
+    static func note(for aloud: Bool) -> String {
+        aloud
             ? String(
                 localized: "A voice reads each prayer to you.",
                 comment: "Settings, Prayers Tab Audio: the line under the chosen option"

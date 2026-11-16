@@ -6,7 +6,7 @@
 //  carries, English and Latin pair line for line, the seasons choose the
 //  right antiphon of Our Lady and the Regina Cæli in Eastertide, the
 //  voice asks for the Rosary's recordings where the Rosary has them, and
-//  the book's Aloud or In Silence is answered only by being chosen.
+//  the book's Silent or Audio is answered only by being chosen.
 //
 
 import Foundation
@@ -111,7 +111,7 @@ struct PrayerBookTests {
         #expect(store.praysAloud == aloud)
         #expect(store.hasChosenAloud)
 
-        // And the next launch remembers it, so the question is not asked
+        // And the next launch remembers it, so the book keeps the choice
         let next = PrayerBookStore(defaults: defaults)
         #expect(next.praysAloud == aloud)
         #expect(next.hasChosenAloud)
@@ -119,11 +119,10 @@ struct PrayerBookTests {
 
     @Test func settingsNamesTheBooksChoiceAsItsOwn() {
         #expect(PrayerBookAudio.title != RosaryInfoRow.audio.title)
-        #expect(PrayerBookAudio.options.map(\.name) == ["In Silence", "With a Voice"])
+        #expect(PrayerBookAudio.options.map(\.name) == ["Silent", "Audio"])
         #expect(PrayerBookAudio.options.map(\.value) == [false, true])
         let notes = [
             PrayerBookAudio.note(for: false), PrayerBookAudio.note(for: true),
-            PrayerBookAudio.note(for: true, answered: false),
         ]
         #expect(Set(notes).count == notes.count)
     }
