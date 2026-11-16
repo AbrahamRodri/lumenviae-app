@@ -151,7 +151,7 @@ struct PrayerRecordView: View {
                         }
                         // A size under the others, and never closer than 8 pt
                         // to the week: PRAY TODAY TO BEGIN ran into it
-                        Title(text: record.line, size: 17).padding(.top, 10)
+                        Title(text: Self.brokenAfterTwoWords(record.line), size: 17).padding(.top, 10)
                         Spacer(minLength: 8)
                         WeekBeads(record: record, initials: labels.weekInitials)
                     }
@@ -164,6 +164,16 @@ struct PrayerRecordView: View {
         }
         .widgetURL(LumenLink.record)
         .lumenBackground()
+    }
+}
+
+extension PrayerRecordView {
+    /// The words after the second held together, so the line breaks
+    /// "12 days / in a row", never "12 days in / a row" (design, w-w7)
+    static func brokenAfterTwoWords(_ line: String) -> String {
+        let words = line.split(separator: " ", omittingEmptySubsequences: true)
+        guard words.count > 3 else { return line }
+        return words.prefix(2).joined(separator: " ") + " " + words.dropFirst(2).joined(separator: "\u{00A0}")
     }
 }
 
