@@ -36,6 +36,10 @@ struct ConsecrationChooserTests {
         #expect(
             ConsecrationDateSelectionView.movedNote(try preparation("annunciation", feastYear: 2046))
                 == "Moved from March 25, which is a Sunday of Lent in 2046")
+        // 2008: the Tuesday after Easter, said with its own template
+        #expect(
+            ConsecrationDateSelectionView.movedNote(try preparation("annunciation", feastYear: 2008))
+                == "Moved from March 25, which is in Easter Week in 2008")
     }
 
     @Test func aFeastOnItsOwnDaySaysNothing() throws {

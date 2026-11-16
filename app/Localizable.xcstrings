@@ -14300,6 +14300,18 @@
         }
       }
     },
+    "Moved from %@, which is in Easter Week in %@" : {
+      "comment" : "Consecration feast chooser, under a feast's name: its own date falls in the week after Easter Sunday that year, like Moved from March 25, which is in Easter Week in 2008",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trasladada del %1$@, que en %2$@ cae en la semana de Pascua"
+          }
+        }
+      }
+    },
     "Mute" : {
       "comment" : "Simple Rosary player: VoiceOver name of the speaker button while the voice is heard",
       "localizations" : {
@@ -29025,18 +29037,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "in Easter Week" : {
-      "comment" : "Consecration feast chooser, why a feast moved: its own date falls in the week after Easter Sunday that year; stands after which is, like which is in Easter Week in 2035",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "la semana de Pascua"
           }
         }
       }

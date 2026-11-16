@@ -386,6 +386,8 @@ struct ConsecrationDateSelectionView: View {
     /// on its own day.
     static func movedNote(_ preparation: FeastPreparation, calendar: Calendar = .current) -> String? {
         let feast = preparation.feast
+        // Only the Annunciation is moved (MarianFeastDay.date(for:))
+        guard feast.id == "annunciation" else { return nil }
         let year = calendar.component(.year, from: preparation.feastDate)
         guard let ownDay = calendar.date(from: DateComponents(year: year, month: feast.month, day: feast.day)),
               !calendar.isDate(ownDay, inSameDayAs: preparation.feastDate),
@@ -394,6 +396,14 @@ struct ConsecrationDateSelectionView: View {
         let fromEaster = calendar.dateComponents(
             [.day], from: calendar.startOfDay(for: easter), to: calendar.startOfDay(for: ownDay)
         ).day ?? 0
+        let from = ownDay.formatted(.dateTime.month(.wide).day())
+        if (1...6).contains(fromEaster) {
+            // Its own template: Spanish says the date "cae en" the week, not
+            // "es" it (ios-review, PR #186)
+            return String(
+                localized: "Moved from \(from), which is in Easter Week in \(String(year))",
+                comment: "Consecration feast chooser, under a feast's name: its own date falls in the week after Easter Sunday that year, like Moved from March 25, which is in Easter Week in 2008")
+        }
         let day: String
         switch fromEaster {
         case -7: day = String(localized: "Palm Sunday", comment: "Consecration feast chooser, why a feast moved: the day its own date falls on that year")
@@ -404,11 +414,9 @@ struct ConsecrationDateSelectionView: View {
         case -2: day = String(localized: "Good Friday", comment: "Consecration feast chooser, why a feast moved: the day its own date falls on that year")
         case -1: day = String(localized: "Holy Saturday", comment: "Consecration feast chooser, why a feast moved: the day its own date falls on that year")
         case 0: day = String(localized: "Easter Sunday", comment: "Consecration feast chooser, why a feast moved: the day its own date falls on that year")
-        case 1...6: day = String(localized: "in Easter Week", comment: "Consecration feast chooser, why a feast moved: its own date falls in the week after Easter Sunday that year; stands after which is, like which is in Easter Week in 2035")
         case 7: day = String(localized: "the Sunday after Easter", comment: "Consecration feast chooser, why a feast moved: the day its own date falls on that year")
         default: day = String(localized: "a Sunday of Lent", comment: "Consecration feast chooser, why a feast moved: the day its own date falls on that year")
         }
-        let from = ownDay.formatted(.dateTime.month(.wide).day())
         return String(
             localized: "Moved from \(from), which is \(day) in \(String(year))",
             comment: "Consecration feast chooser, under a feast's name: its own date, the day that date falls on, and the year, like Moved from March 25, which is Holy Thursday in 2027"
