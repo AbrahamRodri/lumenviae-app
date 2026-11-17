@@ -45,6 +45,12 @@ struct BookPrayer: Identifiable, Hashable {
     /// book does not say, which keeps the foot
     var originCredit: Bool? = nil
 
+    /// The foot's own words where the book gives them (a Spanish prayer,
+    /// api #292), nil there meaning no foot; when false, the foot is
+    /// read from `origin` and `originCredit`
+    var footLine: String? = nil
+    var hasOwnFootLine = false
+
     /// The credit under the title: only a short credit naming an author,
     /// who must be credited on the page; a general origin ("Western
     /// Church · 13th–16th century") is not said there (Abraham, 16 Nov
@@ -56,7 +62,10 @@ struct BookPrayer: Identifiable, Hashable {
     /// alone is not said on the page at all (Abraham, 17 Nov 2026: "if no
     /// souce needed for credits leave it like 13 centry church is odd").
     /// The Sources page and the share text still give it.
-    var creditAtFoot: String? { originCredit == false ? nil : origin }
+    var creditAtFoot: String? {
+        if hasOwnFootLine { return footLine }
+        return originCredit == false ? nil : origin
+    }
 
     /// When or how it is said, in one plain sentence
     let note: String?
@@ -416,11 +425,11 @@ enum PrayerBook {
         spanish: Bool = SpanishContent.isActive
     ) -> BookPrayer {
         guard spanish else { return prayer }
-        let spanishWords: (title: String, text: String, origin: String?, shortCredit: String?, originCredit: Bool?)?
+        let spanishWords: (title: String, text: String, origin: String?, shortCredit: String?, foot: String?)?
         if let translation = translations[prayer.id] {
             spanishWords = (
                 translation.title, translation.text, translation.origin, translation.shortCredit,
-                translation.originCredit
+                translation.footCredit
             )
         } else if let rosary = SpanishContent.prayers[prayer.id] {
             spanishWords = (rosary.title, rosary.lines, nil, nil, nil)
@@ -429,15 +438,18 @@ enum PrayerBook {
         }
         guard let spanishWords else { return prayer }
         // Credited in Spanish where the book says it in Spanish, and not
-        // at all otherwise: never an English line on a Spanish page. Whether
-        // the origin is a credit is the Spanish origin's own (it may name the
-        // book or publisher of the Spanish wording); a Spanish row with no
-        // flag shows its source, since a missing flag must never hide a
-        // credit (orch-lead, 17 Nov 2026)
+        // at all otherwise: never an English line on a Spanish page. The
+        // foot is the book's own line for the Spanish (`foot_credit`, which
+        // may credit only the source of the Spanish wording: "Según el
+        // Compendio..."). A book from before that line shows the whole
+        // Spanish origin, since a missing field must never hide a credit
+        // (orch-lead, 17 Nov 2026)
+        let footLinesServed = translations.values.contains { $0.footCredit != nil }
         return BookPrayer(
             id: prayer.id, title: spanishWords.title, latinTitle: prayer.latinTitle,
             origin: spanishWords.origin, shortCredit: spanishWords.shortCredit,
-            originCredit: spanishWords.originCredit, note: prayer.note,
+            originCredit: nil, footLine: spanishWords.foot, hasOwnFootLine: footLinesServed,
+            note: prayer.note,
             english: spanishWords.text, latin: prayer.latin
         )
     }

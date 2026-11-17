@@ -49,33 +49,49 @@ struct OriginCreditTests {
         #expect(again.originCredit == false)
     }
 
-    /// A Spanish row with no flag of its own shows its source, whatever its
-    /// English twin says: a missing flag never hides a credit
-    @Test func aSpanishRowWithoutAFlagShowsItsSource() {
+    private func translation(origin: String, foot: String?) -> PrayerBookTranslations.Translation {
         var translation = PrayerBookTranslations.Translation(
             id: "test_prayer", title: "Título", text: "Amén.", aiTranslated: nil)
-        translation.origin = "Iglesia de Occidente, siglos XIII a XVI"
-        let english = prayer(origin: "Western Church · 13th–16th century", originCredit: false)
-        let spanish = PrayerBook.inSpanish(english, translations: ["test_prayer": translation], spanish: true)
-        #expect(spanish.creditAtFoot == translation.origin)
-        translation.originCredit = false
-        let flagged = PrayerBook.inSpanish(english, translations: ["test_prayer": translation], spanish: true)
-        #expect(flagged.creditAtFoot == nil)
+        translation.origin = origin
+        translation.footCredit = foot
+        return translation
     }
 
-    /// A Spanish origin can credit the book its Spanish wording comes from
-    /// where the English origin is only a tradition and a century
-    @Test func aSpanishOriginsOwnFlagComesFirst() throws {
-        var translation = PrayerBookTranslations.Translation(
-            id: "test_prayer", title: "Título", text: "Amén.", aiTranslated: nil)
-        translation.origin = "Tradición de la Iglesia · según el Compendio del Catecismo"
-        translation.originCredit = true
+    /// The Spanish foot is the book's own line: the source of the Spanish
+    /// wording alone where only that is a credit
+    @Test func theSpanishFootIsTheBooksOwnLine() {
         let english = prayer(origin: "Western Church · 13th–16th century", originCredit: false)
-        let spanish = PrayerBook.inSpanish(english, translations: ["test_prayer": translation], spanish: true)
-        #expect(spanish.creditAtFoot == translation.origin)
-        let json = #"{"id":"x","title":"X","text":"Amén.","origin":"según","origin_credit":true}"#
+        let angelus = translation(
+            origin: "Iglesia de Occidente, siglos XIII a XVI · según el Compendio del Catecismo de la Iglesia Católica",
+            foot: "Según el Compendio del Catecismo de la Iglesia Católica")
+        let spanish = PrayerBook.inSpanish(english, translations: ["test_prayer": angelus], spanish: true)
+        #expect(spanish.creditAtFoot == "Según el Compendio del Catecismo de la Iglesia Católica")
+    }
+
+    /// Where the book gives Spanish foot lines, a translation without one
+    /// has no foot (the team's own translations)
+    @Test func aTeamTranslationHasNoFoot() {
+        let english = prayer(origin: "Western Church · 9th century", originCredit: false)
+        let team = translation(origin: "Iglesia de Occidente, siglo IX · traducción del equipo", foot: nil)
+        let other = translation(origin: "La Misa · según Lefebvre", foot: "La Misa · según Lefebvre")
+        let spanish = PrayerBook.inSpanish(
+            english, translations: ["test_prayer": team, "other": other], spanish: true)
+        #expect(spanish.creditAtFoot == nil)
+    }
+
+    /// A book from before the Spanish foot lines shows the whole Spanish
+    /// origin, whatever the English twin says: a missing field never hides a credit
+    @Test func aBookFromBeforeTheSpanishFootLinesShowsTheSource() {
+        let english = prayer(origin: "Western Church · 13th–16th century", originCredit: false)
+        let older = translation(origin: "Iglesia de Occidente · según el Compendio", foot: nil)
+        let spanish = PrayerBook.inSpanish(english, translations: ["test_prayer": older], spanish: true)
+        #expect(spanish.creditAtFoot == "Iglesia de Occidente · según el Compendio")
+    }
+
+    @Test func theSpanishDocumentReadsTheFootLine() throws {
+        let json = #"{"id":"x","title":"X","text":"Amén.","origin":"o","foot_credit":"Según el Compendio"}"#
         let decoded = try JSONDecoder().decode(PrayerBookTranslations.Translation.self, from: Data(json.utf8))
-        #expect(decoded.originCredit == true)
+        #expect(decoded.footCredit == "Según el Compendio")
     }
 
     // MARK: - The shipped book
