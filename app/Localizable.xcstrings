@@ -8330,7 +8330,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El día %1$lld quedó sin rezar. Puedes rezarlo ahora o seguir con el día %2$lld."
+            "value" : "El día %1$lld sigue abierto. Puedes rezarlo ahora o seguir con el día %2$lld."
           }
         }
       }
@@ -8342,7 +8342,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El día %lld quedó sin rezar. Puedes rezarlo ahora."
+            "value" : "El día %lld sigue abierto. Puedes rezarlo ahora."
           }
         }
       }
@@ -8463,7 +8463,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los días %1$@ quedaron sin rezar. Puedes rezarlos ahora o seguir con el día %2$lld."
+            "value" : "Los días %1$@ siguen abiertos. Puedes rezarlos ahora o seguir con el día %2$lld."
           }
         }
       }
@@ -8475,7 +8475,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los días %@ quedaron sin rezar. Puedes rezarlos ahora."
+            "value" : "Los días %@ siguen abiertos. Puedes rezarlos ahora."
           }
         }
       }

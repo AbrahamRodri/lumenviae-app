@@ -859,9 +859,11 @@ struct NovenaIntentionSheet: View {
                 .padding(.top, 6)
             }
             .padding(22)
+            .sheetContentMeasure()
         }
+        // As tall as it holds, not the whole glass over an empty half
+        .fittedScrollingSheet()
         .sheetGround()
-        .presentationDetents([.large])
         .onAppear {
             text = initial
             focused = true
@@ -987,9 +989,11 @@ struct NovenaReminderSheet: View {
                 }
             }
             .padding(22)
+            .sheetContentMeasure()
         }
+        // As tall as it holds, not the whole glass over an empty half
+        .fittedScrollingSheet()
         .sheetGround()
-        .presentationDetents([.large])
         .interactiveDismissDisabled(isBeginning)
         .onAppear {
             let parts = initial ?? DateComponents(hour: 20, minute: 0)
