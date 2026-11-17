@@ -137,6 +137,48 @@ extension APIClientTests {
         #expect(StubProtocol.requests.isEmpty)
     }
 
+    @Test func aPageOpenedAgainShowsItsSetsAtOnceAndRefreshesQuietly() async {
+        let cache = MeditationSetsSessionCache()
+        StubProtocol.reset { _ in .init(body: #"{"data": [{"id": 8, "name": "Liguori", "category": "joyful"}]}"#) }
+        let first = MeditationSelectionViewModel(
+            category: .joyful,
+            apiService: APIService(session: StubProtocol.session),
+            favorites: FavoritesService(previewFavorites: []),
+            sessionCache: cache
+        )
+        await first.loadMeditationSets()
+
+        // The server has a new set by the time the page is opened again
+        StubProtocol.reset { _ in .init(body: #"{"data": [{"id": 8, "name": "Liguori", "category": "joyful"}, {"id": 9, "name": "Sheen", "category": "joyful"}]}"#) }
+        let again = MeditationSelectionViewModel(
+            category: .joyful,
+            apiService: APIService(session: StubProtocol.session),
+            favorites: FavoritesService(previewFavorites: []),
+            sessionCache: cache
+        )
+        #expect(!again.isLoading, "no spinner: the session's sets stand from the first frame")
+        #expect(again.meditationSets.map(\.id) == [8])
+        await again.loadMeditationSets()
+        #expect(again.meditationSets.map(\.id) == [8, 9], "refreshed behind the list")
+        #expect(StubProtocol.requests.count == 1)
+    }
+
+    @Test func aQuietRefreshThatFailsKeepsTheSetsOnShow() async {
+        let cache = MeditationSetsSessionCache()
+        cache.keep([summary(8, nil)], for: .joyful)
+        StubProtocol.reset { _ in .init(status: 503) }
+        let vm = MeditationSelectionViewModel(
+            category: .joyful,
+            apiService: APIService(session: StubProtocol.session),
+            favorites: FavoritesService(previewFavorites: []),
+            sessionCache: cache
+        )
+        await vm.loadMeditationSets()
+        #expect(vm.meditationSets.map(\.id) == [8])
+        #expect(vm.errorMessage == nil)
+        #expect(!vm.isLoading)
+    }
+
     @Test func everyCategoryHasABundledSetThatStandsWithNoServer() async {
         for category in MysteryCategory.allCases {
             StubProtocol.reset { _ in .init(status: 503) }
