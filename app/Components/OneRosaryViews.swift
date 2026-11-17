@@ -783,7 +783,10 @@ struct OneRosaryColumn<Words: View>: View {
 
     /// Where the Rosary stands, in plain words, under the title: a
     /// mystery by its number of all of them ("Mystery 2 of 5", "Sorrow 3
-    /// of 7"), and the opening and closing prayers by where they fall
+    /// of 7"), and the opening and closing prayers by where they fall.
+    /// No screen sets it since 17 Nov 2026 (the pill says where); kept,
+    /// with its tests and its Spanish, so the words need not be found
+    /// again if a place line returns.
     static func place(mystery: Int?, of total: Int, phase: SpokenSegment.Phase? = nil) -> String {
         let chaplet = total != 5
         if let mystery {
