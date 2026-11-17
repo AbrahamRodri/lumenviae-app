@@ -22,7 +22,7 @@ Home Screen
             ▼
 The mysteries' page (SelectMeditationView) — one Rosary, three forms
     │
-    ├── WAYS TO PRAY: The Scriptural Rosary · No Meditation (the Audio
+    ├── OTHER WAYS TO PRAY: The Scriptural Rosary · No Meditation (the Audio
     │   Rosary), each opening its own page with these mysteries chosen
     ├── MEDITATIONS ("a short reading on each mystery"): gallery of tiles
     │   (default) or ruled list (remembered), pinned sets on top, the
@@ -34,15 +34,18 @@ The Rosary's own page (RosaryConfirmPage — a set's, the Scriptural
 Rosary's and the Audio Rosary's are the same page)
     │
     ├── The painting dissolving into the page, Back over it
-    ├── Kicker, name in Cinzel, one italic line
+    ├── Kicker, name in Cinzel, one italic line (a set's: "From" its book)
     ├── YOUR ROSARY TODAY: rows only, no choices — Mysteries (not for a
-    │   set), Voice & speed (the prayers' speed; meditations stay at 1×)
+    │   set), Voice & speed (the prayers' speed; meditations stay at 1×);
+    │   a set's page is one card of settings instead (Voice and speed,
+    │   Show words and beads, Save for offline)
     ├── On the beginner's path, a line before PRAY saying it begins on
     │   St. Alphonsus with the helps on, and a plain way to say no
-    ├── Past the rows, a ledger for whoever scrolls (a set's meditations,
-    │   source, offline copy, first meditation)
-    └── "PRAY" (the screen's one gold act) — nothing set beneath it,
-        and never an estimated duration
+    ├── Past the rows, a ledger for whoever scrolls (the Scriptural and
+    │   Audio Rosaries' About, first mystery, From)
+    └── "PRAY" (the screen's one gold act) — on a set's page "Read the
+        first meditation" quietly beneath it, and never an estimated
+        duration
         │
         ▼
 Prayer Flow (5 Mysteries/Decades)
@@ -200,7 +203,7 @@ every Hail Mary, no meditation — or as **the Audio Rosary**, every
 prayer said aloud with no readings between (it was the Rosary Aloud,
 then the Holy Rosary, which a newcomer could not tell from the Rosary,
 then the Rosary Said Aloud, whose "said aloud" a regular reader found
-confusing (Oct 2026); the mysteries' page lists it under WAYS TO PRAY
+confusing (Oct 2026); the mysteries' page lists it under OTHER WAYS TO PRAY
 as **No Meditation** · "Every prayer said aloud, nothing read between",
 since every Rosary is now said aloud and this one only leaves the
 meditation out — Abraham, 5 Nov 2026: "audio rosary should just be say
@@ -1103,13 +1106,22 @@ write concurrent code here:
     to its end it offers to hear it again), and Next, Back and Next
     sharing one width (`wayWidth`) so the play stands at the centre. Back
     and Next move a whole prayer, or a bead. On the last step AMEN, the
-    screen's one filled gold act, takes Next's place: a Rosary is only
-    ever finished by a tap on it.
+    screen's one filled gold act, takes Next's place. Said aloud to its
+    last Amen, the Rosary finishes by itself a breath later (Abraham, 17
+    Nov 2026: "you shouldn't need to click the amen button it should just
+    finish"); a Rosary read as text, or stepped to its end by hand, is
+    finished by a tap on AMEN.
   - **The pill at the top** (`RosaryStopsPill`) names the part of the
     Rosary the hand is in, and opens `RosaryStopsSheet`, which goes to any
     part: the opening prayers, a mystery (with its meditation, named with
     the meditation's title where it differs), the closing prayers
-    (`RosaryStop`, seven mysteries in the chaplet). Beside it, the speaker
+    (`RosaryStop`, seven mysteries in the chaplet). Each mystery's row
+    hangs a 44-point square of its painting (`Constants.mysteryImageURL`,
+    cut to its upper middle) beside its name alone; the opening and
+    closing prayers and a novena day's meditation have no picture, their
+    names aligned with the rest (Abraham's pick, 17 Nov 2026: "maybe
+    instead we have like a preview of the image and we don't need ... the
+    little subtitle"). Beside the pill, the speaker
     (`SimpleRosaryMuteButton`): muted, the voice is silent and the Rosary
     goes on at the recording's own pace, every recording still playing
     under the mute (`SpokenRosaryPlayer.setMuted`), so the hand and the lit
@@ -1139,6 +1151,14 @@ write concurrent code here:
     by default) is a switch in the player's Aa sheet: off, the prayer's
     words and the rail stand down, and the pill and the mystery's name
     stay, for someone who prays with the voice and the painting alone.
+    The same switch stands on a set's own page. Muting the voice turns
+    the words and beads back on, since the Rosary cannot be followed
+    without one or the other; turning them off never mutes.
+  - **A switch row carries no icon** (Abraham, 17 Nov 2026: "on case
+    case bases but gearing torwards no"): Show Words and Beads, Follow
+    the narration and the After the Rosary switches stand bare
+    (`ToggleRow.icon` is optional). Settings' own rows keep theirs, since
+    every Settings row has one; navigation rows and buttons keep theirs.
   - **On a mystery's Our Father**, READ THE MEDITATION (`OneRosaryReadLink`,
     with the meditation's title) opens it as text in `MeditationReaderView`
     over the player, the voice going on beneath. The reader follows the
@@ -1189,13 +1209,22 @@ write concurrent code here:
   anytime". The Audio and Counting pills that stood on this page went
   with the switch.
 
-  A set's page puts its subtitle under the name only when its description
-  opens on a sentence short enough to stand there
-  (`MeditationSetDetailViewModel.subtitle(from:)` — its own splitter, since
-  the system's sentence tokenizer ends sentences at "St." and "Fulton J.");
-  the descriptions run to six lines, and six there pushed the rows under
-  PRAY. The full description stands in the ledger below, unless the
-  subtitle said all of it. The page's pin went with the design: sets are
+  **A set's page is for choosing how to pray it** (Abraham, 17 Nov 2026:
+  "the main part of this page is ... to choose the settings and before
+  you pray"; design's option B). Under the name stands one italic line,
+  the book its meditations are from ("From …"), or, for a set with no
+  source, the opening sentence of its description when it is short
+  enough to stand there (`MeditationSetDetailViewModel.subtitle(from:)` —
+  its own splitter, since the system's sentence tokenizer ends sentences
+  at "St." and "Fulton J."). Then one card of settings
+  (`SetSettingsCard`): Voice and speed, Show words and beads (the
+  player's switch), and Save for offline as a switch ("Saving, 40
+  percent" while it saves, the "Some of it didn't download" line and Try
+  again under it on a failure; off removes the copy). The list of the
+  set's mysteries, its About and the painting credit left the page (the
+  credit stands on Sources); "Read the first meditation" is a quiet link
+  under PRAY (`RosaryConfirmFootLink`) that opens it in a sheet. No "Pray
+  with · Audio" row: the page decides nothing about audio. The page's pin went with the design: sets are
   pinned on the shelf's tiles and rows. PRAY's foot turns solid faster
   than `PrayFootScrim`, the long scrim these pages once stood on, which
   now stands only in the Prayer Book's `PrayFootGround`: the ledger
@@ -1566,12 +1595,13 @@ write concurrent code here:
   (`Data/BundledMeditationSets.swift`: the Gospel for the Joyful and the
   Glorious in the Douay-Rheims, Emmerich's Dolorous Passion for the
   Sorrowful, Liguori's reflections on the seven dolors for the Seven
-  Sorrows, and the Luminous set written for the app), standing after the
-  server's on every mysteries' page and there with no signal, under
-  negative sentinel ids that `MeditationSetResolver` serves from the
-  binary and `recordCompletion` never posts. The Joyful and Glorious
-  Gospel sets are what makes the Gospel filter non-empty while the server
-  has no Scriptural set. Each is generated from its edition's text
+  Sorrows, and the Luminous set written for the app), on a mysteries'
+  page only when nothing else can stand there (no signal and nothing
+  downloaded): beside the server's they read as the same set twice
+  (Abraham, 17 Nov 2026: "if so just get rid of these"). They are served
+  under negative sentinel ids that `MeditationSetResolver` serves from the
+  binary and `recordCompletion` never posts, and the beginner's path and
+  a resumed Rosary still open them. Each is generated from its edition's text
   verbatim; the sources are in `Tools/ContentSourcing/sources.py`.
 - **Offline** — user-initiated download of every set, its narration in the
   chosen voice, its painting, and the spoken Rosary's and the Prayer Book's recordings for that
@@ -1981,7 +2011,7 @@ write concurrent code here:
   Rosary is chosen.
 
   **Doors:** THE SCRIPTURAL ROSARY ("A Bible verse for every Hail
-  Mary") under WAYS TO PRAY on every
+  Mary") under OTHER WAYS TO PRAY on every
   mysteries' page, opening its own page with those mysteries chosen;
   the `PrayerShortcut.scripturalRosary` act — Pray tray ("Joyful
   Mysteries · a verse for every bead"), quick tap, Daily Prayers, the
@@ -2641,6 +2671,26 @@ write concurrent code here:
   server's `priv/rosary_audio/`: change a prayer, re-export, copy, record
   (`mix lumen_viae.generate_rosary_audio --kind book`) before deploying.
   The library download fetches the book's recordings too.
+
+- **Novenas** — nine days of the Rosary with a meditation and the
+  novena's prayer (Mary, Undoer of Knots first), from the Prayer Book's
+  document (`PrayerBookDocument.Novena`). A novena's page
+  (`NovenaPageView`, design's option B, 17 Nov 2026) opens on its
+  painting as a framed plate (`NovenaPlate`, 128 by 196, a gold
+  hairline) beside NOVENA, its title and "Nine days, with the Rosary";
+  then THE NINE DAYS as nine dashes over the novena's own one-line
+  description; then one card of two rows, Your intention (Add, or its
+  first four words) and Daily reminder (Off, or the time), each opening
+  its sheet; then Begin today (Pray it again once prayed) with the
+  credit as plain text beneath. Begin today begins at once: an
+  intention or a reminder chosen before it is held on the page and
+  given to the novena as it begins. Begun, the dashes run under the
+  title and the card stands above the days. There is no Begin
+  tomorrow. In the prayer, an intention written stands in place of the
+  "… your intention" prompt, in light gold italic and whole, and the
+  line "Pause, and name it in your heart." goes; with none written the
+  prompt stays (`PrayerIntentionPause`). It is never sent anywhere and
+  never read aloud.
 
 - **My Prayers** (4.1) — the reader's own prayers and playlists, kept on
   the device only (`MyPrayersStore`, `Application Support/MyPrayers/
@@ -3642,11 +3692,16 @@ transition entirely.
   sized to the safe area, it once cut every page that uses it off in a
   hard line above the home indicator, a title or a gold button halved
   over a flat band.
-- **Every `.sheet` carries `.presentationBackground(AppColors.background)`**. A sheet's own container is the
+- **Every `.sheet` carries a `.presentationBackground`**:
+  `AppColors.backgroundDeep` through `.sheetGround()` and on the
+  players' sheets, `AppColors.background` elsewhere. A sheet's own container is the
   system's white; the content's dark ground is clipped by the same
   rounded rim, and at that rim's anti-aliased edge the white shows
   through as a hairline around the top of every tray. The background
-  goes on the sheet's content view, beside its detents.
+  goes on the sheet's content view, beside its detents. Under a short
+  sheet the gradient ends before the glass does, and a lighter
+  `background` showed beneath it as a band of another blue (Abraham, 17
+  Nov 2026), so the gradient's own deep end is the ground there.
 - **Every `.sheet` and `.fullScreenCover` carries
   `.dynamicTypeSize(...DynamicTypeSize.appMaximum)`** on its content,
   beside its background. A presentation takes its text size from the
@@ -3981,7 +4036,8 @@ prayers are said, the mystery's painting steps back under a deeper veil
 (`OneRosaryPendantVeil`) and the pendant is drawn at the rail's head;
 `PendantPlace` on each script segment says where on it the voice is, and
 the Lock Screen shows the cross, rendered once. After the last Amen the
-Rosary ends on the closing prayers, AMEN beckoning. While the voice says
+Rosary ends on the closing prayers, AMEN beckoning, and goes to its
+completion screen by itself a breath later. While the voice says
 the opening prayers, or waits on its recordings, it holds the hand
 (`voiceHoldsHand`): only Back and Next, the pill and the Lock Screen move
 the Rosary. On arrival PRAY is the word to begin, and the voice begins.

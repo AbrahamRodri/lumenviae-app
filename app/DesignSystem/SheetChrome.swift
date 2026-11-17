@@ -52,7 +52,11 @@ extension View {
     func sheetGround() -> some View {
         background(AppColors.appGradient.ignoresSafeArea())
             .presentationDragIndicator(.visible)
-            .presentationBackground(AppColors.background)
+            // The gradient's own end: a sheet shorter than the glass shows
+            // its container beneath the content, and in the page's lighter
+            // ground that read as "a completely different blue at the very
+            // bottom" (Abraham, 17 Nov 2026)
+            .presentationBackground(AppColors.backgroundDeep)
     }
 }
 

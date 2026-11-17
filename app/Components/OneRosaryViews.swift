@@ -694,20 +694,25 @@ struct OneRosaryColumn<Words: View>: View {
                     .contentTransition(.opacity)
 
                 // Empty on a mystery, whose pill says where it stands; kept
-                // as a line so the words begin at one height on every step
-                Text(place.isEmpty ? " " : place)
-                    .accessibilityHidden(place.isEmpty)
-                    .font(AppFonts.italicFont(15))
-                    .foregroundColor(AppColors.cream.opacity(0.9))  // Held over the brightest paintings
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
-                    .contentTransition(.opacity)
-                    .padding(.top, 2)
+                // as a line so the words begin at one height on every step.
+                // With the words put away there are none to hold level, so
+                // an empty line goes and the step stands close under the
+                // title (Abraham, 17 Nov 2026: "too big of a space")
+                if showsWords || !place.isEmpty {
+                    Text(place.isEmpty ? " " : place)
+                        .accessibilityHidden(place.isEmpty)
+                        .font(AppFonts.italicFont(15))
+                        .foregroundColor(AppColors.cream.opacity(0.9))  // Held over the brightest paintings
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+                        .contentTransition(.opacity)
+                        .padding(.top, 2)
+                }
 
                 OneRosaryStepLabel(text: bead ?? " ")
                     .opacity(bead == nil ? 0 : 1)
                     .accessibilityHidden(bead == nil)
-                    .padding(.top, 12)
+                    .padding(.top, showsWords || !place.isEmpty ? 12 : 8)
             }
             .fixedSize(horizontal: false, vertical: true)
             .frame(height: Self.headHeight(large: dynamicTypeSize.isAccessibilitySize), alignment: .bottomLeading)
@@ -1027,14 +1032,18 @@ struct OneRosaryFooter: View {
             .accessibilityLabel(Text("Back", comment: "One Rosary beta, the player's footer: VoiceOver name of the button back to the bead or prayer before"))
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            // In a slot of its own width whether or not a voice speaks,
-            // so Back and Next never move
+            // In a slot of its own width and height whether or not a voice
+            // speaks, so Back and Next never move, and the row is as tall
+            // before the voice begins as after: a slot of Back's height
+            // grew by the disc's extra 8 points as it arrived, and with
+            // the words put away the head, set on the foot, jumped up
+            // (Abraham, 17 Nov 2026: "a bit of a jumping")
             ZStack {
                 if let play {
                     play.transition(.opacity)
                 }
             }
-            .frame(width: OneRosaryPlayDisc.diameter, height: controlHeight)
+            .frame(width: OneRosaryPlayDisc.diameter, height: max(controlHeight, OneRosaryPlayDisc.diameter))
 
             Group {
                 if isLast {
@@ -1349,7 +1358,7 @@ struct OneRosaryUtilityRow: View {
 
     /// The glyphs grow with their names: at the accessibility sizes a
     /// 20 pt glyph stood small over a name twice its old size
-    @ScaledMetric(relativeTo: .caption) private var glyphSize: CGFloat = 20
+    @ScaledMetric(relativeTo: .caption) private var glyphSize: CGFloat = 24
 
     var body: some View {
         if items.count == 3 {
@@ -1373,18 +1382,13 @@ struct OneRosaryUtilityRow: View {
     }
 
     private func cell(_ item: OneRosaryUtility) -> some View {
+                // The glyph alone: the words READ, VOICE, TEXT and MORE
+                // under them went (Abraham, 17 Nov 2026: "just get rid of
+                // that we don't need that"); VoiceOver still hears the name
                 Button(action: item.action) {
-                    VStack(spacing: 4) {
-                        AppIcon(item.icon, size: min(glyphSize, 28))
-                        Text(item.title.uppercased())
-                            .font(AppFonts.labelFont(12))
-                            // Four names to a row hold to one line at
-                            // xLarge with the letters a little closer
-                            .tracking(items.count > 3 ? 0.8 : 1.4)
-                            .lineLimit(1)
-                    }
-                    .foregroundColor(item.isAccent ? AppColors.goldLight : AppColors.cream.opacity(0.72))
-                    .frame(minWidth: 72, minHeight: 50)
+                    AppIcon(item.icon, size: min(glyphSize, 32))
+                        .foregroundColor(item.isAccent ? AppColors.goldLight : AppColors.cream.opacity(0.8))
+                        .frame(minWidth: 72, minHeight: 44)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(GoldCTAButtonStyle())
@@ -1700,11 +1704,15 @@ struct RosaryStopsPill: View {
 /// fixed in size; one element to VoiceOver, never nine.
 struct NovenaDashes: View {
     let days: NovenaDays
+    /// The novena's own page: the dashes share the column's width in
+    /// equal parts (design's novena page B); elsewhere they keep their size
+    var fills = false
 
     var body: some View {
-        HStack(spacing: 5) {
+        HStack(spacing: fills ? 8 : 5) {
             ForEach(1...max(days.length, 1), id: \.self) { day in
                 dash(days.mark(day))
+                    .frame(maxWidth: fills ? .infinity : nil)
             }
         }
         .animation(Motion.settle, value: days)
@@ -1714,15 +1722,16 @@ struct NovenaDashes: View {
 
     @ViewBuilder
     private func dash(_ mark: NovenaDays.Mark) -> some View {
+        let width: CGFloat? = fills ? nil : (mark == .here ? 20 : 14)
         switch mark {
         case .prayed:
-            Capsule().fill(AppColors.gold).frame(width: 14, height: 4)
+            Capsule().fill(AppColors.gold).frame(width: width, height: 4)
         case .here:
-            Capsule().fill(AppColors.goldLight).frame(width: 20, height: 4)
+            Capsule().fill(AppColors.goldLight).frame(width: width, height: fills ? 5 : 4)
         case .open:
-            Capsule().strokeBorder(AppColors.gold.opacity(0.75), lineWidth: 1).frame(width: 14, height: 5)
+            Capsule().strokeBorder(AppColors.gold.opacity(0.75), lineWidth: 1).frame(width: width, height: 5)
         case .ahead:
-            Capsule().fill(AppColors.cream.opacity(0.22)).frame(width: 14, height: 4)
+            Capsule().fill(AppColors.cream.opacity(0.22)).frame(width: width, height: 4)
         }
     }
 }
@@ -1770,27 +1779,66 @@ struct RosaryStopsSheet: View {
         .fittedScrollingSheet(fallback: [.medium, .large])
     }
 
+    /// A mystery's row hangs a small square of its painting, cut from the
+    /// upper middle, and says its name alone; the opening and closing
+    /// prayers and a novena day's meditation keep the picture's room
+    /// empty, so every name stands in one column (Abraham, 17 Nov 2026,
+    /// design's Go to A: "maybe instead we have like a preview of the
+    /// image and we don't need the little subtitle underneath it")
+    static let pictureSide: CGFloat = 44
+
+    private func painting(_ stop: RosaryStop) -> String? {
+        guard case .mystery(let n) = stop, rows[stop] == nil, let category else { return nil }
+        // The painting the player hangs for that mystery
+        return Constants.mysteryImageURL(category: category.rawValue, index: n)
+    }
+
     private func row(_ stop: RosaryStop) -> some View {
         let isCurrent = stop == current
-        let (name, detail, icon) = describe(stop)
+        let (name, detail, _) = describe(stop)
         return Button {
             dismiss()
             onSelect(stop)
         } label: {
-            SheetRow(
-                name,
-                detail: detail,
-                icon: icon,
-                accessory: isCurrent
-                    ? .label(String(localized: "Here", comment: "Consecration day index sheet: small capitals at the end of the row the reader is on now"))
-                    : .caret,
-                isLit: isCurrent,
-                detailLineLimit: 2
-            )
+            HStack(spacing: 14) {
+                Group {
+                    if let painting = painting(stop) {
+                        ThumbnailImage(
+                            name: painting, focal: UnitPoint(x: 0.5, y: 0.3),
+                            size: CGSize(width: Self.pictureSide, height: Self.pictureSide))
+                            .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                                    .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline))
+                    } else {
+                        Color.clear
+                    }
+                }
+                .frame(width: Self.pictureSide, height: Self.pictureSide)
+                .accessibilityHidden(true)
+
+                Text(name)
+                    .font(AppFonts.bodyFont(17))
+                    .foregroundColor(isCurrent ? AppColors.goldLight : AppColors.cream)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                SheetRowAccessoryView(
+                    accessory: isCurrent
+                        ? .label(String(localized: "Here", comment: "Consecration day index sheet: small capitals at the end of the row the reader is on now"))
+                        : .caret)
+            }
+            .padding(.horizontal, SheetMetrics.gutter)
+            .padding(.vertical, 6)
+            .frame(minHeight: 56)
+            .background(isCurrent ? AppColors.gold.opacity(0.07) : Color.clear)
+            .overlay(alignment: .bottom) { SheetRule() }
+            .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
-        // The detail is what tells one mystery from another, and the lit
-        // row is the one the hand is in
+        // The place and the meditation's title are no longer drawn, but
+        // VoiceOver still hears them: they tell one mystery from another
         .accessibilityLabel(detail.map { "\(name), \($0)" } ?? name)
         .accessibilityAddTraits(isCurrent ? .isSelected : [])
     }

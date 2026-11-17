@@ -10485,6 +10485,17 @@
         }
       }
     },
+    "From %@" : {
+      "comment" : "A meditation set's page: the one line under its name, the book its meditations are from",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De %@"
+          }
+        }
+      }
+    },
     "From %@\n%@ · written about 1712" : {
       "localizations" : {
         "en" : {
@@ -14518,6 +14529,17 @@
         }
       }
     },
+    "NOVENA" : {
+      "comment" : "Novena page: the kicker over its name, beside the painting",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NOVENA"
+          }
+        }
+      }
+    },
     "NOVENA · %lld DAYS" : {
       "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
       "extractionState" : "manual",
@@ -15131,6 +15153,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nueve días, uno a la vez. La app lleva la cuenta de tu día."
+          }
+        }
+      }
+    },
+    "Nine days, with the Rosary" : {
+      "comment" : "Novena page, not begun: the line under its name, beside the painting; never a length of time",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueve días, con el Rosario"
           }
         }
       }
@@ -20200,6 +20233,17 @@
         }
       }
     },
+    "Saving, %lld percent" : {
+      "comment" : "A meditation set's page, its settings card: in place of the offline switch while the set is saved",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardando, %lld por ciento"
+          }
+        }
+      }
+    },
     "Saving…" : {
       "comment" : "Prayer screen, More menu: the download row while the narration is being saved",
       "localizations" : {
@@ -21001,6 +21045,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostrar la partitura"
+          }
+        }
+      }
+    },
+    "Show words and beads" : {
+      "comment" : "A meditation set's page, its settings card: the switch for the player's words and beads",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar palabras y cuentas"
           }
         }
       }
@@ -24619,6 +24674,17 @@
         }
       }
     },
+    "The first meditation" : {
+      "comment" : "A meditation set's page: the kicker over the first meditation, read in a sheet",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La primera meditación"
+          }
+        }
+      }
+    },
     "The first meditation  ·  %@" : {
       "localizations" : {
         "es" : {
@@ -27029,6 +27095,17 @@
         }
       }
     },
+    "Voice and speed" : {
+      "comment" : "A meditation set's page, its settings card: the row opening the voice and its speed",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voz y velocidad"
+          }
+        }
+      }
+    },
     "WED" : {
       "comment" : "Prayer Record calendar: column head for Wednesday, three-letter small capitals",
       "localizations" : {
@@ -27083,13 +27160,13 @@
         }
       }
     },
-    "Ways to pray" : {
+    "Other ways to pray" : {
       "comment" : "Mysteries' page: heading over the Rosary's other two forms, the Scriptural Rosary and the Audio Rosary",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formas de rezar"
+            "value" : "Otras formas de rezar"
           }
         }
       }
@@ -27911,6 +27988,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Escribe la oración como la dices…"
+          }
+        }
+      }
+    },
+    "Write what you pray for." : {
+      "comment" : "VoiceOver hint: the novena's intention row",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escribe por qué rezas."
           }
         }
       }
@@ -29593,6 +29681,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "dila y luego muéstrala"
+          }
+        }
+      }
+    },
+    "setPage.saveForOffline" : {
+      "comment" : "A meditation set's page, its settings card: the switch that keeps the set on the device",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save for offline"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar sin conexión"
           }
         }
       }

@@ -119,7 +119,7 @@ extension APIClientTests {
             favorites: FavoritesService(previewFavorites: [])
         )
         await vm.loadMeditationSets()
-        #expect(vm.meditationSets.map(\.id) == [8] + BundledMeditationSets.summaries(for: vm.category).map(\.id), "the server's set, then the bundled one")
+        #expect(vm.meditationSets.map(\.id) == [8], "the server's set alone: the bundled one stands only when there is no other")
         #expect(vm.errorMessage == nil)
         #expect(!vm.isLoading)
         #expect(StubProtocol.requests.first?.url?.query == "category=joyful")

@@ -177,9 +177,11 @@ final class MeditationSelectionViewModel {
     ///
     /// Only loads once - subsequent calls are no-ops if data exists.
     ///
-    /// Luminous has no server content yet, so the bundled traditional set
-    /// is always prepended — even when the API call fails, the picker
-    /// still has something to pray with.
+    /// The bundled sets stand only when nothing else can: with no signal
+    /// and nothing downloaded, so the picker still has something to pray
+    /// with. Beside the server's they read as the same set twice
+    /// (Abraham, 17 Nov 2026: "maybe these are the built-in ones if so
+    /// just get rid of these like we shouldn't be showing these").
     @MainActor
     func loadMeditationSets() async {
         guard meditationSets.isEmpty else { return }
@@ -201,9 +203,11 @@ final class MeditationSelectionViewModel {
             }
         }
 
-        // The bundled set for these mysteries stands after the server's,
-        // and is there even with no signal and nothing downloaded
-        meditationSets.append(contentsOf: BundledMeditationSets.summaries(for: category))
+        // The bundled set for these mysteries stands only when there is no
+        // other: no signal and nothing downloaded
+        if meditationSets.isEmpty {
+            meditationSets = BundledMeditationSets.summaries(for: category)
+        }
         errorMessage = nil
 
         isLoading = false

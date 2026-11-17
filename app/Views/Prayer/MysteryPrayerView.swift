@@ -31,6 +31,9 @@ struct MysteryPrayerView: View {
     @State private var viewModel: PrayerSessionViewModel
     /// The one sheet this screen presents at a time.
     @State private var activeSheet: PlayerSheet?
+    /// The Rosary has gone to its completion screen: the AMEN tap and the
+    /// voice's own end must not both take it there
+    @State private var hasFinished = false
 
     /// An act the ⋯ tray asked for, run once the tray is actually gone.
     /// Sequenced on `onDismiss` rather than a timer: presenting into a
@@ -239,8 +242,16 @@ struct MysteryPrayerView: View {
         .onChange(of: viewModel.pendant == nil) { _, noPendant in
             if !noPendant { showChrome() }
         }
+        // Said aloud to its last Amen, the Rosary finishes by itself after a
+        // breath (Abraham, 17 Nov 2026: "you shouldn't need to click the
+        // amen button it should just finish"); AMEN still answers a tap
         .onChange(of: viewModel.isSpokenFinished) { _, finished in
-            if finished { showChrome() }
+            guard finished else { return }
+            showChrome()
+            Task {
+                try? await Task.sleep(for: .seconds(1.5))
+                if viewModel.isSpokenFinished { finishRosary() }
+            }
         }
         .onChange(of: viewModel.isLastBeadOfRosary) { _, last in
             if last { showChrome() }
@@ -300,14 +311,14 @@ struct MysteryPrayerView: View {
                 )
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
-                .presentationBackground(AppColors.background)
+                .presentationBackground(AppColors.backgroundDeep)
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .playback:
                 PlaybackSettingsSheet()
                     .presentationDetents(PlaybackSettingsSheet.detents(for: min(phoneTypeSize, .playerMaximum)))
                     .presentationDragIndicator(.visible)
-                    .presentationBackground(AppColors.background)
+                    .presentationBackground(AppColors.backgroundDeep)
                     .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
 
             case .feedback:
@@ -317,7 +328,7 @@ struct MysteryPrayerView: View {
                 )
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
-                .presentationBackground(AppColors.background)
+                .presentationBackground(AppColors.backgroundDeep)
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .text:
@@ -331,7 +342,7 @@ struct MysteryPrayerView: View {
                         showsNarrationOptions: false,
                         showsPartsToggle: true))
                     .presentationDragIndicator(.visible)
-                    .presentationBackground(AppColors.background)
+                    .presentationBackground(AppColors.backgroundDeep)
                     .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
 
             case .stops:
@@ -363,7 +374,7 @@ struct MysteryPrayerView: View {
                     // The tray opens as tall as it measures
                     // (`fittedSheetDetent`)
                     .presentationDragIndicator(.visible)
-                    .presentationBackground(AppColors.background)
+                    .presentationBackground(AppColors.backgroundDeep)
                     .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
             }
         }
@@ -696,6 +707,8 @@ struct MysteryPrayerView: View {
     /// Completed all mysteries — records the Rosary and moves to the
     /// completion screen. The AMEN tap, on either surface, comes here.
     private func finishRosary() {
+        guard !hasFinished else { return }
+        hasFinished = true
         PrayerResumeService.shared.clear()
         Task {
             try? await viewModel.recordCompletion()
