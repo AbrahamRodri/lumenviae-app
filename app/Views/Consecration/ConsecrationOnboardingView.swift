@@ -365,6 +365,10 @@ private struct OnboardingContinueButton: View {
             trailingIcon: icon,
             action: action
         )
+        // "Choose my consecration day" wraps at a large text size: its two
+        // lines centred, not ragged left beside the arrow ("not aligned
+        // well it looks very odd", Abraham, 17 Nov 2026)
+        .multilineTextAlignment(.center)
     }
 }
 
