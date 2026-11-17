@@ -1103,8 +1103,11 @@ write concurrent code here:
     to its end it offers to hear it again), and Next, Back and Next
     sharing one width (`wayWidth`) so the play stands at the centre. Back
     and Next move a whole prayer, or a bead. On the last step AMEN, the
-    screen's one filled gold act, takes Next's place: a Rosary is only
-    ever finished by a tap on it.
+    screen's one filled gold act, takes Next's place. Said aloud to its
+    last Amen, the Rosary finishes by itself a breath later (Abraham, 17
+    Nov 2026: "you shouldn't need to click the amen button it should just
+    finish"); a Rosary read as text, or stepped to its end by hand, is
+    finished by a tap on AMEN.
   - **The pill at the top** (`RosaryStopsPill`) names the part of the
     Rosary the hand is in, and opens `RosaryStopsSheet`, which goes to any
     part: the opening prayers, a mystery (with its meditation, named with
@@ -3972,7 +3975,8 @@ prayers are said, the mystery's painting steps back under a deeper veil
 (`OneRosaryPendantVeil`) and the pendant is drawn at the rail's head;
 `PendantPlace` on each script segment says where on it the voice is, and
 the Lock Screen shows the cross, rendered once. After the last Amen the
-Rosary ends on the closing prayers, AMEN beckoning. While the voice says
+Rosary ends on the closing prayers, AMEN beckoning, and goes to its
+completion screen by itself a breath later. While the voice says
 the opening prayers, or waits on its recordings, it holds the hand
 (`voiceHoldsHand`): only Back and Next, the pill and the Lock Screen move
 the Rosary. On arrival PRAY is the word to begin, and the voice begins.

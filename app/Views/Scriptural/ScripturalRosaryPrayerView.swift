@@ -42,6 +42,9 @@ struct ScripturalRosaryPrayerView: View {
 
     /// The one sheet this screen presents at a time.
     @State private var activeSheet: ScripturalSheet?
+    /// The Rosary has gone to its completion screen: the AMEN tap and the
+    /// voice's own end must not both take it there
+    @State private var hasFinished = false
     /// Back, play and Next with what stands over them, measured so the
     /// words keep room when it grows (`OneRosaryColumn.columnTop`)
     @State private var footHeight: CGFloat = 0
@@ -152,8 +155,16 @@ struct ScripturalRosaryPrayerView: View {
         .onChange(of: viewModel.spokenPendant == nil) { _, noPendant in
             if !noPendant { showChrome() }
         }
+        // Said aloud to its last Amen, the Rosary finishes by itself after a
+        // breath (Abraham, 17 Nov 2026: "you shouldn't need to click the
+        // amen button it should just finish"); AMEN still answers a tap
         .onChange(of: viewModel.isSpokenFinished) { _, finished in
-            if finished { showChrome() }
+            guard finished else { return }
+            showChrome()
+            Task {
+                try? await Task.sleep(for: .seconds(1.5))
+                if viewModel.isSpokenFinished { finishRosary() }
+            }
         }
         .onChange(of: viewModel.isLastBeadOfRosary) { _, last in
             if last { showChrome() }
@@ -423,6 +434,8 @@ struct ScripturalRosaryPrayerView: View {
     /// Completed all mysteries — the record is local only; there is no
     /// set on the server to credit.
     private func finishRosary() {
+        guard !hasFinished else { return }
+        hasFinished = true
         if let day = viewModel.novena {
             NovenaStore.shared.forgetKept(novenaID: day.novenaID)
         } else {
