@@ -1390,19 +1390,26 @@ write concurrent code here:
   it says "The same three steps each day" instead, because the app gives
   no estimate of time, and the second week adds a whole Rosary to every
   day. The chooser (`ConsecrationDateSelectionView`, Abraham's pick,
-  option A with the one-sentence panel, 16 Nov 2026) lists all nine feasts
+  option A, 16 Nov 2026, as revised that night) lists all nine feasts
   in the order they come, scrolling under a fixed foot (no Show more,
   which made rows appear), and **never moves them**: a tap lights the row where it
-  stands (the soonest chosen first and marked SOONEST in an outlined
-  badge). A feast moved this time says why under its name ("Moved from
-  March 25, which is Holy Thursday in 2027", `movedNote`). Over the act,
-  one sentence and nothing else: "33 days, from Saturday, January 9 to
-  Thursday, February 11", each date kept on one line; the act is BEGIN ON JANUARY 9 or BEGIN TODAY,
-  and "Start at any day instead" beneath it. No year on the page: every
-  feast offered falls within the year ahead. It once lifted the chosen
-  feast into a card over the others, so the list reshuffled at each tap,
-  and stood a panel of dates, a countdown and a note over the act;
-  neither should come back. Only a
+  stands (the soonest chosen first). A row is the feast's name alone
+  and the day it is kept this year, SOONEST a small gold word under the
+  first row's date, never a pill beside the name; a moved feast (the
+  Annunciation in Holy Week) shows the day it is kept and says nothing
+  of its own. Over the act, two dates side by side (`FeastSpan`): YOU
+  BEGIN over "Saturday, January 9", a thin gold arrow, YOU CONSECRATE
+  over "Thursday, February 11", each on one line, stacked without the
+  arrow where they cannot stand side by side; the act is BEGIN ON
+  JANUARY 9 or BEGIN TODAY, and "Start at any day instead" beneath it.
+  No year on the page: every feast offered falls within the year ahead.
+  It once lifted the chosen feast into a card over the others, so the
+  list reshuffled at each tap, and stood a panel of dates, a countdown
+  and a note over the act; then a sentence over the act, an outlined
+  SOONEST badge and a line saying why the Annunciation moved ("looks
+  cluttered the text above the begin should not be two lines and the
+  soonest looks weirdly places and the moved from march 25 is also
+  clutter"). None of them should come back. Only a
   preparation that can still begin on its Day 1 is offered
   (`MarianFeastDay.upcomingPreparations`), so each runs its 33 days to
   its feast; joining partway is "Start at any day instead". A start in
