@@ -677,6 +677,11 @@ final class AppRouter {
         case officeNow
         /// `consecration/today`: the Consecration tab, on today's day
         case consecrationToday
+        /// `chant`: the Chant Library
+        case chantLibrary
+        /// `chant/<id>`: that chant's page, over the library; a chant the
+        /// app does not know opens the library
+        case chant(id: String)
     }
 
     /// Reads a link's path, `lumenviae://rosary/today` or
@@ -698,6 +703,8 @@ final class AppRouter {
         case "record" where words.count == 1: return .record
         case "office" where words.count == 2 && words[1] == "now": return .officeNow
         case "consecration" where words.count == 2 && words[1] == "today": return .consecrationToday
+        case "chant" where words.count == 1: return .chantLibrary
+        case "chant" where words.count == 2: return .chant(id: parts[1])
         default: return .home
         }
     }
@@ -746,6 +753,15 @@ final class AppRouter {
             push(.office)
         case .consecrationToday:
             switchTo(.consecration)
+        case .chantLibrary:
+            push(.chantLibrary)
+        case .chant(let id):
+            // The O Antiphons' In-App Event names its chant; the page opens
+            // over the library, so Back goes to the rest of the chants
+            push(.chantLibrary)
+            if let chant = ChantCatalog.chant(id) ?? ChantCatalog.chant(id.lowercased()) {
+                push(.chant(id: chant.id))
+            }
         }
     }
 
@@ -768,5 +784,28 @@ final class AppRouter {
         selectedCategory = nil
         pendingPrayer = nil
         completedPrayer = nil
+    }
+}
+
+/// The `lumenviae://` link the app was last opened with, held at the
+/// scene's root until the home page can open it. A link that launches the
+/// app arrives while the splash is still up and ContentView, which opens
+/// it, is not yet drawn: handled there alone, it was dropped, and the
+/// launch landed on Home.
+@MainActor
+@Observable
+final class AppLinkInbox {
+    static let shared = AppLinkInbox()
+
+    private(set) var pending: URL?
+
+    func receive(_ url: URL) {
+        pending = url
+    }
+
+    /// The link waiting to be opened, given once
+    func take() -> URL? {
+        defer { pending = nil }
+        return pending
     }
 }

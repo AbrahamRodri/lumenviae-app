@@ -228,15 +228,11 @@ struct ContentView: View {
                 consecrationArrivals += 1
             }
         }
-        // A lumenviae:// link, from an App Store event: to Home, but never
-        // over a consecration day being prayed, whose stack is the tab's
-        // own, nor over a sheet — an editor's words live only while it is
-        // up, and going Home would close it. Then the app only comes forward
-        .onOpenURL { url in
-            guard !(router.selectedTab == .consecration && isConsecrationNavigating),
-                  !Self.isPresentingSheet else { return }
-            router.open(url)
-        }
+        // A lumenviae:// link, from a widget or an App Store event, is
+        // received at the scene's root (`AppLinkInbox`), so one that
+        // launched the app waits out the splash and is opened here
+        .onAppear { openPendingLink() }
+        .onChange(of: AppLinkInbox.shared.pending) { _, _ in openPendingLink() }
         .onChange(of: router.shortcutRequest) { _, request in
             guard let request else { return }
             router.shortcutRequest = nil
@@ -761,6 +757,18 @@ struct ContentView: View {
     }
 
     // MARK: - Links
+
+    /// Opens the link the app was opened with (`AppLinkInbox`): its page
+    /// over Home, but never over a consecration day being prayed, whose
+    /// stack is the tab's own, nor over a sheet — an editor's words live
+    /// only while it is up, and going Home would close it. Then the app
+    /// only comes forward
+    private func openPendingLink() {
+        guard let url = AppLinkInbox.shared.take(),
+              !(router.selectedTab == .consecration && isConsecrationNavigating),
+              !Self.isPresentingSheet else { return }
+        router.open(url)
+    }
 
     /// Whether a sheet or a cover stands over the app — an editor, a
     /// tray, a form — which SwiftUI keeps no list of, so it is read off
