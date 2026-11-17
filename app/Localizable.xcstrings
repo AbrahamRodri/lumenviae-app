@@ -27083,13 +27083,13 @@
         }
       }
     },
-    "Ways to pray" : {
+    "Other ways to pray" : {
       "comment" : "Mysteries' page: heading over the Rosary's other two forms, the Scriptural Rosary and the Audio Rosary",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formas de rezar"
+            "value" : "Otras formas de rezar"
           }
         }
       }

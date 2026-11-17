@@ -22,7 +22,7 @@ Home Screen
             ▼
 The mysteries' page (SelectMeditationView) — one Rosary, three forms
     │
-    ├── WAYS TO PRAY: The Scriptural Rosary · No Meditation (the Audio
+    ├── OTHER WAYS TO PRAY: The Scriptural Rosary · No Meditation (the Audio
     │   Rosary), each opening its own page with these mysteries chosen
     ├── MEDITATIONS ("a short reading on each mystery"): gallery of tiles
     │   (default) or ruled list (remembered), pinned sets on top, the
@@ -200,7 +200,7 @@ every Hail Mary, no meditation — or as **the Audio Rosary**, every
 prayer said aloud with no readings between (it was the Rosary Aloud,
 then the Holy Rosary, which a newcomer could not tell from the Rosary,
 then the Rosary Said Aloud, whose "said aloud" a regular reader found
-confusing (Oct 2026); the mysteries' page lists it under WAYS TO PRAY
+confusing (Oct 2026); the mysteries' page lists it under OTHER WAYS TO PRAY
 as **No Meditation** · "Every prayer said aloud, nothing read between",
 since every Rosary is now said aloud and this one only leaves the
 meditation out — Abraham, 5 Nov 2026: "audio rosary should just be say
@@ -1566,12 +1566,13 @@ write concurrent code here:
   (`Data/BundledMeditationSets.swift`: the Gospel for the Joyful and the
   Glorious in the Douay-Rheims, Emmerich's Dolorous Passion for the
   Sorrowful, Liguori's reflections on the seven dolors for the Seven
-  Sorrows, and the Luminous set written for the app), standing after the
-  server's on every mysteries' page and there with no signal, under
-  negative sentinel ids that `MeditationSetResolver` serves from the
-  binary and `recordCompletion` never posts. The Joyful and Glorious
-  Gospel sets are what makes the Gospel filter non-empty while the server
-  has no Scriptural set. Each is generated from its edition's text
+  Sorrows, and the Luminous set written for the app), on a mysteries'
+  page only when nothing else can stand there (no signal and nothing
+  downloaded): beside the server's they read as the same set twice
+  (Abraham, 17 Nov 2026: "if so just get rid of these"). They are served
+  under negative sentinel ids that `MeditationSetResolver` serves from the
+  binary and `recordCompletion` never posts, and the beginner's path and
+  a resumed Rosary still open them. Each is generated from its edition's text
   verbatim; the sources are in `Tools/ContentSourcing/sources.py`.
 - **Offline** — user-initiated download of every set, its narration in the
   chosen voice, its painting, and the spoken Rosary's and the Prayer Book's recordings for that
@@ -1981,7 +1982,7 @@ write concurrent code here:
   Rosary is chosen.
 
   **Doors:** THE SCRIPTURAL ROSARY ("A Bible verse for every Hail
-  Mary") under WAYS TO PRAY on every
+  Mary") under OTHER WAYS TO PRAY on every
   mysteries' page, opening its own page with those mysteries chosen;
   the `PrayerShortcut.scripturalRosary` act — Pray tray ("Joyful
   Mysteries · a verse for every bead"), quick tap, Daily Prayers, the
