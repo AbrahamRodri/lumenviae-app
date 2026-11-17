@@ -32,8 +32,12 @@ final class MeditationSelectionViewModel {
     /// Labels the user has toggled on; sets must match all of them
     var selectedLabels: Set<String> = []
 
-    /// Whether the initial list is loading
-    var isLoading = false
+    /// Whether the initial list is loading. It begins true when nothing
+    /// is preloaded, so the page's first frames, drawn while it slides in
+    /// and before its `.task` runs, show the spinner and not "No
+    /// meditations · Try again", which flashed and then jumped to the
+    /// spinner and the shelf (ios-review, App Store preview, 16 Nov 2026)
+    var isLoading: Bool
 
     /// Error message if loading fails (nil on success)
     var errorMessage: String?
@@ -55,6 +59,7 @@ final class MeditationSelectionViewModel {
         self.apiService = apiService ?? .shared
         self.favorites = favorites ?? .shared
         self.meditationSets = preloadedSets
+        self.isLoading = preloadedSets.isEmpty
     }
 
     // MARK: - Labels

@@ -165,3 +165,12 @@ extension APIClientTests {
         #expect(vm.errorMessage == nil, "a shelf with a set on it is no failure")
     }
 }
+
+@Suite("Mysteries' page: first frames")
+struct MeditationPickerFirstFrameTests {
+    @Test func aPageWithNothingLoadedOpensOnTheSpinner() {
+        let viewModel = MeditationSelectionViewModel(category: .joyful)
+        #expect(viewModel.isLoading)
+        #expect(viewModel.errorMessage == nil)
+    }
+}
