@@ -266,6 +266,11 @@ struct ContentView: View {
                 case .underWay(let today, let open) = progress.standing(on: PrayerDay.now),
                 let day = today ?? open.first
             else { return }
+            // The novena's page stands beneath the day, so the day's close
+            // comes back to it ("Day 2 is still open") and not to Home
+            if router.routes.last != .novena(id: request.novenaID) {
+                router.push(.novena(id: request.novenaID))
+            }
             router.push(.scripturalRosaryPrayer(ScripturalRosaryLaunch(
                 category: NovenaProgress.mysteriesToday(), form: .plain,
                 novenaID: request.novenaID, novenaDay: day)))

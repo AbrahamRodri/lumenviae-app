@@ -364,8 +364,8 @@ extension PrayerBookDocument.Novena {
 // MARK: - NovenaDays
 
 /// A novena's days as its dashes draw them: prayed in gold, the day in
-/// hand lit, an open day hollow, the days ahead quiet. Never a count of
-/// misses (design plan, rules 2 and 3).
+/// hand outlined in light gold until prayed, an open day hollow, the
+/// days ahead quiet. Never a count of misses (design plan, rules 2 and 3).
 struct NovenaDays: Hashable {
     enum Mark: Hashable { case prayed, here, open, ahead }
 
