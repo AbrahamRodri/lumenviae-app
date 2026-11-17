@@ -439,7 +439,7 @@ struct SetSettingsCard: View {
     }
 
     private var title: String {
-        String(localized: "Save for offline", comment: "A meditation set's page: button that downloads the set, its narration and painting")
+        String(localized: "setPage.saveForOffline", defaultValue: "Save for offline", comment: "A meditation set's page, its settings card: the switch that keeps the set on the device")
     }
 
     @ViewBuilder

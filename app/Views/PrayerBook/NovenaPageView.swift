@@ -180,7 +180,8 @@ struct NovenaPageView: View {
             }
             if let progress {
                 NovenaDashes(
-                    days: NovenaDays.of(progress, length: novena.length, here: hereDay(progress, novena), on: now)
+                    days: NovenaDays.of(progress, length: novena.length, here: hereDay(progress, novena), on: now),
+                    fills: true
                 )
             }
         }
@@ -425,7 +426,7 @@ struct NovenaPageView: View {
                 // days are their dashes, as on the begun page and the
                 // Prayers card, and one line says what the rows become
                 VStack(alignment: .leading, spacing: 12) {
-                    NovenaDashes(days: NovenaDays.of(nil, length: novena.length, here: 0))
+                    NovenaDashes(days: NovenaDays.of(nil, length: novena.length, here: 0), fills: true)
                         .accessibilityHidden(true)
                     // What each day holds, in the novena's own words (design's
                     // novena page B)
@@ -452,7 +453,7 @@ struct NovenaPageView: View {
     private func finishedDays(_ finished: FinishedNovena, length: Int) -> some View {
         let range = NovenaSpan.range(from: finished.firstDate(length: length), to: finished.lastDate())
         return VStack(alignment: .leading, spacing: 12) {
-            NovenaDashes(days: NovenaDays(length: length, prayed: Set(1...max(length, 1)), here: 0, open: []))
+            NovenaDashes(days: NovenaDays(length: length, prayed: Set(1...max(length, 1)), here: 0, open: []), fills: true)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(NovenaSpan.spoken(length: length, range: range))
             Text(NovenaSpan.prayedLine(range))

@@ -1704,11 +1704,15 @@ struct RosaryStopsPill: View {
 /// fixed in size; one element to VoiceOver, never nine.
 struct NovenaDashes: View {
     let days: NovenaDays
+    /// The novena's own page: the dashes share the column's width in
+    /// equal parts (design's novena page B); elsewhere they keep their size
+    var fills = false
 
     var body: some View {
-        HStack(spacing: 5) {
+        HStack(spacing: fills ? 8 : 5) {
             ForEach(1...max(days.length, 1), id: \.self) { day in
                 dash(days.mark(day))
+                    .frame(maxWidth: fills ? .infinity : nil)
             }
         }
         .animation(Motion.settle, value: days)
@@ -1718,15 +1722,16 @@ struct NovenaDashes: View {
 
     @ViewBuilder
     private func dash(_ mark: NovenaDays.Mark) -> some View {
+        let width: CGFloat? = fills ? nil : (mark == .here ? 20 : 14)
         switch mark {
         case .prayed:
-            Capsule().fill(AppColors.gold).frame(width: 14, height: 4)
+            Capsule().fill(AppColors.gold).frame(width: width, height: 4)
         case .here:
-            Capsule().fill(AppColors.goldLight).frame(width: 20, height: 4)
+            Capsule().fill(AppColors.goldLight).frame(width: width, height: fills ? 5 : 4)
         case .open:
-            Capsule().strokeBorder(AppColors.gold.opacity(0.75), lineWidth: 1).frame(width: 14, height: 5)
+            Capsule().strokeBorder(AppColors.gold.opacity(0.75), lineWidth: 1).frame(width: width, height: 5)
         case .ahead:
-            Capsule().fill(AppColors.cream.opacity(0.22)).frame(width: 14, height: 4)
+            Capsule().fill(AppColors.cream.opacity(0.22)).frame(width: width, height: 4)
         }
     }
 }

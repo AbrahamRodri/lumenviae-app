@@ -10485,6 +10485,17 @@
         }
       }
     },
+    "From %@" : {
+      "comment" : "A meditation set's page: the one line under its name, the book its meditations are from",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De %@"
+          }
+        }
+      }
+    },
     "From %@\n%@ · written about 1712" : {
       "localizations" : {
         "en" : {
@@ -20222,6 +20233,17 @@
         }
       }
     },
+    "Saving, %lld percent" : {
+      "comment" : "A meditation set's page, its settings card: in place of the offline switch while the set is saved",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardando, %lld por ciento"
+          }
+        }
+      }
+    },
     "Saving…" : {
       "comment" : "Prayer screen, More menu: the download row while the narration is being saved",
       "localizations" : {
@@ -21023,6 +21045,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostrar la partitura"
+          }
+        }
+      }
+    },
+    "Show words and beads" : {
+      "comment" : "A meditation set's page, its settings card: the switch for the player's words and beads",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar palabras y cuentas"
           }
         }
       }
@@ -24641,6 +24674,17 @@
         }
       }
     },
+    "The first meditation" : {
+      "comment" : "A meditation set's page: the kicker over the first meditation, read in a sheet",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La primera meditación"
+          }
+        }
+      }
+    },
     "The first meditation  ·  %@" : {
       "localizations" : {
         "es" : {
@@ -27042,6 +27086,17 @@
     },
     "Voice & speed" : {
       "comment" : "A Rosary's own page: name of the row that opens the narration voice and speed\nVoice & speed sheet from a Rosary's own page: its title",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voz y velocidad"
+          }
+        }
+      }
+    },
+    "Voice and speed" : {
+      "comment" : "A meditation set's page, its settings card: the row opening the voice and its speed",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -29626,6 +29681,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "dila y luego muéstrala"
+          }
+        }
+      }
+    },
+    "setPage.saveForOffline" : {
+      "comment" : "A meditation set's page, its settings card: the switch that keeps the set on the device",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save for offline"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar sin conexión"
           }
         }
       }
