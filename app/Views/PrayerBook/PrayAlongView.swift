@@ -5,10 +5,11 @@
 //  Prayers said one after another on a screen of their own — an order
 //  of prayer (Morning Prayers, Before Confession) or a single prayer.
 //
-//  The words stand on the dark page all the way up, with no painting
-//  behind them (Abraham, 15 Nov 2026: "it cuts at the top and that
-//  doesnt look good it might as well be all dark"); the order's painting
-//  comes forward at the Amen. The page is the prayer, a quiet
+//  The order's painting stands behind the whole page, fixed and veiled,
+//  with no edge anywhere (Abraham, 16 Nov 2026: "i like having the
+//  picture behind"; on 15 Nov a veil riding on the words had cut a band
+//  under the head: "it cuts at the top"); it comes forward at the Amen.
+//  The page is the prayer, a quiet
 //  head (×, the order, its beads, the Silent | Audio switch) and one way on at the
 //  foot: NEXT with the next prayer's name, or AMEN on the last.
 //
@@ -37,6 +38,7 @@ struct PrayAlongView: View {
     @Environment(AppRouter.self) private var router
     @Environment(UserSettings.self) private var settings
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.scenePhase) private var scenePhase
 
     private let store: PrayerBookStore
@@ -135,6 +137,13 @@ struct PrayAlongView: View {
             || (prayers.count == 1 && ["angelus", "regina_caeli"].contains(prayers.first?.id))
     }
 
+    /// Whether a painting stands behind the page: not for a prayer of the
+    /// reader's own that has no picture
+    private var hangsPainting: Bool {
+        guard let prayer, CustomPrayer.uuid(in: prayer.id) != nil else { return true }
+        return launch.art != nil || MyPrayersStore.shared.prayer(withPrayerID: prayer.id)?.art != nil
+    }
+
     /// The painting the Prayers page hangs over this order, or over this
     /// prayer: the same one the reader tapped to come here
     private var painting: PrayerBookPainting {
@@ -178,6 +187,14 @@ struct PrayAlongView: View {
             AppColors.background.ignoresSafeArea()
 
             if let prayer {
+                // Fixed behind the scroll, so the words run over it and
+                // never carry it away; the plain page under Reduce
+                // Transparency, and for a prayer of the reader's with no
+                // picture of its own
+                if !reduceTransparency, hangsPainting {
+                    PrayAlongGround(painting: painting)
+                }
+
                 // Under the Amen's veil the page is still drawn, but
                 // VoiceOver should find only the Amen
                 VStack(spacing: 0) {
@@ -601,10 +618,8 @@ struct PrayAlongView: View {
                                 .fixedSize(horizontal: false, vertical: true)
                                 .accessibilityAddTraits(.isHeader)
 
-                            // Where the prayer comes from, quietly: the
-                            // book credits every prayer it prints. On a
-                            // Spanish page the prayer carries the book's
-                            // Spanish credit, or none
+                            // An author named, who must be credited on the
+                            // page; the general origin stands at the foot
                             if let origin = prayer.creditUnderTitle, !origin.isEmpty {
                                 NovenaCreditLine(
                                     origin: origin, url: novena?.sourceURL(spanish: SpanishContent.isActive), size: 15,
@@ -651,8 +666,8 @@ struct PrayAlongView: View {
 
                             AITranslationNote(prayerID: prayer.id)
 
-                            // A long source, cut short under the title,
-                            // whole at the foot, as the website sets it
+                            // Where the prayer comes from, once, quietly at
+                            // the foot; under the title only an author
                             if let source = prayer.creditAtFoot, !source.isEmpty {
                                 PrayerSourceFoot(
                                     source: source, url: novena?.sourceURL(spanish: SpanishContent.isActive),
@@ -1279,6 +1294,44 @@ final class StanzaMeasures {
         )
         kept[key] = measure
         return measure
+    }
+}
+
+// MARK: - The ground
+
+/// The page's ground: the order's painting from the top edge to the foot,
+/// under one veil of the theme's ground that never ends in an edge: about
+/// 55 percent behind the head and title, 80 by a third of the way down,
+/// 88 from the middle to the foot (design, PICTURE-AND-ORIGIN.md). Fixed,
+/// so the words scroll over it; hidden from VoiceOver, which reads the
+/// words.
+private struct PrayAlongGround: View {
+    let painting: PrayerBookPainting
+
+    var body: some View {
+        ZStack {
+            // The painting hangs off a clear view, so its fill never
+            // widens the page it stands behind
+            Color.clear
+                .overlay {
+                    CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
+                }
+                .clipped()
+
+            LinearGradient(
+                stops: [
+                    .init(color: AppColors.background.opacity(0.55), location: 0),
+                    .init(color: AppColors.background.opacity(0.80), location: 0.33),
+                    .init(color: AppColors.background.opacity(0.88), location: 0.5),
+                    .init(color: AppColors.background.opacity(0.88), location: 1),
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        }
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }
 
