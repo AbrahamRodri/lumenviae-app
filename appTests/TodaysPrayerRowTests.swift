@@ -57,6 +57,14 @@ struct TodaysPrayerRowTests {
         #expect(row.spoken.contains(row.subtitle))
     }
 
+    @Test func consecrationChosenForNextYearNamesTheYear() throws {
+        // 13 Oct 2026 + 90 days: Monday, 11 January 2027
+        let (progress, now) = try consecration(startingDaysFromNow: 90)
+        let row = TodaysPrayerRow.consecration(progress, now: now)
+        #expect(row.fact == "BEGINS JAN 11, 2027")
+        #expect(row.spoken.hasSuffix("Begins Monday, January 11, 2027"))
+    }
+
     @Test func consecrationUnderWay() throws {
         let (progress, now) = try consecration(startingDaysFromNow: -11)
         let row = TodaysPrayerRow.consecration(progress, now: now)
