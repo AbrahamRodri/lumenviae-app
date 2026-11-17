@@ -910,13 +910,18 @@ struct ExploreView: View {
             for category in MysteryCategory.allCases {
                 group.addTask {
                     // The bundled set for these mysteries stands in the
-                    // index as it stands on the mysteries' page, with no
-                    // signal and nothing downloaded
-                    let bundled = await BundledMeditationSets.summaries(for: category)
+                    // index only as it stands on the mysteries' page: when
+                    // there is no other, no signal and nothing downloaded.
+                    // Beside the server's it read as the same set twice
+                    // (Abraham, 17 Nov 2026: "just get rid of these")
+                    let found: [MeditationSetSummary]
                     if let live = try? await APIService.shared.fetchMeditationSets(category: category) {
-                        return live + bundled
+                        found = live
+                    } else {
+                        found = await OfflineContentService.shared.storedSummaries(category: category) ?? []
                     }
-                    return (await OfflineContentService.shared.storedSummaries(category: category) ?? []) + bundled
+                    if found.isEmpty { return await BundledMeditationSets.summaries(for: category) }
+                    return found
                 }
             }
 
