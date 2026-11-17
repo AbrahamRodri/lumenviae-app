@@ -105,6 +105,11 @@ struct GoldCTAButton: View {
             Text(title.uppercased())
                 .font(AppFonts.labelFont(prominence == .page ? 13 : 11))
                 .tracking(prominence == .page ? 2.5 : 2)
+                // A long act wrapped at a large text size is centred, not
+                // ragged left beside its glyph ("Choose my consecration
+                // day": "not aligned well it looks very odd", Abraham,
+                // 17 Nov 2026)
+                .multilineTextAlignment(.center)
                 // A button whose act changes — "Pray" to "Continue" —
                 // crossfades its word rather than swapping it
                 .contentTransition(.opacity)
