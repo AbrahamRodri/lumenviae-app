@@ -31,8 +31,10 @@ struct SpanishShortCreditTests {
         #expect(short != english.shortCredit)
     }
 
-    @Test func theShippedCopyCarriesSeventeen() {
-        #expect(translations.values.filter { $0.shortCredit != nil }.count == 17)
+    /// A Spanish prayer is credited under its title only where its English
+    /// twin is (api #290)
+    @Test func theShippedCopyCarriesFive() {
+        #expect(translations.values.filter { $0.shortCredit != nil }.count == 5)
     }
 
     @Test func aTranslationWithoutOneDecodes() throws {
