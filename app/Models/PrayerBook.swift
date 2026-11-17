@@ -416,22 +416,27 @@ enum PrayerBook {
         spanish: Bool = SpanishContent.isActive
     ) -> BookPrayer {
         guard spanish else { return prayer }
-        let spanishWords: (title: String, text: String, origin: String?, shortCredit: String?)?
+        let spanishWords: (title: String, text: String, origin: String?, shortCredit: String?, originCredit: Bool?)?
         if let translation = translations[prayer.id] {
-            spanishWords = (translation.title, translation.text, translation.origin, translation.shortCredit)
+            spanishWords = (
+                translation.title, translation.text, translation.origin, translation.shortCredit,
+                translation.originCredit
+            )
         } else if let rosary = SpanishContent.prayers[prayer.id] {
-            spanishWords = (rosary.title, rosary.lines, nil, nil)
+            spanishWords = (rosary.title, rosary.lines, nil, nil, nil)
         } else {
             spanishWords = nil
         }
         guard let spanishWords else { return prayer }
         // Credited in Spanish where the book says it in Spanish, and not
         // at all otherwise: never an English line on a Spanish page. Whether
-        // the origin is a credit follows the English twin
+        // the origin is a credit is the Spanish origin's own where the book
+        // says (it may name the book its Spanish wording comes from), else
+        // the English twin's
         return BookPrayer(
             id: prayer.id, title: spanishWords.title, latinTitle: prayer.latinTitle,
             origin: spanishWords.origin, shortCredit: spanishWords.shortCredit,
-            originCredit: prayer.originCredit, note: prayer.note,
+            originCredit: spanishWords.originCredit ?? prayer.originCredit, note: prayer.note,
             english: spanishWords.text, latin: prayer.latin
         )
     }

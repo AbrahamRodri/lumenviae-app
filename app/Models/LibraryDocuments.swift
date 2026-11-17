@@ -549,11 +549,17 @@ nonisolated struct PrayerBookTranslations: Codable, Sendable, Equatable {
         /// the whole origin then standing at the foot, as English does;
         /// absent where the origin is short
         var shortCredit: String?
+        /// Whether the Spanish origin credits someone or something real (a
+        /// book or publisher of the Spanish wording: "según el Compendio del
+        /// Catecismo"), and so stands at the foot; nil where the server does
+        /// not say, which follows the English twin
+        var originCredit: Bool?
 
         enum CodingKeys: String, CodingKey {
             case id, title, text, origin
             case aiTranslated = "ai_translated"
             case shortCredit = "short_credit"
+            case originCredit = "origin_credit"
         }
     }
 

@@ -63,6 +63,21 @@ struct OriginCreditTests {
         #expect(credited.creditAtFoot == translation.origin)
     }
 
+    /// A Spanish origin can credit the book its Spanish wording comes from
+    /// where the English origin is only a tradition and a century
+    @Test func aSpanishOriginsOwnFlagComesFirst() throws {
+        var translation = PrayerBookTranslations.Translation(
+            id: "test_prayer", title: "Título", text: "Amén.", aiTranslated: nil)
+        translation.origin = "Tradición de la Iglesia · según el Compendio del Catecismo"
+        translation.originCredit = true
+        let english = prayer(origin: "Western Church · 13th–16th century", originCredit: false)
+        let spanish = PrayerBook.inSpanish(english, translations: ["test_prayer": translation], spanish: true)
+        #expect(spanish.creditAtFoot == translation.origin)
+        let json = #"{"id":"x","title":"X","text":"Amén.","origin":"según","origin_credit":true}"#
+        let decoded = try JSONDecoder().decode(PrayerBookTranslations.Translation.self, from: Data(json.utf8))
+        #expect(decoded.originCredit == true)
+    }
+
     // MARK: - The shipped book
 
     @Test func theAngelusAndTheLitanyOfLoretoHaveNoFoot() throws {
