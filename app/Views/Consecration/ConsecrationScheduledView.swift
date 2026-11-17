@@ -23,6 +23,9 @@ struct ConsecrationScheduledView: View {
 
     @Environment(ConsecrationViewModel.self) private var viewModel
 
+    /// The day the Spanish beta strip was last closed (`SpanishBeta`)
+    @AppStorage(SpanishBeta.closedOnKey) private var spanishStripClosedOn = ""
+
     /// The feast the 33 days end on: Consecration Day
     private var feast: MarianFeastDay? {
         MarianFeastDay.feast(endingPreparationFrom: start)
@@ -81,7 +84,9 @@ struct ConsecrationScheduledView: View {
 
             moreMenu
                 .padding(.trailing, 14)
-                .padding(.top, 2)
+                // Under the Spanish beta strip, which the tab's own
+                // navigation stack does not count in its safe area
+                .padding(.top, 2 + (SpanishBeta.showsStrip(closedOn: spanishStripClosedOn) ? SpanishBetaStrip.height : 0))
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .navigationBar)
