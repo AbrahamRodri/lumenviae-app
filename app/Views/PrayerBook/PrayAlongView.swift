@@ -619,11 +619,12 @@ struct PrayAlongView: View {
                                 .accessibilityAddTraits(.isHeader)
 
                             // An author named, who must be credited on the
-                            // page; the general origin stands at the foot
+                            // page; the general origin stands at the foot.
+                            // Plain text, never a link: the publisher's page
+                            // is reached from the foot alone (design ruling,
+                            // 17 Nov 2026)
                             if let origin = prayer.creditUnderTitle, !origin.isEmpty {
-                                NovenaCreditLine(
-                                    origin: origin, url: novena?.sourceURL(spanish: SpanishContent.isActive), size: 15,
-                                    color: AppColors.textSecondary)
+                                NovenaCreditLine(origin: origin, url: nil, size: 15, color: AppColors.textSecondary)
                             }
 
                             if let novena, let twin {

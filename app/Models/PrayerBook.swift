@@ -40,14 +40,32 @@ struct BookPrayer: Identifiable, Hashable {
     /// stands at the prayer's foot. Nil where the origin is short
     var shortCredit: String? = nil
 
+    /// Whether the origin credits someone or something real, and so is
+    /// owed a line at the foot (the book's `origin_credit`); nil where the
+    /// book does not say, which keeps the foot
+    var originCredit: Bool? = nil
+
+    /// The foot's own words where the book gives them (a Spanish prayer,
+    /// api #292), nil there meaning no foot; when false, the foot is
+    /// read from `origin` and `originCredit`
+    var footLine: String? = nil
+    var hasOwnFootLine = false
+
     /// The credit under the title: only a short credit naming an author,
     /// who must be credited on the page; a general origin ("Western
     /// Church · 13th–16th century") is not said there (Abraham, 16 Nov
     /// 2026: "no need to say western church 13-16th century")
     var creditUnderTitle: String? { shortCredit }
 
-    /// The whole origin, once, quietly at the prayer's foot
-    var creditAtFoot: String? { origin }
+    /// The whole origin, once, quietly at the prayer's foot, only where it
+    /// credits an author, a book or a publisher: a tradition and a century
+    /// alone is not said on the page at all (Abraham, 17 Nov 2026: "if no
+    /// souce needed for credits leave it like 13 centry church is odd").
+    /// The Sources page and the share text still give it.
+    var creditAtFoot: String? {
+        if hasOwnFootLine { return footLine }
+        return originCredit == false ? nil : origin
+    }
 
     /// When or how it is said, in one plain sentence
     let note: String?
@@ -388,8 +406,8 @@ enum PrayerBook {
         LibraryContent.prayerBook.prayers.map { prayer in
             (prayer.id, inSpanish(BookPrayer(
                 id: prayer.id, title: prayer.title, latinTitle: prayer.latinTitle,
-                origin: prayer.origin, shortCredit: prayer.shortCredit, note: prayer.note,
-                english: prayer.english, latin: prayer.latin
+                origin: prayer.origin, shortCredit: prayer.shortCredit, originCredit: prayer.originCredit,
+                note: prayer.note, english: prayer.english, latin: prayer.latin
             )))
         },
         uniquingKeysWith: { first, _ in first }
@@ -407,20 +425,31 @@ enum PrayerBook {
         spanish: Bool = SpanishContent.isActive
     ) -> BookPrayer {
         guard spanish else { return prayer }
-        let spanishWords: (title: String, text: String, origin: String?, shortCredit: String?)?
+        let spanishWords: (title: String, text: String, origin: String?, shortCredit: String?, foot: String?)?
         if let translation = translations[prayer.id] {
-            spanishWords = (translation.title, translation.text, translation.origin, translation.shortCredit)
+            spanishWords = (
+                translation.title, translation.text, translation.origin, translation.shortCredit,
+                translation.footCredit
+            )
         } else if let rosary = SpanishContent.prayers[prayer.id] {
-            spanishWords = (rosary.title, rosary.lines, nil, nil)
+            spanishWords = (rosary.title, rosary.lines, nil, nil, nil)
         } else {
             spanishWords = nil
         }
         guard let spanishWords else { return prayer }
         // Credited in Spanish where the book says it in Spanish, and not
-        // at all otherwise: never an English line on a Spanish page
+        // at all otherwise: never an English line on a Spanish page. The
+        // foot is the book's own line for the Spanish (`foot_credit`, which
+        // may credit only the source of the Spanish wording: "Según el
+        // Compendio..."). A book from before that line shows the whole
+        // Spanish origin, since a missing field must never hide a credit
+        // (orch-lead, 17 Nov 2026)
+        let footLinesServed = translations.values.contains { $0.footCredit != nil }
         return BookPrayer(
             id: prayer.id, title: spanishWords.title, latinTitle: prayer.latinTitle,
-            origin: spanishWords.origin, shortCredit: spanishWords.shortCredit, note: prayer.note,
+            origin: spanishWords.origin, shortCredit: spanishWords.shortCredit,
+            originCredit: nil, footLine: spanishWords.foot, hasOwnFootLine: footLinesServed,
+            note: prayer.note,
             english: spanishWords.text, latin: prayer.latin
         )
     }
