@@ -154,14 +154,18 @@ struct ConsecrationScheduledView: View {
                 )
             }
         } label: {
+            // The player's close button: a dark disc with a faint rim, so
+            // it reads as a button on any painting
             AppIcon("ph-dots-three", size: 18)
-                .foregroundColor(.white)
-                .padding(13)
-                .background(Color.black.opacity(0.3))
-                .clipShape(Circle())
+                .foregroundStyle(AppColors.cream)
+                .frame(width: 38, height: 38)
+                .background(Circle().fill(Color.black.opacity(0.32)))
+                .overlay(Circle().strokeBorder(Color.white.opacity(0.22), lineWidth: AppLine.hairline))
                 .frame(minWidth: 44, minHeight: 44)
                 .contentShape(Circle())
         }
+        .menuStyle(.button)
+        .buttonStyle(.plain)
         .accessibilityLabel(Text("More options", comment: "Consecration, scheduled page: VoiceOver name of the round button that opens the menu"))
     }
 
@@ -212,9 +216,15 @@ struct ConsecrationScheduledView: View {
     }
 
     private var roadLabel: String {
-        daysUntilStart <= 1
-            ? String(localized: "The road there · begins tomorrow", comment: "Consecration, scheduled page: small capitals over the five parts of the preparation, when Day 1 is tomorrow")
-            : String(localized: "The road there · begins in \(daysUntilStart) days", comment: "Consecration, scheduled page: small capitals over the five parts of the preparation, like The road there · begins in 53 days")
+        switch daysUntilStart {
+        case ...0:
+            // Only for the moment the day turns, before the tab moves on
+            String(localized: "The road there · begins today", comment: "Consecration, scheduled page: small capitals over the five parts of the preparation, on Day 1 itself")
+        case 1:
+            String(localized: "The road there · begins tomorrow", comment: "Consecration, scheduled page: small capitals over the five parts of the preparation, when Day 1 is tomorrow")
+        default:
+            String(localized: "The road there · begins in \(daysUntilStart) days", comment: "Consecration, scheduled page: small capitals over the five parts of the preparation, like The road there · begins in 53 days")
+        }
     }
 
     /// One part of the preparation: a ring on the gold line, the date it
@@ -290,8 +300,10 @@ struct ConsecrationScheduledView: View {
         case .knowledgeOfSelf, .knowledgeOfMary, .knowledgeOfJesus:
             return String(localized: "A week", comment: "Consecration, scheduled page: how long one of the three weeks of the preparation is, under its name")
         case .consecrationDay:
-            guard let feast else { return nil }
-            return String(localized: "The feast of \(feast.name)", comment: "Consecration, scheduled page: under Consecration Day, the feast it falls on, like The feast of Our Lady of Lourdes")
+            // The feast's own name, as the chooser prints it: "The feast
+            // of" read wrong before most of them ("The feast of The
+            // Annunciation", "La fiesta de Inmaculada Concepción")
+            return feast?.name
         }
     }
 

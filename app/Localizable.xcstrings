@@ -24686,17 +24686,6 @@
         }
       }
     },
-    "The feast of %@" : {
-      "comment" : "Consecration, scheduled page: under Consecration Day, the feast it falls on, like The feast of Our Lady of Lourdes",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La fiesta de %@"
-          }
-        }
-      }
-    },
     "The first day's prayers open then. Nothing is asked of you before it." : {
       "localizations" : {
         "es" : {
@@ -25290,6 +25279,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "El camino · comienza en %lld días"
+          }
+        }
+      }
+    },
+    "The road there · begins today" : {
+      "comment" : "Consecration, scheduled page: small capitals over the five parts of the preparation, on Day 1 itself",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El camino · comienza hoy"
           }
         }
       }
