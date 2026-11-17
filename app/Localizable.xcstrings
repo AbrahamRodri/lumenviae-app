@@ -14518,6 +14518,17 @@
         }
       }
     },
+    "NOVENA" : {
+      "comment" : "Novena page: the kicker over its name, beside the painting",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NOVENA"
+          }
+        }
+      }
+    },
     "NOVENA · %lld DAYS" : {
       "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
       "extractionState" : "manual",
@@ -15131,6 +15142,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nueve días, uno a la vez. La app lleva la cuenta de tu día."
+          }
+        }
+      }
+    },
+    "Nine days, with the Rosary" : {
+      "comment" : "Novena page, not begun: the line under its name, beside the painting; never a length of time",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueve días, con el Rosario"
           }
         }
       }
@@ -27911,6 +27933,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Escribe la oración como la dices…"
+          }
+        }
+      }
+    },
+    "Write what you pray for." : {
+      "comment" : "VoiceOver hint: the novena's intention row",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escribe por qué rezas."
           }
         }
       }

@@ -37,6 +37,11 @@ struct NovenaPageTests {
         }
     }
 
+    @Test func theIntentionRowShowsItsFirstWords() {
+        #expect(NovenaPageView.firstWords("For my brother's new job") == "For my brother's new…")
+        #expect(NovenaPageView.firstWords("For Anna") == "For Anna")
+    }
+
     @Test func eachDayHasItsState() {
         var progress = NovenaProgress(novenaID: "n", length: 9, beginning: at(12, day: 11))
         progress.markPrayed(1)

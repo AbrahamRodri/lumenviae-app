@@ -4,8 +4,9 @@
 //
 //  A novena's own page, the way in (design plan, "The finished design",
 //  sections 2, 3, 4, 7 and 9; frames reports/design/novenas/rounds/f-r2-*,
-//  f-r3-*, f-r4-page*): the painting, what the novena is, BEGIN TODAY or
-//  Begin tomorrow, the intention kept on the phone, a reminder, the nine
+//  f-r3-*, f-r4-page*; redrawn as polish-17nov's page B): the painting as a
+//  plate beside its name, BEGIN TODAY, the intention kept on the phone and
+//  a reminder on one card, the nine
 //  days, and once under way the day to pray, a day left open, Welcome back
 //  after three or more, Begin again and End this novena. A day itself is
 //  prayed in the Rosary player (the continuous day).
@@ -27,6 +28,11 @@ struct NovenaPageView: View {
     /// Whether the painting has scrolled up behind the clock and the
     /// Back, so the dark ground under them is needed
     @State private var paintingGone = false
+    /// Chosen before the novena is begun, on the page's card: Begin today
+    /// begins at once with them (Abraham's pick, design's novena page B)
+    @State private var pendingIntention: String?
+    @State private var pendingReminder: DateComponents?
+    @State private var pendingWithIntention = false
 
     private var store: NovenaStore { NovenaStore.shared }
     private var novena: PrayerBookDocument.Novena? { NovenaDayContext.novena(novenaID) }
@@ -44,20 +50,22 @@ struct NovenaPageView: View {
             if let novena {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 0) {
-                        NovenaHero(novena: novena)
-                            .onGeometryChange(for: Bool.self) { hero in
-                                hero.frame(in: .global).maxY < 200
+                        head(novena)
+                            .padding(.horizontal, 22)
+                            .padding(.top, 12)
+                            .onGeometryChange(for: Bool.self) { head in
+                                head.frame(in: .global).minY < 90
                             } action: { gone in
                                 paintingGone = gone
                             }
-                        head(novena)
-                            .padding(.horizontal, 22)
-                            .padding(.top, -64)
                         VStack(alignment: .leading, spacing: 30) {
                             standingCard(novena)
-                            if progress != nil { intentionBlock(novena) }
-                            if progress != nil { reminderRow(novena) }
+                            // Begun, the card stands over the nine days'
+                            // rows, where the intention and reminder stood;
+                            // not begun, under the days' one line
+                            if progress != nil { settingsCard(novena) }
                             daysList(novena)
+                            if progress == nil { settingsCard(novena) }
                             if let progress { endLinks(progress, novena) }
                         }
                         .padding(.horizontal, 22)
@@ -65,7 +73,6 @@ struct NovenaPageView: View {
                         Color.clear.frame(height: max(150, footHeight + 24))
                     }
                 }
-                .ignoresSafeArea(edges: .top)
 
                 chromeGround
 
@@ -145,47 +152,36 @@ struct NovenaPageView: View {
 
     // MARK: - Head
 
+    /// The painting as a framed plate beside the name (Abraham's pick,
+    /// design's novena page B: "so much going on"), no longer a hero run
+    /// to the glass's width, so it is drawn sharp
     private func head(_ novena: PrayerBookDocument.Novena) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            if progress == nil {
-                Text(Self.kicker(length: novena.length))
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2.6)
-                    .foregroundColor(AppColors.gold)
-            }
-            Text(novena.title)
-                .font(AppFonts.titleFont(30))
-                .foregroundColor(AppColors.cream)
-                .fixedSize(horizontal: false, vertical: true)
-                .accessibilityAddTraits(.isHeader)
-
-            if let progress {
-                Text(headLine(progress, length: novena.length))
-                    .font(AppFonts.readingItalicFont(17))
+        VStack(alignment: .leading, spacing: 18) {
+            HStack(alignment: .center, spacing: 18) {
+                NovenaPlate(novena: novena)
+                VStack(alignment: .leading, spacing: 10) {
+                    NovenaLabel(String(localized: "NOVENA", comment: "Novena page: the kicker over its name, beside the painting"))
+                    Text(novena.title)
+                        .font(AppFonts.titleFont(24))
+                        .foregroundColor(AppColors.cream)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibilityAddTraits(.isHeader)
+                    Text(
+                        progress.map { headLine($0, length: novena.length) }
+                            ?? String(
+                                localized: "Nine days, with the Rosary",
+                                comment: "Novena page, not begun: the line under its name, beside the painting; never a length of time")
+                    )
+                    .font(AppFonts.readingItalicFont(16))
                     .foregroundColor(AppColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            if let progress {
                 NovenaDashes(
                     days: NovenaDays.of(progress, length: novena.length, here: hereDay(progress, novena), on: now)
                 )
-                .padding(.top, 6)
-            } else {
-                Text(novena.detail)
-                    .font(AppFonts.readingFont(18))
-                    .foregroundColor(AppColors.cream.opacity(0.92))
-                    .fixedSize(horizontal: false, vertical: true)
-                Text(
-                    String(
-                        localized: "With the Rosary. Begin any day.",
-                        comment:
-                            "Novena page, not begun: how it is prayed and when it may begin; never a length of time")
-                )
-                .font(AppFonts.readingItalicFont(16))
-                .foregroundColor(AppColors.textSecondary)
-                if let origin = novena.origin {
-                    NovenaCreditLine(
-                        origin: origin, url: novena.sourceURL(spanish: SpanishContent.isActive), size: 14,
-                        color: AppColors.textSecondary.opacity(0.85))
-                }
             }
         }
     }
@@ -340,67 +336,69 @@ struct NovenaPageView: View {
 
     // MARK: - Intention and reminder
 
-    private func intentionBlock(_ novena: PrayerBookDocument.Novena) -> some View {
-        Button {
-            sheet = .intention(.editing)
-        } label: {
-            VStack(alignment: .leading, spacing: 8) {
-                NovenaLabel(
-                    NovenaPageView.intentionTitle.uppercased()
-                )
-                HStack(alignment: .firstTextBaseline) {
-                    if let intention = progress?.intention {
-                        Text(intention)
-                            .font(AppFonts.readingItalicFont(19))
-                            .foregroundColor(AppColors.cream)
-                            .fixedSize(horizontal: false, vertical: true)
-                    } else {
-                        Text(
-                            String(
-                                localized: "Add an intention",
-                                comment: "Novena page: the intention row when none is kept")
-                        )
-                        .font(AppFonts.readingItalicFont(18))
-                        .foregroundColor(AppColors.textSecondary)
-                    }
-                    Spacer(minLength: 8)
-                    AppIcon("ph-pencil-simple", size: 16)
-                        .foregroundColor(AppColors.gold)
-                        .accessibilityLabel(
-                            String(
-                                localized: "Edit your intention",
-                                comment: "VoiceOver: the pencil beside the novena's intention"))
-                }
+    /// The intention and the reminder as one card of two rows, on the
+    /// page before the novena is begun and after, each opening its sheet
+    /// (design's novena page B: "A reminder each day" is part of the page)
+    private func settingsCard(_ novena: PrayerBookDocument.Novena) -> some View {
+        let intention = progress == nil ? pendingIntention : progress?.intention
+        let reminder = progress == nil ? pendingReminder : progress?.reminder
+        return VStack(spacing: 0) {
+            settingsRow(
+                NovenaPageView.intentionTitle,
+                value: intention.map(Self.firstWords)
+                    ?? String(localized: "Add", comment: "Novena page: the intention row's value when none is written"),
+                hint: String(localized: "Write what you pray for.", comment: "VoiceOver hint: the novena's intention row")
+            ) {
+                sheet = .intention(.editing)
             }
-            .contentShape(Rectangle())
+            Rectangle().fill(AppColors.gold.opacity(0.14)).frame(height: AppLine.hairline)
+                .padding(.horizontal, 18)
+            settingsRow(
+                String(localized: "Daily reminder", comment: "Novena page: the reminder row's name"),
+                value: Self.reminderTime(reminder)
+                    ?? String(localized: "Off", comment: "Novena page: the reminder row when no reminder is set"),
+                hint: String(localized: "Choose the time.", comment: "VoiceOver hint: the novena's reminder row")
+            ) {
+                sheet = .reminder(.editing)
+            }
         }
-        .buttonStyle(SacredCardButtonStyle())
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous).fill(AppColors.cardBackground.opacity(0.6))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
+        )
     }
 
-    private func reminderRow(_ novena: PrayerBookDocument.Novena) -> some View {
-        Button {
-            sheet = .reminder(.editing)
-        } label: {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    NovenaLabel(
-                        String(
-                            localized: "DAILY REMINDER", comment: "Novena page: the heading over the reminder's time"))
-                    Text(
-                        Self.reminderTime(progress?.reminder)
-                            ?? String(
-                                localized: "Off", comment: "Novena page: the reminder row when no reminder is set")
-                    )
+    private func settingsRow(_ name: String, value: String, hint: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Text(name)
                     .font(AppFonts.readingFont(18))
                     .foregroundColor(AppColors.cream)
-                }
-                Spacer()
+                Spacer(minLength: 12)
+                Text(value)
+                    .font(AppFonts.readingFont(17))
+                    .foregroundColor(AppColors.textSecondary)
+                    .lineLimit(1)
                 AppIcon("ph-caret-right", size: 12).foregroundColor(AppColors.gold.opacity(0.7))
             }
+            .padding(.horizontal, 18)
+            .frame(minHeight: 56)
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityHint(String(localized: "Choose the time.", comment: "VoiceOver hint: the novena's reminder row"))
+        .accessibilityElement(children: .combine)
+        .accessibilityHint(hint)
+    }
+
+    /// The first words of the intention, for its row: the whole of it is
+    /// in its sheet and in the prayer
+    static func firstWords(_ intention: String) -> String {
+        let words = intention.split(separator: " ")
+        guard words.count > 4 else { return intention }
+        return words.prefix(4).joined(separator: " ") + "…"
     }
 
     static func reminderTime(_ components: DateComponents?) -> String? {
@@ -429,7 +427,9 @@ struct NovenaPageView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     NovenaDashes(days: NovenaDays.of(nil, length: novena.length, here: 0))
                         .accessibilityHidden(true)
-                    Text(Self.notBegunDaysLine(length: novena.length))
+                    // What each day holds, in the novena's own words (design's
+                    // novena page B)
+                    Text(novena.detail)
                         .font(AppFonts.readingItalicFont(16))
                         .foregroundColor(AppColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -468,17 +468,6 @@ struct NovenaPageView: View {
             }
         }
         .padding(.top, 6)
-    }
-
-    /// The line under the days of a novena not yet begun
-    static func notBegunDaysLine(length: Int) -> String {
-        length == 9
-            ? String(
-                localized: "Nine days in a row. Once you begin, each day shows its date here.",
-                comment: "Novena page, not begun: under THE NINE DAYS and their nine dashes")
-            : String(
-                localized: "Once you begin, each day shows its date here.",
-                comment: "Novena page, not begun: under THE DAYS of a novena not nine days long")
     }
 
     private func dayRow(_ day: Int, novena: PrayerBookDocument.Novena) -> some View {
@@ -655,7 +644,12 @@ struct NovenaPageView: View {
                     : String(localized: "Begin Today", comment: "Novena page: the gold act beginning the novena today"),
                 glyph: .play
             ) {
-                sheet = .intention(.beginning(tomorrow: false))
+                begin(novena)
+            }
+            if let origin = novena.origin {
+                // Plain text: the publisher's link lives on Sources
+                NovenaCreditLine(origin: origin, url: nil, size: 13, color: AppColors.textSecondary.opacity(0.85))
+                    .multilineTextAlignment(.center)
             }
             // No "Begin tomorrow" beside it (Abraham, 17 Nov 2026: "begin
             // tomorrow doesn't that's just weird we shouldn't have that"); a
@@ -664,6 +658,18 @@ struct NovenaPageView: View {
     }
 
     // MARK: - Acts
+
+    /// Begins at once with what the card holds: no sheets on the way
+    private func begin(_ novena: PrayerBookDocument.Novena) {
+        store.begin(novena, on: now, intention: pendingIntention, reminder: pendingReminder, now: now)
+        if pendingReminder != nil, pendingWithIntention {
+            store.setReminder(pendingReminder, showingIntention: true, for: novena, now: now)
+        }
+        pendingIntention = nil
+        pendingReminder = nil
+        pendingWithIntention = false
+        pray(1, of: novena)
+    }
 
     private func pray(_ day: Int, of novena: PrayerBookDocument.Novena) {
         router.push(
@@ -679,11 +685,16 @@ struct NovenaPageView: View {
             NovenaIntentionSheet(
                 novena: novena,
                 isBeginning: mode != .editing,
-                initial: progress?.intention ?? ""
+                initial: progress?.intention ?? pendingIntention ?? ""
             ) { intention in
                 switch mode {
                 case .editing:
-                    store.setIntention(intention, for: novena)
+                    if progress == nil {
+                        let trimmed = intention?.trimmingCharacters(in: .whitespacesAndNewlines)
+                        pendingIntention = trimmed?.isEmpty == false ? trimmed : nil
+                    } else {
+                        store.setIntention(intention, for: novena)
+                    }
                     sheet = nil
                 case .beginning(let tomorrow):
                     // The reminder comes next; the novena begins there
@@ -694,14 +705,19 @@ struct NovenaPageView: View {
             }
         case .reminder(let mode):
             NovenaReminderSheet(
-                initial: progress?.reminder,
+                initial: progress?.reminder ?? pendingReminder,
                 isBeginning: mode != .editing,
-                showsIntentionChoice: mode == .editing && progress?.intention != nil,
-                showingIntention: progress?.remindsWithIntention ?? false
+                showsIntentionChoice: mode == .editing && (progress?.intention ?? pendingIntention) != nil,
+                showingIntention: progress?.remindsWithIntention ?? pendingWithIntention
             ) { reminder, showingIntention in
                 switch mode {
                 case .editing:
-                    store.setReminder(reminder, showingIntention: showingIntention, for: novena, now: now)
+                    if progress == nil {
+                        pendingReminder = reminder
+                        pendingWithIntention = showingIntention
+                    } else {
+                        store.setReminder(reminder, showingIntention: showingIntention, for: novena, now: now)
+                    }
                 case .beginning(let tomorrow, let intention):
                     let start = tomorrow ? Self.tomorrowsStart(after: now) : now
                     store.begin(novena, on: start, intention: intention, reminder: reminder, now: now)
@@ -1024,8 +1040,9 @@ struct NovenaReminderSheet: View {
 
 // MARK: - Pieces
 
-/// The novena's painting, run up under the bar and dissolving into the page
-struct NovenaHero: View {
+/// The novena's painting as a framed plate beside its name: 128 by 196,
+/// corner 12, a gold hairline rim
+struct NovenaPlate: View {
     let novena: PrayerBookDocument.Novena
 
     var body: some View {
@@ -1033,18 +1050,11 @@ struct NovenaHero: View {
             novena.painting.map { PrayerBookPainting.chosen($0, caption: novena.title) }
             ?? PrayerBookPainting.prayer(novena.prayerID)
         CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
-            .frame(maxWidth: .infinity)
-            .frame(height: 420)
-            .clipped()
-            .mask(
-                LinearGradient(
-                    stops: [
-                        .init(color: .black, location: 0),
-                        .init(color: .black, location: 0.55),
-                        .init(color: .black.opacity(0.3), location: 0.85),
-                        .init(color: .clear, location: 1),
-                    ],
-                    startPoint: .top, endPoint: .bottom)
+            .frame(width: 128, height: 196)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(AppColors.gold.opacity(0.45), lineWidth: AppLine.hairline)
             )
             .accessibilityHidden(true)
     }
