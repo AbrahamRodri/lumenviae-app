@@ -694,20 +694,25 @@ struct OneRosaryColumn<Words: View>: View {
                     .contentTransition(.opacity)
 
                 // Empty on a mystery, whose pill says where it stands; kept
-                // as a line so the words begin at one height on every step
-                Text(place.isEmpty ? " " : place)
-                    .accessibilityHidden(place.isEmpty)
-                    .font(AppFonts.italicFont(15))
-                    .foregroundColor(AppColors.cream.opacity(0.9))  // Held over the brightest paintings
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
-                    .contentTransition(.opacity)
-                    .padding(.top, 2)
+                // as a line so the words begin at one height on every step.
+                // With the words put away there are none to hold level, so
+                // an empty line goes and the step stands close under the
+                // title (Abraham, 17 Nov 2026: "too big of a space")
+                if showsWords || !place.isEmpty {
+                    Text(place.isEmpty ? " " : place)
+                        .accessibilityHidden(place.isEmpty)
+                        .font(AppFonts.italicFont(15))
+                        .foregroundColor(AppColors.cream.opacity(0.9))  // Held over the brightest paintings
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+                        .contentTransition(.opacity)
+                        .padding(.top, 2)
+                }
 
                 OneRosaryStepLabel(text: bead ?? " ")
                     .opacity(bead == nil ? 0 : 1)
                     .accessibilityHidden(bead == nil)
-                    .padding(.top, 12)
+                    .padding(.top, showsWords || !place.isEmpty ? 12 : 8)
             }
             .fixedSize(horizontal: false, vertical: true)
             .frame(height: Self.headHeight(large: dynamicTypeSize.isAccessibilitySize), alignment: .bottomLeading)
