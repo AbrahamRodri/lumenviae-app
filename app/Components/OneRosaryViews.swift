@@ -1774,27 +1774,66 @@ struct RosaryStopsSheet: View {
         .fittedScrollingSheet(fallback: [.medium, .large])
     }
 
+    /// A mystery's row hangs a small square of its painting, cut from the
+    /// upper middle, and says its name alone; the opening and closing
+    /// prayers and a novena day's meditation keep the picture's room
+    /// empty, so every name stands in one column (Abraham, 17 Nov 2026,
+    /// design's Go to A: "maybe instead we have like a preview of the
+    /// image and we don't need the little subtitle underneath it")
+    static let pictureSide: CGFloat = 44
+
+    private func painting(_ stop: RosaryStop) -> String? {
+        guard case .mystery(let n) = stop, rows[stop] == nil, let category else { return nil }
+        let mysteries = MysteryData.mysteries(for: category)
+        return mysteries.indices.contains(n) ? mysteries[n].imageName : nil
+    }
+
     private func row(_ stop: RosaryStop) -> some View {
         let isCurrent = stop == current
-        let (name, detail, icon) = describe(stop)
+        let (name, detail, _) = describe(stop)
         return Button {
             dismiss()
             onSelect(stop)
         } label: {
-            SheetRow(
-                name,
-                detail: detail,
-                icon: icon,
-                accessory: isCurrent
-                    ? .label(String(localized: "Here", comment: "Consecration day index sheet: small capitals at the end of the row the reader is on now"))
-                    : .caret,
-                isLit: isCurrent,
-                detailLineLimit: 2
-            )
+            HStack(spacing: 14) {
+                Group {
+                    if let painting = painting(stop) {
+                        ThumbnailImage(
+                            name: painting, focal: UnitPoint(x: 0.5, y: 0.3),
+                            size: CGSize(width: Self.pictureSide, height: Self.pictureSide))
+                            .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                                    .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline))
+                    } else {
+                        Color.clear
+                    }
+                }
+                .frame(width: Self.pictureSide, height: Self.pictureSide)
+                .accessibilityHidden(true)
+
+                Text(name)
+                    .font(AppFonts.bodyFont(17))
+                    .foregroundColor(isCurrent ? AppColors.goldLight : AppColors.cream)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                SheetRowAccessoryView(
+                    accessory: isCurrent
+                        ? .label(String(localized: "Here", comment: "Consecration day index sheet: small capitals at the end of the row the reader is on now"))
+                        : .caret)
+            }
+            .padding(.horizontal, SheetMetrics.gutter)
+            .padding(.vertical, 6)
+            .frame(minHeight: 56)
+            .background(isCurrent ? AppColors.gold.opacity(0.07) : Color.clear)
+            .overlay(alignment: .bottom) { SheetRule() }
+            .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
-        // The detail is what tells one mystery from another, and the lit
-        // row is the one the hand is in
+        // The place and the meditation's title are no longer drawn, but
+        // VoiceOver still hears them: they tell one mystery from another
         .accessibilityLabel(detail.map { "\(name), \($0)" } ?? name)
         .accessibilityAddTraits(isCurrent ? .isSelected : [])
     }
