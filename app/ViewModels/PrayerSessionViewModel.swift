@@ -1472,8 +1472,14 @@ extension PrayerSessionViewModel {
     /// The voice muted: the Rosary goes on at the recording's pace
     var isMuted: Bool { spoken?.isMuted ?? false }
 
+    /// Muted, the words and beads come back: with the voice silent they
+    /// are the only way to follow (Abraham, 17 Nov 2026: "when I click mute
+    /// it should just default to showing the words and beads"). Hiding the
+    /// words never mutes.
     func toggleMuted() {
-        spoken?.setMuted(!(spoken?.isMuted ?? false))
+        let muting = !(spoken?.isMuted ?? false)
+        spoken?.setMuted(muting)
+        if muting, spoken != nil { UserSettings.shared.rosaryShowsWordsAndBeads = true }
     }
 
     /// The timed lines of what is being said, and the line being said
