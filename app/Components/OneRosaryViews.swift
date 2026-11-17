@@ -1358,7 +1358,7 @@ struct OneRosaryUtilityRow: View {
 
     /// The glyphs grow with their names: at the accessibility sizes a
     /// 20 pt glyph stood small over a name twice its old size
-    @ScaledMetric(relativeTo: .caption) private var glyphSize: CGFloat = 20
+    @ScaledMetric(relativeTo: .caption) private var glyphSize: CGFloat = 24
 
     var body: some View {
         if items.count == 3 {
@@ -1386,8 +1386,8 @@ struct OneRosaryUtilityRow: View {
                 // under them went (Abraham, 17 Nov 2026: "just get rid of
                 // that we don't need that"); VoiceOver still hears the name
                 Button(action: item.action) {
-                    AppIcon(item.icon, size: min(glyphSize, 28))
-                        .foregroundColor(item.isAccent ? AppColors.goldLight : AppColors.cream.opacity(0.72))
+                    AppIcon(item.icon, size: min(glyphSize, 32))
+                        .foregroundColor(item.isAccent ? AppColors.goldLight : AppColors.cream.opacity(0.8))
                         .frame(minWidth: 72, minHeight: 44)
                     .contentShape(Rectangle())
                 }
