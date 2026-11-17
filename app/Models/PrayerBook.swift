@@ -430,13 +430,14 @@ enum PrayerBook {
         guard let spanishWords else { return prayer }
         // Credited in Spanish where the book says it in Spanish, and not
         // at all otherwise: never an English line on a Spanish page. Whether
-        // the origin is a credit is the Spanish origin's own where the book
-        // says (it may name the book its Spanish wording comes from), else
-        // the English twin's
+        // the origin is a credit is the Spanish origin's own (it may name the
+        // book or publisher of the Spanish wording); a Spanish row with no
+        // flag shows its source, since a missing flag must never hide a
+        // credit (orch-lead, 17 Nov 2026)
         return BookPrayer(
             id: prayer.id, title: spanishWords.title, latinTitle: prayer.latinTitle,
             origin: spanishWords.origin, shortCredit: spanishWords.shortCredit,
-            originCredit: spanishWords.originCredit ?? prayer.originCredit, note: prayer.note,
+            originCredit: spanishWords.originCredit, note: prayer.note,
             english: spanishWords.text, latin: prayer.latin
         )
     }

@@ -552,7 +552,7 @@ nonisolated struct PrayerBookTranslations: Codable, Sendable, Equatable {
         /// Whether the Spanish origin credits someone or something real (a
         /// book or publisher of the Spanish wording: "según el Compendio del
         /// Catecismo"), and so stands at the foot; nil where the server does
-        /// not say, which follows the English twin
+        /// not say, which shows it: a missing flag never hides a credit
         var originCredit: Bool?
 
         enum CodingKeys: String, CodingKey {

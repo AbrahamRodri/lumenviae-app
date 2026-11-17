@@ -49,18 +49,18 @@ struct OriginCreditTests {
         #expect(again.originCredit == false)
     }
 
-    @Test func spanishFollowsItsEnglishTwin() {
+    /// A Spanish row with no flag of its own shows its source, whatever its
+    /// English twin says: a missing flag never hides a credit
+    @Test func aSpanishRowWithoutAFlagShowsItsSource() {
         var translation = PrayerBookTranslations.Translation(
             id: "test_prayer", title: "Título", text: "Amén.", aiTranslated: nil)
         translation.origin = "Iglesia de Occidente, siglos XIII a XVI"
         let english = prayer(origin: "Western Church · 13th–16th century", originCredit: false)
         let spanish = PrayerBook.inSpanish(english, translations: ["test_prayer": translation], spanish: true)
-        #expect(spanish.origin == translation.origin)
-        #expect(spanish.creditAtFoot == nil)
-        let credited = PrayerBook.inSpanish(
-            prayer(origin: "Fr. Juan Ramón Celeiro", originCredit: true),
-            translations: ["test_prayer": translation], spanish: true)
-        #expect(credited.creditAtFoot == translation.origin)
+        #expect(spanish.creditAtFoot == translation.origin)
+        translation.originCredit = false
+        let flagged = PrayerBook.inSpanish(english, translations: ["test_prayer": translation], spanish: true)
+        #expect(flagged.creditAtFoot == nil)
     }
 
     /// A Spanish origin can credit the book its Spanish wording comes from

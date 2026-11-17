@@ -2528,7 +2528,8 @@ write concurrent code here:
   foot only where it credits an author, a book or a publisher (the
   book's `origin_credit`; a Spanish prayer reads its translation's own,
   since its origin may name the book or publisher of the Spanish wording,
-  else its English twin's; Abraham, 17 Nov 2026: "if no souce needed for credits leave it
+  and with none shows its source, since a missing flag never hides a
+  credit; Abraham, 17 Nov 2026: "if no souce needed for credits leave it
   like 13 centry church is odd"). A tradition and a century alone is
   said on the Sources page and in the share text, not on the page; a
   book from before the flag keeps the foot. A quiet head — ×, the
