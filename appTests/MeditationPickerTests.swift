@@ -165,7 +165,7 @@ extension APIClientTests {
 
     @Test func aQuietRefreshThatFailsKeepsTheSetsOnShow() async {
         let cache = MeditationSetsSessionCache()
-        cache.keep([summary(8, nil)], for: .joyful)
+        cache.keep([try! JSONDecoder().decode(MeditationSetSummary.self, from: Data(#"{"id": 8, "name": "Liguori", "category": "joyful"}"#.utf8))], for: .joyful)
         StubProtocol.reset { _ in .init(status: 503) }
         let vm = MeditationSelectionViewModel(
             category: .joyful,

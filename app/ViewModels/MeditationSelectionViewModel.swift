@@ -76,9 +76,10 @@ final class MeditationSelectionViewModel {
         // spinner for the fetch on every open (ios-review, App Store
         // preview, 17 Nov 2026)
         let kept = preloadedSets.isEmpty ? self.sessionCache?.sets(for: category) : nil
-        self.meditationSets = kept ?? preloadedSets
+        let shown = kept ?? preloadedSets
+        self.meditationSets = shown
         self.owesRefresh = kept != nil
-        self.isLoading = self.meditationSets.isEmpty
+        self.isLoading = shown.isEmpty
     }
 
     // MARK: - Labels
