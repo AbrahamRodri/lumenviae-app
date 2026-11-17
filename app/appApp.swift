@@ -107,6 +107,10 @@ struct appApp: App {
             // ahead of the tour (ContentView.presentFirstLook), where it
             // once stood over the welcome's first slide and the tour
             // followed straight after, three introductions in a row
+            // A lumenviae:// link is held here, where the scene always
+            // listens, and ContentView opens it once it is drawn: a link
+            // that launched the app came while the splash stood
+            .onOpenURL { AppLinkInbox.shared.receive($0) }
             .onChange(of: isLaunched) { _, launched in
                 // A new install reads at the phone's own text size
                 if launched, !hasSeenOnboarding {

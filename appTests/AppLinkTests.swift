@@ -109,6 +109,11 @@ struct AppLinkTests {
         ("lumenviae://record", .record),
         ("lumenviae://office/now", .officeNow),
         ("lumenviae://consecration/today", .consecrationToday),
+        ("lumenviae://chant", .chantLibrary),
+        ("lumenviae://chant/rorate_caeli", .chant(id: "rorate_caeli")),
+        ("lumenviae://chant/o_sapientia_magnificat", .chant(id: "o_sapientia_magnificat")),
+        ("lumenviae:chant", .chantLibrary),
+        ("lumenviae://chant/rorate_caeli/score", .home),
         ("lumenviae:rosary/today", .todaysMysteries),
         ("LUMENVIAE://Rosary/Today", .todaysMysteries),
         ("lumenviae://rosary", .home),
@@ -128,6 +133,42 @@ struct AppLinkTests {
         let router = try opened("lumenviae://rosary/today")
         #expect(router.selectedTab == .home)
         #expect(router.routes == [.meditationSelection(category: ScheduleService.categoryForToday())])
+    }
+
+    /// The O Antiphons' In-App Event (3 Dec) opens the Chant Library
+    @Test func chantOpensTheLibrary() throws {
+        let router = try opened("lumenviae://chant")
+        #expect(router.selectedTab == (AppTab.barTabs.contains(.chant) ? .chant : .home))
+        #expect(router.routes == (AppTab.barTabs.contains(.chant) ? [] : [.chantLibrary]))
+    }
+
+    @Test(arguments: ["rorate_caeli", "o_sapientia_magnificat", "o_emmanuel_magnificat", "Rorate_Caeli"])
+    func aChantOpensItsPageOverTheLibrary(_ id: String) throws {
+        let router = try opened("lumenviae://chant/\(id)")
+        let page = AppRoute.chant(id: id.lowercased())
+        if AppTab.barTabs.contains(.chant) {
+            #expect(router.selectedTab == .chant)
+            #expect(router.routes == [page])
+        } else {
+            #expect(router.routes == [.chantLibrary, page])
+        }
+    }
+
+    @Test func aChantTheAppLacksOpensTheLibrary() throws {
+        let router = try opened("lumenviae://chant/no_such_chant")
+        #expect(router.selectedTab == (AppTab.barTabs.contains(.chant) ? .chant : .home))
+        #expect(!router.routes.contains(.chant(id: "no_such_chant")))
+    }
+
+    /// A link that launches the app is held until the home page opens it,
+    /// and is given once
+    @Test func theInboxHoldsALinkUntilTaken() throws {
+        let inbox = AppLinkInbox()
+        let url = try #require(URL(string: "lumenviae://chant/rorate_caeli"))
+        inbox.receive(url)
+        #expect(inbox.pending == url)
+        #expect(inbox.take() == url)
+        #expect(inbox.take() == nil)
     }
 
     @Test func novenaOpensItsPage() throws {

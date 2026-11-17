@@ -3761,15 +3761,21 @@ transition entirely.
   "simplify" that.
 - **Links:** the app registers the `lumenviae` URL scheme
   (`CFBundleURLTypes` in `Config/Info.plist`), which the App Store's
-  In-App Events open it with (`lumenviae://home`). `ContentView`'s
-  `onOpenURL` hands the link to `AppRouter.open`, which goes to Home as
+  In-App Events open it with (`lumenviae://home`). The scene's root
+  (`appApp`) receives the link into `AppLinkInbox`, and `ContentView`
+  hands it to `AppRouter.open` once it is drawn: a link that launched
+  the app came while the splash stood, and handled by ContentView's own
+  `onOpenURL` it was dropped. `open` goes to Home as
   a tab tap does and opens the link's page over it
   (`AppRouter.destination(of:)`, the paths the widgets use):
   `rosary/today` (today's mysteries' page), `rosary/continue` (the
   Rosary left off today, as the Pray button takes it up, else today's
   mysteries' page), `novena/<id>`, `missal/today`, `prayer/<id>`
   (`angelus` as the bell opens it; an unknown prayer stays Home),
-  `record`, `office/now`, `consecration/today` (the tab). `home` and any
+  `record`, `office/now`, `consecration/today` (the tab), `chant` (the
+  Chant Library) and `chant/<id>` (that chant's page over the library;
+  an unknown chant opens the library; the O Antiphons' In-App Event).
+  `home` and any
   other path is Home. Over a prayer or its completion screen
   (`AppRoute.isPrayerUnderWay`), a consecration day, or any sheet (an
   editor's words live only while it is up), a link only brings the app
