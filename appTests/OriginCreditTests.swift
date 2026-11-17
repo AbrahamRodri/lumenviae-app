@@ -62,4 +62,31 @@ struct OriginCreditTests {
             translations: ["test_prayer": translation], spanish: true)
         #expect(credited.creditAtFoot == translation.origin)
     }
+
+    // MARK: - The shipped book
+
+    @Test func theAngelusAndTheLitanyOfLoretoHaveNoFoot() throws {
+        for id in ["angelus", "litany_loreto"] {
+            let prayer = try #require(PrayerBook.prayer(id))
+            #expect(prayer.originCredit == false)
+            #expect(prayer.creditAtFoot == nil)
+            #expect(prayer.origin != nil)
+        }
+    }
+
+    @Test func aCreditedPrayerKeepsItsFoot() throws {
+        let prayer = try #require(PrayerBook.prayer("st_joseph_novena"))
+        #expect(prayer.originCredit == true)
+        #expect(prayer.creditAtFoot == prayer.origin)
+    }
+
+    @Test func undoerOfKnotsNamesItsAuthorUnderTheTitle() throws {
+        let prayer = try #require(PrayerBook.prayer("undoer_of_knots_novena"))
+        #expect(prayer.creditUnderTitle == "Fr. Juan Ramón Celeiro")
+        #expect(prayer.creditAtFoot == prayer.origin)
+    }
+
+    @Test func everyPrayerInTheShippedBookSaysWhetherItsOriginIsACredit() {
+        #expect(LibraryContent.prayerBook.prayers.allSatisfy { $0.originCredit != nil })
+    }
 }
