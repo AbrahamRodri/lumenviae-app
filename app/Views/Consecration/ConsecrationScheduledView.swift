@@ -26,6 +26,9 @@ struct ConsecrationScheduledView: View {
     /// The day the Spanish beta strip was last closed (`SpanishBeta`)
     @AppStorage(SpanishBeta.closedOnKey) private var spanishStripClosedOn = ""
 
+    /// The clock's height, which the scroll ignores, for the ··· button
+    @State private var topInset: CGFloat = 0
+
     /// The feast the 33 days end on: Consecration Day
     private var feast: MarianFeastDay? {
         MarianFeastDay.feast(endingPreparationFrom: start)
@@ -76,17 +79,26 @@ struct ConsecrationScheduledView: View {
                 .background(alignment: .top) {
                     plate
                 }
+                // The button rides with the painting and scrolls away with
+                // it: pinned, it stood over the road at the largest text
+                .overlay(alignment: .topTrailing) {
+                    moreMenu
+                        .padding(.trailing, 14)
+                        // Under the clock, and under the Spanish beta strip,
+                        // which the tab's own navigation stack does not count
+                        // in its safe area
+                        .padding(.top, topInset + 2 + (SpanishBeta.showsStrip(closedOn: spanishStripClosedOn) ? SpanishBetaStrip.height : 0))
+                }
                 // Clear of the tab bar
                 .padding(.bottom, 120)
             }
             .scrollBounceBehavior(.basedOnSize)
             .ignoresSafeArea(edges: .top)
-
-            moreMenu
-                .padding(.trailing, 14)
-                // Under the Spanish beta strip, which the tab's own
-                // navigation stack does not count in its safe area
-                .padding(.top, 2 + (SpanishBeta.showsStrip(closedOn: spanishStripClosedOn) ? SpanishBetaStrip.height : 0))
+        }
+        .onGeometryChange(for: CGFloat.self) { proxy in
+            proxy.safeAreaInsets.top
+        } action: { inset in
+            topInset = inset
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .navigationBar)
