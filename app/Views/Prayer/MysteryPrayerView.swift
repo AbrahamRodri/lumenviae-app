@@ -311,14 +311,14 @@ struct MysteryPrayerView: View {
                 )
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
-                .presentationBackground(AppColors.background)
+                .presentationBackground(AppColors.backgroundDeep)
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .playback:
                 PlaybackSettingsSheet()
                     .presentationDetents(PlaybackSettingsSheet.detents(for: min(phoneTypeSize, .playerMaximum)))
                     .presentationDragIndicator(.visible)
-                    .presentationBackground(AppColors.background)
+                    .presentationBackground(AppColors.backgroundDeep)
                     .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
 
             case .feedback:
@@ -328,7 +328,7 @@ struct MysteryPrayerView: View {
                 )
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
-                .presentationBackground(AppColors.background)
+                .presentationBackground(AppColors.backgroundDeep)
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .text:
@@ -342,7 +342,7 @@ struct MysteryPrayerView: View {
                         showsNarrationOptions: false,
                         showsPartsToggle: true))
                     .presentationDragIndicator(.visible)
-                    .presentationBackground(AppColors.background)
+                    .presentationBackground(AppColors.backgroundDeep)
                     .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
 
             case .stops:
@@ -374,7 +374,7 @@ struct MysteryPrayerView: View {
                     // The tray opens as tall as it measures
                     // (`fittedSheetDetent`)
                     .presentationDragIndicator(.visible)
-                    .presentationBackground(AppColors.background)
+                    .presentationBackground(AppColors.backgroundDeep)
                     .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
             }
         }

@@ -1784,8 +1784,8 @@ struct RosaryStopsSheet: View {
 
     private func painting(_ stop: RosaryStop) -> String? {
         guard case .mystery(let n) = stop, rows[stop] == nil, let category else { return nil }
-        let mysteries = MysteryData.mysteries(for: category)
-        return mysteries.indices.contains(n) ? mysteries[n].imageName : nil
+        // The painting the player hangs for that mystery
+        return Constants.mysteryImageURL(category: category.rawValue, index: n)
     }
 
     private func row(_ stop: RosaryStop) -> some View {

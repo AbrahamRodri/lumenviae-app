@@ -71,7 +71,14 @@ struct MeditationSetDetailView: View {
                 comment: "A meditation set's page: small capitals over the set's name when its mysteries are not known"
             ),
             title: viewModel.name,
-            subtitle: viewModel.subtitle,
+            // One line: the book the meditations are from, the page's
+            // "From" moved up (Abraham, 17 Nov 2026: "the from is kind of
+            // important"); the description, the list of the mysteries and
+            // the painting's credit leave the page (the credit stays on
+            // Sources)
+            subtitle: viewModel.sourceTitle.map { source in
+                String(localized: "From \(source)", comment: "A meditation set's page: the one line under its name, the book its meditations are from")
+            } ?? viewModel.subtitle,
             prayEnabled: viewModel.hasMeditations,
             preparing: isPreparingToPray && viewModel.fullSet == nil ? String(
                 localized: "Preparing the meditations",
@@ -86,6 +93,11 @@ struct MeditationSetDetailView: View {
                     comment: "Simple Rosary, the beginner's path: the quiet button that declines and opens the day's mysteries' page"),
                 onDecline: { onDecline?() }
             ) : nil,
+            footLink: viewModel.previewText == nil ? nil : RosaryConfirmFootLink(
+                title: String(
+                    localized: "Read the first meditation",
+                    comment: "A meditation set's page: button that unfolds the first meditation's text"),
+                action: { showsPreview = true }),
             onBack: { router.pop() },
             onPray: pray
         ) {
@@ -95,11 +107,19 @@ struct MeditationSetDetailView: View {
                 category: viewModel.category
             )
         } choices: {
-            RosaryChoicesSection(form: .meditation, category: viewModel.category)
+            SetSettingsCard(category: viewModel.category, offline: viewModel.offlineState) {
+                Task { await viewModel.toggleOfflineCopy() }
+            }
+            .animation(Motion.crossfade, value: viewModel.offlineState == nil)
         } ledger: {
-            sections
-                .animation(Motion.crossfade, value: viewModel.isLoading)
-                .animation(Motion.crossfade, value: showsPreview)
+            loadNotes
+        }
+        .sheet(isPresented: $showsPreview) {
+            firstMeditationSheet
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+                .sheetGround()
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .task {
             await viewModel.load()
@@ -123,322 +143,19 @@ struct MeditationSetDetailView: View {
         }
     }
 
-    // MARK: - The Ledger
+    // MARK: - Under the card
 
-    /// Short sections down the page, each named in the left margin and
-    /// ruled off from the one above.
-    private var sections: some View {
-        VStack(spacing: 0) {
-            if let about = viewModel.about {
-                SetSection(label: String(
-                    localized: "About",
-                    comment: "A meditation set's page, the ledger: label of the row describing the set"
-                )) {
-                    ReadingText(text: about, size: 16)
-                }
-            }
-
-            if !viewModel.entryTitles.isEmpty {
-                SetSection(label: String(
-                    localized: "The\nmeditations",
-                    comment: "A meditation set's page, ledger label in two short lines (a line break between) over the list of the set's meditations"
-                )) { meditationList }
-            }
-
-            if viewModel.hasAttribution {
-                SetSection(label: String(
-                    localized: "From",
-                    comment: "A meditation set's page, ledger label of the row naming the author and the source"
-                )) { attribution }
-            }
-
-            // The painting's credit, the way a museum plate carries one —
-            // small, and only when the painting came with one
-            if let credit = viewModel.artworkCredit {
-                SetSection(label: String(
-                    localized: "The\npainting",
-                    comment: "A meditation set's page, ledger label in two short lines (a line break between) over the painting's credit"
-                )) {
-                    Text(credit)
-                        .font(AppFonts.italicFont(14))
-                        .foregroundColor(AppColors.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-
-            offlineSection
-
-            firstMeditationSection
-        }
-    }
-
-    /// The meditations this set holds, numbered, with the devotion's own
-    /// place in the week beneath.
-    private var meditationList: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            ForEach(Array(viewModel.entryTitles.enumerated()), id: \.offset) { index, title in
-                HStack(alignment: .firstTextBaseline, spacing: 12) {
-                    Text(Self.numeral(index + 1))
-                        .font(AppFonts.labelFont(10))
-                        .tracking(1)
-                        .foregroundColor(AppColors.gold.opacity(0.7))
-                        .frame(width: 22, alignment: .leading)
-
-                    Text(title)
-                        .font(AppFonts.readingFont(16))
-                        .foregroundColor(AppColors.cream.opacity(0.92))
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-
-            if let context = viewModel.contextLine {
-                Text(context)
-                    .font(AppFonts.italicFont(13))
-                    .foregroundColor(AppColors.textSecondary)
-                    .padding(.top, 4)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-        .accessibilityElement(children: .combine)
-    }
-
-    /// The voice and the book behind the meditations — the thing a
-    /// reader most wants to know about a set named for a saint, and the
-    /// one piece the API already carried that the page never said.
-    private var attribution: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            if let source = viewModel.sourceTitle {
-                Text(source)
-                    .font(AppFonts.readingItalicFont(16))
-                    .foregroundColor(AppColors.cream.opacity(0.92))
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-
-            if let author = viewModel.authorName {
-                Text(author)
-                    .font(AppFonts.readingFont(15))
-                    .foregroundColor(AppColors.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-    }
-
-    // MARK: - Offline
-
-    /// Save this one set — its text and every narration — so it can be
-    /// prayed with no connection.
-    ///
-    /// Account downloads the whole library at once, which is the right
-    /// default and the wrong thing to ask of someone who wants one set
-    /// before a flight. This is the same files by the same route, scoped
-    /// to the set in front of you. It appears only once the set has
-    /// loaded: what a set weighs offline depends on the narrations it
-    /// carries, and until they're known the page can't honestly offer it.
+    /// Only what the page must say about loading: a set that would not
+    /// load, with Try again, or one that has nothing to open
     @ViewBuilder
-    private var offlineSection: some View {
-        if let state = viewModel.offlineState {
-            SetSection(label: String(
-                localized: "Offline",
-                comment: "A meditation set's page, ledger label of the row that saves the set for praying without a connection"
-            )) {
-                // One slot for the four states, so save → saving → saved
-                // crossfade over one another instead of the row being
-                // torn down and rebuilt
-                ZStack(alignment: .topLeading) {
-                    switch state {
-                    case .available:
-                        offlineButton(
-                            title: String(
-                                localized: "Save for offline",
-                                comment: "A meditation set's page: button that downloads the set, its narration and painting"
-                            ),
-                            icon: "ph-download-simple",
-                            color: AppColors.gold
-                        )
-                        .transition(.opacity)
-
-                    case .saving(let fraction):
-                        savingIndicator(fraction: fraction)
-                            .transition(.opacity)
-
-                    case .saved:
-                        VStack(alignment: .leading, spacing: 6) {
-                            HStack(spacing: 8) {
-                                AppIcon("ph-check-circle", size: 14)
-                                    .foregroundColor(AppColors.gold.opacity(0.8))
-
-                                Text("Saved on this device")
-                                    .font(AppFonts.readingFont(15))
-                                    .foregroundColor(AppColors.cream.opacity(0.92))
-                            }
-
-                            offlineButton(
-                                title: String(
-                                    localized: "Remove",
-                                    comment: "A meditation set's page: button that deletes the saved offline copy"
-                                ),
-                                icon: "ph-trash",
-                                color: AppColors.textSecondary
-                            )
-                        }
-                        .transition(.opacity)
-
-                    case .failed:
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Some of it didn't download. What finished is saved.")
-                                .font(AppFonts.italicFont(14))
-                                .foregroundColor(AppColors.textSecondary)
-                                .fixedSize(horizontal: false, vertical: true)
-
-                            offlineButton(
-                                title: String(
-                                    localized: "Try again",
-                                    comment: "A meditation set's page: button that tries the download or the load again"
-                                ),
-                                icon: "ph-arrow-counter-clockwise",
-                                color: AppColors.gold
-                            )
-                        }
-                        .transition(.opacity)
-                    }
-                }
-                .animation(Motion.crossfade, value: Self.offlineStage(of: state))
-            }
-        }
-    }
-
-    /// Which of the four the offline row is in, ignoring how far along
-    /// a save is — the bar animates its own progress
-    private static func offlineStage(of state: OfflineContentService.SetOfflineState) -> Int {
-        switch state {
-        case .available: return 0
-        case .saving: return 1
-        case .saved: return 2
-        case .failed: return 3
-        }
-    }
-
-    /// The button keeps its 44pt target but gives its padding back to the
-    /// section, so an "Offline" row doesn't stand twice as tall as the
-    /// ones above it.
-    private func offlineButton(title: String, icon: String, color: Color) -> some View {
-        QuietGoldButton(
-            title: title,
-            leadingIcon: icon,
-            leadingIconSize: 13,
-            size: 10,
-            color: color,
-            horizontalPadding: 0
-        ) {
-            Task { await viewModel.toggleOfflineCopy() }
-        }
-        .padding(.vertical, -10)
-    }
-
-    /// A fine gold rule filling left to right — the same restraint as the
-    /// bead strand, without pretending a file transfer is a devotion.
-    private func savingIndicator(fraction: Double) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("SAVING")
-                .font(AppFonts.labelFont(9))
-                .tracking(2.5)
-                .foregroundColor(AppColors.gold.opacity(0.8))
-
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    Capsule()
-                        .fill(AppColors.gold.opacity(0.15))
-
-                    Capsule()
-                        .fill(AppColors.goldGradient)
-                        .frame(width: max(2, geometry.size.width * fraction))
-                }
-            }
-            .frame(height: 2)
-            .animation(Motion.ease(0.3), value: fraction)
-        }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Saving on this device, \(Int(fraction * 100)) percent")
-    }
-
-    // MARK: - The First Meditation
-
-    /// One of the five, in full, behind a line you have to ask for.
-    ///
-    /// It used to sit open at the foot of the page, which meant the act
-    /// was always a long scroll away and the page read as an article
-    /// rather than a threshold. Closed, the page ends where the button
-    /// is; opened, the whole meditation is there — never a clamped
-    /// excerpt fading out mid-thought.
-    @ViewBuilder
-    private var firstMeditationSection: some View {
-        if let previewText = viewModel.previewText {
-            VStack(alignment: .leading, spacing: 0) {
-                sectionRule
-
-                // The line and the meditation share one slot: opening is
-                // the text rising in over the line as the page makes room
-                ZStack(alignment: .topLeading) {
-                if showsPreview {
-                    VStack(alignment: .leading, spacing: 14) {
-                        Text("The first meditation  ·  \(viewModel.previewSubject)")
-                            .font(AppFonts.italicFont(14))
-                            .foregroundColor(AppColors.textSecondary)
-                            .fixedSize(horizontal: false, vertical: true)
-
-                        ReadingText(text: previewText, size: 17)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                        MeditationLanguageNote(meditation: viewModel.firstMeditation)
-
-                        QuietGoldButton(
-                            title: String(
-                                localized: "Close",
-                                comment: "A meditation set's page: button that folds away the first meditation's preview"
-                            ),
-                            leadingIcon: "ph-caret-up",
-                            leadingIconSize: 10,
-                            size: 10,
-                            color: AppColors.gold.opacity(0.75),
-                            horizontalPadding: 0
-                        ) {
-                            showsPreview = false
-                        }
-                    }
-                    .padding(.top, 20)
-                    .padding(.bottom, 8)
-                    .transition(.opacity.combined(with: .offset(y: -8)))
-                } else {
-                    QuietGoldButton(
-                        title: String(
-                            localized: "Read the first meditation",
-                            comment: "A meditation set's page: button that unfolds the first meditation's text"
-                        ),
-                        leadingIcon: "ph-book-open",
-                        leadingIconSize: 12,
-                        trailingIcon: "ph-caret-down",
-                        size: 10,
-                        color: AppColors.gold,
-                        horizontalPadding: 0
-                    ) {
-                        showsPreview = true
-                    }
-                    .padding(.vertical, 6)
-                    .transition(.opacity)
-                }
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        } else if viewModel.loadFailed {
+    private var loadNotes: some View {
+        if viewModel.loadFailed {
             VStack(spacing: 10) {
-                sectionRule
-
                 Text("Couldn't load these meditations. Check your connection and try again.")
                     .font(AppFonts.italicFont(15))
                     .foregroundColor(AppColors.textSecondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 14)
 
                 QuietGoldButton(
                     title: String(
@@ -453,28 +170,36 @@ struct MeditationSetDetailView: View {
                     Task { await viewModel.load() }
                 }
             }
-        } else if viewModel.fullSet != nil {
-            // Loaded, but nothing to open: no meditations, or an empty first
-            // one. Say so — and the act below stays quiet.
-            VStack(spacing: 0) {
-                sectionRule
-
-                Text("These meditations aren't available yet.")
-                    .font(AppFonts.italicFont(15))
-                    .foregroundColor(AppColors.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 16)
-            }
+        } else if viewModel.fullSet != nil, viewModel.previewText == nil {
+            Text("These meditations aren't available yet.")
+                .font(AppFonts.italicFont(15))
+                .foregroundColor(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
         }
-        // Still loading: nothing here. The sections above are already
-        // readable from bundled data, so a spinner would be the only
-        // restless thing on a page that is otherwise complete.
     }
 
-    private var sectionRule: some View {
-        Rectangle()
-            .fill(AppColors.gold.opacity(0.18))
-            .frame(height: AppLine.hairline)
+    /// The first meditation in full, behind the quiet link under PRAY
+    private var firstMeditationSheet: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 14) {
+                SheetHeader(
+                    kicker: String(localized: "The first meditation", comment: "A meditation set's page: the kicker over the first meditation, read in a sheet"),
+                    title: viewModel.previewSubject
+                ) {
+                    SheetHeaderAction(title: String(localized: "Done", comment: "Sheet header button that closes the sheet")) {
+                        showsPreview = false
+                    }
+                }
+                if let previewText = viewModel.previewText {
+                    ReadingText(text: previewText, size: 17)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, SheetMetrics.gutter)
+                    MeditationLanguageNote(meditation: viewModel.firstMeditation)
+                        .padding(.horizontal, SheetMetrics.gutter)
+                }
+            }
+            .padding(.bottom, 32)
+        }
     }
 
     // MARK: - Pray
@@ -499,13 +224,6 @@ struct MeditationSetDetailView: View {
                 showsLoadFailure = true
             }
         }
-    }
-
-    /// The mystery list's numbers, in plain figures: they are read as
-    /// numbers, and Roman numerals asked the reader to work them out.
-    /// Never needs past seven.
-    private static func numeral(_ n: Int) -> String {
-        "\(n)"
     }
 }
 

@@ -186,7 +186,7 @@ struct ScripturalRosaryPrayerView: View {
                 )
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
-                .presentationBackground(AppColors.background)
+                .presentationBackground(AppColors.backgroundDeep)
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .text:
@@ -200,14 +200,14 @@ struct ScripturalRosaryPrayerView: View {
                         showsNarrationOptions: false,
                         showsPartsToggle: true))
                     .presentationDragIndicator(.visible)
-                    .presentationBackground(AppColors.background)
+                    .presentationBackground(AppColors.backgroundDeep)
                     .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
 
             case .playback:
                 PlaybackSettingsSheet()
                     .presentationDetents(PlaybackSettingsSheet.detents(for: min(phoneTypeSize, .playerMaximum)))
                     .presentationDragIndicator(.visible)
-                    .presentationBackground(AppColors.background)
+                    .presentationBackground(AppColors.backgroundDeep)
                     .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
 
             case .feedback:
@@ -217,7 +217,7 @@ struct ScripturalRosaryPrayerView: View {
                 )
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
-                .presentationBackground(AppColors.background)
+                .presentationBackground(AppColors.backgroundDeep)
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .stops:
@@ -243,7 +243,7 @@ struct ScripturalRosaryPrayerView: View {
                 )
                 // The tray opens as tall as it measures (`fittedSheetDetent`)
                 .presentationDragIndicator(.visible)
-                .presentationBackground(AppColors.background)
+                .presentationBackground(AppColors.backgroundDeep)
                 .dynamicTypeSize(...DynamicTypeSize.playerMaximum)
             }
         }
