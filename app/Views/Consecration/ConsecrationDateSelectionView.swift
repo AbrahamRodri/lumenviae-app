@@ -235,7 +235,7 @@ struct ConsecrationDateSelectionView: View {
     /// read by the day it is kept, with nothing said of its own day
     static func rowLabel(_ preparation: FeastPreparation, isSoonest: Bool) -> String {
         let feast = preparation.feast.name
-        let date = footDate(preparation.feastDate)
+        let date = footDate(preparation.feastDate, standsAlone: false)
         return isSoonest
             ? String(
                 localized: "\(feast), \(date), the soonest.",
@@ -256,7 +256,9 @@ struct ConsecrationDateSelectionView: View {
         return VStack(spacing: 16) {
             FeastSpan(
                 begin: Self.footDate(preparation.start),
-                consecrate: Self.footDate(preparation.feastDate)
+                consecrate: Self.footDate(preparation.feastDate),
+                spokenBegin: Self.footDate(preparation.start, standsAlone: false),
+                spokenConsecrate: Self.footDate(preparation.feastDate, standsAlone: false)
             )
             .animation(Motion.crossfade, value: preparation.id)
 
@@ -348,11 +350,14 @@ struct ConsecrationDateSelectionView: View {
     /// A day in the foot, standing alone under its label: "Saturday,
     /// January 9"; in Spanish "Miércoles 3 de marzo", without the comma
     /// the system puts after the weekday and with a capital, since it
-    /// begins its line
-    static func footDate(_ date: Date) -> String {
+    /// begins its line; inside a sentence (`standsAlone: false`, the
+    /// VoiceOver labels, which braille shows) the weekday keeps its small
+    /// letter, "Comienzas el lunes 5 de abril"
+    static func footDate(_ date: Date, standsAlone: Bool = true) -> String {
         let words = date.formatted(.dateTime.weekday(.wide).month(.wide).day())
         guard AppLanguage.isSpanish else { return words }
         let joined = words.replacingOccurrences(of: ", ", with: " ")
+        guard standsAlone else { return joined }
         return joined.prefix(1).uppercased() + joined.dropFirst()
     }
 
@@ -436,6 +441,9 @@ struct ConsecrationDateSelectionView: View {
 private struct FeastSpan: View {
     let begin: String
     let consecrate: String
+    /// The same two days as they are said inside a sentence
+    let spokenBegin: String
+    let spokenConsecrate: String
 
     private var beginLabel: String {
         String(localized: "You begin", comment: "Consecration feast chooser, over Begin: small capitals over Day 1's date")
@@ -466,7 +474,7 @@ private struct FeastSpan: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
             String(
-                localized: "You begin \(begin). You consecrate \(consecrate).",
+                localized: "You begin \(spokenBegin). You consecrate \(spokenConsecrate).",
                 comment: "VoiceOver, consecration feast chooser: the two dates over Begin, Day 1's then the feast's"))
     }
 

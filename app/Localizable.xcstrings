@@ -3406,18 +3406,6 @@
         }
       }
     },
-    "33 days, from %@ to %@" : {
-      "comment" : "Consecration feast chooser, over Begin: what the chosen feast means, Day 1's date then the feast's, each with its weekday, like 33 days, from Saturday, January 9 to Thursday, February 11",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "33 días, del %1$@ al %2$@"
-          }
-        }
-      }
-    },
     "54 days in a row, as long as the Rosary novena: 27 days asking, then 27 giving thanks." : {
       "comment" : "Streak milestone: the line of blessing shown when it is reached, saying what the run of days means",
       "localizations" : {
@@ -9163,18 +9151,6 @@
         }
       }
     },
-    "Easter Sunday" : {
-      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Domingo de Pascua"
-          }
-        }
-      }
-    },
     "Easter is not one day. Keep it with a decade." : {
       "comment" : "Daily prayer reminder notification in the Easter season: its text under the title. Warm and inviting, never scolding; under about 75 characters",
       "localizations" : {
@@ -10927,18 +10903,6 @@
         }
       }
     },
-    "Good Friday" : {
-      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Viernes Santo"
-          }
-        }
-      }
-    },
     "Gospel" : {
       "comment" : "A kind of meditation: the Gospel passage of the mystery\nThe Mass: a part of the Mass named plainly in English, as a heading in the reader and its index; the Latin name stands beside it",
       "localizations" : {
@@ -11569,30 +11533,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pausa tu turno"
-          }
-        }
-      }
-    },
-    "Holy Saturday" : {
-      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sábado Santo"
-          }
-        }
-      }
-    },
-    "Holy Thursday" : {
-      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jueves Santo"
           }
         }
       }
@@ -14204,18 +14144,6 @@
         }
       }
     },
-    "Monday of Holy Week" : {
-      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lunes Santo"
-          }
-        }
-      }
-    },
     "Montfort calls it an easy, short, perfect and secure way to union with Our Lord. What follows is his teaching, a part at a time." : {
       "localizations" : {
         "es" : {
@@ -14383,30 +14311,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mover, cambiar de tamaño u ocultar secciones"
-          }
-        }
-      }
-    },
-    "Moved from %@, which is %@ in %@" : {
-      "comment" : "Consecration feast chooser, under a feast's name: its own date, the day that date falls on, and the year, like Moved from March 25, which is Holy Thursday in 2027",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trasladada del %1$@, que en %3$@ es %2$@"
-          }
-        }
-      }
-    },
-    "Moved from %@, which is in Easter Week in %@" : {
-      "comment" : "Consecration feast chooser, under a feast's name: its own date falls in the week after Easter Sunday that year, like Moved from March 25, which is in Easter Week in 2008",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trasladada del %1$@, que en %2$@ cae en la semana de Pascua"
           }
         }
       }
@@ -17148,18 +17052,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pintura elegida"
-          }
-        }
-      }
-    },
-    "Palm Sunday" : {
-      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Domingo de Ramos"
           }
         }
       }
@@ -26747,18 +26639,6 @@
         }
       }
     },
-    "Tuesday of Holy Week" : {
-      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Martes Santo"
-          }
-        }
-      }
-    },
     "Turn On in iPhone Settings" : {
       "comment" : "Settings: a row's name",
       "localizations" : {
@@ -27231,18 +27111,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "miércoles"
-          }
-        }
-      }
-    },
-    "Wednesday of Holy Week" : {
-      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Miércoles Santo"
           }
         }
       }
@@ -28931,18 +28799,6 @@
         }
       }
     },
-    "a Sunday of Lent" : {
-      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "un domingo de Cuaresma"
-          }
-        }
-      }
-    },
     "a faithful week" : {
       "comment" : "Streak milestone: what the Church calls a run of this many days of prayer, lower case, shown after the count, like 9 days · a novena",
       "localizations" : {
@@ -29809,18 +29665,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "iniciales"
-          }
-        }
-      }
-    },
-    "the Sunday after Easter" : {
-      "comment" : "Consecration feast chooser, why a feast moved: the day its own date falls on that year",
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "el domingo después de Pascua"
           }
         }
       }
