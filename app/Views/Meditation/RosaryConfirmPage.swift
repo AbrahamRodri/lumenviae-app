@@ -767,7 +767,6 @@ private struct VoiceAndSpeedSheet: View {
                         switchRow(
                             extra.title,
                             detail: extra.detail,
-                            icon: extra.icon,
                             isOn: Binding(
                                 get: { settings.isChosen(extra) },
                                 set: { settings.setChosen(extra, $0) }
@@ -786,11 +785,11 @@ private struct VoiceAndSpeedSheet: View {
     }
 
     /// A ruled row whose whole width is its switch
-    private func switchRow(_ title: String, detail: String, icon: String, isOn: Binding<Bool>) -> some View {
+    private func switchRow(_ title: String, detail: String, isOn: Binding<Bool>) -> some View {
         Button {
             withAnimation(Motion.settle) { isOn.wrappedValue.toggle() }
         } label: {
-            SheetRow(title, detail: detail, icon: icon, detailLineLimit: nil) {
+            SheetRow(title, detail: detail, detailLineLimit: nil) {
                 BeadSwitch(isOn: isOn.wrappedValue)
             }
         }

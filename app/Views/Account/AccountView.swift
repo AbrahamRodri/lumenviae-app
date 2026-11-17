@@ -862,7 +862,9 @@ struct ChantsSavedLine: View {
 // MARK: - Toggle Row
 
 struct ToggleRow: View {
-    let icon: String
+    /// A switch row carries no icon unless there is a reason for one
+    /// (Abraham, 17 Nov 2026: "gearing torwards no")
+    var icon: String? = nil
     let title: String
     var subtitle: String? = nil
     @Binding var isOn: Bool
@@ -877,9 +879,11 @@ struct ToggleRow: View {
             withAnimation(Motion.settle) { isOn.toggle() }
         } label: {
             HStack(spacing: 16) {
-                AppIcon(icon, size: 18)
-                    .foregroundColor(AppColors.textSecondary)
-                    .frame(width: 24)
+                if let icon {
+                    AppIcon(icon, size: 18)
+                        .foregroundColor(AppColors.textSecondary)
+                        .frame(width: 24)
+                }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
@@ -1472,7 +1476,6 @@ struct AfterTheRosarySheet: View {
 
                 ForEach(RosaryClosingExtra.allCases, id: \.self) { extra in
                     ToggleRow(
-                        icon: extra.icon,
                         title: extra.title,
                         subtitle: extra.detail,
                         isOn: Binding(

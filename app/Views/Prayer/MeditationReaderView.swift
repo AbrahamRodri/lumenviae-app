@@ -649,7 +649,6 @@ struct ReaderTextOptionsSheet: View {
                         localized: "When off, only the prayer’s name stays.",
                         comment: "The Rosary's player, text sheet: the line under Show Words and Beads, saying what is left when it is off"
                     ),
-                    icon: "lv-rosary",
                     isOn: $settings.rosaryShowsWordsAndBeads,
                     showsDivider: false,
                     // Two lines, now the sheet measures itself: at the
@@ -673,7 +672,6 @@ struct ReaderTextOptionsSheet: View {
                         localized: "The page keeps pace with the voice",
                         comment: "Meditation reader, text options sheet: the line under Follow the narration"
                     ),
-                    icon: "ph-text-align-left",
                     isOn: $settings.readerAutoScroll,
                     showsDivider: false,
                     detailLineLimit: 1
