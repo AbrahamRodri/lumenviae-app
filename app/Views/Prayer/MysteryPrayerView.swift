@@ -936,11 +936,14 @@ extension MysteryPrayerView {
             let lines = SilentPendant.lines(of: pendant.prayerID, in: userSettings.prayerLanguage)
             OneRosaryColumn(
                 title: pendant.heading,
-                place: OneRosaryColumn<EmptyView>.place(mystery: nil, of: viewModel.strand.decades, phase: pendant.phase),
+                // Nothing under the opening or closing prayers' title: the
+                // pill says where the Rosary stands
+                place: "",
                 bead: OneRosaryColumn<EmptyView>.pendantLabel(pendant, count: viewModel.silentPendantCount),
                 help: oneRosaryHelp,
                 wordsKey: "\(pendant.heading)|\(pendant.title)|\(viewModel.silentPendantCount ?? "")",
-                showsWords: showsWordsAndBeads
+                showsWords: showsWordsAndBeads,
+                holdsEmptyPlace: false
             ) {
                 VStack(alignment: .leading, spacing: 8) {
                     SpokenRosaryWords(

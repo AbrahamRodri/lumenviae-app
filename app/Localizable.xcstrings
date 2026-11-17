@@ -4386,6 +4386,17 @@
         }
       }
     },
+    "A week" : {
+      "comment" : "Consecration, scheduled page: how long one of the three weeks of the preparation is, under its name",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una semana"
+          }
+        }
+      }
+    },
     "A word with your Mother" : {
       "comment" : "Daily prayer reminder notification for readers wanting to grow closer to Mary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters",
       "localizations" : {
@@ -8456,6 +8467,17 @@
         }
       }
     },
+    "Day 1 opens here on %@." : {
+      "comment" : "Consecration, scheduled page: the quiet line at the foot saying when the first day's prayers open, like Day 1 opens here on Saturday, January 9.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El día 1 se abre aquí el %@."
+          }
+        }
+      }
+    },
     "Days %@ are still open. You can pray them now, or go on with Day %lld." : {
       "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
       "extractionState" : "manual",
@@ -10035,6 +10057,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Filtrar por tipo"
+          }
+        }
+      }
+    },
+    "Final" : {
+      "comment" : "Consecration introduction, page 4: the path's last station, day 34, in the column where the others give their days",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Final"
           }
         }
       }
@@ -24653,6 +24686,17 @@
         }
       }
     },
+    "The feast of %@" : {
+      "comment" : "Consecration, scheduled page: under Consecration Day, the feast it falls on, like The feast of Our Lady of Lourdes",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fiesta de %@"
+          }
+        }
+      }
+    },
     "The first day's prayers open then. Nothing is asked of you before it." : {
       "localizations" : {
         "es" : {
@@ -25235,6 +25279,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La reflexión"
+          }
+        }
+      }
+    },
+    "The road there · begins in %lld days" : {
+      "comment" : "Consecration, scheduled page: small capitals over the five parts of the preparation, like The road there · begins in 53 days",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El camino · comienza en %lld días"
+          }
+        }
+      }
+    },
+    "The road there · begins tomorrow" : {
+      "comment" : "Consecration, scheduled page: small capitals over the five parts of the preparation, when Day 1 is tomorrow",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El camino · comienza mañana"
           }
         }
       }
@@ -26746,6 +26812,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Duodécimo día"
+          }
+        }
+      }
+    },
+    "Twelve days" : {
+      "comment" : "Consecration, scheduled page: how long the first part of the preparation is, under its name",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doce días"
           }
         }
       }
@@ -28407,6 +28484,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tu capilla"
+          }
+        }
+      }
+    },
+    "Your Consecration to Mary" : {
+      "comment" : "Consecration, scheduled page: kicker over the chosen feast's name while the preparation has not begun",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu consagración a María"
           }
         }
       }

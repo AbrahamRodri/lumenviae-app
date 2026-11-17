@@ -903,7 +903,10 @@ private struct JourneyStepView: View {
     private func dayRangeLabel(_ phase: ConsecrationPhase) -> String {
         let range = phase.dayRange
         if phase == .consecrationDay {
-            return String(localized: "Consecration Day", comment: "Consecration introduction, page 4: the path's last station, day 34")
+            // One word where the others give their days; the card's own
+            // line beneath still names it Consecration Day (Abraham, 17
+            // Nov 2026: "Have instead of consecration day final")
+            return String(localized: "Final", comment: "Consecration introduction, page 4: the path's last station, day 34, in the column where the others give their days")
         }
         return range.count == 1
             ? String(localized: "Day \(range.lowerBound)", comment: "Consecration introduction, page 4: a station of the path that is one day long")

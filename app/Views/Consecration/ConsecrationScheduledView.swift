@@ -3,10 +3,13 @@
 //  Lumen Viae
 //
 //  The tab's page for a consecration chosen ahead of its feast, until
-//  its Day 1 comes: when the 33 days begin, the feast they end on, the
-//  book to read while waiting, and a way to choose another feast. No day
-//  of it is open yet (`ConsecrationProgress.hasBegun`), and on Day 1 the
-//  tab turns to the day's own page by itself.
+//  its Day 1 comes: the road ahead (design's option C, Abraham's pick,
+//  17 Nov 2026). The feast is the title over its date, and the five
+//  parts of the preparation stand on one gold line, each with the date
+//  it begins. Nothing on the page is a button: the book and the way back
+//  to the feasts stand in the ··· menu. No day of it is open yet
+//  (`ConsecrationProgress.hasBegun`), and on Day 1 the tab turns to the
+//  day's own page by itself.
 //
 
 import SwiftUI
@@ -41,27 +44,31 @@ struct ConsecrationScheduledView: View {
     // MARK: - Body
 
     var body: some View {
-        ZStack(alignment: .top) {
+        ZStack(alignment: .topTrailing) {
             AppColors.appGradient
                 .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
+                VStack(alignment: .leading, spacing: 0) {
                     titleBlock
-                        .padding(.top, 220)
-                        .padding(.horizontal, 28)
+                        .padding(.top, 236)
                         .devotionalEntrance()
 
-                    datesCard
-                        .padding(.top, 26)
-                        .padding(.horizontal, 20)
+                    road
+                        .padding(.top, 34)
                         .devotionalEntrance(delay: 0.08)
 
-                    doors
-                        .padding(.top, 22)
+                    Text("Day 1 opens here on \(Self.dayAndDate(start)).", comment: "Consecration, scheduled page: the quiet line at the foot saying when the first day's prayers open, like Day 1 opens here on Saturday, January 9.")
+                        .font(AppFonts.italicFont(15))
+                        .foregroundColor(AppColors.textSecondary)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 40)
                         .devotionalEntrance(delay: 0.16)
                 }
-                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 24)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 // The painting rides with the page, behind the title
                 .background(alignment: .top) {
                     plate
@@ -71,6 +78,10 @@ struct ConsecrationScheduledView: View {
             }
             .scrollBounceBehavior(.basedOnSize)
             .ignoresSafeArea(edges: .top)
+
+            moreMenu
+                .padding(.trailing, 14)
+                .padding(.top, 2)
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .navigationBar)
@@ -78,19 +89,19 @@ struct ConsecrationScheduledView: View {
 
     // MARK: - Painting
 
-    /// The Annunciation, as on the introduction's second page: the yes
-    /// a consecration to Mary renews
+    /// The Coronation, the picture of Consecration Day itself: the page
+    /// looks to where the road ends
     private var plate: some View {
-        CachedAssetImage("joyful_annunciation", focal: UnitPoint(x: 0.5, y: 0.3))
+        CachedAssetImage(ConsecrationPhase.consecrationDay.heroImageName, focal: UnitPoint(x: 0.5, y: 0.25))
             .frame(maxWidth: .infinity)
-            .frame(height: 360)
+            .frame(height: 380)
             .clipped()
             .overlay(
                 LinearGradient(
                     stops: [
-                        .init(color: .black.opacity(0.45), location: 0),
-                        .init(color: .black.opacity(0), location: 0.35),
-                        .init(color: AppColors.background.opacity(0.7), location: 1)
+                        .init(color: .black.opacity(0.4), location: 0),
+                        .init(color: .black.opacity(0), location: 0.3),
+                        .init(color: AppColors.background.opacity(0.75), location: 1)
                     ],
                     startPoint: .top,
                     endPoint: .bottom
@@ -100,7 +111,7 @@ struct ConsecrationScheduledView: View {
                 LinearGradient(
                     stops: [
                         .init(color: .black, location: 0),
-                        .init(color: .black, location: 0.45),
+                        .init(color: .black, location: 0.55),
                         .init(color: .clear, location: 1)
                     ],
                     startPoint: .top,
@@ -111,107 +122,182 @@ struct ConsecrationScheduledView: View {
             .accessibilityHidden(true)
     }
 
-    // MARK: - Title
+    // MARK: - More
 
-    private var titleBlock: some View {
-        VStack(spacing: 12) {
-            ConsecrationIntroKicker(
-                text: String(localized: "Consecration to Mary", comment: "Consecration, scheduled page: kicker over the title while the chosen preparation has not begun")
-            )
-                .shadow(color: .black.opacity(0.5), radius: 4, y: 1)
-
-            (daysUntilStart == 1
-                ? Text("Your 33 days begin tomorrow")
-                : Text("Your 33 days begin \(ConsecrationDateSelectionView.longDate(start, weekday: true))"))
-                .font(AppFonts.headlineFont(26))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.center)
-                .lineSpacing(4)
-                .fixedSize(horizontal: false, vertical: true)
-                .shadow(color: .black.opacity(0.4), radius: 6, y: 1)
-                .accessibilityAddTraits(.isHeader)
-
-            Text("The first day's prayers open then. Nothing is asked of you before it.")
-                .font(AppFonts.italicFont(17))
-                .foregroundColor(AppColors.accentSoft)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-    }
-
-    // MARK: - Dates
-
-    private var datesCard: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            dateRow(
-                label: String(localized: "DAY 1", comment: "Consecration, scheduled page: small capitals over the date the preparation begins"),
-                date: ConsecrationDateSelectionView.longDate(start, weekday: true),
-                note: ConsecrationDateSelectionView.countdown(daysUntilStart)
-            )
-
-            ConsecrationIntroRule()
-                .padding(.vertical, 14)
-
-            dateRow(
-                label: String(localized: "CONSECRATION DAY", comment: "Consecration, scheduled page: small capitals over the date of the feast the preparation ends on"),
-                date: ConsecrationDateSelectionView.longDate(feastDate, weekday: true),
-                note: feast?.name
-            )
-        }
-        .sacredCard(padding: 18, elevated: true)
-    }
-
-    private func dateRow(label: String, date: String, note: String?) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(label)
-                .font(AppFonts.labelFont(10.5))
-                .tracking(2.5)
-                .foregroundColor(AppColors.gold)
-
-            Text(date)
-                .font(AppFonts.bodyFont(17))
-                .foregroundColor(AppColors.cream)
-
-            if let note {
-                Text(note)
-                    .font(AppFonts.italicFont(15))
-                    .foregroundColor(AppColors.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .accessibilityElement(children: .combine)
-    }
-
-    // MARK: - Doors
-
-    /// Two quiet doors: the book the consecration comes from, which
-    /// Montfort asks to be read, and the way back to the feasts. Nothing
-    /// here is the page's gold act, since there is nothing yet to pray.
-    private var doors: some View {
-        VStack(spacing: 4) {
-            QuietGoldButton(
-                title: String(localized: "Read True Devotion to Mary", comment: "Consecration, scheduled page: quiet button opening Montfort's book True Devotion to Mary"),
-                leadingIcon: "ph-book-open",
-                size: 11
-            ) {
+    /// The two doors the page once showed as gold links: the book the
+    /// consecration comes from, and the way back to the feasts
+    private var moreMenu: some View {
+        Menu {
+            Button {
                 path.append(.trueDevotionReader)
+            } label: {
+                Label(
+                    String(localized: "Read True Devotion to Mary", comment: "Consecration, scheduled page: menu item opening Montfort's book True Devotion to Mary"),
+                    systemImage: "book"
+                )
             }
-            .frame(minHeight: 44)
-            .accessibilityHint("The book this consecration comes from")
 
-            QuietGoldButton(
-                title: String(localized: "Choose another feast", comment: "Consecration, scheduled page: quiet button that lets go of the chosen feast to choose another"),
-                size: 10,
-                color: AppColors.textSecondary
-            ) {
+            Button {
                 // Nothing is lost: no day of it has been prayed
                 withAnimation(Motion.crossfade) {
                     viewModel.abandonConsecration()
                 }
+            } label: {
+                Label(
+                    String(localized: "Choose another feast", comment: "Consecration, scheduled page: menu item that lets go of the chosen feast to choose another"),
+                    systemImage: "calendar"
+                )
             }
-            .frame(minHeight: 44)
+        } label: {
+            AppIcon("ph-dots-three", size: 18)
+                .foregroundColor(.white)
+                .padding(13)
+                .background(Color.black.opacity(0.3))
+                .clipShape(Circle())
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Circle())
         }
+        .accessibilityLabel(Text("More options", comment: "Consecration, scheduled page: VoiceOver name of the round button that opens the menu"))
+    }
+
+    // MARK: - Title
+
+    private var titleBlock: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(String(localized: "Your Consecration to Mary", comment: "Consecration, scheduled page: kicker over the chosen feast's name while the preparation has not begun").uppercased())
+                .font(AppFonts.labelFont(12))
+                .tracking(3.5)
+                .foregroundColor(AppColors.gold)
+                .shadow(color: .black.opacity(0.5), radius: 4, y: 1)
+
+            // The feast's name, or the date when the day chosen has none
+            Text(feast?.name ?? Self.fullDate(feastDate))
+                .font(AppFonts.headlineFont(28))
+                .foregroundColor(AppColors.cream)
+                .lineSpacing(2)
+                .fixedSize(horizontal: false, vertical: true)
+                .shadow(color: .black.opacity(0.45), radius: 6, y: 1)
+                .accessibilityAddTraits(.isHeader)
+
+            if feast != nil {
+                Text(Self.fullDate(feastDate))
+                    .font(AppFonts.italicFont(19))
+                    .foregroundColor(AppColors.accentSoft)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    // MARK: - The road
+
+    private var road: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(roadLabel.uppercased())
+                .font(AppFonts.labelFont(11))
+                .tracking(3)
+                .foregroundColor(AppColors.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.bottom, 22)
+
+            ForEach(Array(ConsecrationPhase.allCases.enumerated()), id: \.element) { index, phase in
+                roadRow(phase, isLast: index == ConsecrationPhase.allCases.count - 1)
+            }
+        }
+    }
+
+    private var roadLabel: String {
+        daysUntilStart <= 1
+            ? String(localized: "The road there · begins tomorrow", comment: "Consecration, scheduled page: small capitals over the five parts of the preparation, when Day 1 is tomorrow")
+            : String(localized: "The road there · begins in \(daysUntilStart) days", comment: "Consecration, scheduled page: small capitals over the five parts of the preparation, like The road there · begins in 53 days")
+    }
+
+    /// One part of the preparation: a ring on the gold line, the date it
+    /// begins, its name and how long it is. Not a door.
+    private func roadRow(_ phase: ConsecrationPhase, isLast: Bool) -> some View {
+        let begins = Calendar.current.date(byAdding: .day, value: phase.dayRange.lowerBound - 1, to: start) ?? start
+
+        return HStack(alignment: .top, spacing: 0) {
+            // The ring, and the line on to the next
+            VStack(spacing: 0) {
+                ZStack {
+                    if isLast {
+                        Circle()
+                            .fill(AppColors.gold)
+                            .frame(width: 13, height: 13)
+                            .shadow(color: AppColors.gold.opacity(0.7), radius: 6)
+                    } else {
+                        Circle()
+                            .stroke(AppColors.gold, lineWidth: 1.5)
+                            .frame(width: 12, height: 12)
+                    }
+                }
+                .frame(width: 14, height: 14)
+                .padding(.top, 5)
+
+                if !isLast {
+                    Rectangle()
+                        .fill(AppColors.gold.opacity(0.55))
+                        .frame(width: 1)
+                        .frame(maxHeight: .infinity)
+                }
+            }
+            .frame(width: 14)
+
+            Text(begins.formatted(.dateTime.month(.abbreviated).day()).uppercased())
+                .font(AppFonts.labelFont(11))
+                .tracking(2)
+                .foregroundColor(AppColors.gold)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .frame(width: 72, alignment: .leading)
+                .padding(.leading, 18)
+                .padding(.top, 6)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(isLast ? phase.displayName : phase.subtitle)
+                    .font(AppFonts.bodyFont(19))
+                    .foregroundColor(isLast ? AppColors.goldLight : AppColors.cream)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if let note = Self.note(for: phase, feast: feast) {
+                    Text(note)
+                        .font(AppFonts.italicFont(15))
+                        .foregroundColor(AppColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .padding(.bottom, isLast ? 0 : 24)
+
+            Spacer(minLength: 0)
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        .accessibilityElement(children: .combine)
+    }
+
+    // MARK: - Words
+
+    /// How long a part is, or the feast Consecration Day falls on
+    static func note(for phase: ConsecrationPhase, feast: MarianFeastDay?) -> String? {
+        switch phase {
+        case .preparatory:
+            return String(localized: "Twelve days", comment: "Consecration, scheduled page: how long the first part of the preparation is, under its name")
+        case .knowledgeOfSelf, .knowledgeOfMary, .knowledgeOfJesus:
+            return String(localized: "A week", comment: "Consecration, scheduled page: how long one of the three weeks of the preparation is, under its name")
+        case .consecrationDay:
+            guard let feast else { return nil }
+            return String(localized: "The feast of \(feast.name)", comment: "Consecration, scheduled page: under Consecration Day, the feast it falls on, like The feast of Our Lady of Lourdes")
+        }
+    }
+
+    /// "Thursday, February 11, 2027": the consecration's date in full
+    static func fullDate(_ date: Date) -> String {
+        date.formatted(.dateTime.weekday(.wide).month(.wide).day().year())
+    }
+
+    /// "Saturday, January 9"
+    static func dayAndDate(_ date: Date) -> String {
+        date.formatted(.dateTime.weekday(.wide).month(.wide).day())
     }
 }
 
