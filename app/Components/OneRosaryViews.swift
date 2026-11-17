@@ -603,6 +603,13 @@ struct OneRosaryColumn<Words: View>: View {
     /// aside and the title, the place and the step stay where they are
     var showsWords: Bool = true
 
+    /// Whether an empty place keeps its line, so the words begin at one
+    /// height on every mystery. The opening and closing prayers say
+    /// nothing there and let it go, their title close over the prayer's
+    /// name (Abraham, 17 Nov 2026: "i dont want the subtitles before the
+    /// first mystery bit still have the two other lines closer")
+    var holdsEmptyPlace: Bool = true
+
     @ViewBuilder let words: () -> Words
 
     /// The room over the words that the title, the place and the step
@@ -679,6 +686,9 @@ struct OneRosaryColumn<Words: View>: View {
         }
     }
 
+    /// Whether the line under the title stands, empty or not
+    private var keepsPlaceLine: Bool { !place.isEmpty || (showsWords && holdsEmptyPlace) }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // The head, set to its foot in a room of one height, so a
@@ -698,7 +708,7 @@ struct OneRosaryColumn<Words: View>: View {
                 // With the words put away there are none to hold level, so
                 // an empty line goes and the step stands close under the
                 // title (Abraham, 17 Nov 2026: "too big of a space")
-                if showsWords || !place.isEmpty {
+                if keepsPlaceLine {
                     Text(place.isEmpty ? " " : place)
                         .accessibilityHidden(place.isEmpty)
                         .font(AppFonts.italicFont(15))
@@ -712,7 +722,7 @@ struct OneRosaryColumn<Words: View>: View {
                 OneRosaryStepLabel(text: bead ?? " ")
                     .opacity(bead == nil ? 0 : 1)
                     .accessibilityHidden(bead == nil)
-                    .padding(.top, showsWords || !place.isEmpty ? 12 : 8)
+                    .padding(.top, keepsPlaceLine ? 12 : 8)
             }
             .fixedSize(horizontal: false, vertical: true)
             .frame(height: Self.headHeight(large: dynamicTypeSize.isAccessibilitySize), alignment: .bottomLeading)
@@ -773,7 +783,10 @@ struct OneRosaryColumn<Words: View>: View {
 
     /// Where the Rosary stands, in plain words, under the title: a
     /// mystery by its number of all of them ("Mystery 2 of 5", "Sorrow 3
-    /// of 7"), and the opening and closing prayers by where they fall
+    /// of 7"), and the opening and closing prayers by where they fall.
+    /// No screen sets it since 17 Nov 2026 (the pill says where); kept,
+    /// with its tests and its Spanish, so the words need not be found
+    /// again if a place line returns.
     static func place(mystery: Int?, of total: Int, phase: SpokenSegment.Phase? = nil) -> String {
         let chaplet = total != 5
         if let mystery {
