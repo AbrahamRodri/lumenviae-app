@@ -855,7 +855,14 @@ private struct JourneyStepView: View {
             Text(dayRangeLabel(phase))
                 .font(AppFonts.bodyFont(12))
                 .foregroundColor(phase.accentColor)
-                .frame(width: 52, alignment: .leading)
+                // Wide enough for "Consecration" (and "consagración") on a
+                // line of its own: at 52 the last station's word was cut
+                // (Abraham, 17 Nov 2026: "the consecration word itself is
+                // just cut off")
+                .lineLimit(2)
+                .minimumScaleFactor(0.85)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(width: 72, alignment: .leading)
 
             // The phase's accent — the same quiet hue journey the 33 days
             // themselves walk, brightening toward the consecration
