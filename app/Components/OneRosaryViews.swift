@@ -1032,14 +1032,18 @@ struct OneRosaryFooter: View {
             .accessibilityLabel(Text("Back", comment: "One Rosary beta, the player's footer: VoiceOver name of the button back to the bead or prayer before"))
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            // In a slot of its own width whether or not a voice speaks,
-            // so Back and Next never move
+            // In a slot of its own width and height whether or not a voice
+            // speaks, so Back and Next never move, and the row is as tall
+            // before the voice begins as after: a slot of Back's height
+            // grew by the disc's extra 8 points as it arrived, and with
+            // the words put away the head, set on the foot, jumped up
+            // (Abraham, 17 Nov 2026: "a bit of a jumping")
             ZStack {
                 if let play {
                     play.transition(.opacity)
                 }
             }
-            .frame(width: OneRosaryPlayDisc.diameter, height: controlHeight)
+            .frame(width: OneRosaryPlayDisc.diameter, height: max(controlHeight, OneRosaryPlayDisc.diameter))
 
             Group {
                 if isLast {
