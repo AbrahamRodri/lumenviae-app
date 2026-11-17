@@ -1373,18 +1373,13 @@ struct OneRosaryUtilityRow: View {
     }
 
     private func cell(_ item: OneRosaryUtility) -> some View {
+                // The glyph alone: the words READ, VOICE, TEXT and MORE
+                // under them went (Abraham, 17 Nov 2026: "just get rid of
+                // that we don't need that"); VoiceOver still hears the name
                 Button(action: item.action) {
-                    VStack(spacing: 4) {
-                        AppIcon(item.icon, size: min(glyphSize, 28))
-                        Text(item.title.uppercased())
-                            .font(AppFonts.labelFont(12))
-                            // Four names to a row hold to one line at
-                            // xLarge with the letters a little closer
-                            .tracking(items.count > 3 ? 0.8 : 1.4)
-                            .lineLimit(1)
-                    }
-                    .foregroundColor(item.isAccent ? AppColors.goldLight : AppColors.cream.opacity(0.72))
-                    .frame(minWidth: 72, minHeight: 50)
+                    AppIcon(item.icon, size: min(glyphSize, 28))
+                        .foregroundColor(item.isAccent ? AppColors.goldLight : AppColors.cream.opacity(0.72))
+                        .frame(minWidth: 72, minHeight: 44)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(GoldCTAButtonStyle())

@@ -657,11 +657,9 @@ struct NovenaPageView: View {
             ) {
                 sheet = .intention(.beginning(tomorrow: false))
             }
-            QuietGoldButton(
-                title: String(localized: "Begin tomorrow", comment: "Novena page: begin the novena tomorrow instead")
-            ) {
-                sheet = .intention(.beginning(tomorrow: true))
-            }
+            // No "Begin tomorrow" beside it (Abraham, 17 Nov 2026: "begin
+            // tomorrow doesn't that's just weird we shouldn't have that"); a
+            // novena already set for tomorrow keeps its day
         }
     }
 
