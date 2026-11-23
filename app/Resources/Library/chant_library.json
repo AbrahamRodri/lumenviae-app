@@ -1,15 +1,13 @@
 {
-  "version": "4a00c3e140e957ce",
-  "updated_at": "2026-11-17T18:30:00Z",
   "chants": [
     {
       "audio": {
         "bytes": 760764,
         "sha256": "3d83eac83eca27c02e9c565e8b8e50a4a9fff7e55c66ce967489cd4bcaaa9bfe",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/salve_regina_simple-3d83eac83eca.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/salve_regina_simple-3d83eac83eca.m4a"
       },
       "detail": "The evening song to Mary from Trinity Sunday to Advent, and the Rosary's close",
-      "duration": 185,
+      "duration": 185.0,
       "english_title": "Hail, Holy Queen",
       "group_id": "ourLady",
       "id": "salve_regina_simple",
@@ -149,7 +147,7 @@
           "start": 171.85
         },
         {
-          "end": 182,
+          "end": 182.0,
           "english": "Amen.",
           "latin": "Amen.",
           "part": null,
@@ -166,7 +164,7 @@
           "caption": "Salve Regina",
           "file": "chant-salve-regina-simple",
           "sha256": "8748a1058c7c12afcabf9907ac73228d90bed77f0596a4b8ddde475d23f8e441",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-salve-regina-simple-8748a1058c7c.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-salve-regina-simple-8748a1058c7c.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -174,7 +172,7 @@
           "caption": "Ora pro nobis",
           "file": "chant-vers-alt-ora-pro-nobis",
           "sha256": "26838831a84d31456c94a479a5b5f3784f5b7c6bd8e5dbca5b1e96ec057094f2",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-ora-pro-nobis-26838831a84d.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-ora-pro-nobis-26838831a84d.lvscore"
         },
         {
           "aspect_ratio": 1.5328,
@@ -182,7 +180,7 @@
           "caption": "Oremus. Omnipotens… qui gloriosae",
           "file": "chant-or-omnipotens-sempiterne",
           "sha256": "20e0cb95b1a9f8b86d93b360ca954c9704d1fa753681f31365bbb46f912cd501",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-omnipotens-sempiterne-20e0cb95b1a9.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-omnipotens-sempiterne-20e0cb95b1a9.lvscore"
         }
       ],
       "setting": "Simple melody",
@@ -192,7 +190,7 @@
       "audio": {
         "bytes": 1027526,
         "sha256": "4ef8bfb6afc85780468161180b7a8a2857522f7c08c397f937a4ceb88e1a3a2d",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/salve_regina_solemn-4ef8bfb6afc8.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/salve_regina_solemn-4ef8bfb6afc8.m4a"
       },
       "detail": "The same song in its older, richer melody",
       "duration": 250.1,
@@ -380,7 +378,7 @@
           "caption": "Salve Regina",
           "file": "chant-salve-regina-solemne",
           "sha256": "221f557e4e7401be435472d3fba5903c8f2abb98fb977846dd227f3e4dfd0555",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-salve-regina-solemne-221f557e4e74.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-salve-regina-solemne-221f557e4e74.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -388,7 +386,7 @@
           "caption": "Ora pro nobis",
           "file": "chant-vers-alt-ora-pro-nobis",
           "sha256": "26838831a84d31456c94a479a5b5f3784f5b7c6bd8e5dbca5b1e96ec057094f2",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-ora-pro-nobis-26838831a84d.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-ora-pro-nobis-26838831a84d.lvscore"
         },
         {
           "aspect_ratio": 1.5328,
@@ -396,7 +394,7 @@
           "caption": "Oremus. Omnipotens… qui gloriosae",
           "file": "chant-or-omnipotens-sempiterne",
           "sha256": "20e0cb95b1a9f8b86d93b360ca954c9704d1fa753681f31365bbb46f912cd501",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-omnipotens-sempiterne-20e0cb95b1a9.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-omnipotens-sempiterne-20e0cb95b1a9.lvscore"
         }
       ],
       "setting": "Solemn melody",
@@ -406,7 +404,7 @@
       "audio": {
         "bytes": 725373,
         "sha256": "83baae3a2cae5a542a8530b374f7f85ed9ac88c1f4eff6f4d743f2b8d9ed63ca",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/alma_redemptoris_simple-83baae3a2cae.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/alma_redemptoris_simple-83baae3a2cae.m4a"
       },
       "detail": "The evening song to Mary from Advent to February 2",
       "duration": 177.7,
@@ -580,7 +578,7 @@
           "caption": "Alma Redemptoris Mater",
           "file": "chant-alma-redemptoris-mater-simple",
           "sha256": "aa4d18d74483fd408b9eda208156e127dbc2afd9cb633523d3ebab322aeeaef4",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-alma-redemptoris-mater-simple-aa4d18d74483.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-alma-redemptoris-mater-simple-aa4d18d74483.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -588,7 +586,7 @@
           "caption": "Angelus Domini",
           "file": "chant-vers-alt-angelus-domini",
           "sha256": "f2d79e339077c816f137df1631afd9f8537e6944af31b61a9757689efc64da64",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-angelus-domini-f2d79e339077.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-angelus-domini-f2d79e339077.lvscore"
         },
         {
           "aspect_ratio": 1.9104,
@@ -596,7 +594,7 @@
           "caption": "Oremus. Gratiam tuam",
           "file": "chant-or-gratiam-tuam",
           "sha256": "0e59cd635480522649a5c9ab0bc28d49b0dbc0d3c3869607c2b157d86b6acd51",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-gratiam-tuam-0e59cd635480.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-gratiam-tuam-0e59cd635480.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -604,7 +602,7 @@
           "caption": "Post partum",
           "file": "chant-vers-alt-post-partum",
           "sha256": "1fc44cf8666c642d330070773d2c4a6ec3b52b3cb2d06ded7fa4d15546502bd4",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-post-partum-1fc44cf8666c.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-post-partum-1fc44cf8666c.lvscore"
         },
         {
           "aspect_ratio": 1.8951,
@@ -612,7 +610,7 @@
           "caption": "Oremus. Deus qui salutis",
           "file": "chant-or-deus-qui-salutis",
           "sha256": "f7a16c6747f73c120e825219abb2583efb0285208f2814f7a108cc8d799f8f0b",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-deus-qui-salutis-f7a16c6747f7.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-deus-qui-salutis-f7a16c6747f7.lvscore"
         }
       ],
       "setting": "Simple melody",
@@ -622,10 +620,10 @@
       "audio": {
         "bytes": 859677,
         "sha256": "14bbe1ca4dd1c75e84cbf0ff38fd902a89a4bccd309d643aa58b409328299d2c",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/alma_redemptoris-14bbe1ca4dd1.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/alma_redemptoris-14bbe1ca4dd1.m4a"
       },
       "detail": "The same song in its older, richer melody",
-      "duration": 210,
+      "duration": 210.0,
       "english_title": "Loving Mother of the Redeemer",
       "group_id": "ourLady",
       "id": "alma_redemptoris",
@@ -817,7 +815,7 @@
           "caption": "Alma Redemptoris Mater",
           "file": "chant-alma-redemptoris-mater-solemne",
           "sha256": "7b512ac4f59487ad0886202e6a8f59577860b999d744d4a7188959bdefbdd004",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-alma-redemptoris-mater-solemne-7b512ac4f594.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-alma-redemptoris-mater-solemne-7b512ac4f594.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -825,7 +823,7 @@
           "caption": "Angelus Domini",
           "file": "chant-vers-alt-angelus-domini",
           "sha256": "f2d79e339077c816f137df1631afd9f8537e6944af31b61a9757689efc64da64",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-angelus-domini-f2d79e339077.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-angelus-domini-f2d79e339077.lvscore"
         },
         {
           "aspect_ratio": 1.9104,
@@ -833,7 +831,7 @@
           "caption": "Oremus. Gratiam tuam quaesumus",
           "file": "chant-or-gratiam-tuam",
           "sha256": "0e59cd635480522649a5c9ab0bc28d49b0dbc0d3c3869607c2b157d86b6acd51",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-gratiam-tuam-0e59cd635480.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-gratiam-tuam-0e59cd635480.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -841,7 +839,7 @@
           "caption": "Post partum",
           "file": "chant-vers-alt-post-partum",
           "sha256": "1fc44cf8666c642d330070773d2c4a6ec3b52b3cb2d06ded7fa4d15546502bd4",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-post-partum-1fc44cf8666c.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-post-partum-1fc44cf8666c.lvscore"
         },
         {
           "aspect_ratio": 1.8951,
@@ -849,7 +847,7 @@
           "caption": "Oremus. Deus qui salutis",
           "file": "chant-or-deus-qui-salutis",
           "sha256": "f7a16c6747f73c120e825219abb2583efb0285208f2814f7a108cc8d799f8f0b",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-deus-qui-salutis-f7a16c6747f7.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-deus-qui-salutis-f7a16c6747f7.lvscore"
         }
       ],
       "setting": "Solemn melody",
@@ -859,7 +857,7 @@
       "audio": {
         "bytes": 400477,
         "sha256": "e7685c48949d0125c5201bac0413fcbc61211fa51a2fb51d7d167ff895a3f9c3",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ave_regina_simple-e7685c48949d.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/ave_regina_simple-e7685c48949d.m4a"
       },
       "detail": "The evening song to Mary from February 2 to Holy Week",
       "duration": 96.5,
@@ -977,7 +975,7 @@
           "caption": "Ave Regina caelorum",
           "file": "chant-ave-regina-caelorum-simple",
           "sha256": "40aa2ca1c5b1f6a35f669a79e765ea8e05d0bb3b4ef664072457956d86fd04ac",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-ave-regina-caelorum-simple-40aa2ca1c5b1.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-ave-regina-caelorum-simple-40aa2ca1c5b1.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -985,7 +983,7 @@
           "caption": "Dignare me",
           "file": "chant-vers-alt-dignare-me",
           "sha256": "75ff3c2319325fcdb839486e510b4f006fb1d70ad040f050fead9680ba74b3af",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-dignare-me-75ff3c231932.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-dignare-me-75ff3c231932.lvscore"
         },
         {
           "aspect_ratio": 1.9585,
@@ -993,7 +991,7 @@
           "caption": "Oremus. Concede misericors Deus",
           "file": "chant-or-concede-misericors",
           "sha256": "1beecdb0fbad7cb1c97ec77956fcae0c677f2496bf748e772bcee617a506daa3",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-concede-misericors-1beecdb0fbad.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-concede-misericors-1beecdb0fbad.lvscore"
         }
       ],
       "setting": "Simple melody",
@@ -1003,10 +1001,10 @@
       "audio": {
         "bytes": 564491,
         "sha256": "6a36034bcf9d3fba45424325f47d919156f253192c0254d36c296f41b74bb9c3",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ave_regina_solemn-6a36034bcf9d.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/ave_regina_solemn-6a36034bcf9d.m4a"
       },
       "detail": "The same song in its solemn melody",
-      "duration": 138,
+      "duration": 138.0,
       "english_title": "Hail, Queen of Heaven",
       "group_id": "ourLady",
       "id": "ave_regina_solemn",
@@ -1114,7 +1112,7 @@
           "caption": "Ave Regina caelorum",
           "file": "chant-ave-regina-caelorum",
           "sha256": "f27bb3c8c8e50c29781e5a0522d4f8fa087d51434aba8617203b2118fa6cd8b2",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-ave-regina-caelorum-f27bb3c8c8e5.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-ave-regina-caelorum-f27bb3c8c8e5.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -1122,7 +1120,7 @@
           "caption": "Dignare me",
           "file": "chant-vers-alt-dignare-me",
           "sha256": "75ff3c2319325fcdb839486e510b4f006fb1d70ad040f050fead9680ba74b3af",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-dignare-me-75ff3c231932.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-dignare-me-75ff3c231932.lvscore"
         },
         {
           "aspect_ratio": 1.9585,
@@ -1130,7 +1128,7 @@
           "caption": "Oremus. Concede misericors Deus",
           "file": "chant-or-concede-misericors",
           "sha256": "1beecdb0fbad7cb1c97ec77956fcae0c677f2496bf748e772bcee617a506daa3",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-concede-misericors-1beecdb0fbad.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-concede-misericors-1beecdb0fbad.lvscore"
         }
       ],
       "setting": "Solemn melody",
@@ -1140,10 +1138,10 @@
       "audio": {
         "bytes": 376990,
         "sha256": "0f08c4f495066dec1e5ac39f097df876b543d86b65632173db92951535ace2dd",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/regina_caeli_simple-0f08c4f49506.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/regina_caeli_simple-0f08c4f49506.m4a"
       },
       "detail": "The song to Mary for the fifty days of Easter, sung in place of the Angelus",
-      "duration": 91,
+      "duration": 91.0,
       "english_title": "Queen of Heaven, Rejoice",
       "group_id": "ourLady",
       "id": "regina_caeli_simple",
@@ -1251,7 +1249,7 @@
           "caption": "Regina caeli",
           "file": "chant-regina-caeli-simple",
           "sha256": "d5a87d073db84374f2977309e7116d810e45f3d55bdc3ae50fd60e658cea0327",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-regina-caeli-simple-d5a87d073db8.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-regina-caeli-simple-d5a87d073db8.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -1259,7 +1257,7 @@
           "caption": "Gaude et laetare",
           "file": "chant-vers-alt-gaude-et-laetare",
           "sha256": "c5651d59b0f9a3d1bb5f15fde9812b4b592e272506b1f45562fdb4fb7e316fcc",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-gaude-et-laetare-c5651d59b0f9.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-gaude-et-laetare-c5651d59b0f9.lvscore"
         },
         {
           "aspect_ratio": 1.8735,
@@ -1267,7 +1265,7 @@
           "caption": "Oremus. Deus qui per resurrectionem",
           "file": "chant-or-deus-qui-per-web",
           "sha256": "b7065f588858fe2aa859f54abccfdcbb398d086c845c29eac9710d09fdcb542b",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-deus-qui-per-web-b7065f588858.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-deus-qui-per-web-b7065f588858.lvscore"
         }
       ],
       "setting": "Simple melody",
@@ -1277,10 +1275,10 @@
       "audio": {
         "bytes": 588773,
         "sha256": "b172ee616ce45109800d6f585d6ddd6585f56c0212cd261cff75fbf35ab357bc",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/regina_caeli_solemn-b172ee616ce4.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/regina_caeli_solemn-b172ee616ce4.m4a"
       },
       "detail": "The same song in its solemn melody",
-      "duration": 144,
+      "duration": 144.0,
       "english_title": "Queen of Heaven, Rejoice",
       "group_id": "ourLady",
       "id": "regina_caeli_solemn",
@@ -1388,7 +1386,7 @@
           "caption": "Regina caeli",
           "file": "chant-regina-caeli-solemne",
           "sha256": "137e6e7cd792c91467588468ba8932597d051a376e8138328a201f63947b1dd8",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-regina-caeli-solemne-137e6e7cd792.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-regina-caeli-solemne-137e6e7cd792.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -1396,7 +1394,7 @@
           "caption": "Gaude et laetare",
           "file": "chant-vers-alt-gaude-et-laetare",
           "sha256": "c5651d59b0f9a3d1bb5f15fde9812b4b592e272506b1f45562fdb4fb7e316fcc",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-gaude-et-laetare-c5651d59b0f9.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-gaude-et-laetare-c5651d59b0f9.lvscore"
         },
         {
           "aspect_ratio": 1.8735,
@@ -1404,7 +1402,7 @@
           "caption": "Oremus. Deus qui per resurrectionem",
           "file": "chant-or-deus-qui-per-web",
           "sha256": "b7065f588858fe2aa859f54abccfdcbb398d086c845c29eac9710d09fdcb542b",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-deus-qui-per-web-b7065f588858.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-deus-qui-per-web-b7065f588858.lvscore"
         }
       ],
       "setting": "Solemn melody",
@@ -1414,7 +1412,7 @@
       "audio": {
         "bytes": 422322,
         "sha256": "27e259673e11dfc3fcef142b6fe627d9996feb80bc4045ade596e065b747e2c5",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/sub_tuum-27e259673e11.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/sub_tuum-27e259673e11.m4a"
       },
       "detail": "The oldest prayer to Mary that survives",
       "duration": 104.1,
@@ -1518,7 +1516,7 @@
           "caption": "Sub tuum praesidium",
           "file": "chant-sub-tuum-praesidium",
           "sha256": "18ae73f5fd0c0c84e89c3efd751b9f78dccde52beb4353b0062adaff4e4a01ff",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-sub-tuum-praesidium-18ae73f5fd0c.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-sub-tuum-praesidium-18ae73f5fd0c.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -1526,7 +1524,7 @@
           "caption": "Ora pro nobis",
           "file": "chant-vers-alt-ora-pro-nobis",
           "sha256": "26838831a84d31456c94a479a5b5f3784f5b7c6bd8e5dbca5b1e96ec057094f2",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-ora-pro-nobis-26838831a84d.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-ora-pro-nobis-26838831a84d.lvscore"
         },
         {
           "aspect_ratio": 1.9268,
@@ -1534,7 +1532,7 @@
           "caption": "Oremus. Concede nos famulos tuos",
           "file": "chant-or-concede-nos-famulos",
           "sha256": "53ebb57f8600f2cfae697bbedc95ab9b7ab72cb9c2875e5c06bbe3c46ed20ef2",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-concede-nos-famulos-53ebb57f8600.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-concede-nos-famulos-53ebb57f8600.lvscore"
         }
       ],
       "setting": null,
@@ -1544,10 +1542,10 @@
       "audio": {
         "bytes": 722705,
         "sha256": "891e481f9d8bcffc811fc3e93ade5e731b309df005923be637ab8c5cdbbf342a",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ave_maris_stella_feasts-891e481f9d8b.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/ave_maris_stella_feasts-891e481f9d8b.m4a"
       },
       "detail": "The evening hymn of her feasts, in its best-known melody",
-      "duration": 180,
+      "duration": 180.0,
       "english_title": "Hail, Star of the Sea",
       "group_id": "ourLady",
       "id": "ave_maris_stella_feasts",
@@ -1760,7 +1758,7 @@
           "caption": "Ave maris stella",
           "file": "chant-ave-maris-stella",
           "sha256": "3d15c8e8d0dd8825f4129053a9dde1b3ed85d2956ea3b6bea68c601b9258e3aa",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-ave-maris-stella-3d15c8e8d0dd.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-ave-maris-stella-3d15c8e8d0dd.lvscore"
         }
       ],
       "setting": "Feast-day melody",
@@ -1770,10 +1768,10 @@
       "audio": {
         "bytes": 543062,
         "sha256": "c9d8730591ee1bbb0a6d9d5e866ba56f75790ac51db5100d54155b7126c2a3f7",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ave_maris_stella-c9d8730591ee.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/ave_maris_stella-c9d8730591ee.m4a"
       },
       "detail": "The evening hymn of her Office on Saturday",
-      "duration": 132,
+      "duration": 132.0,
       "english_title": "Hail, Star of the Sea",
       "group_id": "ourLady",
       "id": "ave_maris_stella",
@@ -1895,7 +1893,7 @@
           "caption": "Ave maris stella",
           "file": "chant-ave-maris-stella-off-bmv-in-sabb",
           "sha256": "241028fea917f07fe7adef92f6aa96a3cd07c8ce217bc4f326dcfb4019ea30ac",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-ave-maris-stella-off-bmv-in-sabb-241028fea917.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-ave-maris-stella-off-bmv-in-sabb-241028fea917.lvscore"
         }
       ],
       "setting": "Saturday melody",
@@ -1905,7 +1903,7 @@
       "audio": {
         "bytes": 576946,
         "sha256": "a26f1cf44ee6ff9893e1703736a1ac5b5212df7062b4df9bcf6e2f81d7f28533",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/quem_terra-a26f1cf44ee6.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/quem_terra-a26f1cf44ee6.m4a"
       },
       "detail": "A hymn of Our Lady's feasts: the Lord of all things carried in the Virgin's womb",
       "duration": 143.1,
@@ -2070,7 +2068,7 @@
           "caption": "Quem terra pontus sidera",
           "file": "chant-quem-terra-pontus-sidera",
           "sha256": "7401269d1d16ad96daae74ff2db25f31e5ac50d4269b230758d72a6ae435516c",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-quem-terra-pontus-sidera-7401269d1d16.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-quem-terra-pontus-sidera-7401269d1d16.lvscore"
         }
       ],
       "setting": null,
@@ -2080,7 +2078,7 @@
       "audio": {
         "bytes": 944351,
         "sha256": "f590ec2c56d5fb76f3b140b42c4df22c96fe5553ac978b96b1ee9388ba7fdbf7",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/omni_die-f590ec2c56d5.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/omni_die-f590ec2c56d5.m4a"
       },
       "detail": "A medieval hymn of praise to Mary, for every day",
       "duration": 230.1,
@@ -2434,7 +2432,7 @@
           "caption": "Omni die dic Mariae",
           "file": "chant-omni-die-dic-mariae",
           "sha256": "ed7d71e100b9e4e34a4df43707b37ef454d75744a5dcf958efa36220d0d28e70",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-omni-die-dic-mariae-ed7d71e100b9.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-omni-die-dic-mariae-ed7d71e100b9.lvscore"
         }
       ],
       "setting": null,
@@ -2444,10 +2442,10 @@
       "audio": {
         "bytes": 487820,
         "sha256": "1f394df2a395456150aaf321c4c00350b9b8a7c71532596b20f2230afc6db34f",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/concordi_laetitia-1f394df2a395.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/concordi_laetitia-1f394df2a395.m4a"
       },
       "detail": "A hymn to Mary for the Easter season, rejoicing in her Son risen",
-      "duration": 120,
+      "duration": 120.0,
       "english_title": "With Joy in One Accord",
       "group_id": "seasons",
       "id": "concordi_laetitia",
@@ -2644,7 +2642,7 @@
           "caption": "Concordi laetitia",
           "file": "chant-concordi-laetitia",
           "sha256": "83643b349604ee4e77e2d0c5073bf9492375afe61dcf2be9f814da57fcb91167",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-concordi-laetitia-83643b349604.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-concordi-laetitia-83643b349604.lvscore"
         }
       ],
       "setting": null,
@@ -2654,7 +2652,7 @@
       "audio": {
         "bytes": 1277645,
         "sha256": "fd308a83223195b2c7245d771b62e68032ffe6e4dfd2f67fab01f8c2a29a45bd",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/magnificat-fd308a832231.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/magnificat-fd308a832231.m4a"
       },
       "detail": "Mary's own song, sung at evening prayer every day",
       "duration": 314.1,
@@ -2919,7 +2917,7 @@
           "caption": "Magnificat cum Alleluia",
           "file": "chant-magnificat-cum-alleluia",
           "sha256": "7b935c87c1532a48dd0a8e10cd5523dfdd6ad72b09ec9d74380d894f0f8a7a93",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-magnificat-cum-alleluia-7b935c87c153.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-magnificat-cum-alleluia-7b935c87c153.lvscore"
         }
       ],
       "setting": "With alleluia",
@@ -2929,10 +2927,10 @@
       "audio": {
         "bytes": 436939,
         "sha256": "e43e02b950cf3284ac68e3dc33fc5e80ba72bdedd8f99b081cd599f1b48740be",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/tota_pulchra-e43e02b950cf.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/tota_pulchra-e43e02b950cf.m4a"
       },
       "detail": "In honour of the Immaculate Conception: Mary, conceived without sin",
-      "duration": 108,
+      "duration": 108.0,
       "english_title": "Thou Art All Fair",
       "group_id": "ourLady",
       "id": "tota_pulchra",
@@ -3047,7 +3045,7 @@
           "caption": "Tota pulchra es Maria",
           "file": "chant-tota-pulchra-es-maria-web",
           "sha256": "082a05bbe909ea5172415f899edde4712ec17aa9ef9a656fed0638ccc4a3ec66",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-tota-pulchra-es-maria-web-082a05bbe909.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-tota-pulchra-es-maria-web-082a05bbe909.lvscore"
         }
       ],
       "setting": null,
@@ -3057,10 +3055,10 @@
       "audio": {
         "bytes": 693304,
         "sha256": "56f3159cfc0388a3113bceea7b783d779e6af42ae9070595a0323a27ba24aa6e",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/flos_carmeli-56f3159cfc03.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/flos_carmeli-56f3159cfc03.m4a"
       },
       "detail": "The feast poem of Our Lady of Mount Carmel",
-      "duration": 168,
+      "duration": 168.0,
       "english_title": "Flower of Carmel",
       "group_id": "ourLady",
       "id": "flos_carmeli",
@@ -3357,7 +3355,7 @@
           "caption": "Flos Carmeli",
           "file": "chant-flos-carmeli-w",
           "sha256": "39a2aeafb1ee3001acc489e14738c5e71e225a51c088bbb86dd1753164a9e5f1",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-flos-carmeli-w-39a2aeafb1ee.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-flos-carmeli-w-39a2aeafb1ee.lvscore"
         }
       ],
       "setting": null,
@@ -3367,10 +3365,10 @@
       "audio": {
         "bytes": 1333636,
         "sha256": "06314150fced4954602f35cbeb948e0f84d982662ce50631459386b79d390e03",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/stabat_mater-06314150fced.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/stabat_mater-06314150fced.m4a"
       },
       "detail": "The feast poem of the Seven Sorrows of Mary",
-      "duration": 330,
+      "duration": 330.0,
       "english_title": "The Mother Stood",
       "group_id": "seasons",
       "id": "stabat_mater",
@@ -3814,7 +3812,7 @@
           "caption": "Stabat Mater",
           "file": "chant-stabat-mater-seq",
           "sha256": "ddd2925f9c6f47c9d0d9dc71773234c554374e9ab2da81a4dec58041f1bc7ab6",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-stabat-mater-seq-ddd2925f9c6f.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-stabat-mater-seq-ddd2925f9c6f.lvscore"
         }
       ],
       "setting": "Feast poem",
@@ -3824,7 +3822,7 @@
       "audio": {
         "bytes": 3196160,
         "sha256": "a4251d69a659412d7f834383552bdf21d31fd5186264ea0e5bc67a22abe18a03",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/litany_loreto-a4251d69a659.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/litany_loreto-a4251d69a659.m4a"
       },
       "detail": "With the closing verse and prayer for each season",
       "duration": 784.1,
@@ -4695,7 +4693,7 @@
           "start": 547.93
         },
         {
-          "end": 561,
+          "end": 561.0,
           "english": "spare us, O Lord.",
           "latin": "parce nobis, Dómine.",
           "part": null,
@@ -4950,7 +4948,7 @@
           "caption": "Kyrie eleison",
           "file": "chant-litaniae-lauretanae-1-kyrie",
           "sha256": "0917c1e17dbd4cf7591db9d7586de1fb8d1acaebf4c45368c1465cbb826ddd52",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-lauretanae-1-kyrie-0917c1e17dbd.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-lauretanae-1-kyrie-0917c1e17dbd.lvscore"
         },
         {
           "aspect_ratio": 7.4264,
@@ -4958,7 +4956,7 @@
           "caption": "Pater de caelis",
           "file": "chant-litaniae-lauretanae-2-pater",
           "sha256": "22b9fe76aab9386eeb17d5820736eb29516990b1408b7ae42ac33e9b8ffeb179",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-lauretanae-2-pater-22b9fe76aab9.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-lauretanae-2-pater-22b9fe76aab9.lvscore"
         },
         {
           "aspect_ratio": 7.4265,
@@ -4966,7 +4964,7 @@
           "caption": "Sancta Maria",
           "file": "chant-litaniae-lauretanae-3-sancta-maria",
           "sha256": "207b627c36c7f6905f9dc1f2cc4e77542a167cf4d3fbc9964b4f00e5462d924a",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-lauretanae-3-sancta-maria-207b627c36c7.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-lauretanae-3-sancta-maria-207b627c36c7.lvscore"
         },
         {
           "aspect_ratio": 7.4265,
@@ -4974,7 +4972,7 @@
           "caption": "Mater Christi",
           "file": "chant-litaniae-lauretanae-4-mater-christi",
           "sha256": "30e00beae91cecd7eb788122925e998410252695b2f84415a44a3352950e9d33",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-lauretanae-4-mater-christi-30e00beae91c.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-lauretanae-4-mater-christi-30e00beae91c.lvscore"
         },
         {
           "aspect_ratio": 2.4138,
@@ -4982,7 +4980,7 @@
           "caption": "Agnus Dei",
           "file": "chant-litaniae-lauretanae-5-agnus",
           "sha256": "d3fe68e87372272497446b029bd81fc105fae22320eaed3dd9e43121656456cc",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-lauretanae-5-agnus-d3fe68e87372.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-lauretanae-5-agnus-d3fe68e87372.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -4990,7 +4988,7 @@
           "caption": "Ora pro nobis",
           "file": "chant-vers-alt-ora-pro-nobis",
           "sha256": "26838831a84d31456c94a479a5b5f3784f5b7c6bd8e5dbca5b1e96ec057094f2",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-ora-pro-nobis-26838831a84d.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-ora-pro-nobis-26838831a84d.lvscore"
         },
         {
           "aspect_ratio": 1.9268,
@@ -4998,7 +4996,7 @@
           "caption": "Oremus. Concede nos famulos tuos",
           "file": "chant-or-concede-nos-famulos",
           "sha256": "53ebb57f8600f2cfae697bbedc95ab9b7ab72cb9c2875e5c06bbe3c46ed20ef2",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-concede-nos-famulos-53ebb57f8600.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-concede-nos-famulos-53ebb57f8600.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -5006,7 +5004,7 @@
           "caption": "Angelus Domini",
           "file": "chant-vers-alt-angelus-domini",
           "sha256": "f2d79e339077c816f137df1631afd9f8537e6944af31b61a9757689efc64da64",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-angelus-domini-f2d79e339077.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-angelus-domini-f2d79e339077.lvscore"
         },
         {
           "aspect_ratio": 1.8202,
@@ -5014,7 +5012,7 @@
           "caption": "Oremus. Deus qui de beatae",
           "file": "chant-litaniae-lauretanae-9-oratio-adventu-nativitatem",
           "sha256": "da8e206d42967d245f35a7d45e142d10ebf5b018bcfb2c38ba3c1d87eedfb3ee",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-lauretanae-9-oratio-adventu-nativitatem-da8e206d4296.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-lauretanae-9-oratio-adventu-nativitatem-da8e206d4296.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -5022,7 +5020,7 @@
           "caption": "Post partum",
           "file": "chant-vers-alt-post-partum",
           "sha256": "1fc44cf8666c642d330070773d2c4a6ec3b52b3cb2d06ded7fa4d15546502bd4",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-post-partum-1fc44cf8666c.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-post-partum-1fc44cf8666c.lvscore"
         },
         {
           "aspect_ratio": 1.8951,
@@ -5030,7 +5028,7 @@
           "caption": "Oremus. Deus qui salutis",
           "file": "chant-or-deus-qui-salutis",
           "sha256": "f7a16c6747f73c120e825219abb2583efb0285208f2814f7a108cc8d799f8f0b",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-deus-qui-salutis-f7a16c6747f7.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-deus-qui-salutis-f7a16c6747f7.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -5038,7 +5036,7 @@
           "caption": "Gaude et laetare",
           "file": "chant-vers-alt-gaude-et-laetare",
           "sha256": "c5651d59b0f9a3d1bb5f15fde9812b4b592e272506b1f45562fdb4fb7e316fcc",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-gaude-et-laetare-c5651d59b0f9.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-gaude-et-laetare-c5651d59b0f9.lvscore"
         }
       ],
       "setting": null,
@@ -5048,7 +5046,7 @@
       "audio": {
         "bytes": 527868,
         "sha256": "5b97fe2719018b1c675468c151e57adc734d23e59f011d0887a782d7a0372457",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/memorare-5b97fe271901.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/memorare-5b97fe271901.m4a"
       },
       "detail": "St Bernard's prayer, set to chant",
       "duration": 128.3,
@@ -5152,7 +5150,7 @@
           "caption": "Memorare",
           "file": "chant-memorare-1",
           "sha256": "fcf008c7939cd8c651c58f48aa1459ab88ad08ed45544c3ce3948d8e721b5a70",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-memorare-1-fcf008c7939c.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-memorare-1-fcf008c7939c.lvscore"
         }
       ],
       "setting": null,
@@ -5162,10 +5160,10 @@
       "audio": {
         "bytes": 230198,
         "sha256": "99df4eb1fc2fb42907e758618a4342d2ed4d431046a686741e62565440f0d36e",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ave_maria_antiphon-99df4eb1fc2f.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/ave_maria_antiphon-99df4eb1fc2f.m4a"
       },
       "detail": "Sung at Mass on the last Sunday of Advent",
-      "duration": 57,
+      "duration": 57.0,
       "english_title": "Hail Mary",
       "group_id": "ourLady",
       "id": "ave_maria_antiphon",
@@ -5222,7 +5220,7 @@
           "caption": "Ave Maria",
           "file": "chant-ave-maria-antiphona",
           "sha256": "77eea7cb333741913e48651ce4effeebfcf0f3fe95dc0fe33e0b0b1e49300374",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-ave-maria-antiphona-77eea7cb3337.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-ave-maria-antiphona-77eea7cb3337.lvscore"
         }
       ],
       "setting": "Short chant",
@@ -5232,10 +5230,10 @@
       "audio": {
         "bytes": 1918541,
         "sha256": "17ab812e2e4856b6a1618a48f84a02f93d3dc51baae5f68b05b1d8e1cead42d3",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/salve_mater-17ab812e2e48.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/salve_mater-17ab812e2e48.m4a"
       },
       "detail": "A hymn to Mary with a refrain for all to sing",
-      "duration": 463,
+      "duration": 463.0,
       "english_title": "Hail, Mother of Mercy",
       "group_id": "ourLady",
       "id": "salve_mater",
@@ -5284,7 +5282,7 @@
           "start": 33.03
         },
         {
-          "end": 46,
+          "end": 46.0,
           "english": "Mother of God and Mother of pardon,",
           "latin": "Mater Dei et mater véniæ,",
           "part": null,
@@ -5354,7 +5352,7 @@
           "start": 99.41
         },
         {
-          "end": 112,
+          "end": 112.0,
           "english": "Mother of God and Mother of pardon,",
           "latin": "Mater Dei et mater véniæ,",
           "part": null,
@@ -5721,7 +5719,7 @@
           "caption": "Salve Mater",
           "file": "chant-salve-mater",
           "sha256": "3b0d6946a3be982a0575bcb8c73fb9379ece3709379bf36d65a465c4ec4ebaa5",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-salve-mater-3b0d6946a3be.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-salve-mater-3b0d6946a3be.lvscore"
         }
       ],
       "setting": null,
@@ -5731,10 +5729,10 @@
       "audio": {
         "bytes": 365287,
         "sha256": "dea13773edf94efeba1a8bee834974707aeaa8cff41b7ed6253177a961ed1b33",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/inviolata-dea13773edf9.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/inviolata-dea13773edf9.m4a"
       },
       "detail": "A hymn to Mary, ever a virgin",
-      "duration": 90,
+      "duration": 90.0,
       "english_title": "Inviolate",
       "group_id": "ourLady",
       "id": "inviolata",
@@ -5835,7 +5833,7 @@
           "caption": "Inviolata",
           "file": "chant-inviolata",
           "sha256": "3d99972d4af606503d02888d449c41c3f159a4e3df7c5f59285d617a9784e45f",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-inviolata-3d99972d4af6.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-inviolata-3d99972d4af6.lvscore"
         }
       ],
       "setting": null,
@@ -5845,7 +5843,7 @@
       "audio": {
         "bytes": 484820,
         "sha256": "d85a793026cbb0ea9e46b9463aa3f4943e27b7accc888e5bb5f2a07f2ddd47b4",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_gloriosa-d85a793026cb.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/o_gloriosa-d85a793026cb.m4a"
       },
       "detail": "The morning hymn of Mary's feasts",
       "duration": 119.1,
@@ -5982,7 +5980,7 @@
           "caption": "O gloriosa Virginum",
           "file": "chant-o-gloriosa-virginum",
           "sha256": "1b91c843402c9bef14ac437504436081cbad2f2ac2e98aa0d7de7b790b591de9",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-gloriosa-virginum-1b91c843402c.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-gloriosa-virginum-1b91c843402c.lvscore"
         }
       ],
       "setting": null,
@@ -5992,10 +5990,10 @@
       "audio": {
         "bytes": 1448759,
         "sha256": "230021801c1fb8ac03cd245d142e408c5243b932e0b759ad5e7b984fffcb0101",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/te_matrem-230021801c1f.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/te_matrem-230021801c1f.m4a"
       },
       "detail": "A song of praise to Mary, in the form of the Te Deum",
-      "duration": 360,
+      "duration": 360.0,
       "english_title": "We Praise Thee as Mother",
       "group_id": "ourLady",
       "id": "te_matrem",
@@ -6233,7 +6231,7 @@
           "start": 321.71
         },
         {
-          "end": 345,
+          "end": 345.0,
           "english": "In thee, O Lady, have I hoped:",
           "latin": "In te Dómina sperávi:",
           "part": 0,
@@ -6255,7 +6253,7 @@
           "caption": "Te Matrem laudamus",
           "file": "chant-te-matrem-laudamus",
           "sha256": "daf2b39ac2f39b23ac22224e151db77963de7fa7582b1e8cdc6e1b5d1d0aa241",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-te-matrem-laudamus-daf2b39ac2f3.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-te-matrem-laudamus-daf2b39ac2f3.lvscore"
         }
       ],
       "setting": null,
@@ -6265,7 +6263,7 @@
       "audio": {
         "bytes": 67805,
         "sha256": "8e32839d32672b58e33398198a26f474ff9fda3db2cff27c0a6349cef50e508a",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/in_nomine_patris-8e32839d3267.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/in_nomine_patris-8e32839d3267.m4a"
       },
       "detail": "How a sung Rosary begins and ends",
       "duration": 17.7,
@@ -6299,7 +6297,7 @@
           "caption": "In nomine Patris",
           "file": "chant-in-nomine-patris",
           "sha256": "0dc2a762ffcbafbe23ef65f5df1992311223828df4c3724a37e8180c9cd34f02",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-in-nomine-patris-0dc2a762ffcb.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-in-nomine-patris-0dc2a762ffcb.lvscore"
         }
       ],
       "setting": null,
@@ -6309,7 +6307,7 @@
       "audio": {
         "bytes": 721475,
         "sha256": "1e0c4c68e69fecae753937502ef23c9278660d781c384b0e8607f7677a6dcbbe",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/credo_in_deum-1e0c4c68e69f.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/credo_in_deum-1e0c4c68e69f.m4a"
       },
       "detail": "On the crucifix",
       "duration": 175.1,
@@ -6431,7 +6429,7 @@
           "start": 110.65
         },
         {
-          "end": 124,
+          "end": 124.0,
           "english": "I believe in the Holy Spirit,",
           "latin": "Credo in Spíritum Sanctum,",
           "part": null,
@@ -6490,7 +6488,7 @@
           "caption": "Credo in Deum",
           "file": "chant-credo-in-deum",
           "sha256": "499f95ca21ddc6d2cb33118a93f3c172f42244bc2f43ee596117ec767026d257",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-credo-in-deum-499f95ca21dd.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-credo-in-deum-499f95ca21dd.lvscore"
         }
       ],
       "setting": null,
@@ -6500,10 +6498,10 @@
       "audio": {
         "bytes": 225214,
         "sha256": "53772a62769f87b5e2a468196c548d0b49eb3a54935f6f858bae69d9e95eeb1b",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/pater_noster-53772a62769f.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/pater_noster-53772a62769f.m4a"
       },
       "detail": "On each large bead",
-      "duration": 56,
+      "duration": 56.0,
       "english_title": "Our Father",
       "group_id": "rosary",
       "id": "pater_noster",
@@ -6576,7 +6574,7 @@
           "caption": "Pater noster",
           "file": "chant-pater-noster",
           "sha256": "725f2dd73c006ecfd8767708d48e799afe45ccdce3b8033ae5499a6640a0d2de",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-pater-noster-725f2dd73c00.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-pater-noster-725f2dd73c00.lvscore"
         }
       ],
       "setting": null,
@@ -6586,10 +6584,10 @@
       "audio": {
         "bytes": 154811,
         "sha256": "c440543d72370ddb30fd5232354a934213de3f56260f063fec6262a2c2e3a9a4",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ave_maria-c440543d7237.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/ave_maria-c440543d7237.m4a"
       },
       "detail": "On each small bead, as the Rosary is sung",
-      "duration": 39,
+      "duration": 39.0,
       "english_title": "Hail Mary",
       "group_id": "rosary",
       "id": "ave_maria",
@@ -6648,7 +6646,7 @@
           "caption": "Ave Maria",
           "file": "chant-ave-maria",
           "sha256": "c38b60d6a70a6f402a248bb4209ca882180ff0d69e0f04b0cb4b711111c6b6e4",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-ave-maria-c38b60d6a70a.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-ave-maria-c38b60d6a70a.lvscore"
         }
       ],
       "setting": null,
@@ -6658,10 +6656,10 @@
       "audio": {
         "bytes": 128417,
         "sha256": "bf214cd9b3daeae39d2a48d8385673fa022570bb711e2ca6c6f9323d8be73644",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/gloria_patri-bf214cd9b3da.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/gloria_patri-bf214cd9b3da.m4a"
       },
       "detail": "At the close of every decade",
-      "duration": 32,
+      "duration": 32.0,
       "english_title": "Glory Be",
       "group_id": "rosary",
       "id": "gloria_patri",
@@ -6699,7 +6697,7 @@
           "caption": "Gloria Patri",
           "file": "chant-gloria-patri-iii-ant",
           "sha256": "0cf482ac1e77cbfd2f392cfe5976086155b07a48fda3dd06fdc2fe76c1ff7b06",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-gloria-patri-iii-ant-0cf482ac1e77.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-gloria-patri-iii-ant-0cf482ac1e77.lvscore"
         }
       ],
       "setting": null,
@@ -6709,7 +6707,7 @@
       "audio": {
         "bytes": 140891,
         "sha256": "01de8f3753198ecdb074fe37871b06ddeff93ab06d527bf6e96fae9e01662f34",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_mi_jesu-01de8f375319.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/o_mi_jesu-01de8f375319.m4a"
       },
       "detail": "After the Glory Be, with a second short prayer to Mary",
       "duration": 34.5,
@@ -6764,7 +6762,7 @@
           "caption": "First short prayer",
           "file": "chant-o-mi-jesu",
           "sha256": "5e125eab44e474e7d9dfdb54f2e107b2c4aa9b4f5f262715cb2da85ce4a019d9",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-mi-jesu-5e125eab44e4.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-mi-jesu-5e125eab44e4.lvscore"
         },
         {
           "aspect_ratio": 9.0027,
@@ -6772,7 +6770,7 @@
           "caption": "Second short prayer",
           "file": "chant-o-maria",
           "sha256": "243425c0041b071ae567b44b88e6ffea88d77605453e9d7ba6438e4f5856f316",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-maria-243425c0041b.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-maria-243425c0041b.lvscore"
         }
       ],
       "setting": null,
@@ -6782,7 +6780,7 @@
       "audio": {
         "bytes": 973317,
         "sha256": "2c89f63ac3df1667af26b7f63df68cb024cb8ac9e021ca99c44c00e2715d2475",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/angelus-2c89f63ac3df.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/angelus-2c89f63ac3df.m4a"
       },
       "detail": "At 6 AM, noon and 6 PM, with its closing prayer",
       "duration": 234.9,
@@ -7040,7 +7038,7 @@
           "caption": "Angelus Domini",
           "file": "chant-angelus-domini",
           "sha256": "48d60901ec81e5208c09a949fb95307d8cc4e932a09f53d051771bf6660eddbb",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-angelus-domini-48d60901ec81.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-angelus-domini-48d60901ec81.lvscore"
         },
         {
           "aspect_ratio": 2.52,
@@ -7048,7 +7046,7 @@
           "caption": "Ave Maria",
           "file": "chant-ave-maria",
           "sha256": "c38b60d6a70a6f402a248bb4209ca882180ff0d69e0f04b0cb4b711111c6b6e4",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-ave-maria-c38b60d6a70a.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-ave-maria-c38b60d6a70a.lvscore"
         },
         {
           "aspect_ratio": 7.7402,
@@ -7056,7 +7054,7 @@
           "caption": "Ecce ancilla Domini",
           "file": "chant-ecce-ancilla-domini",
           "sha256": "dc5ee87d6ee6806015b5e5948af11b8fa3f8f478221153e7f4a6095ca6843747",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-ecce-ancilla-domini-dc5ee87d6ee6.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-ecce-ancilla-domini-dc5ee87d6ee6.lvscore"
         },
         {
           "aspect_ratio": 7.8438,
@@ -7064,7 +7062,7 @@
           "caption": "Et Verbum",
           "file": "chant-et-verbum-caro",
           "sha256": "8aa790f135b40ae4f6f7d4d537efcb6066bb0360198be144c324cb0dbf45f919",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-et-verbum-caro-8aa790f135b4.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-et-verbum-caro-8aa790f135b4.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -7072,7 +7070,7 @@
           "caption": "Ora pro nobis",
           "file": "chant-vers-alt-ora-pro-nobis",
           "sha256": "26838831a84d31456c94a479a5b5f3784f5b7c6bd8e5dbca5b1e96ec057094f2",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-ora-pro-nobis-26838831a84d.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-ora-pro-nobis-26838831a84d.lvscore"
         },
         {
           "aspect_ratio": 1.9104,
@@ -7080,7 +7078,7 @@
           "caption": "Oremus. Gratiam tuam quaesumus",
           "file": "chant-or-gratiam-tuam",
           "sha256": "0e59cd635480522649a5c9ab0bc28d49b0dbc0d3c3869607c2b157d86b6acd51",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-gratiam-tuam-0e59cd635480.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-gratiam-tuam-0e59cd635480.lvscore"
         },
         {
           "aspect_ratio": 3.8498,
@@ -7088,7 +7086,7 @@
           "caption": "Gloria Patri",
           "file": "chant-gloria-patri-ii-mon",
           "sha256": "6a9c5988ebc95990bb1f60a2437efdccf2afdd5656b44ef14c22972408d0e840",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-gloria-patri-ii-mon-6a9c5988ebc9.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-gloria-patri-ii-mon-6a9c5988ebc9.lvscore"
         }
       ],
       "setting": null,
@@ -7098,10 +7096,10 @@
       "audio": {
         "bytes": 1082167,
         "sha256": "0fb0d8b52eec72a57b402f5c8679f1c0ec75ac4fa44f311adceab3f80f55bb96",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/adoro_te-0fb0d8b52eec.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/adoro_te-0fb0d8b52eec.m4a"
       },
       "detail": "St Thomas Aquinas's hymn to the hidden God",
-      "duration": 264,
+      "duration": 264.0,
       "english_title": "I Adore Thee Devoutly",
       "group_id": "hymns",
       "id": "adoro_te",
@@ -7321,7 +7319,7 @@
           "caption": "Adoro te devote",
           "file": "chant-adoro-te-devote",
           "sha256": "4fff22ade764a9aff38c36606a90a83dfa99c26337d7c10be4bf14af91d220db",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-adoro-te-devote-4fff22ade764.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-adoro-te-devote-4fff22ade764.lvscore"
         }
       ],
       "setting": null,
@@ -7331,10 +7329,10 @@
       "audio": {
         "bytes": 347083,
         "sha256": "eb319c4922387ef0ae91ce8c6057ff895cce1eba64d233f37b034d956e37d1c5",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ave_verum-eb319c492238.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/ave_verum-eb319c492238.m4a"
       },
       "detail": "Sung as the priest raises the Host, and at Benediction",
-      "duration": 87,
+      "duration": 87.0,
       "english_title": "Hail, True Body",
       "group_id": "hymns",
       "id": "ave_verum",
@@ -7421,7 +7419,7 @@
           "caption": "Ave verum Corpus",
           "file": "chant-ave-verum-corpus",
           "sha256": "465cbfa3d36ad2b0f2f8c2a7f164a33cebbe6c37d7fbb9da8d9e088361c6d648",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-ave-verum-corpus-465cbfa3d36a.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-ave-verum-corpus-465cbfa3d36a.lvscore"
         }
       ],
       "setting": null,
@@ -7431,10 +7429,10 @@
       "audio": {
         "bytes": 263022,
         "sha256": "dcc9712ae6f9f03f18bc5fa1481a70ddcc0c9102fb507f756c9c8951de5d184e",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_salutaris-dcc9712ae6f9.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/o_salutaris-dcc9712ae6f9.m4a"
       },
       "detail": "Sung as the Host is placed on the altar for adoration",
-      "duration": 66,
+      "duration": 66.0,
       "english_title": "O Saving Victim",
       "group_id": "benediction",
       "id": "o_salutaris",
@@ -7500,7 +7498,7 @@
           "caption": "O salutaris Hostia",
           "file": "chant-o-salutaris-hostia-i",
           "sha256": "23ef9655b631f10a5e1c5f68d7736fcde0607370b158d55a96bfb25fe7e85690",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-salutaris-hostia-i-23ef9655b631.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-salutaris-hostia-i-23ef9655b631.lvscore"
         }
       ],
       "setting": null,
@@ -7510,7 +7508,7 @@
       "audio": {
         "bytes": 559542,
         "sha256": "5c5e4e008a4a595904d4634e359919256f4e5a155a1d3382770e15657e8de96d",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/tantum_ergo-5c5e4e008a4a.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/tantum_ergo-5c5e4e008a4a.m4a"
       },
       "detail": "Sung before the blessing at Benediction",
       "duration": 137.4,
@@ -7684,7 +7682,7 @@
           "caption": "Tantum ergo",
           "file": "chant-tantum-ergo-i",
           "sha256": "4cac5d7c7d69824649fedfb3da15348ce84a0b72290f83c733565920094439c5",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-tantum-ergo-i-4cac5d7c7d69.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-tantum-ergo-i-4cac5d7c7d69.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -7692,7 +7690,7 @@
           "caption": "Panem de caelo",
           "file": "chant-vers-panem-de-caelo",
           "sha256": "47b33c5049e86f8928db1193a7aedbf2fe66f1f22d14638c28fa72623f7b1416",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-panem-de-caelo-47b33c5049e8.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-panem-de-caelo-47b33c5049e8.lvscore"
         },
         {
           "aspect_ratio": 1.8202,
@@ -7700,7 +7698,7 @@
           "caption": "Oremus. Deus qui nobis",
           "file": "chant-or-deus-qui-nobis",
           "sha256": "d7fe784de65c39022109a518a524fea1168e92ffa63fd2edb7a0d3f516ed75f6",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-deus-qui-nobis-d7fe784de65c.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-deus-qui-nobis-d7fe784de65c.lvscore"
         }
       ],
       "setting": null,
@@ -7710,10 +7708,10 @@
       "audio": {
         "bytes": 487083,
         "sha256": "c8a33f2c8c13d748a76c7db152656bc0d262992e7f343ab69c5ef9b7ca95ca21",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_sacrum_convivium-c8a33f2c8c13.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/o_sacrum_convivium-c8a33f2c8c13.m4a"
       },
       "detail": "Sung at evening prayer on Corpus Christi, the feast of the Body of Christ",
-      "duration": 118,
+      "duration": 118.0,
       "english_title": "O Sacred Banquet",
       "group_id": "hymns",
       "id": "o_sacrum_convivium",
@@ -7793,7 +7791,7 @@
           "caption": "O sacrum convivium",
           "file": "chant-o-sacrum-convivium",
           "sha256": "add8269ad12be7dbf7203d32835c398c1595b95fbd51e69682235ac03582b176",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-sacrum-convivium-add8269ad12b.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-sacrum-convivium-add8269ad12b.lvscore"
         }
       ],
       "setting": null,
@@ -7803,7 +7801,7 @@
       "audio": {
         "bytes": 518921,
         "sha256": "5ef1d9b755c49e35122028bbe4cf4075cd3b3b6a1cbefcb49a4d2b8da4750035",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/divine_praises-5ef1d9b755c4.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/divine_praises-5ef1d9b755c4.m4a"
       },
       "detail": "Said or sung after the blessing at Benediction",
       "duration": 127.1,
@@ -7935,7 +7933,7 @@
           "caption": "Laudes Divinae",
           "file": "chant-laudes-divinae",
           "sha256": "bf69a7ba8c3ed69d79c181009cc5e39cb0556011c63bfc37e36417022b925299",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-laudes-divinae-bf69a7ba8c3e.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-laudes-divinae-bf69a7ba8c3e.lvscore"
         }
       ],
       "setting": null,
@@ -7945,10 +7943,10 @@
       "audio": {
         "bytes": 362427,
         "sha256": "e4c8f2190dae859916648dd8d4af0d1771bda15984abdbf9d63bb5a15825962e",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/anima_christi-e4c8f2190dae.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/anima_christi-e4c8f2190dae.m4a"
       },
       "detail": "A thanksgiving after Communion",
-      "duration": 90,
+      "duration": 90.0,
       "english_title": "Soul of Christ",
       "group_id": "hymns",
       "id": "anima_christi",
@@ -8056,7 +8054,7 @@
           "caption": "Anima Christi",
           "file": "chant-anima-christi-i",
           "sha256": "c0619e346e51ab2d6ff80f1b1dc2074bb46abf933e5d495c0e78be4367c1ed68",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-anima-christi-i-c0619e346e51.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-anima-christi-i-c0619e346e51.lvscore"
         }
       ],
       "setting": null,
@@ -8066,10 +8064,10 @@
       "audio": {
         "bytes": 345568,
         "sha256": "c86a3bb8ea0ad441128cc41ea365a077d942fd099d174008d216a11c875ad2df",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/panis_angelicus-c86a3bb8ea0a.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/panis_angelicus-c86a3bb8ea0a.m4a"
       },
       "detail": "From St Thomas's hymn for the night prayer of Corpus Christi",
-      "duration": 87,
+      "duration": 87.0,
       "english_title": "Bread of Angels",
       "group_id": "hymns",
       "id": "panis_angelicus",
@@ -8189,7 +8187,7 @@
           "caption": "Panis angelicus",
           "file": "chant-panis-angelicus",
           "sha256": "48121f654bbf212ad656d65961f0f047d5435d46b09f4a3e0ed7151cbd4550e1",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-panis-angelicus-48121f654bbf.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-panis-angelicus-48121f654bbf.lvscore"
         }
       ],
       "setting": null,
@@ -8199,10 +8197,10 @@
       "audio": {
         "bytes": 1790741,
         "sha256": "0547641d4b9e0abc9ccd7d952dd8d3402067c626f171763fea2a5c7d258ef315",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/lauda_sion-0547641d4b9e.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/lauda_sion-0547641d4b9e.m4a"
       },
       "detail": "The feast poem of Corpus Christi, the feast of the Body of Christ",
-      "duration": 438,
+      "duration": 438.0,
       "english_title": "Praise, O Sion",
       "group_id": "sequences",
       "id": "lauda_sion",
@@ -8777,7 +8775,7 @@
           "caption": "Lauda Sion Salvatorem",
           "file": "chant-lauda-sion-salvatorem",
           "sha256": "3f5519aec1b40b7fe5bc7fa2df39e44da8c29b0955b83f487da29e08362822f8",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-lauda-sion-salvatorem-3f5519aec1b4.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-lauda-sion-salvatorem-3f5519aec1b4.lvscore"
         }
       ],
       "setting": null,
@@ -8787,10 +8785,10 @@
       "audio": {
         "bytes": 409492,
         "sha256": "b237f0bce7e12acc7f982781074ebe269d09c0fb1e47b9eba35dcdca31af8339",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/adoremus-b237f0bce7e1.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/adoremus-b237f0bce7e1.m4a"
       },
       "detail": "Sung at the close of Benediction",
-      "duration": 101,
+      "duration": 101.0,
       "english_title": "Let Us Adore For Ever",
       "group_id": "benediction",
       "id": "adoremus",
@@ -8917,7 +8915,7 @@
           "caption": "Adoremus in aeternum",
           "file": "chant-adoremus-in-aeternum-1",
           "sha256": "f12719f7c76d488adb680e102b8290fe020da00bbc9d1aaeee13e509cd8b5b12",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-adoremus-in-aeternum-1-f12719f7c76d.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-adoremus-in-aeternum-1-f12719f7c76d.lvscore"
         }
       ],
       "setting": null,
@@ -8927,10 +8925,10 @@
       "audio": {
         "bytes": 413565,
         "sha256": "4e1d95b254fb9cea053e6032d6a4deb42b3c3f53657986ec69ca9440e4410bf3",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ecce_panis-4e1d95b254fb.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/ecce_panis-4e1d95b254fb.m4a"
       },
       "detail": "The last verses of the Lauda Sion (Praise, O Sion)",
-      "duration": 101,
+      "duration": 101.0,
       "english_title": "Behold the Bread of Angels",
       "group_id": "hymns",
       "id": "ecce_panis",
@@ -9078,7 +9076,7 @@
           "caption": "Ecce panis Angelorum",
           "file": "chant-ecce-panis-angelorum",
           "sha256": "dea2ade1f2ceadfe73d4664c3cb469f34ed2ffb34f1cd12f03dab9ff80c28c6e",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-ecce-panis-angelorum-dea2ade1f2ce.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-ecce-panis-angelorum-dea2ade1f2ce.lvscore"
         }
       ],
       "setting": null,
@@ -9088,10 +9086,10 @@
       "audio": {
         "bytes": 621687,
         "sha256": "0875c892a77143db29946f485c874944c1360d0a2b3dd1f3cd5db34b742497e8",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ubi_caritas-0875c892a771.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/ubi_caritas-0875c892a771.m4a"
       },
       "detail": "Sung at the washing of feet on Holy Thursday",
-      "duration": 152,
+      "duration": 152.0,
       "english_title": "Where Charity and Love Are",
       "group_id": "seasons",
       "id": "ubi_caritas",
@@ -9218,7 +9216,7 @@
           "caption": "Ubi caritas",
           "file": "chant-ubi-caritas",
           "sha256": "bfdc113ff27786876f16f6668dc7960fd79c2dbf77d44bcfd32fe272eb74b723",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-ubi-caritas-bfdc113ff277.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-ubi-caritas-bfdc113ff277.lvscore"
         }
       ],
       "setting": null,
@@ -9228,7 +9226,7 @@
       "audio": {
         "bytes": 230170,
         "sha256": "8a936d7eef11649832999f626f4a30659858ea447af7a1ac567603f8c49b42dc",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/adoramus_te-8a936d7eef11.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/adoramus_te-8a936d7eef11.m4a"
       },
       "detail": "A short chant of adoration of Christ, who by His holy Cross redeemed the world",
       "duration": 58.1,
@@ -9245,7 +9243,7 @@
           "start": 0.35
         },
         {
-          "end": 13,
+          "end": 13.0,
           "english": "most holy Lord Jesus Christ,",
           "latin": "sanctíssime Dómine Jesu Christe,",
           "part": null,
@@ -9288,7 +9286,7 @@
           "caption": "Adoramus te",
           "file": "chant-adoramus-te",
           "sha256": "ee1c08065942eefa7597dd0d8c5c0d09e4d9c33e184c69bf1140d001ef3a1c19",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-adoramus-te-ee1c08065942.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-adoramus-te-ee1c08065942.lvscore"
         }
       ],
       "setting": null,
@@ -9298,10 +9296,10 @@
       "audio": {
         "bytes": 1132809,
         "sha256": "069d3001ad52889a3c29538aedff7bf38c7fec97b9a7f088de76af8df8159866",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/pange_lingua-069d3001ad52.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/pange_lingua-069d3001ad52.m4a"
       },
       "detail": "St Thomas Aquinas's hymn for Corpus Christi, whose last two verses are the Tantum Ergo",
-      "duration": 276,
+      "duration": 276.0,
       "english_title": "Sing, My Tongue, the Saviour's Glory",
       "group_id": "benediction",
       "id": "pange_lingua",
@@ -9617,7 +9615,7 @@
           "caption": "Pange lingua",
           "file": "chant-pange-lingua",
           "sha256": "e1a133b147b9c3d94d8d0cdc685d3ebe52964b7eb84599135c9701553caa7fa3",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-pange-lingua-e1a133b147b9.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-pange-lingua-e1a133b147b9.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -9625,7 +9623,7 @@
           "caption": "Panem de caelo",
           "file": "chant-vers-panem-de-caelo",
           "sha256": "47b33c5049e86f8928db1193a7aedbf2fe66f1f22d14638c28fa72623f7b1416",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-panem-de-caelo-47b33c5049e8.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-panem-de-caelo-47b33c5049e8.lvscore"
         },
         {
           "aspect_ratio": 1.8202,
@@ -9633,7 +9631,7 @@
           "caption": "Oremus. Deus qui nobis",
           "file": "chant-or-deus-qui-nobis",
           "sha256": "d7fe784de65c39022109a518a524fea1168e92ffa63fd2edb7a0d3f516ed75f6",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-deus-qui-nobis-d7fe784de65c.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-deus-qui-nobis-d7fe784de65c.lvscore"
         }
       ],
       "setting": null,
@@ -9643,7 +9641,7 @@
       "audio": {
         "bytes": 609901,
         "sha256": "aa9e4140cd75801fe6d2cdffa3fdb7b1b97eae66ea67e825661471cb2e08aaa6",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/jesu_nostra_redemptio-aa9e4140cd75.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/jesu_nostra_redemptio-aa9e4140cd75.m4a"
       },
       "detail": "The hymn of the Ascension, sung too in the procession of Corpus Christi",
       "duration": 151.1,
@@ -9808,7 +9806,7 @@
           "caption": "Jesu nostra redemptio",
           "file": "chant-jesu-nostra-redemptio",
           "sha256": "b96066e3224dff082cb0d74bd93d1786dd336a09f071dba338b030cd04809185",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-jesu-nostra-redemptio-b96066e3224d.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-jesu-nostra-redemptio-b96066e3224d.lvscore"
         }
       ],
       "setting": null,
@@ -9818,7 +9816,7 @@
       "audio": {
         "bytes": 1015281,
         "sha256": "0b20cdf757b6f42adb951362a259780956952a120bccfcd85d4cf6fe7e77f0a8",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/veni_creator-0b20cdf757b6.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/veni_creator-0b20cdf757b6.m4a"
       },
       "detail": "The hymn of Pentecost, with its closing verse and prayer",
       "duration": 248.1,
@@ -10083,7 +10081,7 @@
           "caption": "Veni Creator Spiritus",
           "file": "chant-veni-creator-spiritus",
           "sha256": "6bad46334f607b58e4b0bec09ab261306cbf0a332cb43dd18b8b5dba3e7dc599",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-veni-creator-spiritus-6bad46334f60.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-veni-creator-spiritus-6bad46334f60.lvscore"
         },
         {
           "aspect_ratio": 3.9167,
@@ -10091,7 +10089,7 @@
           "caption": "Emitte Spiritum tuum",
           "file": "chant-vers-emitte-spiritum",
           "sha256": "4862faec31c878e92a016c905a347bdb69af041f525de2a35ebdde1103e20858",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-emitte-spiritum-4862faec31c8.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-emitte-spiritum-4862faec31c8.lvscore"
         },
         {
           "aspect_ratio": 2.4607,
@@ -10099,7 +10097,7 @@
           "caption": "Oremus. Deus qui corda",
           "file": "chant-or-deus-qui-corda",
           "sha256": "bb196f2216981191aeb8cc0bb395720920de3d53adfafbc5d7dc5468a0414e64",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-deus-qui-corda-bb196f221698.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-deus-qui-corda-bb196f221698.lvscore"
         }
       ],
       "setting": null,
@@ -10109,7 +10107,7 @@
       "audio": {
         "bytes": 626005,
         "sha256": "5b894eedd63472dd76b1c5aee4a83c2c1ec03dba573dbcb00b550e62b457a12f",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/veni_sancte_spiritus-5b894eedd634.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/veni_sancte_spiritus-5b894eedd634.m4a"
       },
       "detail": "The golden feast poem of Pentecost",
       "duration": 157.1,
@@ -10304,7 +10302,7 @@
           "caption": "Veni Sancte Spiritus",
           "file": "chant-veni-sancte-spiritus-web",
           "sha256": "c112c2539e58ef33b7eace2fec91edd2ca82f625db1c1e83c3d5091c1c6e39cb",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-veni-sancte-spiritus-web-c112c2539e58.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-veni-sancte-spiritus-web-c112c2539e58.lvscore"
         }
       ],
       "setting": "Feast poem",
@@ -10314,7 +10312,7 @@
       "audio": {
         "bytes": 348180,
         "sha256": "7e7c00945767c8e2a63583001d1dea2c4f447860fea0622c09fb6fc01bdb9ccb",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/veni_sancte_reple-7e7c00945767.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/veni_sancte_reple-7e7c00945767.m4a"
       },
       "detail": "Before prayer, study or any work",
       "duration": 88.1,
@@ -10425,7 +10423,7 @@
           "caption": "Veni Sancte Spiritus reple",
           "file": "chant-veni-sancte-spiritus-reple",
           "sha256": "6bca3d6b0a71815514a7782e39a655a538bdae90b00f4d85a313009cd289be6d",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-veni-sancte-spiritus-reple-6bca3d6b0a71.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-veni-sancte-spiritus-reple-6bca3d6b0a71.lvscore"
         },
         {
           "aspect_ratio": 3.9167,
@@ -10433,7 +10431,7 @@
           "caption": "Emitte Spiritum tuum",
           "file": "chant-vers-emitte-spiritum",
           "sha256": "4862faec31c878e92a016c905a347bdb69af041f525de2a35ebdde1103e20858",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-emitte-spiritum-4862faec31c8.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-emitte-spiritum-4862faec31c8.lvscore"
         },
         {
           "aspect_ratio": 2.4607,
@@ -10441,7 +10439,7 @@
           "caption": "Oremus. Deus qui corda",
           "file": "chant-or-deus-qui-corda",
           "sha256": "bb196f2216981191aeb8cc0bb395720920de3d53adfafbc5d7dc5468a0414e64",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-or-deus-qui-corda-bb196f221698.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-or-deus-qui-corda-bb196f221698.lvscore"
         }
       ],
       "setting": "Short chant",
@@ -10451,7 +10449,7 @@
       "audio": {
         "bytes": 2847173,
         "sha256": "9560c70794edd4c5b32461b940148ad5ef6f5b848410fceeb9346a6b252904f5",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/litany_sacred_heart-9560c70794ed.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/litany_sacred_heart-9560c70794ed.m4a"
       },
       "detail": "For the first Friday of each month, and for June",
       "duration": 698.1,
@@ -11157,7 +11155,7 @@
           "caption": "Kyrie eleison",
           "file": "chant-litaniae-ss-cordis-jesu-1-kyrie",
           "sha256": "ae39f5d9978f00cc63df4a792bf3ab4d2800c8ae9978f653002209de340e6811",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-ss-cordis-jesu-1-kyrie-ae39f5d9978f.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-ss-cordis-jesu-1-kyrie-ae39f5d9978f.lvscore"
         },
         {
           "aspect_ratio": 7.4264,
@@ -11165,7 +11163,7 @@
           "caption": "Pater de caelis",
           "file": "chant-litaniae-ss-cordis-jesu-2-pater",
           "sha256": "f89d7bb4cc303809038a10881bcea2f93f0d2f4ef9ed39e00adbbfa184834a27",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-ss-cordis-jesu-2-pater-f89d7bb4cc30.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-ss-cordis-jesu-2-pater-f89d7bb4cc30.lvscore"
         },
         {
           "aspect_ratio": 7.4264,
@@ -11173,7 +11171,7 @@
           "caption": "Cor Jesu Filii Patris aeterni",
           "file": "chant-litaniae-ss-cordis-jesu-3-cor-jesu",
           "sha256": "247e2c0d5a16d2c1dc1c0d7bc070e87d178cf88b1716492fc2892159ef7d02d2",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-ss-cordis-jesu-3-cor-jesu-247e2c0d5a16.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-ss-cordis-jesu-3-cor-jesu-247e2c0d5a16.lvscore"
         },
         {
           "aspect_ratio": 2.238,
@@ -11181,7 +11179,7 @@
           "caption": "Agnus Dei",
           "file": "chant-litaniae-ss-cordis-jesu-4-agnus-dei",
           "sha256": "194f56b089a469320a079139dbd92bb3084b53669c5d03749632c77d006d0344",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-ss-cordis-jesu-4-agnus-dei-194f56b089a4.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-ss-cordis-jesu-4-agnus-dei-194f56b089a4.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -11189,7 +11187,7 @@
           "caption": "Jesu mitis",
           "file": "chant-litaniae-ss-cordis-jesu-5-vers-jesu-mitis",
           "sha256": "df6dee8c9012dd5d9c850786435cb23e38d3bc1aabe1f391fc6ee4dfeabf815a",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-ss-cordis-jesu-5-vers-jesu-mitis-df6dee8c9012.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-ss-cordis-jesu-5-vers-jesu-mitis-df6dee8c9012.lvscore"
         },
         {
           "aspect_ratio": 1.4443,
@@ -11197,7 +11195,7 @@
           "caption": "Oremus. Omnipotens… respice in Cor",
           "file": "chant-litaniae-ss-cordis-jesu-6-or-omn-respice",
           "sha256": "ab2582f58ef712bad2c6eded9bf4c1c99b4ae357496f61164bd069c9a5346ca3",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-ss-cordis-jesu-6-or-omn-respice-ab2582f58ef7.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-ss-cordis-jesu-6-or-omn-respice-ab2582f58ef7.lvscore"
         }
       ],
       "setting": null,
@@ -11207,10 +11205,10 @@
       "audio": {
         "bytes": 3571668,
         "sha256": "8e8758d81838bed353d26a900e26814fef09bd9e3a069dd9cce413b26f97ff76",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/litany_holy_name-8e8758d81838.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/litany_holy_name-8e8758d81838.m4a"
       },
       "detail": "Approved for the whole Church in 1862",
-      "duration": 876,
+      "duration": 876.0,
       "english_title": "The Litany of the Holy Name",
       "group_id": "litanies",
       "id": "litany_holy_name",
@@ -11392,7 +11390,7 @@
           "start": 130.89
         },
         {
-          "end": 141,
+          "end": 141.0,
           "english": "have mercy on us.",
           "latin": "miserére nobis.",
           "part": null,
@@ -12246,7 +12244,7 @@
           "start": 795.75
         },
         {
-          "end": 804,
+          "end": 804.0,
           "english": "Jesus, graciously hear us.",
           "latin": "Jesu, exáudi nos.",
           "part": null,
@@ -12333,7 +12331,7 @@
           "caption": "Kyrie eleison",
           "file": "chant-litaniae-sanctissimi-nominis-jesu-0",
           "sha256": "fd480d9ffd86b0a50f69f26174dba909b14cf1a90cf08f5ae18340d22cc1d028",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-sanctissimi-nominis-jesu-0-fd480d9ffd86.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-sanctissimi-nominis-jesu-0-fd480d9ffd86.lvscore"
         },
         {
           "aspect_ratio": 8.0851,
@@ -12341,7 +12339,7 @@
           "caption": "Pater de caelis",
           "file": "chant-litaniae-sanctissimi-nominis-jesu-1",
           "sha256": "7e6e32f8879fe544cc204d3072a2164c19ce56d171e152b1c07dafedf6b570f5",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-sanctissimi-nominis-jesu-1-7e6e32f8879f.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-sanctissimi-nominis-jesu-1-7e6e32f8879f.lvscore"
         },
         {
           "aspect_ratio": 8.0851,
@@ -12349,7 +12347,7 @@
           "caption": "Jesu Fili Dei vivi",
           "file": "chant-litaniae-sanctissimi-nominis-jesu-2",
           "sha256": "9c2d294b71aca3854b1a738a2dc30e479844de8789382733ada97ccb5a6f488f",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-sanctissimi-nominis-jesu-2-9c2d294b71ac.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-sanctissimi-nominis-jesu-2-9c2d294b71ac.lvscore"
         },
         {
           "aspect_ratio": 4.5157,
@@ -12357,7 +12355,7 @@
           "caption": "Propitius esto",
           "file": "chant-litaniae-sanctissimi-nominis-jesu-3-alt",
           "sha256": "e36ba16ed0d34391732a9c304a8d0b0e67ed9144b0a3e1ff643b633e7af0f762",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-sanctissimi-nominis-jesu-3-alt-e36ba16ed0d3.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-sanctissimi-nominis-jesu-3-alt-e36ba16ed0d3.lvscore"
         },
         {
           "aspect_ratio": 1.8174,
@@ -12365,7 +12363,7 @@
           "caption": "Agnus Dei",
           "file": "chant-litaniae-sanctissimi-nominis-jesu-4",
           "sha256": "847ee3525d9d3628cf3334f5f3f59bc98dceaf865604493237328e88ec74e837",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-sanctissimi-nominis-jesu-4-847ee3525d9d.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-sanctissimi-nominis-jesu-4-847ee3525d9d.lvscore"
         },
         {
           "aspect_ratio": 0.7909,
@@ -12373,7 +12371,7 @@
           "caption": "Closing prayer",
           "file": "chant-litaniae-sanctissimi-nominis-jesu-5",
           "sha256": "9d509f1e1ebc9432947c20283d5073e1adb8fe74ba20eeb5c04f8200c2a33cf2",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-sanctissimi-nominis-jesu-5-9d509f1e1ebc.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-sanctissimi-nominis-jesu-5-9d509f1e1ebc.lvscore"
         }
       ],
       "setting": null,
@@ -12383,7 +12381,7 @@
       "audio": {
         "bytes": 466909,
         "sha256": "e9ca59f340dade331e49eaf54d90b0a353588070cf93d044e1adcecc61ff661a",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/jesu_dulcis_memoria-e9ca59f340da.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/jesu_dulcis_memoria-e9ca59f340da.m4a"
       },
       "detail": "The hymn of the Holy Name",
       "duration": 116.1,
@@ -12541,7 +12539,7 @@
           "caption": "Jesu dulcis memoria",
           "file": "chant-jesu-dulcis-memoria",
           "sha256": "1f658429501a3b74c174cd993576ac6aa7c9ec4c986139370e78771917bd3fea",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-jesu-dulcis-memoria-1f658429501a.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-jesu-dulcis-memoria-1f658429501a.lvscore"
         }
       ],
       "setting": null,
@@ -12551,7 +12549,7 @@
       "audio": {
         "bytes": 149455,
         "sha256": "f10ffaceb791823bf3b40f6444e7a5853812f524a61c8b6a713b5f31fd0ce730",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/cor_jesu-f10ffaceb791.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/cor_jesu-f10ffaceb791.m4a"
       },
       "detail": "A short prayer to the Sacred Heart",
       "duration": 38.1,
@@ -12611,7 +12609,7 @@
           "caption": "Cor Jesu sacratissimum",
           "file": "chant-cor-jesu-sacratissimum-i",
           "sha256": "ae39f26161186ef6bdcf423738250da74071b8c2fbc31a18ced21a0d9b0660a3",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-cor-jesu-sacratissimum-i-ae39f2616118.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-cor-jesu-sacratissimum-i-ae39f2616118.lvscore"
         }
       ],
       "setting": null,
@@ -12621,7 +12619,7 @@
       "audio": {
         "bytes": 1687103,
         "sha256": "526b7c10ba84ebd3a7687741070a2ba9d9db7fec53d690fa68e352e98b428240",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/te_deum_simple-526b7c10ba84.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/te_deum_simple-526b7c10ba84.m4a"
       },
       "detail": "The Church's great hymn of thanksgiving, with its closing verses and prayer",
       "duration": 412.1,
@@ -13040,7 +13038,7 @@
           "caption": "Te Deum",
           "file": "chant-te-deum-simple",
           "sha256": "a6b9eb8a90cba23ba79053a74a8b3f45bb446a044d00497f91e3d2c0cec04dcd",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-te-deum-simple-a6b9eb8a90cb.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-te-deum-simple-a6b9eb8a90cb.lvscore"
         },
         {
           "aspect_ratio": 1.0171,
@@ -13048,7 +13046,7 @@
           "caption": "Verse and response",
           "file": "chant-versos-del-te-deum",
           "sha256": "cc2b03cb698b97a94f615cc0a4ab7d7ec030aae54bb8327543e54eef6ecb4c01",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-versos-del-te-deum-cc2b03cb698b.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-versos-del-te-deum-cc2b03cb698b.lvscore"
         },
         {
           "aspect_ratio": 1.4494,
@@ -13056,7 +13054,7 @@
           "caption": "Closing prayer",
           "file": "chant-oracion-del-te-deum",
           "sha256": "4f8398cf94bae07d0430e7374c2bb8c8656d03c09c5db58b1b00b844209546cc",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-oracion-del-te-deum-4f8398cf94ba.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-oracion-del-te-deum-4f8398cf94ba.lvscore"
         }
       ],
       "setting": "Simple melody",
@@ -13066,7 +13064,7 @@
       "audio": {
         "bytes": 1846050,
         "sha256": "b84d15ef0591f2ed37bfb1db5400dcec23a137b853b8c54cf46d03fc0fdeb079",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/te_deum-b84d15ef0591.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/te_deum-b84d15ef0591.m4a"
       },
       "detail": "The same hymn in its solemn melody, with its closing verses and prayer",
       "duration": 451.1,
@@ -13181,7 +13179,7 @@
           "start": 136.53
         },
         {
-          "end": 159,
+          "end": 159.0,
           "english": "and the Holy Ghost, the Paraclete.",
           "latin": "Sanctum quoque Paráclitum Spíritum.",
           "part": null,
@@ -13436,7 +13434,7 @@
           "caption": "Te Deum",
           "file": "chant-te-deum-solemne",
           "sha256": "db0165361956cf8e020e875fada5db5dfa97f688c9762cfeefb6102326c5e004",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-te-deum-solemne-db0165361956.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-te-deum-solemne-db0165361956.lvscore"
         },
         {
           "aspect_ratio": 1.0171,
@@ -13444,7 +13442,7 @@
           "caption": "Verse and response",
           "file": "chant-versos-del-te-deum",
           "sha256": "cc2b03cb698b97a94f615cc0a4ab7d7ec030aae54bb8327543e54eef6ecb4c01",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-versos-del-te-deum-cc2b03cb698b.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-versos-del-te-deum-cc2b03cb698b.lvscore"
         },
         {
           "aspect_ratio": 1.4494,
@@ -13452,7 +13450,7 @@
           "caption": "Closing prayer",
           "file": "chant-oracion-del-te-deum",
           "sha256": "4f8398cf94bae07d0430e7374c2bb8c8656d03c09c5db58b1b00b844209546cc",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-oracion-del-te-deum-4f8398cf94ba.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-oracion-del-te-deum-4f8398cf94ba.lvscore"
         }
       ],
       "setting": "Solemn melody",
@@ -13462,7 +13460,7 @@
       "audio": {
         "bytes": 521996,
         "sha256": "90bcfbcca47b86ad4ae6a54653b9500f23e3b2ff78ea24e71261a6bb91632ec2",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/christus_vincit-90bcfbcca47b.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/christus_vincit-90bcfbcca47b.m4a"
       },
       "detail": "Cries of praise to Christ the King",
       "duration": 128.1,
@@ -13585,7 +13583,7 @@
           "caption": "Christus vincit",
           "file": "chant-christus-vincit-simple",
           "sha256": "bccd39bd2ae73a94e265da665311d0696e1bde33aee248f131daf34d70fb4b19",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-christus-vincit-simple-bccd39bd2ae7.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-christus-vincit-simple-bccd39bd2ae7.lvscore"
         }
       ],
       "setting": null,
@@ -13595,10 +13593,10 @@
       "audio": {
         "bytes": 975461,
         "sha256": "ea1d295b42376a57b15e46f54c61ec4c70e08f3efeac08b787aa77c1071f499f",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/te_saeculorum-ea1d295b4237.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/te_saeculorum-ea1d295b4237.m4a"
       },
       "detail": "The evening hymn of the feast of Christ the King",
-      "duration": 237,
+      "duration": 237.0,
       "english_title": "Thee, Prince of All the Ages",
       "group_id": "hymns",
       "id": "te_saeculorum",
@@ -13844,7 +13842,7 @@
           "caption": "Te saeculorum Principem",
           "file": "chant-te-saeculorum-principem",
           "sha256": "025631cff3946600e219843de217d3daf33bfb792f9c6c575935d4c88aa5341b",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-te-saeculorum-principem-025631cff394.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-te-saeculorum-principem-025631cff394.lvscore"
         }
       ],
       "setting": null,
@@ -13854,10 +13852,10 @@
       "audio": {
         "bytes": 1101496,
         "sha256": "ef4fe5c73152a4389e7b900a95ac8f38c9f0421fde72ac61e3f838d21f172986",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/salvete_christi_vulnera-ef4fe5c73152.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/salvete_christi_vulnera-ef4fe5c73152.m4a"
       },
       "detail": "The morning hymn of the Precious Blood, kept in July",
-      "duration": 270,
+      "duration": 270.0,
       "english_title": "Hail, Wounds of Christ",
       "group_id": "hymns",
       "id": "salvete_christi_vulnera",
@@ -14131,7 +14129,7 @@
           "caption": "Salvete Christi vulnera",
           "file": "chant-salvete-christi-vulnera",
           "sha256": "78aec8a4faa7b3c6b842a1e3400daa7b4e3974b2084e47edbec0a093c30526f1",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-salvete-christi-vulnera-78aec8a4faa7.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-salvete-christi-vulnera-78aec8a4faa7.lvscore"
         }
       ],
       "setting": null,
@@ -14141,10 +14139,10 @@
       "audio": {
         "bytes": 563416,
         "sha256": "e1d7f9d88bd9705472aba4d54b37c01c7f316316af4d1580bff6692db970de5d",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/lucis_creator-e1d7f9d88bd9.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/lucis_creator-e1d7f9d88bd9.m4a"
       },
       "detail": "The evening hymn of Sundays through the year",
-      "duration": 137,
+      "duration": 137.0,
       "english_title": "O Blest Creator of the Light",
       "group_id": "hymns",
       "id": "lucis_creator",
@@ -14306,7 +14304,7 @@
           "caption": "Lucis Creator optime",
           "file": "chant-lucis-creator-optime",
           "sha256": "aad575c36210ac7f2963671ae105028f01b86197791d4825170a777f5fe52df2",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-lucis-creator-optime-aad575c36210.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-lucis-creator-optime-aad575c36210.lvscore"
         }
       ],
       "setting": null,
@@ -14316,10 +14314,10 @@
       "audio": {
         "bytes": 539773,
         "sha256": "10c466bca23fef7f39af0c560af4cd7b20a79e712c66405fafe1fe75ce806abb",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/da_pacem-10c466bca23f.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/da_pacem-10c466bca23f.m4a"
       },
       "detail": "A prayer for peace in our days",
-      "duration": 132,
+      "duration": 132.0,
       "english_title": "Give Peace, O Lord",
       "group_id": "hymns",
       "id": "da_pacem",
@@ -14483,7 +14481,7 @@
           "caption": "Da pacem Domine",
           "file": "chant-da-pacem-domine",
           "sha256": "aa19301a2075e22c663a22ac81bff8c02f2d22784d309b090f8046537f8645bd",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-da-pacem-domine-aa19301a2075.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-da-pacem-domine-aa19301a2075.lvscore"
         }
       ],
       "setting": null,
@@ -14493,10 +14491,10 @@
       "audio": {
         "bytes": 371891,
         "sha256": "d493d1411476681145ddfd5d5bc8d7c13e87b38554951fdcb49a2f26d68d4085",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/sancte_michael-d493d1411476.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/sancte_michael-d493d1411476.m4a"
       },
       "detail": "Pope Leo XIII's prayer, set to chant",
-      "duration": 90,
+      "duration": 90.0,
       "english_title": "St Michael the Archangel",
       "group_id": "hymns",
       "id": "sancte_michael",
@@ -14590,7 +14588,7 @@
           "caption": "Sancte Michael archangele",
           "file": "chant-sancte-michael-archangele",
           "sha256": "fa1cb000dca584267258aa1ee7fd11a2200d90b09e4c251a51ee55eb1798e0df",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-sancte-michael-archangele-fa1cb000dca5.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-sancte-michael-archangele-fa1cb000dca5.lvscore"
         }
       ],
       "setting": null,
@@ -14600,7 +14598,7 @@
       "audio": {
         "bytes": 719185,
         "sha256": "14b86fb7d00d351ec1d6e0d08c1a7c5e076e7a9cc1243432ca1c49df95e0169e",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ut_queant_laxis-14b86fb7d00d.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/ut_queant_laxis-14b86fb7d00d.m4a"
       },
       "detail": "The hymn of St John the Baptist on June 24, whose lines gave the notes their names: ut, re, mi",
       "duration": 175.1,
@@ -14758,7 +14756,7 @@
           "caption": "Ut queant laxis",
           "file": "chant-ut-queant-laxis",
           "sha256": "26443bbd8df28dbd2cad73164d07a53273bfac4c6313593957a8e2dbe66409be",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-ut-queant-laxis-26443bbd8df2.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-ut-queant-laxis-26443bbd8df2.lvscore"
         }
       ],
       "setting": null,
@@ -14768,7 +14766,7 @@
       "audio": {
         "bytes": 1940421,
         "sha256": "2a2d1b50d9fc22819e079475eb0e93e2cf473d605993e9cb3cef8c4b9ec3a458",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/litany_st_joseph-2a2d1b50d9fc.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/litany_st_joseph-2a2d1b50d9fc.m4a"
       },
       "detail": "For Wednesdays and the month of March",
       "duration": 470.1,
@@ -14869,7 +14867,7 @@
           "start": 54.85
         },
         {
-          "end": 65,
+          "end": 65.0,
           "english": "have mercy on us.",
           "latin": "miserére nobis.",
           "part": null,
@@ -15072,7 +15070,7 @@
           "start": 208.17
         },
         {
-          "end": 219,
+          "end": 219.0,
           "english": "Joseph most strong,",
           "latin": "Joseph fortíssime,",
           "part": null,
@@ -15383,7 +15381,7 @@
           "caption": "Kyrie eleison",
           "file": "chant-litaniae-s-joseph-1-kyrie",
           "sha256": "00df1dafd974db930269f2d2619f6dcfbfa496b19918bf854296b7e4ea275058",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-s-joseph-1-kyrie-00df1dafd974.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-s-joseph-1-kyrie-00df1dafd974.lvscore"
         },
         {
           "aspect_ratio": 7.4265,
@@ -15391,7 +15389,7 @@
           "caption": "Pater de caelis",
           "file": "chant-litaniae-s-joseph-2-pater",
           "sha256": "6fb79770f3efcdab3088bf13e732ee19485f4297958caf77e8ebcd67638ad8c4",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-s-joseph-2-pater-6fb79770f3ef.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-s-joseph-2-pater-6fb79770f3ef.lvscore"
         },
         {
           "aspect_ratio": 7.4264,
@@ -15399,7 +15397,7 @@
           "caption": "Sancta Maria",
           "file": "chant-litaniae-s-joseph-3-1-sancta-maria",
           "sha256": "cf4a7748ace8a852d7503f2d7c4adcd36a3182c89072b8a4a2ea183ff6e44265",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-s-joseph-3-1-sancta-maria-cf4a7748ace8.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-s-joseph-3-1-sancta-maria-cf4a7748ace8.lvscore"
         },
         {
           "aspect_ratio": 2.4138,
@@ -15407,7 +15405,7 @@
           "caption": "Agnus Dei",
           "file": "chant-litaniae-s-joseph-4-agnus-dei",
           "sha256": "4f95e1df58eeaebdc87d45c8a2de84fc80656b7a0e922305b11878d30ff92df1",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-s-joseph-4-agnus-dei-4f95e1df58ee.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-s-joseph-4-agnus-dei-4f95e1df58ee.lvscore"
         },
         {
           "aspect_ratio": 3.9357,
@@ -15415,7 +15413,7 @@
           "caption": "Constituit eum",
           "file": "chant-vers-alt-constituit-eum",
           "sha256": "8dc6120aa3b73d4187bd37034cc1d5c31290f07ec6bcb1607e788f3c234fcce5",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vers-alt-constituit-eum-8dc6120aa3b7.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vers-alt-constituit-eum-8dc6120aa3b7.lvscore"
         },
         {
           "aspect_ratio": 1.8202,
@@ -15423,7 +15421,7 @@
           "caption": "Oremus. Deus qui ineffabili",
           "file": "chant-litaniae-s-joseph-6-oratio",
           "sha256": "82cc3b4dec7185fc3f4e84f0e0f8a31eb36b714d796a33b46e551c1a4ac88ef5",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-s-joseph-6-oratio-82cc3b4dec71.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-s-joseph-6-oratio-82cc3b4dec71.lvscore"
         }
       ],
       "setting": null,
@@ -15433,7 +15431,7 @@
       "audio": {
         "bytes": 808512,
         "sha256": "cb12ce717505f79310c188e9140b7e8168871716664a4122cfb09f703ce59aaf",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/te_joseph-cb12ce717505.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/te_joseph-cb12ce717505.m4a"
       },
       "detail": "The evening hymn of St Joseph",
       "duration": 197.1,
@@ -15598,7 +15596,7 @@
           "caption": "Te Joseph celebrent",
           "file": "chant-te-joseph-celebrent",
           "sha256": "7f70a490c3574f9bb5db219411b6ca05a6280ac8ab636ffd52f5b542ca503751",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-te-joseph-celebrent-7f70a490c357.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-te-joseph-celebrent-7f70a490c357.lvscore"
         }
       ],
       "setting": null,
@@ -15608,7 +15606,7 @@
       "audio": {
         "bytes": 4398962,
         "sha256": "83bc7909c2e88f298d73833e3080cb174d821bdca942ab6bdc6062651f62a7c5",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/litany_saints-83bc7909c2e8.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/litany_saints-83bc7909c2e8.m4a"
       },
       "detail": "The oldest litany of the Church",
       "duration": 1072.1,
@@ -17364,7 +17362,7 @@
           "caption": "Kyrie eleison",
           "file": "chant-litaniae-sanctorum-1-kyrie-eleison",
           "sha256": "2740c36eee439bfd789963f8c80f4bcc2de2a8b8b2d1beeb5a88907f0b1ef88d",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-sanctorum-1-kyrie-eleison-2740c36eee43.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-sanctorum-1-kyrie-eleison-2740c36eee43.lvscore"
         },
         {
           "aspect_ratio": 7.8361,
@@ -17372,7 +17370,7 @@
           "caption": "Pater de caelis",
           "file": "chant-litaniae-sanctorum-2-pater-de-caelis",
           "sha256": "c13b43c4f73eb05dc786d3f934f5d43ebfaf91f0670bf3c19ab5a684c2c21588",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-sanctorum-2-pater-de-caelis-c13b43c4f73e.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-sanctorum-2-pater-de-caelis-c13b43c4f73e.lvscore"
         },
         {
           "aspect_ratio": 4.6023,
@@ -17380,7 +17378,7 @@
           "caption": "Propitius esto",
           "file": "chant-litaniae-sanctorum-3-propitius-esto",
           "sha256": "476967354897de43afc8e132a4005ab4a81d2f1bf7f785508ab9ce6ffbb69013",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-sanctorum-3-propitius-esto-476967354897.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-sanctorum-3-propitius-esto-476967354897.lvscore"
         },
         {
           "aspect_ratio": 7.8361,
@@ -17388,7 +17386,7 @@
           "caption": "Peccatores",
           "file": "chant-litaniae-sanctorum-4-peccatores",
           "sha256": "f45a82d3527339d31364560aaac3160ae9cf28e3e6d529f4c73317484f6a946d",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-sanctorum-4-peccatores-f45a82d35273.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-sanctorum-4-peccatores-f45a82d35273.lvscore"
         },
         {
           "aspect_ratio": 1.4128,
@@ -17396,7 +17394,7 @@
           "caption": "Agnus Dei, Kyrie eleison",
           "file": "chant-litaniae-sanctorum-5-agnus-dei-kyrie",
           "sha256": "ef6648e809bb9ceece468b91e5529674d173abfb4f988705b4c50f9b309bf94e",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-litaniae-sanctorum-5-agnus-dei-kyrie-ef6648e809bb.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-litaniae-sanctorum-5-agnus-dei-kyrie-ef6648e809bb.lvscore"
         }
       ],
       "setting": null,
@@ -17406,10 +17404,10 @@
       "audio": {
         "bytes": 1177701,
         "sha256": "972de1a535db8171b78688bd7c1bea1e07a8288f9e95246cb6d30826da63fc33",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/rorate_caeli-972de1a535db.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/rorate_caeli-972de1a535db.m4a"
       },
       "detail": "The prayer of Advent's waiting",
-      "duration": 288,
+      "duration": 288.0,
       "english_title": "Drop Down Dew, Ye Heavens",
       "group_id": "seasons",
       "id": "rorate_caeli",
@@ -17683,7 +17681,7 @@
           "caption": "Rorate caeli",
           "file": "chant-rorate-caeli",
           "sha256": "dca7b5621dc53ceb0d39c03ce1ef43eaeb7c094afe88b0dcd09d61e5742566dc",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-rorate-caeli-dca7b5621dc5.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-rorate-caeli-dca7b5621dc5.lvscore"
         }
       ],
       "setting": null,
@@ -17693,7 +17691,7 @@
       "audio": {
         "bytes": 454698,
         "sha256": "a379ff0f601e3ff7ebc4a73cfa7797bd8792fde7de6ce236b1724068d09e9923",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/en_clara_vox-a379ff0f601e.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/en_clara_vox-a379ff0f601e.m4a"
       },
       "detail": "The morning hymn of Advent",
       "duration": 113.1,
@@ -17823,7 +17821,7 @@
           "caption": "En clara vox redarguit",
           "file": "chant-en-clara-vox-redarguit",
           "sha256": "f066e0cba92e0d17ce76e62df5d83a06f8ac85b1c3016435f32727c727c08395",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-en-clara-vox-redarguit-f066e0cba92e.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-en-clara-vox-redarguit-f066e0cba92e.lvscore"
         }
       ],
       "setting": null,
@@ -17833,7 +17831,7 @@
       "audio": {
         "bytes": 505316,
         "sha256": "f5fa37befc0bfae5f416d3000df2ab6c73b9e78c01a5fab3966052ea8aefe994",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/creator_alme-f5fa37befc0b.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/creator_alme-f5fa37befc0b.m4a"
       },
       "detail": "The evening hymn of Advent",
       "duration": 125.1,
@@ -17942,7 +17940,7 @@
           "caption": "Creator alme siderum",
           "file": "chant-creator-alme-siderum",
           "sha256": "e2a2f2db9b6df64aeba23b0de004aec111d2438479aa9ac872176ae320fdffc3",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-creator-alme-siderum-e2a2f2db9b6d.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-creator-alme-siderum-e2a2f2db9b6d.lvscore"
         }
       ],
       "setting": null,
@@ -17952,7 +17950,7 @@
       "audio": {
         "bytes": 1114376,
         "sha256": "94178405dbd3d98b4798faaaf880677b9efda1122d395c7b16354bce242fe75e",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/veni_emmanuel-94178405dbd3.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/veni_emmanuel-94178405dbd3.m4a"
       },
       "detail": "Advent's seven “O” prayers, made into a hymn",
       "duration": 272.1,
@@ -18257,7 +18255,7 @@
           "caption": "Veni veni Emmanuel",
           "file": "chant-veni-veni-emmanuel-webfix",
           "sha256": "a12eb0dcf62e857e81abc75cc334cfa94a13d3faa5b46e1817246a0214d0aff0",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-veni-veni-emmanuel-webfix-a12eb0dcf62e.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-veni-veni-emmanuel-webfix-a12eb0dcf62e.lvscore"
         }
       ],
       "setting": null,
@@ -18267,7 +18265,7 @@
       "audio": {
         "bytes": 968009,
         "sha256": "67bc5efa81323c9e25f244ee773133b0ef86b4dd5f7ec1a6350665e5dd568ea9",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_sapientia_magnificat-67bc5efa8132.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/o_sapientia_magnificat-67bc5efa8132.m4a"
       },
       "detail": "Advent's “O” prayer for December 17, sung with Mary's song, the Magnificat",
       "duration": 238.1,
@@ -18518,7 +18516,7 @@
           "caption": "O Sapientia",
           "file": "chant-o-sapientia-magnificat-1",
           "sha256": "e92a91e1e5c043da5d179bff70186dd1343a8617bf71d31e515144a0255c0576",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-sapientia-magnificat-1-e92a91e1e5c0.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-sapientia-magnificat-1-e92a91e1e5c0.lvscore"
         },
         {
           "aspect_ratio": 3.806,
@@ -18526,7 +18524,7 @@
           "caption": "Magnificat",
           "file": "chant-o-sapientia-magnificat-2",
           "sha256": "282596698eb6452cbc4907531f6452c002976bf63b80e6bdd397ba5480977eef",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-sapientia-magnificat-2-282596698eb6.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-sapientia-magnificat-2-282596698eb6.lvscore"
         },
         {
           "aspect_ratio": 2.2518,
@@ -18534,7 +18532,7 @@
           "caption": "O Sapientia",
           "file": "chant-o-sapientia-magnificat-3",
           "sha256": "522df423efec58441dc9b1b7192b4eb62adfaa26c24b9bb46e36e8c681a79d36",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-sapientia-magnificat-3-522df423efec.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-sapientia-magnificat-3-522df423efec.lvscore"
         }
       ],
       "setting": null,
@@ -18544,7 +18542,7 @@
       "audio": {
         "bytes": 982804,
         "sha256": "8d81acb95d8e02da7adaf9c44fd63a00968881a51406924fa915e1201ed22ef3",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_adonai_magnificat-8d81acb95d8e.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/o_adonai_magnificat-8d81acb95d8e.m4a"
       },
       "detail": "Advent's “O” prayer for December 18, sung with Mary's song, the Magnificat",
       "duration": 241.1,
@@ -18823,7 +18821,7 @@
           "caption": "O Adonai",
           "file": "chant-o-adonai-magnificat-1",
           "sha256": "de517293a5211eb82bfe5f3d4ba2a2a663213e45daf175bf46eda1c14da9295c",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-adonai-magnificat-1-de517293a521.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-adonai-magnificat-1-de517293a521.lvscore"
         },
         {
           "aspect_ratio": 3.806,
@@ -18831,7 +18829,7 @@
           "caption": "Magnificat",
           "file": "chant-o-sapientia-magnificat-2",
           "sha256": "282596698eb6452cbc4907531f6452c002976bf63b80e6bdd397ba5480977eef",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-sapientia-magnificat-2-282596698eb6.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-sapientia-magnificat-2-282596698eb6.lvscore"
         },
         {
           "aspect_ratio": 2.2729,
@@ -18839,7 +18837,7 @@
           "caption": "O Adonai",
           "file": "chant-o-adonai-magnificat-3",
           "sha256": "b66f938edef3911ed0095385c85b6d68636668e85b9e5df97bb8226b1f1231bf",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-adonai-magnificat-3-b66f938edef3.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-adonai-magnificat-3-b66f938edef3.lvscore"
         }
       ],
       "setting": null,
@@ -18849,10 +18847,10 @@
       "audio": {
         "bytes": 1005516,
         "sha256": "9fe009856326a8593ad76a0501ec3236ff5a5862362bf5f4239e502c7ffe9d5d",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_radix_magnificat-9fe009856326.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/o_radix_magnificat-9fe009856326.m4a"
       },
       "detail": "Advent's “O” prayer for December 19, sung with Mary's song, the Magnificat",
-      "duration": 246,
+      "duration": 246.0,
       "english_title": "O Root of Jesse, with the Magnificat",
       "group_id": "seasons",
       "id": "o_radix_magnificat",
@@ -19114,7 +19112,7 @@
           "caption": "O Radix Jesse",
           "file": "chant-o-radix-jesse-magnificat-web-1",
           "sha256": "abfeef4313ddbe2c908957f74be71b0818ad39aefbca8a3299577d645cb0e3fa",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-radix-jesse-magnificat-web-1-abfeef4313dd.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-radix-jesse-magnificat-web-1-abfeef4313dd.lvscore"
         },
         {
           "aspect_ratio": 3.806,
@@ -19122,7 +19120,7 @@
           "caption": "Magnificat",
           "file": "chant-o-sapientia-magnificat-2",
           "sha256": "282596698eb6452cbc4907531f6452c002976bf63b80e6bdd397ba5480977eef",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-sapientia-magnificat-2-282596698eb6.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-sapientia-magnificat-2-282596698eb6.lvscore"
         },
         {
           "aspect_ratio": 2.2607,
@@ -19130,7 +19128,7 @@
           "caption": "O Radix Jesse",
           "file": "chant-o-radix-jesse-magnificat-web-3",
           "sha256": "cdc39f56ec6cfd05419bc4050e5daf10ac6277f0af7c8c3ebbfd19502f0c649f",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-radix-jesse-magnificat-web-3-cdc39f56ec6c.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-radix-jesse-magnificat-web-3-cdc39f56ec6c.lvscore"
         }
       ],
       "setting": null,
@@ -19140,7 +19138,7 @@
       "audio": {
         "bytes": 1109471,
         "sha256": "7a2cc9789f5e43d1aa9fef206fcbbd6b15fe15e84ceed118b71411d7e6251778",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_clavis_magnificat-7a2cc9789f5e.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/o_clavis_magnificat-7a2cc9789f5e.m4a"
       },
       "detail": "Advent's “O” prayer for December 20, sung with Mary's song, the Magnificat",
       "duration": 271.1,
@@ -19440,7 +19438,7 @@
           "caption": "O Clavis David",
           "file": "chant-o-clavis-david-magnificat-web-1",
           "sha256": "fcefd1285a7c66627e1e426fa145764bde2899d9cc448b389a152e5aa0600e20",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-clavis-david-magnificat-web-1-fcefd1285a7c.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-clavis-david-magnificat-web-1-fcefd1285a7c.lvscore"
         },
         {
           "aspect_ratio": 3.806,
@@ -19448,7 +19446,7 @@
           "caption": "Magnificat",
           "file": "chant-o-sapientia-magnificat-2",
           "sha256": "282596698eb6452cbc4907531f6452c002976bf63b80e6bdd397ba5480977eef",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-sapientia-magnificat-2-282596698eb6.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-sapientia-magnificat-2-282596698eb6.lvscore"
         },
         {
           "aspect_ratio": 2.2534,
@@ -19456,7 +19454,7 @@
           "caption": "O Clavis David",
           "file": "chant-o-clavis-david-magnificat-web-3",
           "sha256": "b8af704db0a7a3cd39a55178b54ce24e2cbd9d65c89490fbbad7599087b41add",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-clavis-david-magnificat-web-3-b8af704db0a7.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-clavis-david-magnificat-web-3-b8af704db0a7.lvscore"
         }
       ],
       "setting": null,
@@ -19466,10 +19464,10 @@
       "audio": {
         "bytes": 968010,
         "sha256": "053115738409e57265c9b8ac6651d8a0c8abf6640b11a4debe19dbbfe149f0c5",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_oriens_magnificat-053115738409.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/o_oriens_magnificat-053115738409.m4a"
       },
       "detail": "Advent's “O” prayer for December 21, sung with Mary's song, the Magnificat",
-      "duration": 237,
+      "duration": 237.0,
       "english_title": "O Day-Spring, with the Magnificat",
       "group_id": "seasons",
       "id": "o_oriens_magnificat",
@@ -19630,7 +19628,7 @@
           "start": 145.59
         },
         {
-          "end": 164,
+          "end": 164.0,
           "english": "As He spoke to our fathers, to Abraham and to his seed for ever.",
           "latin": "Sicut locútus est ad patres nostros, Abraham et sémini ejus in sǽcula.",
           "part": 1,
@@ -19710,7 +19708,7 @@
           "caption": "O Oriens",
           "file": "chant-o-oriens-magnificat-web-1",
           "sha256": "da78e45fa19aa11af585475ec9b312578ef94717c134e5cc6299a4c38856f4f6",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-oriens-magnificat-web-1-da78e45fa19a.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-oriens-magnificat-web-1-da78e45fa19a.lvscore"
         },
         {
           "aspect_ratio": 3.806,
@@ -19718,7 +19716,7 @@
           "caption": "Magnificat",
           "file": "chant-o-sapientia-magnificat-2",
           "sha256": "282596698eb6452cbc4907531f6452c002976bf63b80e6bdd397ba5480977eef",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-sapientia-magnificat-2-282596698eb6.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-sapientia-magnificat-2-282596698eb6.lvscore"
         },
         {
           "aspect_ratio": 3.1826,
@@ -19726,7 +19724,7 @@
           "caption": "O Oriens",
           "file": "chant-o-oriens-magnificat-web-3",
           "sha256": "597735c8a5df38c4f241e97f32f4ff2a1ed32dec2cb21af48db361110b6999f8",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-oriens-magnificat-web-3-597735c8a5df.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-oriens-magnificat-web-3-597735c8a5df.lvscore"
         }
       ],
       "setting": null,
@@ -19736,10 +19734,10 @@
       "audio": {
         "bytes": 962238,
         "sha256": "2b426c6c7b6f6dfa5beff5f242ecd09e689fe25c59e9cde487006e327fd638aa",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_rex_magnificat-2b426c6c7b6f.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/o_rex_magnificat-2b426c6c7b6f.m4a"
       },
       "detail": "Advent's “O” prayer for December 22, sung with Mary's song, the Magnificat",
-      "duration": 237,
+      "duration": 237.0,
       "english_title": "O King of the Gentiles, with the Magnificat",
       "group_id": "seasons",
       "id": "o_rex_magnificat",
@@ -19802,7 +19800,7 @@
           "start": 53.89
         },
         {
-          "end": 64,
+          "end": 64.0,
           "english": "in God my Saviour.",
           "latin": "in Deo salutári meo.",
           "part": 1,
@@ -19970,7 +19968,7 @@
           "start": 210.77
         },
         {
-          "end": 226,
+          "end": 226.0,
           "english": "come to save man,",
           "latin": "veni, et salva hóminem,",
           "part": 2,
@@ -19994,7 +19992,7 @@
           "caption": "O Rex Gentium",
           "file": "chant-o-rex-gentium-magnificat-web-1",
           "sha256": "e6db0531b1c949fb5cf69333aee60bca11afeb854e3df2fed9f18e3f65de1924",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-rex-gentium-magnificat-web-1-e6db0531b1c9.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-rex-gentium-magnificat-web-1-e6db0531b1c9.lvscore"
         },
         {
           "aspect_ratio": 3.806,
@@ -20002,7 +20000,7 @@
           "caption": "Magnificat",
           "file": "chant-o-sapientia-magnificat-2",
           "sha256": "282596698eb6452cbc4907531f6452c002976bf63b80e6bdd397ba5480977eef",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-sapientia-magnificat-2-282596698eb6.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-sapientia-magnificat-2-282596698eb6.lvscore"
         },
         {
           "aspect_ratio": 3.1826,
@@ -20010,7 +20008,7 @@
           "caption": "O Rex Gentium",
           "file": "chant-o-rex-gentium-magnificat-web-3",
           "sha256": "9b2f6d76e24e418f4ff10d0a7daf76accd7c47b0219d4430823396989152ba11",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-rex-gentium-magnificat-web-3-9b2f6d76e24e.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-rex-gentium-magnificat-web-3-9b2f6d76e24e.lvscore"
         }
       ],
       "setting": null,
@@ -20020,7 +20018,7 @@
       "audio": {
         "bytes": 940816,
         "sha256": "d74bdaba46e387d64a0438e8d739622d9ee34717dcdf6ddf8d54c73c0892dfe7",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_emmanuel_magnificat-d74bdaba46e3.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/o_emmanuel_magnificat-d74bdaba46e3.m4a"
       },
       "detail": "Advent's “O” prayer for December 23, sung with Mary's song, the Magnificat",
       "duration": 232.1,
@@ -20212,7 +20210,7 @@
           "start": 166.77
         },
         {
-          "end": 179,
+          "end": 179.0,
           "english": "As it was in the beginning, is now, and ever shall be,",
           "latin": "Sicut erat in princípio, et nunc, et semper,",
           "part": 1,
@@ -20271,7 +20269,7 @@
           "caption": "O Emmanuel",
           "file": "chant-o-emmanuel-magnificat-web-1",
           "sha256": "60c489a76bf783e93a450fdba99d60c2f3584a1a511732824c3a9d914a2a44b9",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-emmanuel-magnificat-web-1-60c489a76bf7.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-emmanuel-magnificat-web-1-60c489a76bf7.lvscore"
         },
         {
           "aspect_ratio": 3.806,
@@ -20279,7 +20277,7 @@
           "caption": "Magnificat",
           "file": "chant-o-sapientia-magnificat-2",
           "sha256": "282596698eb6452cbc4907531f6452c002976bf63b80e6bdd397ba5480977eef",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-sapientia-magnificat-2-282596698eb6.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-sapientia-magnificat-2-282596698eb6.lvscore"
         },
         {
           "aspect_ratio": 3.1964,
@@ -20287,7 +20285,7 @@
           "caption": "O Emmanuel",
           "file": "chant-o-emmanuel-magnificat-web-3",
           "sha256": "4658df590ee39740447fd569efbfc93657c8d4ca459dbc050aa6824a3c6459f0",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-emmanuel-magnificat-web-3-4658df590ee3.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-emmanuel-magnificat-web-3-4658df590ee3.lvscore"
         }
       ],
       "setting": null,
@@ -20297,10 +20295,10 @@
       "audio": {
         "bytes": 1793831,
         "sha256": "79dc4714e496c351567a66eb3ec5faa638152b7d02b1d08b7fb3772c0b3673f9",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/puer_natus-79dc4714e496.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/puer_natus-79dc4714e496.m4a"
       },
       "detail": "A Christmas carol of the Middle Ages",
-      "duration": 444,
+      "duration": 444.0,
       "english_title": "A Child Is Born in Bethlehem",
       "group_id": "seasons",
       "id": "puer_natus",
@@ -20707,7 +20705,7 @@
           "caption": "Puer natus in Bethlehem",
           "file": "chant-puer-natus-in-bethlehem-web",
           "sha256": "48c8ae541be365ebbd913b9832b42d1b69f495ed77bb5244256c1288ca7cbbaa",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-puer-natus-in-bethlehem-web-48c8ae541be3.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-puer-natus-in-bethlehem-web-48c8ae541be3.lvscore"
         }
       ],
       "setting": null,
@@ -20717,10 +20715,10 @@
       "audio": {
         "bytes": 1275302,
         "sha256": "1a0b5e260df5f2ddfd6c5a708f702b1076aaed6a5fb42410b4e178778175b035",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/adeste_fideles-1a0b5e260df5.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/adeste_fideles-1a0b5e260df5.m4a"
       },
       "detail": "The Christmas hymn in its Latin",
-      "duration": 315,
+      "duration": 315.0,
       "english_title": "O Come, All Ye Faithful",
       "group_id": "seasons",
       "id": "adeste_fideles",
@@ -20832,7 +20830,7 @@
           "start": 96.63
         },
         {
-          "end": 111,
+          "end": 111.0,
           "english": "Come, let us adore,",
           "latin": "Veníte, adorémus,",
           "part": null,
@@ -20895,7 +20893,7 @@
           "start": 161.25
         },
         {
-          "end": 173,
+          "end": 173.0,
           "english": "we shall see veiled beneath the flesh:",
           "latin": "Velátum sub carne vidébimus:",
           "part": null,
@@ -21043,7 +21041,7 @@
           "caption": "Adeste fideles",
           "file": "chant-adeste-fideles",
           "sha256": "b861274faf0bfb78d11d377cafc4f7d60b3311ca48d09149c2bf86f8f460658b",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-adeste-fideles-b861274faf0b.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-adeste-fideles-b861274faf0b.lvscore"
         }
       ],
       "setting": null,
@@ -21053,7 +21051,7 @@
       "audio": {
         "bytes": 831617,
         "sha256": "a6e7fa32175a43dfb442c3796ced89fb466ae5376c2afc94070c90dbff3b61a6",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/jesu_redemptor-a6e7fa32175a.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/jesu_redemptor-a6e7fa32175a.m4a"
       },
       "detail": "The evening hymn of Christmas",
       "duration": 203.1,
@@ -21274,7 +21272,7 @@
           "caption": "Jesu Redemptor omnium",
           "file": "chant-jesu-redemptor-omnium",
           "sha256": "b442fbc0afa3904291396ce69c3e79d81c8dbd799bd80650f39549aae2c1b57a",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-jesu-redemptor-omnium-b442fbc0afa3.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-jesu-redemptor-omnium-b442fbc0afa3.lvscore"
         }
       ],
       "setting": null,
@@ -21284,7 +21282,7 @@
       "audio": {
         "bytes": 874999,
         "sha256": "e23b76cb44e2a79bd30c057bde3215467c60ec5c677d56f14f4307a9d7f118e2",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/attende_domine-e23b76cb44e2.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/attende_domine-e23b76cb44e2.m4a"
       },
       "detail": "Lent's plea for mercy",
       "duration": 212.1,
@@ -21484,7 +21482,7 @@
           "caption": "Attende Domine",
           "file": "chant-attende-domine-web-1",
           "sha256": "a9d8f450d0d99031f76438195498842ecba2814ed0d33253e1d9a7f06c0e801f",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-attende-domine-web-1-a9d8f450d0d9.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-attende-domine-web-1-a9d8f450d0d9.lvscore"
         }
       ],
       "setting": null,
@@ -21494,10 +21492,10 @@
       "audio": {
         "bytes": 993169,
         "sha256": "023881091376c44e182442cd6e9009f41de6b3904b7d166ced2f827e64996d0d",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/parce_domine-023881091376.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/parce_domine-023881091376.m4a"
       },
       "detail": "From the prophet Joel, sung in Lent",
-      "duration": 243,
+      "duration": 243.0,
       "english_title": "Spare, O Lord",
       "group_id": "seasons",
       "id": "parce_domine",
@@ -21820,7 +21818,7 @@
           "caption": "Parce Domine",
           "file": "chant-parce-domine-web-1",
           "sha256": "e2708b1c5bcc10332504f118a18256305b459346cf478551b00e5fe6544aed45",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-parce-domine-web-1-e2708b1c5bcc.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-parce-domine-web-1-e2708b1c5bcc.lvscore"
         }
       ],
       "setting": null,
@@ -21830,10 +21828,10 @@
       "audio": {
         "bytes": 1227741,
         "sha256": "252a7be2cf0c2cc77fba097e68601ae6688815593122c50f4f17b48d8a519a3e",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/media_vita-252a7be2cf0c.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/media_vita-252a7be2cf0c.m4a"
       },
       "detail": "A plea from the weeks before Lent: in the midst of life we are in death",
-      "duration": 300,
+      "duration": 300.0,
       "english_title": "In the Midst of Life",
       "group_id": "seasons",
       "id": "media_vita",
@@ -22071,7 +22069,7 @@
           "start": 254.33
         },
         {
-          "end": 273,
+          "end": 273.0,
           "english": "holy and mighty,",
           "latin": "Sancte fortis,",
           "part": null,
@@ -22107,7 +22105,7 @@
           "caption": "Media vita",
           "file": "chant-media-vita-web",
           "sha256": "5eef6a2f941b3b9b6656a4b91ba1a533831bf8533da6ed125ddc61bff782f0a4",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-media-vita-web-5eef6a2f941b.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-media-vita-web-5eef6a2f941b.lvscore"
         }
       ],
       "setting": null,
@@ -22117,7 +22115,7 @@
       "audio": {
         "bytes": 1311780,
         "sha256": "0f90592ab95fc2930a317266429f565fbfb582c6a7e61a6a19d1edb645596ad3",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/miserere-0f90592ab95f.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/miserere-0f90592ab95f.m4a"
       },
       "detail": "David's psalm of repentance",
       "duration": 320.1,
@@ -22431,7 +22429,7 @@
           "caption": "Miserere mei Deus",
           "file": "chant-miserere-mei-deus",
           "sha256": "19670999e5ca93d4619f1bf25e63f8ebf0e7c3498226f0c30e2dcbf7cbaf0ba9",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-miserere-mei-deus-19670999e5ca.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-miserere-mei-deus-19670999e5ca.lvscore"
         }
       ],
       "setting": null,
@@ -22441,7 +22439,7 @@
       "audio": {
         "bytes": 836507,
         "sha256": "36db2fccd00ab26dbdc33cbaae49b518c52a1e7d3f13b3f5e7c57baa17b97d9d",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/vexilla_regis-36db2fccd00a.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/vexilla_regis-36db2fccd00a.m4a"
       },
       "detail": "The evening hymn of the last two weeks of Lent",
       "duration": 205.1,
@@ -22662,7 +22660,7 @@
           "caption": "Vexilla Regis prodeunt",
           "file": "chant-vexilla-regis-prodeunt",
           "sha256": "24d886d19517a8e7dc61f3348fc0f731617c39fa0f36393a07f94d78e5e50498",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vexilla-regis-prodeunt-24d886d19517.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vexilla-regis-prodeunt-24d886d19517.lvscore"
         }
       ],
       "setting": null,
@@ -22672,10 +22670,10 @@
       "audio": {
         "bytes": 552949,
         "sha256": "2beff6eeab6fc4e7fe602143e5b59384f639df1518ffd95c2fa1edf672d87392",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/audi_benigne-2beff6eeab6f.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/audi_benigne-2beff6eeab6f.m4a"
       },
       "detail": "The evening hymn of Lent",
-      "duration": 135,
+      "duration": 135.0,
       "english_title": "O Kind Creator, Bow Thine Ear",
       "group_id": "seasons",
       "id": "audi_benigne",
@@ -22781,7 +22779,7 @@
           "caption": "Audi benigne Conditor",
           "file": "chant-audi-benigne-conditor-web-1",
           "sha256": "e3b6c82443742bd6d02411726ba280274e0b0e0ae036c1060aed438b87f842f0",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-audi-benigne-conditor-web-1-e3b6c8244374.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-audi-benigne-conditor-web-1-e3b6c8244374.lvscore"
         }
       ],
       "setting": null,
@@ -22791,10 +22789,10 @@
       "audio": {
         "bytes": 451321,
         "sha256": "5d5eac2e1c8e6785807f8f7ff21b56ba69bd03989e4b0b96985c8c25c5e95a5e",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_vos_omnes-5d5eac2e1c8e.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/o_vos_omnes-5d5eac2e1c8e.m4a"
       },
       "detail": "Lamentations 1:12, sung in the Sorrowful Mysteries",
-      "duration": 110,
+      "duration": 110.0,
       "english_title": "O All Ye That Pass By",
       "group_id": "seasons",
       "id": "o_vos_omnes",
@@ -22872,7 +22870,7 @@
           "caption": "O vos omnes",
           "file": "chant-o-vos-omnes",
           "sha256": "bdb6b5e6b6b4f0d4c969d109affb2384281f71ed5a3cb28b7ceba3558fb9950a",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-vos-omnes-bdb6b5e6b6b4.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-vos-omnes-bdb6b5e6b6b4.lvscore"
         }
       ],
       "setting": null,
@@ -22882,10 +22880,10 @@
       "audio": {
         "bytes": 462673,
         "sha256": "d2df4eb64a74924f81b5eb7da4a567954414b1d693b3cb551e84a46b016237a2",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/victimae_paschali-d2df4eb64a74.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/victimae_paschali-d2df4eb64a74.m4a"
       },
       "detail": "The feast poem of Easter Sunday",
-      "duration": 114,
+      "duration": 114.0,
       "english_title": "Praises to the Paschal Victim",
       "group_id": "sequences",
       "id": "victimae_paschali",
@@ -23047,7 +23045,7 @@
           "caption": "Victimae paschali laudes",
           "file": "chant-victimae-paschali-laudes",
           "sha256": "233115373f3b70c5c412a25d84f7c5a38deca3860db4319c4cbb24560af5f520",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-victimae-paschali-laudes-233115373f3b.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-victimae-paschali-laudes-233115373f3b.lvscore"
         }
       ],
       "setting": null,
@@ -23057,10 +23055,10 @@
       "audio": {
         "bytes": 1613587,
         "sha256": "01d1958966f0383eeef90d1f93e9c1515cec91bd590c98ce376dd08e93b0bf5c",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_filii-01d1958966f0.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/o_filii-01d1958966f0.m4a"
       },
       "detail": "An Easter carol of the Resurrection",
-      "duration": 390,
+      "duration": 390.0,
       "english_title": "O Sons and Daughters",
       "group_id": "seasons",
       "id": "o_filii",
@@ -23607,7 +23605,7 @@
           "caption": "O filii et filiae",
           "file": "chant-o-filii-et-filiae-web-1",
           "sha256": "08949d78304e91b9c6c39093a182ccc11841da0afe0d772f23ec626d39d77eb3",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-o-filii-et-filiae-web-1-08949d78304e.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-o-filii-et-filiae-web-1-08949d78304e.lvscore"
         }
       ],
       "setting": null,
@@ -23617,10 +23615,10 @@
       "audio": {
         "bytes": 853299,
         "sha256": "d71b30f4e1a77fddde53a398226e3791a9a82cc7b557a1a2275c5b3ca62ad1f1",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/vidi_aquam-d71b30f4e1a7.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/vidi_aquam-d71b30f4e1a7.m4a"
       },
       "detail": "Sung as the priest sprinkles holy water before Sunday Mass in the Easter season",
-      "duration": 210,
+      "duration": 210.0,
       "english_title": "I Saw Water",
       "group_id": "asperges",
       "id": "vidi_aquam",
@@ -23767,7 +23765,7 @@
           "start": 184.97
         },
         {
-          "end": 205,
+          "end": 205.0,
           "english": "alleluia, alleluia.",
           "latin": "allelúia, allelúia.",
           "part": 0,
@@ -23782,7 +23780,7 @@
           "caption": "Vidi aquam",
           "file": "chant-vidi-aquam",
           "sha256": "e882b175f80d11c1af5e655901cdf0d0c5ee0df2b7809e544b91dc09ca3c6e88",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-vidi-aquam-e882b175f80d.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-vidi-aquam-e882b175f80d.lvscore"
         }
       ],
       "setting": null,
@@ -23792,10 +23790,10 @@
       "audio": {
         "bytes": 1441455,
         "sha256": "f1b30779cb3dd77315fb6a5141239ebc23131b4be391c809b2e1f3f7de77eb11",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/salve_festa_dies-f1b30779cb3d.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/salve_festa_dies-f1b30779cb3d.m4a"
       },
       "detail": "The Easter hymn of the day for ever blest, on which God conquers hell",
-      "duration": 348,
+      "duration": 348.0,
       "english_title": "Hail, Festive Day",
       "group_id": "seasons",
       "id": "salve_festa_dies",
@@ -24069,7 +24067,7 @@
           "caption": "Salve festa dies",
           "file": "chant-salve-festa-dies",
           "sha256": "032a4889682a31c53f86076c3faa6cac4a7e089ad153d88a7354bcf8664b7541",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-salve-festa-dies-032a4889682a.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-salve-festa-dies-032a4889682a.lvscore"
         }
       ],
       "setting": null,
@@ -24079,10 +24077,10 @@
       "audio": {
         "bytes": 537316,
         "sha256": "0f41f46e4e9e931759804c6de52ae234325a1f039e93576a066ca470be57d01c",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/aurora_caelum-0f41f46e4e9e.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/aurora_caelum-0f41f46e4e9e.m4a"
       },
       "detail": "The morning hymn of the Easter season",
-      "duration": 132,
+      "duration": 132.0,
       "english_title": "The Dawn Is Reddening the Sky",
       "group_id": "seasons",
       "id": "aurora_caelum",
@@ -24188,7 +24186,7 @@
           "caption": "Aurora caelum purpurat",
           "file": "chant-aurora-caelum-purpurat",
           "sha256": "0adc869278c5a6533cf143c310b3483bdaf7f73865523313f54eba56b1a1f5fd",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-aurora-caelum-purpurat-0adc869278c5.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-aurora-caelum-purpurat-0adc869278c5.lvscore"
         }
       ],
       "setting": null,
@@ -24198,7 +24196,7 @@
       "audio": {
         "bytes": 905188,
         "sha256": "f4d3e1d8afe90b2a455c16f9e1ae3c8c519d8c69dd31443376f8aa4a2f9e3543",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ad_regias-f4d3e1d8afe9.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/ad_regias-f4d3e1d8afe9.m4a"
       },
       "detail": "The evening hymn of the Easter season",
       "duration": 220.1,
@@ -24349,7 +24347,7 @@
           "caption": "Ad regias Agni dapes",
           "file": "chant-ad-regias-agni-dapes",
           "sha256": "483d5cc7dfafa34b7794fd7726d648f91e44fc1b952defe16356e14a50a544f6",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-ad-regias-agni-dapes-483d5cc7dfaf.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-ad-regias-agni-dapes-483d5cc7dfaf.lvscore"
         }
       ],
       "setting": null,
@@ -24359,10 +24357,10 @@
       "audio": {
         "bytes": 1568835,
         "sha256": "b3c8590a074c18502553c4902b7dc72e512cd08503e57bc8a22e702d4f6630ea",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/dies_irae-b3c8590a074c.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/dies_irae-b3c8590a074c.m4a"
       },
       "detail": "The poem sung at the funeral Mass, before the Gospel",
-      "duration": 384,
+      "duration": 384.0,
       "english_title": "Day of Wrath",
       "group_id": "requiem",
       "id": "dies_irae",
@@ -24404,7 +24402,7 @@
           "start": 21.97
         },
         {
-          "end": 34,
+          "end": 34.0,
           "english": "to sift all things strictly!",
           "latin": "Cuncta stricte discussúrus!",
           "part": null,
@@ -24769,7 +24767,7 @@
           "caption": "Dies irae",
           "file": "chant-dies-irae",
           "sha256": "ceba497ccec5956be155a37b3088b9459e0f83833c6f2f95ada483c68732a8bf",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-dies-irae-ceba497ccec5.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-dies-irae-ceba497ccec5.lvscore"
         }
       ],
       "setting": null,
@@ -24779,10 +24777,10 @@
       "audio": {
         "bytes": 620244,
         "sha256": "841271faf0b28b4c3a804a2c6a2edb35a57ba95020e83cdde43142fb14b5d9aa",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/kyrie_de_angelis-841271faf0b2.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/kyrie_de_angelis-841271faf0b2.m4a"
       },
       "detail": "From the Mass of the Angels (Mass VIII), the best-known sung Mass",
-      "duration": 153,
+      "duration": 153.0,
       "english_title": "Lord, Have Mercy",
       "group_id": "mass",
       "id": "kyrie_de_angelis",
@@ -24860,7 +24858,7 @@
           "caption": "Kyrie",
           "file": "chant-kyrie-viii",
           "sha256": "f04239f22f8e103ed6e84ebde58435b398199e5b1237678ac81402f50bfe9f7d",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-kyrie-viii-f04239f22f8e.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-kyrie-viii-f04239f22f8e.lvscore"
         }
       ],
       "setting": "Mass of the Angels",
@@ -24870,10 +24868,10 @@
       "audio": {
         "bytes": 666465,
         "sha256": "e020a4032d6a37c1b88f29f2f1b4fcf24dcc534d5cdfbafd93250a591872f653",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/gloria_de_angelis-e020a4032d6a.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/gloria_de_angelis-e020a4032d6a.m4a"
       },
       "detail": "From the Mass of the Angels (Mass VIII), the best-known sung Mass",
-      "duration": 165,
+      "duration": 165.0,
       "english_title": "Glory to God in the Highest",
       "group_id": "mass",
       "id": "gloria_de_angelis",
@@ -25049,7 +25047,7 @@
           "caption": "Gloria",
           "file": "chant-gloria-viii",
           "sha256": "eec6da7a9510253be1874dae592786458ab64d6ff58f2e8aded72f1573e3fb98",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-gloria-viii-eec6da7a9510.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-gloria-viii-eec6da7a9510.lvscore"
         }
       ],
       "setting": "Mass of the Angels",
@@ -25059,10 +25057,10 @@
       "audio": {
         "bytes": 375927,
         "sha256": "2b8f33e59379fd70a0bc66434081b252ae56926d7fca7f6750199a7b1479dc84",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/sanctus_de_angelis-2b8f33e59379.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/sanctus_de_angelis-2b8f33e59379.m4a"
       },
       "detail": "From the Mass of the Angels (Mass VIII), the best-known sung Mass",
-      "duration": 93,
+      "duration": 93.0,
       "english_title": "Holy, Holy, Holy",
       "group_id": "mass",
       "id": "sanctus_de_angelis",
@@ -25126,7 +25124,7 @@
           "caption": "Sanctus",
           "file": "chant-sanctus-viii",
           "sha256": "867a1d72d130fe582e8a1d89c9c7284c2e2cd07e2e5aad7d1edc18df1ca84f4e",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-sanctus-viii-867a1d72d130.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-sanctus-viii-867a1d72d130.lvscore"
         }
       ],
       "setting": "Mass of the Angels",
@@ -25136,7 +25134,7 @@
       "audio": {
         "bytes": 314161,
         "sha256": "08cec57f9d67e0cf10570a753abf73f6f65b618e1e102de00b842a1763297342",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/agnus_de_angelis-08cec57f9d67.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/agnus_de_angelis-08cec57f9d67.m4a"
       },
       "detail": "From the Mass of the Angels (Mass VIII), the best-known sung Mass",
       "duration": 77.1,
@@ -25210,7 +25208,7 @@
           "caption": "Agnus Dei",
           "file": "chant-agnus-dei-viii",
           "sha256": "2c1e3ea1ad601b9bb150d614d84e8183438990c78e697e8718d6665350af9099",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-agnus-dei-viii-2c1e3ea1ad60.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-agnus-dei-viii-2c1e3ea1ad60.lvscore"
         }
       ],
       "setting": "Mass of the Angels",
@@ -25220,7 +25218,7 @@
       "audio": {
         "bytes": 1115138,
         "sha256": "af247a5c440b3ad4eb63a758d2ad5eb75d0af352199a26a0152c5e3fe3bfacc8",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/credo_iii-af247a5c440b.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/credo_iii-af247a5c440b.m4a"
       },
       "detail": "The Creed sung on Sundays and great feasts",
       "duration": 274.1,
@@ -25450,7 +25448,7 @@
           "caption": "Credo",
           "file": "chant-credo-iii",
           "sha256": "30dcd5c6f247af02f38ff3226a86d7b6bd5c263f5584dc12ea852f262cb01659",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-credo-iii-30dcd5c6f247.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-credo-iii-30dcd5c6f247.lvscore"
         }
       ],
       "setting": "Credo III",
@@ -25460,7 +25458,7 @@
       "audio": {
         "bytes": 514036,
         "sha256": "1011c47beea1fa1a9cdd5061bc5da4809bc50bb25859c06998bd2771224ac145",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/asperges_me-1011c47beea1.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/asperges_me-1011c47beea1.m4a"
       },
       "detail": "Sung as the priest sprinkles holy water before Sunday Mass, outside the Easter season",
       "duration": 127.1,
@@ -25526,7 +25524,7 @@
           "start": 89.31
         },
         {
-          "end": 122,
+          "end": 122.0,
           "english": "Thou shalt wash me, and I shall be made whiter than snow.",
           "latin": "lavábis me, et super nivem dealbábor.",
           "part": 0,
@@ -25541,7 +25539,7 @@
           "caption": "Asperges me",
           "file": "chant-asperges-me",
           "sha256": "bd14898131fba00f4a40a750e533c456777d989609e20d3d92255f187d5481c7",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-asperges-me-bd14898131fb.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-asperges-me-bd14898131fb.lvscore"
         }
       ],
       "setting": null,
@@ -25551,10 +25549,10 @@
       "audio": {
         "bytes": 487824,
         "sha256": "8136d9f3f71261a308f1cd53ce62152ba4de12b372db69a7e5a21a0a29fd6aea",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/kyrie_orbis_factor-8136d9f3f712.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/kyrie_orbis_factor-8136d9f3f712.m4a"
       },
       "detail": "From Mass XI, Orbis Factor, the Mass of the Sundays through the year",
-      "duration": 119,
+      "duration": 119.0,
       "english_title": "Lord, Have Mercy",
       "group_id": "mass",
       "id": "kyrie_orbis_factor",
@@ -25632,7 +25630,7 @@
           "caption": "Kyrie",
           "file": "chant-kyrie-xi",
           "sha256": "35d122d813ea096c347a655ef370a0a5e74f5b93abd832d3760843764b6a14a9",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-kyrie-xi-35d122d813ea.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-kyrie-xi-35d122d813ea.lvscore"
         }
       ],
       "setting": "Mass XI",
@@ -25642,10 +25640,10 @@
       "audio": {
         "bytes": 704595,
         "sha256": "854f3c9e5d1971ca534a2962fbbe4397e84cbd2b3b00578fd98105ad2af377fe",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/gloria_orbis_factor-854f3c9e5d19.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/gloria_orbis_factor-854f3c9e5d19.m4a"
       },
       "detail": "From Mass XI, Orbis Factor, the Mass of the Sundays through the year",
-      "duration": 172,
+      "duration": 172.0,
       "english_title": "Glory to God in the Highest",
       "group_id": "mass",
       "id": "gloria_orbis_factor",
@@ -25807,7 +25805,7 @@
           "caption": "Gloria",
           "file": "chant-gloria-xi",
           "sha256": "5948783bef7f4f7b3b62732a069bd7bef32ec02696d28f69d797d9f240152648",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-gloria-xi-5948783bef7f.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-gloria-xi-5948783bef7f.lvscore"
         }
       ],
       "setting": "Mass XI",
@@ -25817,10 +25815,10 @@
       "audio": {
         "bytes": 312864,
         "sha256": "e2f7a629f1b4324059e9718c0ec5e16d3ff9f0a83ba45a24dce50c7ec1fb7159",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/sanctus_orbis_factor-e2f7a629f1b4.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/sanctus_orbis_factor-e2f7a629f1b4.m4a"
       },
       "detail": "From Mass XI, Orbis Factor, the Mass of the Sundays through the year",
-      "duration": 76,
+      "duration": 76.0,
       "english_title": "Holy, Holy, Holy",
       "group_id": "mass",
       "id": "sanctus_orbis_factor",
@@ -25877,7 +25875,7 @@
           "caption": "Sanctus",
           "file": "chant-sanctus-xi",
           "sha256": "9f64bed3a1b69fcc9f602ea4fff294271a4006a854bc865ee3f548c5ba404700",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-sanctus-xi-9f64bed3a1b6.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-sanctus-xi-9f64bed3a1b6.lvscore"
         }
       ],
       "setting": "Mass XI",
@@ -25887,17 +25885,17 @@
       "audio": {
         "bytes": 250827,
         "sha256": "0a40a16bd60a4be221cc3e689def56dcaf37561f69bcb0debfc9993d8a2e65d5",
-        "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/agnus_orbis_factor-0a40a16bd60a.m4a"
+        "url": "https://media.lumenviae.org/chants/audio/agnus_orbis_factor-0a40a16bd60a.m4a"
       },
       "detail": "From Mass XI, Orbis Factor, the Mass of the Sundays through the year",
-      "duration": 62,
+      "duration": 62.0,
       "english_title": "Lamb of God",
       "group_id": "mass",
       "id": "agnus_orbis_factor",
       "latin_title": "Agnus Dei",
       "lines": [
         {
-          "end": 5,
+          "end": 5.0,
           "english": "Lamb of God,",
           "latin": "Agnus Dei,",
           "part": 0,
@@ -25911,14 +25909,14 @@
           "start": 5.21
         },
         {
-          "end": 19,
+          "end": 19.0,
           "english": "have mercy on us.",
           "latin": "miserére nobis.",
           "part": 0,
           "start": 12.81
         },
         {
-          "end": 32,
+          "end": 32.0,
           "english": "Lamb of God, Who takest away the sins of the world,",
           "latin": "Agnus Dei, qui tollis peccáta mundi:",
           "part": 0,
@@ -25961,361 +25959,11 @@
           "caption": "Agnus Dei",
           "file": "chant-agnus-dei-xi",
           "sha256": "98490066ef96782c086badbf5df011f013046d22a3e77fa4ecfdf85e6718f632",
-          "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/scores/chant-agnus-dei-xi-98490066ef96.lvscore"
+          "url": "https://media.lumenviae.org/chants/scores/chant-agnus-dei-xi-98490066ef96.lvscore"
         }
       ],
       "setting": "Mass XI",
       "source_url": "https://www.verbumgloriae.es/project/misa-xi-orbis-factor/"
-    }
-  ],
-  "feasts": [
-    {
-      "chant_id": "jesu_dulcis_memoria",
-      "id": "holy_name",
-      "name": "The Holy Name of Jesus",
-      "painting": "jesus_holy_name",
-      "rule": {
-        "day": null,
-        "days_from_easter": null,
-        "kind": "holy_name",
-        "month": null
-      }
-    },
-    {
-      "chant_id": "te_joseph",
-      "id": "st_joseph",
-      "name": "St Joseph",
-      "painting": "devotion_st_joseph",
-      "rule": {
-        "day": 19,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 3
-      }
-    },
-    {
-      "chant_id": "ave_maria_antiphon",
-      "id": "annunciation",
-      "name": "The Annunciation",
-      "painting": "feast_annunciation",
-      "rule": {
-        "day": 25,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 3
-      }
-    },
-    {
-      "chant_id": "pange_lingua",
-      "id": "holy_thursday",
-      "name": "Holy Thursday",
-      "painting": "luminous_eucharist",
-      "rule": {
-        "day": null,
-        "days_from_easter": -3,
-        "kind": "easter",
-        "month": null
-      }
-    },
-    {
-      "chant_id": "vexilla_regis",
-      "id": "good_friday",
-      "name": "Good Friday",
-      "painting": "sorrowful_crucifixion",
-      "rule": {
-        "day": null,
-        "days_from_easter": -2,
-        "kind": "easter",
-        "month": null
-      }
-    },
-    {
-      "chant_id": "victimae_paschali",
-      "id": "easter",
-      "name": "Easter Sunday",
-      "painting": "easter_noli_me_tangere",
-      "rule": {
-        "day": null,
-        "days_from_easter": 0,
-        "kind": "easter",
-        "month": null
-      }
-    },
-    {
-      "chant_id": "jesu_nostra_redemptio",
-      "id": "ascension",
-      "name": "The Ascension",
-      "painting": "glorious_ascension",
-      "rule": {
-        "day": null,
-        "days_from_easter": 39,
-        "kind": "easter",
-        "month": null
-      }
-    },
-    {
-      "chant_id": "veni_sancte_spiritus",
-      "id": "pentecost",
-      "name": "Pentecost",
-      "painting": "glorious_pentecost",
-      "rule": {
-        "day": null,
-        "days_from_easter": 49,
-        "kind": "easter",
-        "month": null
-      }
-    },
-    {
-      "chant_id": "lauda_sion",
-      "id": "corpus_christi",
-      "name": "Corpus Christi (the Body of Christ)",
-      "painting": "topic_blessed_sacrament",
-      "rule": {
-        "day": null,
-        "days_from_easter": 60,
-        "kind": "easter",
-        "month": null
-      }
-    },
-    {
-      "chant_id": "litany_sacred_heart",
-      "id": "sacred_heart",
-      "name": "The Sacred Heart",
-      "painting": "topic_our_lord",
-      "rule": {
-        "day": null,
-        "days_from_easter": 68,
-        "kind": "easter",
-        "month": null
-      }
-    },
-    {
-      "chant_id": "ut_queant_laxis",
-      "id": "st_john_baptist",
-      "name": "The Birth of St John the Baptist",
-      "painting": "saint_john_baptist_birth",
-      "rule": {
-        "day": 24,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 6
-      }
-    },
-    {
-      "chant_id": "salvete_christi_vulnera",
-      "id": "precious_blood",
-      "name": "The Precious Blood",
-      "painting": "jesus_precious_blood",
-      "rule": {
-        "day": 1,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 7
-      }
-    },
-    {
-      "chant_id": "flos_carmeli",
-      "id": "mount_carmel",
-      "name": "Our Lady of Mount Carmel",
-      "painting": "mary_mount_carmel",
-      "rule": {
-        "day": 16,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 7
-      }
-    },
-    {
-      "chant_id": "ave_maris_stella_feasts",
-      "id": "assumption",
-      "name": "The Assumption",
-      "painting": "glorious_assumption",
-      "rule": {
-        "day": 15,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 8
-      }
-    },
-    {
-      "chant_id": "stabat_mater",
-      "id": "seven_sorrows",
-      "name": "Our Lady of Sorrows",
-      "painting": "mary_mater_dolorosa",
-      "rule": {
-        "day": 15,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 9
-      }
-    },
-    {
-      "chant_id": "sancte_michael",
-      "id": "st_michael",
-      "name": "St Michael",
-      "painting": "saint_michael",
-      "rule": {
-        "day": 29,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 9
-      }
-    },
-    {
-      "chant_id": "litany_loreto",
-      "id": "rosary",
-      "name": "Our Lady of the Rosary",
-      "painting": "feast_our_lady_of_the_rosary",
-      "rule": {
-        "day": 7,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 10
-      }
-    },
-    {
-      "chant_id": "christus_vincit",
-      "id": "christ_the_king",
-      "name": "Christ the King",
-      "painting": "feast_christ_the_king",
-      "rule": {
-        "day": null,
-        "days_from_easter": null,
-        "kind": "last_sunday_of_october",
-        "month": null
-      }
-    },
-    {
-      "chant_id": "litany_saints",
-      "id": "all_saints",
-      "name": "All Saints",
-      "painting": "feast_all_saints",
-      "rule": {
-        "day": 1,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 11
-      }
-    },
-    {
-      "chant_id": "dies_irae",
-      "id": "all_souls",
-      "name": "All Souls",
-      "painting": "devotion_holy_souls",
-      "rule": {
-        "day": 2,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 11
-      }
-    },
-    {
-      "chant_id": "tota_pulchra",
-      "id": "immaculate_conception",
-      "name": "The Immaculate Conception",
-      "painting": "mary_immaculate_conception",
-      "rule": {
-        "day": 8,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 12
-      }
-    },
-    {
-      "chant_id": "o_sapientia_magnificat",
-      "id": "o_sapientia",
-      "name": "Advent's “O Wisdom”",
-      "painting": "advent_isaiah",
-      "rule": {
-        "day": 17,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 12
-      }
-    },
-    {
-      "chant_id": "o_adonai_magnificat",
-      "id": "o_adonai",
-      "name": "Advent's “O Adonai”",
-      "painting": "advent_isaiah",
-      "rule": {
-        "day": 18,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 12
-      }
-    },
-    {
-      "chant_id": "o_radix_magnificat",
-      "id": "o_radix",
-      "name": "Advent's “O Root of Jesse”",
-      "painting": "advent_isaiah",
-      "rule": {
-        "day": 19,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 12
-      }
-    },
-    {
-      "chant_id": "o_clavis_magnificat",
-      "id": "o_clavis",
-      "name": "Advent's “O Key of David”",
-      "painting": "advent_isaiah",
-      "rule": {
-        "day": 20,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 12
-      }
-    },
-    {
-      "chant_id": "o_oriens_magnificat",
-      "id": "o_oriens",
-      "name": "Advent's “O Day-Spring”",
-      "painting": "advent_isaiah",
-      "rule": {
-        "day": 21,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 12
-      }
-    },
-    {
-      "chant_id": "o_rex_magnificat",
-      "id": "o_rex",
-      "name": "Advent's “O King of the Gentiles”",
-      "painting": "advent_isaiah",
-      "rule": {
-        "day": 22,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 12
-      }
-    },
-    {
-      "chant_id": "o_emmanuel_magnificat",
-      "id": "o_emmanuel",
-      "name": "Advent's “O Emmanuel”",
-      "painting": "advent_isaiah",
-      "rule": {
-        "day": 23,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 12
-      }
-    },
-    {
-      "chant_id": "adeste_fideles",
-      "id": "christmas",
-      "name": "Christmas Day",
-      "painting": "christmas_shepherds",
-      "rule": {
-        "day": 25,
-        "days_from_easter": null,
-        "kind": "fixed",
-        "month": 12
-      }
     }
   ],
   "groups": [
@@ -26622,378 +26270,6 @@
       "title": "The Rosary in Latin"
     }
   ],
-  "months": [
-    {
-      "chant_ids": [
-        "jesu_dulcis_memoria",
-        "litany_holy_name"
-      ],
-      "feast_id": "holy_name",
-      "month": 1,
-      "occasion_id": null,
-      "title": "The Month of the Holy Name"
-    },
-    {
-      "chant_ids": [
-        "te_joseph",
-        "litany_st_joseph"
-      ],
-      "feast_id": "st_joseph",
-      "month": 3,
-      "occasion_id": null,
-      "title": "The Month of St Joseph"
-    },
-    {
-      "chant_ids": [
-        "adoro_te",
-        "ave_verum"
-      ],
-      "feast_id": null,
-      "month": 4,
-      "occasion_id": "visit",
-      "title": "The Month of the Blessed Sacrament"
-    },
-    {
-      "chant_ids": [
-        "ave_maris_stella_feasts",
-        "litany_loreto"
-      ],
-      "feast_id": null,
-      "month": 5,
-      "occasion_id": "sung_rosary",
-      "title": "The Month of Mary"
-    },
-    {
-      "chant_ids": [
-        "litany_sacred_heart",
-        "cor_jesu"
-      ],
-      "feast_id": "sacred_heart",
-      "month": 6,
-      "occasion_id": null,
-      "title": "The Month of the Sacred Heart"
-    },
-    {
-      "chant_ids": [
-        "salvete_christi_vulnera",
-        "anima_christi"
-      ],
-      "feast_id": "precious_blood",
-      "month": 7,
-      "occasion_id": null,
-      "title": "The Month of the Precious Blood"
-    },
-    {
-      "chant_ids": [
-        "inviolata",
-        "salve_mater"
-      ],
-      "feast_id": "assumption",
-      "month": 8,
-      "occasion_id": null,
-      "title": "The Month of the Immaculate Heart"
-    },
-    {
-      "chant_ids": [
-        "stabat_mater"
-      ],
-      "feast_id": "seven_sorrows",
-      "month": 9,
-      "occasion_id": null,
-      "title": "The Month of Our Lady of Sorrows"
-    },
-    {
-      "chant_ids": [],
-      "feast_id": "rosary",
-      "month": 10,
-      "occasion_id": "sung_rosary",
-      "title": "The Month of the Holy Rosary"
-    },
-    {
-      "chant_ids": [],
-      "feast_id": "all_souls",
-      "month": 11,
-      "occasion_id": "for_the_dead",
-      "title": "The Month for Those Who Have Died"
-    },
-    {
-      "chant_ids": [],
-      "feast_id": "immaculate_conception",
-      "month": 12,
-      "occasion_id": null,
-      "title": "The Month of the Immaculate Conception"
-    }
-  ],
-  "occasions": [
-    {
-      "blocks": [
-        {
-          "rounds": 1,
-          "rubric": "The Host is placed on the altar for all to see. Kneel.",
-          "steps": [
-            {
-              "chant_id": "o_salutaris",
-              "kind": "chant",
-              "times": 1
-            }
-          ]
-        },
-        {
-          "rounds": 1,
-          "rubric": "The priest offers incense.",
-          "steps": [
-            {
-              "chant_id": "tantum_ergo",
-              "kind": "chant",
-              "times": 1
-            }
-          ]
-        },
-        {
-          "rounds": 1,
-          "rubric": "The priest blesses everyone with the Host. Then pray together:",
-          "steps": [
-            {
-              "chant_id": "divine_praises",
-              "kind": "chant",
-              "times": 1
-            }
-          ]
-        },
-        {
-          "rounds": 1,
-          "rubric": "The Host is put back in the tabernacle, where it is kept in church.",
-          "steps": [
-            {
-              "chant_id": "adoremus",
-              "kind": "chant",
-              "times": 1
-            }
-          ]
-        }
-      ],
-      "id": "benediction",
-      "note": "Benediction: hymns before the Host, then the priest's blessing",
-      "painting": "topic_blessed_sacrament",
-      "title": "Adoration and Blessing"
-    },
-    {
-      "blocks": [
-        {
-          "rounds": 1,
-          "rubric": "Kneel before the tabernacle, where the Host is kept.",
-          "steps": [
-            {
-              "chant_id": "adoro_te",
-              "kind": "chant",
-              "times": 1
-            }
-          ]
-        },
-        {
-          "rounds": 1,
-          "rubric": "Greet Our Lord, hidden there.",
-          "steps": [
-            {
-              "chant_id": "ave_verum",
-              "kind": "chant",
-              "times": 1
-            }
-          ]
-        },
-        {
-          "rounds": 1,
-          "rubric": "Before you go, give thanks.",
-          "steps": [
-            {
-              "chant_id": "o_sacrum_convivium",
-              "kind": "chant",
-              "times": 1
-            }
-          ]
-        }
-      ],
-      "id": "visit",
-      "note": "Quiet time with Jesus, present in the Host",
-      "painting": "jesus_eucharist_saviour",
-      "title": "A Visit to Jesus in Church"
-    },
-    {
-      "blocks": [
-        {
-          "rounds": 1,
-          "rubric": "On the crucifix: make the Sign of the Cross, then sing the Creed.",
-          "steps": [
-            {
-              "chant_id": "in_nomine_patris",
-              "kind": "chant",
-              "times": 1
-            },
-            {
-              "chant_id": "credo_in_deum",
-              "kind": "chant",
-              "times": 1
-            }
-          ]
-        },
-        {
-          "rounds": 1,
-          "rubric": "On the large bead, then the three small beads, for faith, hope and charity.",
-          "steps": [
-            {
-              "chant_id": "pater_noster",
-              "kind": "chant",
-              "times": 1
-            },
-            {
-              "chant_id": "ave_maria",
-              "kind": "chant",
-              "times": 3
-            },
-            {
-              "chant_id": "gloria_patri",
-              "kind": "chant",
-              "times": 1
-            }
-          ]
-        },
-        {
-          "rounds": 5,
-          "rubric": "Name each mystery, then pray its decade of ten Hail Marys. Five times.",
-          "steps": [
-            {
-              "chant_id": "pater_noster",
-              "kind": "chant",
-              "times": 1
-            },
-            {
-              "chant_id": "ave_maria",
-              "kind": "chant",
-              "times": 10
-            },
-            {
-              "chant_id": "gloria_patri",
-              "kind": "chant",
-              "times": 1
-            },
-            {
-              "chant_id": "o_mi_jesu",
-              "kind": "chant",
-              "times": 1
-            }
-          ]
-        },
-        {
-          "rounds": 1,
-          "rubric": "After the fifth decade.",
-          "steps": [
-            {
-              "chant_id": "salve_regina_simple",
-              "kind": "chant",
-              "times": 1
-            },
-            {
-              "chant_id": "in_nomine_patris",
-              "kind": "chant",
-              "times": 1
-            }
-          ]
-        }
-      ],
-      "id": "sung_rosary",
-      "note": "Every prayer of the Rosary, sung in Latin",
-      "painting": "feast_our_lady_of_the_rosary",
-      "title": "A Sung Rosary"
-    },
-    {
-      "blocks": [
-        {
-          "rounds": 1,
-          "rubric": "Put yourself under her protection for the night.",
-          "steps": [
-            {
-              "chant_id": "sub_tuum",
-              "kind": "chant",
-              "times": 1
-            }
-          ]
-        },
-        {
-          "rounds": 1,
-          "rubric": "Then tonight's song to Mary.",
-          "steps": [
-            {
-              "chant_id": null,
-              "kind": "antiphon_of_the_season",
-              "times": 1
-            }
-          ]
-        }
-      ],
-      "id": "before_bed",
-      "note": "End the day with Mary",
-      "painting": "hour_night",
-      "title": "Before Bed"
-    },
-    {
-      "blocks": [
-        {
-          "rounds": 1,
-          "rubric": "Before you begin, ask the Holy Spirit to come.",
-          "steps": [
-            {
-              "chant_id": "veni_sancte_reple",
-              "kind": "chant",
-              "times": 1
-            }
-          ]
-        },
-        {
-          "rounds": 1,
-          "rubric": "Then the hymn sung at the start of any work.",
-          "steps": [
-            {
-              "chant_id": "veni_creator",
-              "kind": "chant",
-              "times": 1
-            }
-          ]
-        }
-      ],
-      "id": "before_work",
-      "note": "Ask for help before you start",
-      "painting": "saint_joseph_carpenter",
-      "title": "Before Work or Study"
-    },
-    {
-      "blocks": [
-        {
-          "rounds": 1,
-          "rubric": "The poem sung at the funeral Mass.",
-          "steps": [
-            {
-              "chant_id": "dies_irae",
-              "kind": "chant",
-              "times": 1
-            }
-          ]
-        },
-        {
-          "rounds": 1,
-          "rubric": "Then ask all the saints to pray for them.",
-          "steps": [
-            {
-              "chant_id": "litany_saints",
-              "kind": "chant",
-              "times": 1
-            }
-          ]
-        }
-      ],
-      "id": "for_the_dead",
-      "note": "At a funeral, or any time in November",
-      "painting": "devotion_holy_souls",
-      "title": "For Those Who Have Died"
-    }
-  ]
+  "updated_at": "2026-11-17T18:30:00Z",
+  "version": "95093a1da8e8a1f8"
 }
