@@ -12,7 +12,7 @@
     },
     {
       "latin": "et sceptrum domus Ísraël: qui áperis,",
-      "english": "and Sceptre of the house of Israel, who openest,",
+      "english": "and Sceptre of the house of Israel that openest,",
       "start": 7.29,
       "end": 15.83,
       "part": 0
@@ -26,35 +26,35 @@
     },
     {
       "latin": "claudis, et nemo áperit:",
-      "english": "who shuttest, and no man openeth:",
+      "english": "and shuttest and no man openeth;",
       "start": 22.35,
       "end": 31.78,
       "part": 0
     },
     {
       "latin": "veni, et educ vinctum",
-      "english": "come, and lead forth the captive",
+      "english": "come to bring out the prisoners",
       "start": 32.03,
       "end": 38.85,
       "part": 0
     },
     {
       "latin": "de domo cárceris,",
-      "english": "out of the prison house,",
+      "english": "from the prison,",
       "start": 38.85,
       "end": 45.42,
       "part": 0
     },
     {
       "latin": "sedéntem in ténebris",
-      "english": "him that sitteth in darkness",
+      "english": "and them that sit in darkness,",
       "start": 45.65,
       "end": 52.32,
       "part": 0
     },
     {
       "latin": "et umbra mortis.",
-      "english": "and in the shadow of death.",
+      "english": "and in the shadow of death!",
       "start": 52.75,
       "end": 59.2,
       "part": 0
@@ -229,14 +229,14 @@
     },
     {
       "latin": "et sceptrum domus Ísraël:",
-      "english": "and Sceptre of the house of Israel,",
+      "english": "and Sceptre of the house of Israel",
       "start": 214.05,
       "end": 219.71,
       "part": 2
     },
     {
       "latin": "qui áperis,",
-      "english": "who openest,",
+      "english": "that openest,",
       "start": 219.76,
       "end": 222.59,
       "part": 2
@@ -250,35 +250,35 @@
     },
     {
       "latin": "claudis, et nemo áperit:",
-      "english": "who shuttest, and no man openeth:",
+      "english": "and shuttest and no man openeth;",
       "start": 229.11,
       "end": 238.56,
       "part": 2
     },
     {
       "latin": "veni, et educ vinctum",
-      "english": "come, and lead forth the captive",
+      "english": "come to bring out the prisoners",
       "start": 238.79,
       "end": 245.61,
       "part": 2
     },
     {
       "latin": "de domo cárceris,",
-      "english": "out of the prison house,",
+      "english": "from the prison,",
       "start": 245.61,
       "end": 252.16,
       "part": 2
     },
     {
       "latin": "sedéntem in ténebris",
-      "english": "him that sitteth in darkness",
+      "english": "and them that sit in darkness,",
       "start": 252.39,
       "end": 259.08,
       "part": 2
     },
     {
       "latin": "et umbra mortis.",
-      "english": "and in the shadow of death.",
+      "english": "and in the shadow of death!",
       "start": 259.51,
       "end": 265.96,
       "part": 2

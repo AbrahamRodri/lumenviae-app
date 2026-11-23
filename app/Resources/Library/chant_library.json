@@ -1,4 +1,6 @@
 {
+  "version": "4a00c3e140e957ce",
+  "updated_at": "2026-11-17T18:30:00Z",
   "chants": [
     {
       "audio": {
@@ -7,7 +9,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/salve_regina_simple-3d83eac83eca.m4a"
       },
       "detail": "The evening song to Mary from Trinity Sunday to Advent, and the Rosary's close",
-      "duration": 185.0,
+      "duration": 185,
       "english_title": "Hail, Holy Queen",
       "group_id": "ourLady",
       "id": "salve_regina_simple",
@@ -147,7 +149,7 @@
           "start": 171.85
         },
         {
-          "end": 182.0,
+          "end": 182,
           "english": "Amen.",
           "latin": "Amen.",
           "part": null,
@@ -623,7 +625,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/alma_redemptoris-14bbe1ca4dd1.m4a"
       },
       "detail": "The same song in its older, richer melody",
-      "duration": 210.0,
+      "duration": 210,
       "english_title": "Loving Mother of the Redeemer",
       "group_id": "ourLady",
       "id": "alma_redemptoris",
@@ -1004,7 +1006,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ave_regina_solemn-6a36034bcf9d.m4a"
       },
       "detail": "The same song in its solemn melody",
-      "duration": 138.0,
+      "duration": 138,
       "english_title": "Hail, Queen of Heaven",
       "group_id": "ourLady",
       "id": "ave_regina_solemn",
@@ -1141,7 +1143,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/regina_caeli_simple-0f08c4f49506.m4a"
       },
       "detail": "The song to Mary for the fifty days of Easter, sung in place of the Angelus",
-      "duration": 91.0,
+      "duration": 91,
       "english_title": "Queen of Heaven, Rejoice",
       "group_id": "ourLady",
       "id": "regina_caeli_simple",
@@ -1278,7 +1280,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/regina_caeli_solemn-b172ee616ce4.m4a"
       },
       "detail": "The same song in its solemn melody",
-      "duration": 144.0,
+      "duration": 144,
       "english_title": "Queen of Heaven, Rejoice",
       "group_id": "ourLady",
       "id": "regina_caeli_solemn",
@@ -1545,7 +1547,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ave_maris_stella_feasts-891e481f9d8b.m4a"
       },
       "detail": "The evening hymn of her feasts, in its best-known melody",
-      "duration": 180.0,
+      "duration": 180,
       "english_title": "Hail, Star of the Sea",
       "group_id": "ourLady",
       "id": "ave_maris_stella_feasts",
@@ -1771,7 +1773,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ave_maris_stella-c9d8730591ee.m4a"
       },
       "detail": "The evening hymn of her Office on Saturday",
-      "duration": 132.0,
+      "duration": 132,
       "english_title": "Hail, Star of the Sea",
       "group_id": "ourLady",
       "id": "ave_maris_stella",
@@ -2445,7 +2447,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/concordi_laetitia-1f394df2a395.m4a"
       },
       "detail": "A hymn to Mary for the Easter season, rejoicing in her Son risen",
-      "duration": 120.0,
+      "duration": 120,
       "english_title": "With Joy in One Accord",
       "group_id": "seasons",
       "id": "concordi_laetitia",
@@ -2930,7 +2932,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/tota_pulchra-e43e02b950cf.m4a"
       },
       "detail": "In honour of the Immaculate Conception: Mary, conceived without sin",
-      "duration": 108.0,
+      "duration": 108,
       "english_title": "Thou Art All Fair",
       "group_id": "ourLady",
       "id": "tota_pulchra",
@@ -3058,7 +3060,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/flos_carmeli-56f3159cfc03.m4a"
       },
       "detail": "The feast poem of Our Lady of Mount Carmel",
-      "duration": 168.0,
+      "duration": 168,
       "english_title": "Flower of Carmel",
       "group_id": "ourLady",
       "id": "flos_carmeli",
@@ -3368,7 +3370,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/stabat_mater-06314150fced.m4a"
       },
       "detail": "The feast poem of the Seven Sorrows of Mary",
-      "duration": 330.0,
+      "duration": 330,
       "english_title": "The Mother Stood",
       "group_id": "seasons",
       "id": "stabat_mater",
@@ -4693,7 +4695,7 @@
           "start": 547.93
         },
         {
-          "end": 561.0,
+          "end": 561,
           "english": "spare us, O Lord.",
           "latin": "parce nobis, Dómine.",
           "part": null,
@@ -5163,7 +5165,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ave_maria_antiphon-99df4eb1fc2f.m4a"
       },
       "detail": "Sung at Mass on the last Sunday of Advent",
-      "duration": 57.0,
+      "duration": 57,
       "english_title": "Hail Mary",
       "group_id": "ourLady",
       "id": "ave_maria_antiphon",
@@ -5233,7 +5235,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/salve_mater-17ab812e2e48.m4a"
       },
       "detail": "A hymn to Mary with a refrain for all to sing",
-      "duration": 463.0,
+      "duration": 463,
       "english_title": "Hail, Mother of Mercy",
       "group_id": "ourLady",
       "id": "salve_mater",
@@ -5282,7 +5284,7 @@
           "start": 33.03
         },
         {
-          "end": 46.0,
+          "end": 46,
           "english": "Mother of God and Mother of pardon,",
           "latin": "Mater Dei et mater véniæ,",
           "part": null,
@@ -5352,7 +5354,7 @@
           "start": 99.41
         },
         {
-          "end": 112.0,
+          "end": 112,
           "english": "Mother of God and Mother of pardon,",
           "latin": "Mater Dei et mater véniæ,",
           "part": null,
@@ -5732,7 +5734,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/inviolata-dea13773edf9.m4a"
       },
       "detail": "A hymn to Mary, ever a virgin",
-      "duration": 90.0,
+      "duration": 90,
       "english_title": "Inviolate",
       "group_id": "ourLady",
       "id": "inviolata",
@@ -5993,7 +5995,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/te_matrem-230021801c1f.m4a"
       },
       "detail": "A song of praise to Mary, in the form of the Te Deum",
-      "duration": 360.0,
+      "duration": 360,
       "english_title": "We Praise Thee as Mother",
       "group_id": "ourLady",
       "id": "te_matrem",
@@ -6231,7 +6233,7 @@
           "start": 321.71
         },
         {
-          "end": 345.0,
+          "end": 345,
           "english": "In thee, O Lady, have I hoped:",
           "latin": "In te Dómina sperávi:",
           "part": 0,
@@ -6429,7 +6431,7 @@
           "start": 110.65
         },
         {
-          "end": 124.0,
+          "end": 124,
           "english": "I believe in the Holy Spirit,",
           "latin": "Credo in Spíritum Sanctum,",
           "part": null,
@@ -6501,7 +6503,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/pater_noster-53772a62769f.m4a"
       },
       "detail": "On each large bead",
-      "duration": 56.0,
+      "duration": 56,
       "english_title": "Our Father",
       "group_id": "rosary",
       "id": "pater_noster",
@@ -6587,7 +6589,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ave_maria-c440543d7237.m4a"
       },
       "detail": "On each small bead, as the Rosary is sung",
-      "duration": 39.0,
+      "duration": 39,
       "english_title": "Hail Mary",
       "group_id": "rosary",
       "id": "ave_maria",
@@ -6659,7 +6661,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/gloria_patri-bf214cd9b3da.m4a"
       },
       "detail": "At the close of every decade",
-      "duration": 32.0,
+      "duration": 32,
       "english_title": "Glory Be",
       "group_id": "rosary",
       "id": "gloria_patri",
@@ -7099,7 +7101,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/adoro_te-0fb0d8b52eec.m4a"
       },
       "detail": "St Thomas Aquinas's hymn to the hidden God",
-      "duration": 264.0,
+      "duration": 264,
       "english_title": "I Adore Thee Devoutly",
       "group_id": "hymns",
       "id": "adoro_te",
@@ -7332,7 +7334,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ave_verum-eb319c492238.m4a"
       },
       "detail": "Sung as the priest raises the Host, and at Benediction",
-      "duration": 87.0,
+      "duration": 87,
       "english_title": "Hail, True Body",
       "group_id": "hymns",
       "id": "ave_verum",
@@ -7432,7 +7434,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_salutaris-dcc9712ae6f9.m4a"
       },
       "detail": "Sung as the Host is placed on the altar for adoration",
-      "duration": 66.0,
+      "duration": 66,
       "english_title": "O Saving Victim",
       "group_id": "benediction",
       "id": "o_salutaris",
@@ -7711,7 +7713,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_sacrum_convivium-c8a33f2c8c13.m4a"
       },
       "detail": "Sung at evening prayer on Corpus Christi, the feast of the Body of Christ",
-      "duration": 118.0,
+      "duration": 118,
       "english_title": "O Sacred Banquet",
       "group_id": "hymns",
       "id": "o_sacrum_convivium",
@@ -7946,7 +7948,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/anima_christi-e4c8f2190dae.m4a"
       },
       "detail": "A thanksgiving after Communion",
-      "duration": 90.0,
+      "duration": 90,
       "english_title": "Soul of Christ",
       "group_id": "hymns",
       "id": "anima_christi",
@@ -8067,7 +8069,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/panis_angelicus-c86a3bb8ea0a.m4a"
       },
       "detail": "From St Thomas's hymn for the night prayer of Corpus Christi",
-      "duration": 87.0,
+      "duration": 87,
       "english_title": "Bread of Angels",
       "group_id": "hymns",
       "id": "panis_angelicus",
@@ -8200,7 +8202,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/lauda_sion-0547641d4b9e.m4a"
       },
       "detail": "The feast poem of Corpus Christi, the feast of the Body of Christ",
-      "duration": 438.0,
+      "duration": 438,
       "english_title": "Praise, O Sion",
       "group_id": "sequences",
       "id": "lauda_sion",
@@ -8788,7 +8790,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/adoremus-b237f0bce7e1.m4a"
       },
       "detail": "Sung at the close of Benediction",
-      "duration": 101.0,
+      "duration": 101,
       "english_title": "Let Us Adore For Ever",
       "group_id": "benediction",
       "id": "adoremus",
@@ -8928,7 +8930,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ecce_panis-4e1d95b254fb.m4a"
       },
       "detail": "The last verses of the Lauda Sion (Praise, O Sion)",
-      "duration": 101.0,
+      "duration": 101,
       "english_title": "Behold the Bread of Angels",
       "group_id": "hymns",
       "id": "ecce_panis",
@@ -9089,7 +9091,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/ubi_caritas-0875c892a771.m4a"
       },
       "detail": "Sung at the washing of feet on Holy Thursday",
-      "duration": 152.0,
+      "duration": 152,
       "english_title": "Where Charity and Love Are",
       "group_id": "seasons",
       "id": "ubi_caritas",
@@ -9243,7 +9245,7 @@
           "start": 0.35
         },
         {
-          "end": 13.0,
+          "end": 13,
           "english": "most holy Lord Jesus Christ,",
           "latin": "sanctíssime Dómine Jesu Christe,",
           "part": null,
@@ -9299,7 +9301,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/pange_lingua-069d3001ad52.m4a"
       },
       "detail": "St Thomas Aquinas's hymn for Corpus Christi, whose last two verses are the Tantum Ergo",
-      "duration": 276.0,
+      "duration": 276,
       "english_title": "Sing, My Tongue, the Saviour's Glory",
       "group_id": "benediction",
       "id": "pange_lingua",
@@ -11208,7 +11210,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/litany_holy_name-8e8758d81838.m4a"
       },
       "detail": "Approved for the whole Church in 1862",
-      "duration": 876.0,
+      "duration": 876,
       "english_title": "The Litany of the Holy Name",
       "group_id": "litanies",
       "id": "litany_holy_name",
@@ -11390,7 +11392,7 @@
           "start": 130.89
         },
         {
-          "end": 141.0,
+          "end": 141,
           "english": "have mercy on us.",
           "latin": "miserére nobis.",
           "part": null,
@@ -12244,7 +12246,7 @@
           "start": 795.75
         },
         {
-          "end": 804.0,
+          "end": 804,
           "english": "Jesus, graciously hear us.",
           "latin": "Jesu, exáudi nos.",
           "part": null,
@@ -13179,7 +13181,7 @@
           "start": 136.53
         },
         {
-          "end": 159.0,
+          "end": 159,
           "english": "and the Holy Ghost, the Paraclete.",
           "latin": "Sanctum quoque Paráclitum Spíritum.",
           "part": null,
@@ -13596,7 +13598,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/te_saeculorum-ea1d295b4237.m4a"
       },
       "detail": "The evening hymn of the feast of Christ the King",
-      "duration": 237.0,
+      "duration": 237,
       "english_title": "Thee, Prince of All the Ages",
       "group_id": "hymns",
       "id": "te_saeculorum",
@@ -13855,7 +13857,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/salvete_christi_vulnera-ef4fe5c73152.m4a"
       },
       "detail": "The morning hymn of the Precious Blood, kept in July",
-      "duration": 270.0,
+      "duration": 270,
       "english_title": "Hail, Wounds of Christ",
       "group_id": "hymns",
       "id": "salvete_christi_vulnera",
@@ -14142,7 +14144,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/lucis_creator-e1d7f9d88bd9.m4a"
       },
       "detail": "The evening hymn of Sundays through the year",
-      "duration": 137.0,
+      "duration": 137,
       "english_title": "O Blest Creator of the Light",
       "group_id": "hymns",
       "id": "lucis_creator",
@@ -14317,7 +14319,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/da_pacem-10c466bca23f.m4a"
       },
       "detail": "A prayer for peace in our days",
-      "duration": 132.0,
+      "duration": 132,
       "english_title": "Give Peace, O Lord",
       "group_id": "hymns",
       "id": "da_pacem",
@@ -14494,7 +14496,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/sancte_michael-d493d1411476.m4a"
       },
       "detail": "Pope Leo XIII's prayer, set to chant",
-      "duration": 90.0,
+      "duration": 90,
       "english_title": "St Michael the Archangel",
       "group_id": "hymns",
       "id": "sancte_michael",
@@ -14867,7 +14869,7 @@
           "start": 54.85
         },
         {
-          "end": 65.0,
+          "end": 65,
           "english": "have mercy on us.",
           "latin": "miserére nobis.",
           "part": null,
@@ -15070,7 +15072,7 @@
           "start": 208.17
         },
         {
-          "end": 219.0,
+          "end": 219,
           "english": "Joseph most strong,",
           "latin": "Joseph fortíssime,",
           "part": null,
@@ -17407,7 +17409,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/rorate_caeli-972de1a535db.m4a"
       },
       "detail": "The prayer of Advent's waiting",
-      "duration": 288.0,
+      "duration": 288,
       "english_title": "Drop Down Dew, Ye Heavens",
       "group_id": "seasons",
       "id": "rorate_caeli",
@@ -18850,7 +18852,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_radix_magnificat-9fe009856326.m4a"
       },
       "detail": "Advent's “O” prayer for December 19, sung with Mary's song, the Magnificat",
-      "duration": 246.0,
+      "duration": 246,
       "english_title": "O Root of Jesse, with the Magnificat",
       "group_id": "seasons",
       "id": "o_radix_magnificat",
@@ -19467,7 +19469,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_oriens_magnificat-053115738409.m4a"
       },
       "detail": "Advent's “O” prayer for December 21, sung with Mary's song, the Magnificat",
-      "duration": 237.0,
+      "duration": 237,
       "english_title": "O Day-Spring, with the Magnificat",
       "group_id": "seasons",
       "id": "o_oriens_magnificat",
@@ -19628,7 +19630,7 @@
           "start": 145.59
         },
         {
-          "end": 164.0,
+          "end": 164,
           "english": "As He spoke to our fathers, to Abraham and to his seed for ever.",
           "latin": "Sicut locútus est ad patres nostros, Abraham et sémini ejus in sǽcula.",
           "part": 1,
@@ -19737,7 +19739,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_rex_magnificat-2b426c6c7b6f.m4a"
       },
       "detail": "Advent's “O” prayer for December 22, sung with Mary's song, the Magnificat",
-      "duration": 237.0,
+      "duration": 237,
       "english_title": "O King of the Gentiles, with the Magnificat",
       "group_id": "seasons",
       "id": "o_rex_magnificat",
@@ -19800,7 +19802,7 @@
           "start": 53.89
         },
         {
-          "end": 64.0,
+          "end": 64,
           "english": "in God my Saviour.",
           "latin": "in Deo salutári meo.",
           "part": 1,
@@ -19968,7 +19970,7 @@
           "start": 210.77
         },
         {
-          "end": 226.0,
+          "end": 226,
           "english": "come to save man,",
           "latin": "veni, et salva hóminem,",
           "part": 2,
@@ -20210,7 +20212,7 @@
           "start": 166.77
         },
         {
-          "end": 179.0,
+          "end": 179,
           "english": "As it was in the beginning, is now, and ever shall be,",
           "latin": "Sicut erat in princípio, et nunc, et semper,",
           "part": 1,
@@ -20298,7 +20300,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/puer_natus-79dc4714e496.m4a"
       },
       "detail": "A Christmas carol of the Middle Ages",
-      "duration": 444.0,
+      "duration": 444,
       "english_title": "A Child Is Born in Bethlehem",
       "group_id": "seasons",
       "id": "puer_natus",
@@ -20718,7 +20720,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/adeste_fideles-1a0b5e260df5.m4a"
       },
       "detail": "The Christmas hymn in its Latin",
-      "duration": 315.0,
+      "duration": 315,
       "english_title": "O Come, All Ye Faithful",
       "group_id": "seasons",
       "id": "adeste_fideles",
@@ -20830,7 +20832,7 @@
           "start": 96.63
         },
         {
-          "end": 111.0,
+          "end": 111,
           "english": "Come, let us adore,",
           "latin": "Veníte, adorémus,",
           "part": null,
@@ -20893,7 +20895,7 @@
           "start": 161.25
         },
         {
-          "end": 173.0,
+          "end": 173,
           "english": "we shall see veiled beneath the flesh:",
           "latin": "Velátum sub carne vidébimus:",
           "part": null,
@@ -21495,7 +21497,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/parce_domine-023881091376.m4a"
       },
       "detail": "From the prophet Joel, sung in Lent",
-      "duration": 243.0,
+      "duration": 243,
       "english_title": "Spare, O Lord",
       "group_id": "seasons",
       "id": "parce_domine",
@@ -21831,7 +21833,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/media_vita-252a7be2cf0c.m4a"
       },
       "detail": "A plea from the weeks before Lent: in the midst of life we are in death",
-      "duration": 300.0,
+      "duration": 300,
       "english_title": "In the Midst of Life",
       "group_id": "seasons",
       "id": "media_vita",
@@ -22069,7 +22071,7 @@
           "start": 254.33
         },
         {
-          "end": 273.0,
+          "end": 273,
           "english": "holy and mighty,",
           "latin": "Sancte fortis,",
           "part": null,
@@ -22673,7 +22675,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/audi_benigne-2beff6eeab6f.m4a"
       },
       "detail": "The evening hymn of Lent",
-      "duration": 135.0,
+      "duration": 135,
       "english_title": "O Kind Creator, Bow Thine Ear",
       "group_id": "seasons",
       "id": "audi_benigne",
@@ -22792,7 +22794,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_vos_omnes-5d5eac2e1c8e.m4a"
       },
       "detail": "Lamentations 1:12, sung in the Sorrowful Mysteries",
-      "duration": 110.0,
+      "duration": 110,
       "english_title": "O All Ye That Pass By",
       "group_id": "seasons",
       "id": "o_vos_omnes",
@@ -22883,7 +22885,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/victimae_paschali-d2df4eb64a74.m4a"
       },
       "detail": "The feast poem of Easter Sunday",
-      "duration": 114.0,
+      "duration": 114,
       "english_title": "Praises to the Paschal Victim",
       "group_id": "sequences",
       "id": "victimae_paschali",
@@ -23058,7 +23060,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/o_filii-01d1958966f0.m4a"
       },
       "detail": "An Easter carol of the Resurrection",
-      "duration": 390.0,
+      "duration": 390,
       "english_title": "O Sons and Daughters",
       "group_id": "seasons",
       "id": "o_filii",
@@ -23618,7 +23620,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/vidi_aquam-d71b30f4e1a7.m4a"
       },
       "detail": "Sung as the priest sprinkles holy water before Sunday Mass in the Easter season",
-      "duration": 210.0,
+      "duration": 210,
       "english_title": "I Saw Water",
       "group_id": "asperges",
       "id": "vidi_aquam",
@@ -23765,7 +23767,7 @@
           "start": 184.97
         },
         {
-          "end": 205.0,
+          "end": 205,
           "english": "alleluia, alleluia.",
           "latin": "allelúia, allelúia.",
           "part": 0,
@@ -23793,7 +23795,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/salve_festa_dies-f1b30779cb3d.m4a"
       },
       "detail": "The Easter hymn of the day for ever blest, on which God conquers hell",
-      "duration": 348.0,
+      "duration": 348,
       "english_title": "Hail, Festive Day",
       "group_id": "seasons",
       "id": "salve_festa_dies",
@@ -24080,7 +24082,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/aurora_caelum-0f41f46e4e9e.m4a"
       },
       "detail": "The morning hymn of the Easter season",
-      "duration": 132.0,
+      "duration": 132,
       "english_title": "The Dawn Is Reddening the Sky",
       "group_id": "seasons",
       "id": "aurora_caelum",
@@ -24360,7 +24362,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/dies_irae-b3c8590a074c.m4a"
       },
       "detail": "The poem sung at the funeral Mass, before the Gospel",
-      "duration": 384.0,
+      "duration": 384,
       "english_title": "Day of Wrath",
       "group_id": "requiem",
       "id": "dies_irae",
@@ -24402,7 +24404,7 @@
           "start": 21.97
         },
         {
-          "end": 34.0,
+          "end": 34,
           "english": "to sift all things strictly!",
           "latin": "Cuncta stricte discussúrus!",
           "part": null,
@@ -24780,7 +24782,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/kyrie_de_angelis-841271faf0b2.m4a"
       },
       "detail": "From the Mass of the Angels (Mass VIII), the best-known sung Mass",
-      "duration": 153.0,
+      "duration": 153,
       "english_title": "Lord, Have Mercy",
       "group_id": "mass",
       "id": "kyrie_de_angelis",
@@ -24871,7 +24873,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/gloria_de_angelis-e020a4032d6a.m4a"
       },
       "detail": "From the Mass of the Angels (Mass VIII), the best-known sung Mass",
-      "duration": 165.0,
+      "duration": 165,
       "english_title": "Glory to God in the Highest",
       "group_id": "mass",
       "id": "gloria_de_angelis",
@@ -25060,7 +25062,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/sanctus_de_angelis-2b8f33e59379.m4a"
       },
       "detail": "From the Mass of the Angels (Mass VIII), the best-known sung Mass",
-      "duration": 93.0,
+      "duration": 93,
       "english_title": "Holy, Holy, Holy",
       "group_id": "mass",
       "id": "sanctus_de_angelis",
@@ -25524,7 +25526,7 @@
           "start": 89.31
         },
         {
-          "end": 122.0,
+          "end": 122,
           "english": "Thou shalt wash me, and I shall be made whiter than snow.",
           "latin": "lavábis me, et super nivem dealbábor.",
           "part": 0,
@@ -25552,7 +25554,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/kyrie_orbis_factor-8136d9f3f712.m4a"
       },
       "detail": "From Mass XI, Orbis Factor, the Mass of the Sundays through the year",
-      "duration": 119.0,
+      "duration": 119,
       "english_title": "Lord, Have Mercy",
       "group_id": "mass",
       "id": "kyrie_orbis_factor",
@@ -25643,7 +25645,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/gloria_orbis_factor-854f3c9e5d19.m4a"
       },
       "detail": "From Mass XI, Orbis Factor, the Mass of the Sundays through the year",
-      "duration": 172.0,
+      "duration": 172,
       "english_title": "Glory to God in the Highest",
       "group_id": "mass",
       "id": "gloria_orbis_factor",
@@ -25818,7 +25820,7 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/sanctus_orbis_factor-e2f7a629f1b4.m4a"
       },
       "detail": "From Mass XI, Orbis Factor, the Mass of the Sundays through the year",
-      "duration": 76.0,
+      "duration": 76,
       "english_title": "Holy, Holy, Holy",
       "group_id": "mass",
       "id": "sanctus_orbis_factor",
@@ -25888,14 +25890,14 @@
         "url": "https://s3.us-east-2.amazonaws.com/lumenviae-images/chants/audio/agnus_orbis_factor-0a40a16bd60a.m4a"
       },
       "detail": "From Mass XI, Orbis Factor, the Mass of the Sundays through the year",
-      "duration": 62.0,
+      "duration": 62,
       "english_title": "Lamb of God",
       "group_id": "mass",
       "id": "agnus_orbis_factor",
       "latin_title": "Agnus Dei",
       "lines": [
         {
-          "end": 5.0,
+          "end": 5,
           "english": "Lamb of God,",
           "latin": "Agnus Dei,",
           "part": 0,
@@ -25909,14 +25911,14 @@
           "start": 5.21
         },
         {
-          "end": 19.0,
+          "end": 19,
           "english": "have mercy on us.",
           "latin": "miserére nobis.",
           "part": 0,
           "start": 12.81
         },
         {
-          "end": 32.0,
+          "end": 32,
           "english": "Lamb of God, Who takest away the sins of the world,",
           "latin": "Agnus Dei, qui tollis peccáta mundi:",
           "part": 0,
@@ -25964,6 +25966,356 @@
       ],
       "setting": "Mass XI",
       "source_url": "https://www.verbumgloriae.es/project/misa-xi-orbis-factor/"
+    }
+  ],
+  "feasts": [
+    {
+      "chant_id": "jesu_dulcis_memoria",
+      "id": "holy_name",
+      "name": "The Holy Name of Jesus",
+      "painting": "jesus_holy_name",
+      "rule": {
+        "day": null,
+        "days_from_easter": null,
+        "kind": "holy_name",
+        "month": null
+      }
+    },
+    {
+      "chant_id": "te_joseph",
+      "id": "st_joseph",
+      "name": "St Joseph",
+      "painting": "devotion_st_joseph",
+      "rule": {
+        "day": 19,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 3
+      }
+    },
+    {
+      "chant_id": "ave_maria_antiphon",
+      "id": "annunciation",
+      "name": "The Annunciation",
+      "painting": "feast_annunciation",
+      "rule": {
+        "day": 25,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 3
+      }
+    },
+    {
+      "chant_id": "pange_lingua",
+      "id": "holy_thursday",
+      "name": "Holy Thursday",
+      "painting": "luminous_eucharist",
+      "rule": {
+        "day": null,
+        "days_from_easter": -3,
+        "kind": "easter",
+        "month": null
+      }
+    },
+    {
+      "chant_id": "vexilla_regis",
+      "id": "good_friday",
+      "name": "Good Friday",
+      "painting": "sorrowful_crucifixion",
+      "rule": {
+        "day": null,
+        "days_from_easter": -2,
+        "kind": "easter",
+        "month": null
+      }
+    },
+    {
+      "chant_id": "victimae_paschali",
+      "id": "easter",
+      "name": "Easter Sunday",
+      "painting": "easter_noli_me_tangere",
+      "rule": {
+        "day": null,
+        "days_from_easter": 0,
+        "kind": "easter",
+        "month": null
+      }
+    },
+    {
+      "chant_id": "jesu_nostra_redemptio",
+      "id": "ascension",
+      "name": "The Ascension",
+      "painting": "glorious_ascension",
+      "rule": {
+        "day": null,
+        "days_from_easter": 39,
+        "kind": "easter",
+        "month": null
+      }
+    },
+    {
+      "chant_id": "veni_sancte_spiritus",
+      "id": "pentecost",
+      "name": "Pentecost",
+      "painting": "glorious_pentecost",
+      "rule": {
+        "day": null,
+        "days_from_easter": 49,
+        "kind": "easter",
+        "month": null
+      }
+    },
+    {
+      "chant_id": "lauda_sion",
+      "id": "corpus_christi",
+      "name": "Corpus Christi (the Body of Christ)",
+      "painting": "topic_blessed_sacrament",
+      "rule": {
+        "day": null,
+        "days_from_easter": 60,
+        "kind": "easter",
+        "month": null
+      }
+    },
+    {
+      "chant_id": "litany_sacred_heart",
+      "id": "sacred_heart",
+      "name": "The Sacred Heart",
+      "painting": "topic_our_lord",
+      "rule": {
+        "day": null,
+        "days_from_easter": 68,
+        "kind": "easter",
+        "month": null
+      }
+    },
+    {
+      "chant_id": "ut_queant_laxis",
+      "id": "st_john_baptist",
+      "name": "The Birth of St John the Baptist",
+      "painting": "saint_john_baptist_birth",
+      "rule": {
+        "day": 24,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 6
+      }
+    },
+    {
+      "chant_id": "salvete_christi_vulnera",
+      "id": "precious_blood",
+      "name": "The Precious Blood",
+      "painting": "jesus_precious_blood",
+      "rule": {
+        "day": 1,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 7
+      }
+    },
+    {
+      "chant_id": "flos_carmeli",
+      "id": "mount_carmel",
+      "name": "Our Lady of Mount Carmel",
+      "painting": "mary_mount_carmel",
+      "rule": {
+        "day": 16,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 7
+      }
+    },
+    {
+      "chant_id": "ave_maris_stella_feasts",
+      "id": "assumption",
+      "name": "The Assumption",
+      "painting": "glorious_assumption",
+      "rule": {
+        "day": 15,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 8
+      }
+    },
+    {
+      "chant_id": "stabat_mater",
+      "id": "seven_sorrows",
+      "name": "Our Lady of Sorrows",
+      "painting": "mary_mater_dolorosa",
+      "rule": {
+        "day": 15,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 9
+      }
+    },
+    {
+      "chant_id": "sancte_michael",
+      "id": "st_michael",
+      "name": "St Michael",
+      "painting": "saint_michael",
+      "rule": {
+        "day": 29,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 9
+      }
+    },
+    {
+      "chant_id": "litany_loreto",
+      "id": "rosary",
+      "name": "Our Lady of the Rosary",
+      "painting": "feast_our_lady_of_the_rosary",
+      "rule": {
+        "day": 7,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 10
+      }
+    },
+    {
+      "chant_id": "christus_vincit",
+      "id": "christ_the_king",
+      "name": "Christ the King",
+      "painting": "feast_christ_the_king",
+      "rule": {
+        "day": null,
+        "days_from_easter": null,
+        "kind": "last_sunday_of_october",
+        "month": null
+      }
+    },
+    {
+      "chant_id": "litany_saints",
+      "id": "all_saints",
+      "name": "All Saints",
+      "painting": "feast_all_saints",
+      "rule": {
+        "day": 1,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 11
+      }
+    },
+    {
+      "chant_id": "dies_irae",
+      "id": "all_souls",
+      "name": "All Souls",
+      "painting": "devotion_holy_souls",
+      "rule": {
+        "day": 2,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 11
+      }
+    },
+    {
+      "chant_id": "tota_pulchra",
+      "id": "immaculate_conception",
+      "name": "The Immaculate Conception",
+      "painting": "mary_immaculate_conception",
+      "rule": {
+        "day": 8,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 12
+      }
+    },
+    {
+      "chant_id": "o_sapientia_magnificat",
+      "id": "o_sapientia",
+      "name": "Advent's “O Wisdom”",
+      "painting": "advent_isaiah",
+      "rule": {
+        "day": 17,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 12
+      }
+    },
+    {
+      "chant_id": "o_adonai_magnificat",
+      "id": "o_adonai",
+      "name": "Advent's “O Adonai”",
+      "painting": "advent_isaiah",
+      "rule": {
+        "day": 18,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 12
+      }
+    },
+    {
+      "chant_id": "o_radix_magnificat",
+      "id": "o_radix",
+      "name": "Advent's “O Root of Jesse”",
+      "painting": "advent_isaiah",
+      "rule": {
+        "day": 19,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 12
+      }
+    },
+    {
+      "chant_id": "o_clavis_magnificat",
+      "id": "o_clavis",
+      "name": "Advent's “O Key of David”",
+      "painting": "advent_isaiah",
+      "rule": {
+        "day": 20,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 12
+      }
+    },
+    {
+      "chant_id": "o_oriens_magnificat",
+      "id": "o_oriens",
+      "name": "Advent's “O Day-Spring”",
+      "painting": "advent_isaiah",
+      "rule": {
+        "day": 21,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 12
+      }
+    },
+    {
+      "chant_id": "o_rex_magnificat",
+      "id": "o_rex",
+      "name": "Advent's “O King of the Gentiles”",
+      "painting": "advent_isaiah",
+      "rule": {
+        "day": 22,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 12
+      }
+    },
+    {
+      "chant_id": "o_emmanuel_magnificat",
+      "id": "o_emmanuel",
+      "name": "Advent's “O Emmanuel”",
+      "painting": "advent_isaiah",
+      "rule": {
+        "day": 23,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 12
+      }
+    },
+    {
+      "chant_id": "adeste_fideles",
+      "id": "christmas",
+      "name": "Christmas Day",
+      "painting": "christmas_shepherds",
+      "rule": {
+        "day": 25,
+        "days_from_easter": null,
+        "kind": "fixed",
+        "month": 12
+      }
     }
   ],
   "groups": [
@@ -26270,6 +26622,378 @@
       "title": "The Rosary in Latin"
     }
   ],
-  "updated_at": "2026-11-17T16:30:00Z",
-  "version": "dccba069b1dc672a"
+  "months": [
+    {
+      "chant_ids": [
+        "jesu_dulcis_memoria",
+        "litany_holy_name"
+      ],
+      "feast_id": "holy_name",
+      "month": 1,
+      "occasion_id": null,
+      "title": "The Month of the Holy Name"
+    },
+    {
+      "chant_ids": [
+        "te_joseph",
+        "litany_st_joseph"
+      ],
+      "feast_id": "st_joseph",
+      "month": 3,
+      "occasion_id": null,
+      "title": "The Month of St Joseph"
+    },
+    {
+      "chant_ids": [
+        "adoro_te",
+        "ave_verum"
+      ],
+      "feast_id": null,
+      "month": 4,
+      "occasion_id": "visit",
+      "title": "The Month of the Blessed Sacrament"
+    },
+    {
+      "chant_ids": [
+        "ave_maris_stella_feasts",
+        "litany_loreto"
+      ],
+      "feast_id": null,
+      "month": 5,
+      "occasion_id": "sung_rosary",
+      "title": "The Month of Mary"
+    },
+    {
+      "chant_ids": [
+        "litany_sacred_heart",
+        "cor_jesu"
+      ],
+      "feast_id": "sacred_heart",
+      "month": 6,
+      "occasion_id": null,
+      "title": "The Month of the Sacred Heart"
+    },
+    {
+      "chant_ids": [
+        "salvete_christi_vulnera",
+        "anima_christi"
+      ],
+      "feast_id": "precious_blood",
+      "month": 7,
+      "occasion_id": null,
+      "title": "The Month of the Precious Blood"
+    },
+    {
+      "chant_ids": [
+        "inviolata",
+        "salve_mater"
+      ],
+      "feast_id": "assumption",
+      "month": 8,
+      "occasion_id": null,
+      "title": "The Month of the Immaculate Heart"
+    },
+    {
+      "chant_ids": [
+        "stabat_mater"
+      ],
+      "feast_id": "seven_sorrows",
+      "month": 9,
+      "occasion_id": null,
+      "title": "The Month of Our Lady of Sorrows"
+    },
+    {
+      "chant_ids": [],
+      "feast_id": "rosary",
+      "month": 10,
+      "occasion_id": "sung_rosary",
+      "title": "The Month of the Holy Rosary"
+    },
+    {
+      "chant_ids": [],
+      "feast_id": "all_souls",
+      "month": 11,
+      "occasion_id": "for_the_dead",
+      "title": "The Month for Those Who Have Died"
+    },
+    {
+      "chant_ids": [],
+      "feast_id": "immaculate_conception",
+      "month": 12,
+      "occasion_id": null,
+      "title": "The Month of the Immaculate Conception"
+    }
+  ],
+  "occasions": [
+    {
+      "blocks": [
+        {
+          "rounds": 1,
+          "rubric": "The Host is placed on the altar for all to see. Kneel.",
+          "steps": [
+            {
+              "chant_id": "o_salutaris",
+              "kind": "chant",
+              "times": 1
+            }
+          ]
+        },
+        {
+          "rounds": 1,
+          "rubric": "The priest offers incense.",
+          "steps": [
+            {
+              "chant_id": "tantum_ergo",
+              "kind": "chant",
+              "times": 1
+            }
+          ]
+        },
+        {
+          "rounds": 1,
+          "rubric": "The priest blesses everyone with the Host. Then pray together:",
+          "steps": [
+            {
+              "chant_id": "divine_praises",
+              "kind": "chant",
+              "times": 1
+            }
+          ]
+        },
+        {
+          "rounds": 1,
+          "rubric": "The Host is put back in the tabernacle, where it is kept in church.",
+          "steps": [
+            {
+              "chant_id": "adoremus",
+              "kind": "chant",
+              "times": 1
+            }
+          ]
+        }
+      ],
+      "id": "benediction",
+      "note": "Benediction: hymns before the Host, then the priest's blessing",
+      "painting": "topic_blessed_sacrament",
+      "title": "Adoration and Blessing"
+    },
+    {
+      "blocks": [
+        {
+          "rounds": 1,
+          "rubric": "Kneel before the tabernacle, where the Host is kept.",
+          "steps": [
+            {
+              "chant_id": "adoro_te",
+              "kind": "chant",
+              "times": 1
+            }
+          ]
+        },
+        {
+          "rounds": 1,
+          "rubric": "Greet Our Lord, hidden there.",
+          "steps": [
+            {
+              "chant_id": "ave_verum",
+              "kind": "chant",
+              "times": 1
+            }
+          ]
+        },
+        {
+          "rounds": 1,
+          "rubric": "Before you go, give thanks.",
+          "steps": [
+            {
+              "chant_id": "o_sacrum_convivium",
+              "kind": "chant",
+              "times": 1
+            }
+          ]
+        }
+      ],
+      "id": "visit",
+      "note": "Quiet time with Jesus, present in the Host",
+      "painting": "jesus_eucharist_saviour",
+      "title": "A Visit to Jesus in Church"
+    },
+    {
+      "blocks": [
+        {
+          "rounds": 1,
+          "rubric": "On the crucifix: make the Sign of the Cross, then sing the Creed.",
+          "steps": [
+            {
+              "chant_id": "in_nomine_patris",
+              "kind": "chant",
+              "times": 1
+            },
+            {
+              "chant_id": "credo_in_deum",
+              "kind": "chant",
+              "times": 1
+            }
+          ]
+        },
+        {
+          "rounds": 1,
+          "rubric": "On the large bead, then the three small beads, for faith, hope and charity.",
+          "steps": [
+            {
+              "chant_id": "pater_noster",
+              "kind": "chant",
+              "times": 1
+            },
+            {
+              "chant_id": "ave_maria",
+              "kind": "chant",
+              "times": 3
+            },
+            {
+              "chant_id": "gloria_patri",
+              "kind": "chant",
+              "times": 1
+            }
+          ]
+        },
+        {
+          "rounds": 5,
+          "rubric": "Name each mystery, then pray its decade of ten Hail Marys. Five times.",
+          "steps": [
+            {
+              "chant_id": "pater_noster",
+              "kind": "chant",
+              "times": 1
+            },
+            {
+              "chant_id": "ave_maria",
+              "kind": "chant",
+              "times": 10
+            },
+            {
+              "chant_id": "gloria_patri",
+              "kind": "chant",
+              "times": 1
+            },
+            {
+              "chant_id": "o_mi_jesu",
+              "kind": "chant",
+              "times": 1
+            }
+          ]
+        },
+        {
+          "rounds": 1,
+          "rubric": "After the fifth decade.",
+          "steps": [
+            {
+              "chant_id": "salve_regina_simple",
+              "kind": "chant",
+              "times": 1
+            },
+            {
+              "chant_id": "in_nomine_patris",
+              "kind": "chant",
+              "times": 1
+            }
+          ]
+        }
+      ],
+      "id": "sung_rosary",
+      "note": "Every prayer of the Rosary, sung in Latin",
+      "painting": "feast_our_lady_of_the_rosary",
+      "title": "A Sung Rosary"
+    },
+    {
+      "blocks": [
+        {
+          "rounds": 1,
+          "rubric": "Put yourself under her protection for the night.",
+          "steps": [
+            {
+              "chant_id": "sub_tuum",
+              "kind": "chant",
+              "times": 1
+            }
+          ]
+        },
+        {
+          "rounds": 1,
+          "rubric": "Then tonight's song to Mary.",
+          "steps": [
+            {
+              "chant_id": null,
+              "kind": "antiphon_of_the_season",
+              "times": 1
+            }
+          ]
+        }
+      ],
+      "id": "before_bed",
+      "note": "End the day with Mary",
+      "painting": "hour_night",
+      "title": "Before Bed"
+    },
+    {
+      "blocks": [
+        {
+          "rounds": 1,
+          "rubric": "Before you begin, ask the Holy Spirit to come.",
+          "steps": [
+            {
+              "chant_id": "veni_sancte_reple",
+              "kind": "chant",
+              "times": 1
+            }
+          ]
+        },
+        {
+          "rounds": 1,
+          "rubric": "Then the hymn sung at the start of any work.",
+          "steps": [
+            {
+              "chant_id": "veni_creator",
+              "kind": "chant",
+              "times": 1
+            }
+          ]
+        }
+      ],
+      "id": "before_work",
+      "note": "Ask for help before you start",
+      "painting": "saint_joseph_carpenter",
+      "title": "Before Work or Study"
+    },
+    {
+      "blocks": [
+        {
+          "rounds": 1,
+          "rubric": "The poem sung at the funeral Mass.",
+          "steps": [
+            {
+              "chant_id": "dies_irae",
+              "kind": "chant",
+              "times": 1
+            }
+          ]
+        },
+        {
+          "rounds": 1,
+          "rubric": "Then ask all the saints to pray for them.",
+          "steps": [
+            {
+              "chant_id": "litany_saints",
+              "kind": "chant",
+              "times": 1
+            }
+          ]
+        }
+      ],
+      "id": "for_the_dead",
+      "note": "At a funeral, or any time in November",
+      "painting": "devotion_holy_souls",
+      "title": "For Those Who Have Died"
+    }
+  ]
 }
