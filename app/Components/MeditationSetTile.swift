@@ -31,6 +31,13 @@ struct MeditationSetTile: View {
     var setId: Int = 0
     var artwork: SetArtwork? = nil
 
+    /// The set's mysteries, whose painting stands in for a picture the
+    /// set lacks or that has not come (offline on a fresh install)
+    var category: MysteryCategory? = nil
+
+    /// Whether the tile is drawn on a painting, its own or its mysteries'
+    private var painted: Bool { artwork != nil || category != nil }
+
     /// Pinned to the top of the picker. A pin, not a star: the list
     /// isn't rated, it's ordered — this set is the one you keep coming
     /// back to, so it sits where you can reach it.
@@ -51,7 +58,7 @@ struct MeditationSetTile: View {
                             PinGlyph(isPinned: isPinned, size: 15)
                                 .foregroundColor(
                                     isPinned ? AppColors.gold
-                                        : artwork == nil ? AppColors.textSecondary.opacity(0.55)
+                                        : !painted ? AppColors.textSecondary.opacity(0.55)
                                         : AppColors.cream.opacity(0.8)
                                 )
                                 .frame(width: 44, height: 44)
@@ -79,13 +86,13 @@ struct MeditationSetTile: View {
                     Text(labelLine)
                         .font(AppFonts.labelFont(9.5))
                         .tracking(1.6)
-                        .foregroundColor(artwork == nil ? AppColors.accentSoft : AppColors.cream.opacity(0.8))
+                        .foregroundColor(!painted ? AppColors.accentSoft : AppColors.cream.opacity(0.8))
                         .lineLimit(2)
                 }
             }
             // Words over a painting get a breath of shadow, so a pale
             // passage behind them can't take the title away
-            .shadow(color: .black.opacity(artwork == nil ? 0 : 0.55), radius: 4, y: 1)
+            .shadow(color: .black.opacity(!painted ? 0 : 0.55), radius: 4, y: 1)
             // A floor, not a ceiling: the tile grows with the text size
             // rather than letting a long title climb out of it.
             .frame(minHeight: 172, alignment: .bottomLeading)
@@ -96,12 +103,14 @@ struct MeditationSetTile: View {
             // through the top of the tile where nothing needs to be read.
             // The card fill stays beneath so a painting that never arrives
             // leaves a plain tile, not a hole in the shelf.
-            .sacredCard(padding: 14, filled: artwork == nil)
+            .sacredCard(padding: 14, filled: !painted)
             .background {
-                if let artwork {
+                if painted {
                     ZStack {
                         AppColors.cardBackground
-                        SetArtworkView(setId: setId, artwork: artwork, fallback: .nothing)
+                        SetArtworkView(
+                            setId: setId, artwork: artwork,
+                            fallback: category.map { .categoryPaintingWhileLoading($0) } ?? .nothing)
                         LinearGradient(
                             stops: [
                                 .init(color: .black.opacity(0.08), location: 0),
@@ -143,6 +152,9 @@ struct MeditationSetRow: View {
     /// leading edge. Rows without one keep to type.
     var setId: Int = 0
     var artwork: SetArtwork? = nil
+    /// The set's mysteries, whose painting stands in for a plate that has
+    /// not come
+    var category: MysteryCategory? = nil
 
     var isPinned: Bool = false
     var showsDivider: Bool = true
@@ -160,7 +172,9 @@ struct MeditationSetRow: View {
 
                 HStack(spacing: 14) {
                     if let artwork {
-                        SetArtworkView(setId: setId, artwork: artwork, fallback: .nothing)
+                        SetArtworkView(
+                            setId: setId, artwork: artwork,
+                            fallback: category.map { .categoryPaintingWhileLoading($0) } ?? .nothing)
                             .background(AppColors.cardBackground)
                             .frame(width: 44, height: 44)
                             .clipShape(RoundedRectangle(cornerRadius: 8))

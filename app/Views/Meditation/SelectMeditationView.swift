@@ -424,6 +424,7 @@ struct SelectMeditationView: View {
                             labels: meditationSet.labels ?? [],
                             setId: meditationSet.id,
                             artwork: meditationSet.artwork,
+                            category: category,
                             isPinned: viewModel.isPinned(meditationSet),
                             onTogglePin: {
                                 withAnimation(Motion.settle) {
@@ -444,6 +445,7 @@ struct SelectMeditationView: View {
                             labels: meditationSet.labels ?? [],
                             setId: meditationSet.id,
                             artwork: meditationSet.artwork,
+                            category: category,
                             isPinned: viewModel.isPinned(meditationSet),
                             showsDivider: index > 0 || leadsWithRule,
                             onTogglePin: {

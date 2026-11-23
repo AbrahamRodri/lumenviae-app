@@ -32,11 +32,15 @@ struct SetArtworkView: View {
     let fallback: Fallback
 
     /// Where the chain ends. A set on its own page ends on the devotion's
-    /// painting, so the plate is never empty. A shelf of sets ends on
-    /// nothing: the same category painting repeated down every tile that
-    /// lacks its own would say nothing about any of them.
+    /// painting, so the plate is never empty. A shelf of sets ends there
+    /// too, and stands it under a painting still on its way, so a set
+    /// with no picture, or one offline on a fresh install, is never a bare
+    /// dark card and the real painting fades in over it (design's offline
+    /// set card, Abraham's "Looks right", 23 Nov 2026). `nothing` is kept
+    /// for a plate that must stay empty.
     enum Fallback {
         case categoryPainting(MysteryCategory?)
+        case categoryPaintingWhileLoading(MysteryCategory?)
         case nothing
     }
 
@@ -65,7 +69,11 @@ struct SetArtworkView: View {
     var body: some View {
         ZStack {
             if let artwork, !failed {
-                AppColors.cardBackground
+                if case .categoryPaintingWhileLoading(let category) = fallback {
+                    categoryPainting(for: category)
+                } else {
+                    AppColors.cardBackground
+                }
 
                 if let loaded, loadedURL == artwork.url {
                     FocalFill(uiImage: loaded, focal: artwork.focalPoint)
@@ -73,7 +81,7 @@ struct SetArtworkView: View {
                 }
             } else {
                 switch fallback {
-                case .categoryPainting(let category):
+                case .categoryPainting(let category), .categoryPaintingWhileLoading(let category):
                     categoryPainting(for: category)
                 case .nothing:
                     Color.clear
