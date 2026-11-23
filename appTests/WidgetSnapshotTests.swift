@@ -174,6 +174,37 @@ struct WidgetSnapshotTests {
         #expect(consecration?.feastLine == "For the feast of 26 December")
     }
 
+    @Test func aConsecrationChosenAheadInAnotherYearSaysTheYear() {
+        // From 18 Nov 2026, a preparation beginning 11 Jan 2027
+        let progress = ConsecrationProgress(startDate: day(54))
+        let consecration = today(snapshot(consecration: progress)).consecration
+        #expect(consecration?.beginsLine == "Begins 11 January 2027")
+        #expect(consecration?.feastLine == "For the feast of 13 February 2027")
+    }
+
+    /// Noon, or the given time, on a day of Dec 2026 or Nov 2026, Chicago
+    private func date(_ month: Int, _ dayOfMonth: Int, hour: Int = 12, minute: Int = 0) -> Date {
+        calendar.date(from: DateComponents(year: 2026, month: month, day: dayOfMonth, hour: hour, minute: minute))!
+    }
+
+    @Test func theAdventDaysNameTheirMysteries() {
+        // The traditional schedule: Advent's Sundays Joyful, then the weekdays
+        #expect(today(snapshot(now: date(11, 29))).mysteries.category == "joyful", "First Sunday of Advent")
+        #expect(today(snapshot(now: date(12, 8))).mysteries.category == "sorrowful", "Tuesday, the Immaculate Conception")
+        #expect(today(snapshot(now: date(12, 17))).mysteries.category == "joyful", "Thursday")
+        #expect(today(snapshot(now: date(12, 21))).mysteries.category == "joyful", "Monday")
+    }
+
+    @Test func theDayTurnsAtMidnight() {
+        let snap = snapshot(now: date(12, 21))
+        let before = snap.day(at: date(12, 21, hour: 23, minute: 59), calendar: calendar)
+        let after = snap.day(at: date(12, 22, hour: 0, minute: 1), calendar: calendar)
+        #expect(before?.date == "2026-12-21")
+        #expect(before?.mysteries.category == "joyful")
+        #expect(after?.date == "2026-12-22")
+        #expect(after?.mysteries.category == "sorrowful")
+    }
+
     @Test func aWidgetFindsTheDayAndTheHourByTheClock() {
         let snap = snapshot()
         #expect(snap.day(at: day(2), calendar: calendar)?.date == "2026-11-20")
