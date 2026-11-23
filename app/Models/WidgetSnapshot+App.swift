@@ -189,6 +189,11 @@ extension WidgetSnapshot {
         _ novenas: [String: NovenaProgress], info: (String) -> NovenaInfo?, at date: Date, calendar: Calendar
     ) -> [Novena] {
         novenas.values.compactMap { (progress: NovenaProgress) -> Novena? in
+            // A novena the Prayer Book no longer holds (the Undoer of Knots,
+            // taken off in Nov 2026) is not shown: it stood under its raw id
+            // at "Day 4 of 9", and its link opened nothing. Its days are
+            // kept, and it comes back if the novena does
+            guard let about = info(progress.novenaID) else { return nil }
             let todays: Int?
             let current: Int
             switch progress.standing(on: date, calendar: calendar) {
@@ -203,11 +208,10 @@ extension WidgetSnapshot {
             }
             let shown = max(1, min(current, progress.length))
             let prayedToday = progress.prayed.contains(progress.dayNumber(on: date, calendar: calendar))
-            let about = info(progress.novenaID)
             return Novena(
                 id: progress.novenaID,
-                name: about?.name ?? progress.novenaID,
-                painting: about?.painting,
+                name: about.name,
+                painting: about.painting,
                 length: progress.length,
                 prayedDays: progress.prayed.sorted(),
                 todaysDay: todays,

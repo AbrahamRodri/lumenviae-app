@@ -137,6 +137,13 @@ struct WidgetSnapshotTests {
         #expect(today(snapshot(novenas: ["st_joseph": done])).novenas.isEmpty)
     }
 
+    @Test func aNovenaTheBookNoLongerHoldsIsNotShown() {
+        var knots = NovenaProgress(novenaID: "undoer_of_knots", length: 9, beginning: day(-3), calendar: calendar)
+        knots.prayed = [1, 2, 3]
+        #expect(today(snapshot(novenas: ["undoer_of_knots": knots])).novenas.isEmpty)
+        #expect(!snapshot(novenas: ["undoer_of_knots": knots]).days.contains { !$0.novenas.isEmpty })
+    }
+
     @Test func theRecordCountsDaysInARowAndThisWeek() {
         // Wednesday prayed, and Monday and Tuesday before it
         let record = today(snapshot(prayerDays: [prayerDay(0), prayerDay(-1), prayerDay(-2), prayerDay(-10)])).record
