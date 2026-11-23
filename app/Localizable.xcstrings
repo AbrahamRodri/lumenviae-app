@@ -4469,6 +4469,17 @@
         }
       }
     },
+    "ADVENT" : {
+      "comment" : "Prayers tab: the season named at the right of This Season, in small gold capitals",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ADVIENTO"
+          }
+        }
+      }
+    },
     "AFTER THE ROSARY" : {
       "localizations" : {
         "es" : {
@@ -19109,6 +19120,39 @@
         }
       }
     },
+    "Read this Sunday's collect" : {
+      "comment" : "Prayers tab, This Season: the Advent wreath card on a Sunday of Advent or its Saturday eve",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leer la colecta de este domingo"
+          }
+        }
+      }
+    },
+    "Read this week's collect" : {
+      "comment" : "Prayers tab, This Season: the Advent wreath card on a weekday",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leer la colecta de esta semana"
+          }
+        }
+      }
+    },
+    "Read today's antiphon" : {
+      "comment" : "Prayers tab, This Season: the O Antiphons card's action line",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leer la antífona de hoy"
+          }
+        }
+      }
+    },
     "Read · %@" : {
       "comment" : "Marian Library, the next feast: button opening the library's reading, named when it has another title, like Read · Behold Thy Mother; shown in small capitals",
       "localizations" : {
@@ -25951,6 +25995,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Treinta y tres días, lo que dura la Consagración a María de san Luis María de Montfort."
+          }
+        }
+      }
+    },
+    "This Season" : {
+      "comment" : "Prayers tab: the heading over the Advent prayers' cards",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este tiempo"
           }
         }
       }

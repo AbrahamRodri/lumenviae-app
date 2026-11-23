@@ -22,6 +22,9 @@ import SwiftUI
 struct PrayersShelfHeading: View {
     let title: String
     var seeAll: (() -> Void)?
+    /// A word at the right in SEE ALL's capitals that is no button: the
+    /// season This Season is in (ADVENT)
+    var label: String?
 
     var body: some View {
         HStack(alignment: .firstTextBaseline) {
@@ -41,6 +44,11 @@ struct PrayersShelfHeading: View {
                 }
                 .buttonStyle(QuietGlyphButtonStyle())
                 .accessibilityLabel("See all: \(title)")
+            } else if let label {
+                Text(label)
+                    .font(AppFonts.labelFont(9.5))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold)
             }
         }
         .frame(minHeight: 30)

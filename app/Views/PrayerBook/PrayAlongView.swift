@@ -661,7 +661,8 @@ struct PrayAlongView: View {
                                     section: section,
                                     size: textSize,
                                     opacity: { stanzaOpacity($0, following: following) },
-                                    open: { saidPrayer = $0 }
+                                    open: { saidPrayer = $0 },
+                                    today: twin == nil ? adventToday : nil
                                 )
                                 .animation(Motion.crossfade, value: litStanza)
                             }
