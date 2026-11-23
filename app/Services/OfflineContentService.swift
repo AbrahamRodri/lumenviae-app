@@ -231,7 +231,7 @@ final class OfflineContentService {
     /// Dedicated session for audio files: fail a stalled connection in 30s
     /// instead of URLSession.shared's 60s, but allow large transfers.
     private let downloadSession: URLSession = {
-        let config = URLSessionConfiguration.default
+        let config = URLSessionConfiguration.app
         config.timeoutIntervalForRequest = 30
         config.timeoutIntervalForResource = 300
         return URLSession(configuration: config)

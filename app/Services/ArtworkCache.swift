@@ -43,7 +43,7 @@ final class ArtworkCache {
     /// immutable answer. Separate from the API session: its timeouts are
     /// for a cold Fly machine, not for a few hundred KB from S3.
     private let session: URLSession = {
-        let config = URLSessionConfiguration.default
+        let config = URLSessionConfiguration.app
         config.urlCache = URLCache(
             memoryCapacity: 16 * 1024 * 1024,
             diskCapacity: 128 * 1024 * 1024,

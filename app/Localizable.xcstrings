@@ -14251,6 +14251,17 @@
         }
       }
     },
+    "More meditations come with a connection." : {
+      "comment" : "Mysteries' page with no signal and nothing downloaded: after the line under MEDITATIONS, saying the one built-in set is not all there is",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando tengas conexión, verás más meditaciones."
+          }
+        }
+      }
+    },
     "More options" : {
       "localizations" : {
         "es" : {

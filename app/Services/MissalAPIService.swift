@@ -48,7 +48,7 @@ final class MissalAPIService {
         if let session {
             self.session = session
         } else {
-            let config = URLSessionConfiguration.default
+            let config = URLSessionConfiguration.app
             config.timeoutIntervalForRequest = 15
             config.timeoutIntervalForResource = 45
             self.session = URLSession(configuration: config)
