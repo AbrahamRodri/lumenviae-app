@@ -207,7 +207,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ a las 6 a. m."
+            "value" : "%@ a las 6 a. m."
           }
         }
       }
@@ -218,7 +218,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ a las 6 p. m."
+            "value" : "%@ a las 6 p. m."
           }
         }
       }
@@ -3373,7 +3373,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "12 p. m., cuando las campanas tocan para la oración del mediodía"
+            "value" : "12 p. m., cuando las campanas tocan para la oración del mediodía"
           }
         }
       }
@@ -3424,7 +3424,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "6 a. m."
+            "value" : "6 a. m."
           }
         }
       }
@@ -3435,7 +3435,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "6 a. m., mediodía y 6 p. m."
+            "value" : "6 a. m., mediodía y 6 p. m."
           }
         }
       }
@@ -3446,7 +3446,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "6 a. m., para empezar el día con oración"
+            "value" : "6 a. m., para empezar el día con oración"
           }
         }
       }
@@ -3458,7 +3458,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "8 p. m."
+            "value" : "8 p. m."
           }
         }
       }
@@ -3469,7 +3469,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "8 p. m., para terminar el día con oración"
+            "value" : "8 p. m., para terminar el día con oración"
           }
         }
       }
@@ -4084,7 +4084,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una oración a María a las 6 a. m., al mediodía y a las 6 p. m."
+            "value" : "Una oración a María a las 6 a. m., al mediodía y a las 6 p. m."
           }
         }
       }
@@ -4249,7 +4249,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una breve oración a María a las 6 a. m., al mediodía y a las 6 p. m., que recuerda el mensaje del ángel."
+            "value" : "Una breve oración a María a las 6 a. m., al mediodía y a las 6 p. m., que recuerda el mensaje del ángel."
           }
         }
       }
@@ -4260,7 +4260,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una breve oración a María a las 6 a. m., al mediodía y a las 6 p. m."
+            "value" : "Una breve oración a María a las 6 a. m., al mediodía y a las 6 p. m."
           }
         }
       }
@@ -5557,7 +5557,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A las 6 p. m."
+            "value" : "A las 6 p. m."
           }
         }
       }
@@ -19448,7 +19448,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recordarme a las 6 a. m."
+            "value" : "Recordarme a las 6 a. m."
           }
         }
       }
@@ -19459,7 +19459,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recordarme a las 8 p. m."
+            "value" : "Recordarme a las 8 p. m."
           }
         }
       }
@@ -19840,7 +19840,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suena a las 6 a. m., al mediodía y a las 6 p. m. para el Ángelus, una breve oración a María"
+            "value" : "Suena a las 6 a. m., al mediodía y a las 6 p. m. para el Ángelus, una breve oración a María"
           }
         }
       }
