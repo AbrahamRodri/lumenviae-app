@@ -106,6 +106,8 @@ struct AppLinkTests {
         ("lumenviae://novena/undoer_of_knots", .novena(id: "undoer_of_knots")),
         ("lumenviae://missal/today", .missalToday),
         ("lumenviae://prayer/angelus", .prayer(id: "angelus")),
+        ("lumenviae://prayers/o_antiphons", .prayer(id: "o_antiphons")),
+        ("lumenviae://prayers", .home),
         ("lumenviae://record", .record),
         ("lumenviae://office/now", .officeNow),
         ("lumenviae://consecration/today", .consecrationToday),

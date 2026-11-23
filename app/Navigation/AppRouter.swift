@@ -668,7 +668,7 @@ final class AppRouter {
         case novena(id: String)
         /// `missal/today`: today's Mass
         case missalToday
-        /// `prayer/<id>`: the Angelus (`angelus`) as the bell opens it, any
+        /// `prayer/<id>` or `prayers/<id>`: the Angelus (`angelus`) as the bell opens it, any
         /// other prayer on the pray-along screen
         case prayer(id: String)
         /// `record`: the Prayer Record
@@ -699,7 +699,8 @@ final class AppRouter {
         case "rosary" where words.count == 2 && words[1] == "continue": return .continueRosary
         case "novena" where parts.count == 2: return .novena(id: parts[1])
         case "missal" where words.count == 2 && words[1] == "today": return .missalToday
-        case "prayer" where parts.count == 2: return .prayer(id: parts[1])
+        // `prayers/<id>` too, the plural the Advent row named
+        case "prayer" where parts.count == 2, "prayers" where parts.count == 2: return .prayer(id: parts[1])
         case "record" where words.count == 1: return .record
         case "office" where words.count == 2 && words[1] == "now": return .officeNow
         case "consecration" where words.count == 2 && words[1] == "today": return .consecrationToday
