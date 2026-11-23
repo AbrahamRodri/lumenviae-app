@@ -9,6 +9,7 @@
 //  class is read and named in the Missal's words.
 //
 
+import Foundation
 import Testing
 @testable import app
 
