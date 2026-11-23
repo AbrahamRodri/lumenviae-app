@@ -84,19 +84,26 @@ struct SheetHeader<Trailing: View>: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             VStack(alignment: .leading, spacing: 6) {
-                if let kicker {
-                    Text(kicker.uppercased())
-                        .font(AppFonts.labelFont(9))
-                        .tracking(2.5)
-                        .foregroundColor(AppColors.gold)
+                VStack(alignment: .leading, spacing: 6) {
+                    if let kicker {
+                        Text(kicker.uppercased())
+                            .font(AppFonts.labelFont(9))
+                            .tracking(2.5)
+                            .foregroundColor(AppColors.gold)
+                    }
+
+                    Text(title)
+                        .font(AppFonts.headlineFont(22))
+                        .foregroundColor(AppColors.cream)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(.isHeader)
 
-                Text(title)
-                    .font(AppFonts.headlineFont(22))
-                    .foregroundColor(AppColors.cream)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-
+                // The lead is read after the heading, not inside it:
+                // combined, the headings rotor read Sources & Credits'
+                // whole paragraph as its heading
                 if let lead {
                     Text(lead)
                         .font(AppFonts.italicFont(14))
@@ -107,8 +114,6 @@ struct SheetHeader<Trailing: View>: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .accessibilityElement(children: .combine)
-            .accessibilityAddTraits(.isHeader)
 
             trailing
                 // `SheetHeaderAction` centres itself on the kicker's line;
