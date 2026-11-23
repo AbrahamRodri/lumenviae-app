@@ -280,8 +280,8 @@ struct MeditationReaderView: View {
 
             VStack(spacing: 10) {
                 Text(mysteryKicker.uppercased())
-                    .font(AppFonts.labelFont(10))
-                    .tracking(3)
+                    .font(AppFonts.labelFont(12))
+                    .tracking(2.2)
                     .foregroundColor(AppColors.gold)
                     .multilineTextAlignment(.center)
 

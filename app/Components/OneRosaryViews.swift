@@ -363,8 +363,8 @@ private struct RailBeadPressStyle: ButtonStyle {
             // gap clear of the press's 44-point light
             .overlay(alignment: .trailing) {
                 Text(lines.joined(separator: " · ").uppercased())
-                    .font(AppFonts.labelFont(10.5))
-                    .tracking(1.3)
+                    .font(AppFonts.labelFont(12))
+                    .tracking(1)
                     .foregroundColor(AppColors.cream)
                     .lineLimit(1)
                     .fixedSize()

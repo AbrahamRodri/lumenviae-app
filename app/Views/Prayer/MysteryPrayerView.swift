@@ -637,8 +637,8 @@ struct MysteryPrayerView: View {
     private func titleBlock(meditation: Meditation, showsMysteryName: Bool) -> some View {
         VStack(alignment: .leading, spacing: 5) {
             Text(mysteryKicker.uppercased())
-                .font(AppFonts.labelFont(10))
-                .tracking(2.5)
+                .font(AppFonts.labelFont(12))
+                .tracking(1.9)
                 .foregroundColor(AppColors.gold)
                 .contentTransition(.opacity)
 
