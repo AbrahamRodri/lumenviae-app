@@ -711,6 +711,10 @@ struct PrayAlongView: View {
             )
             .onChange(of: litStanza) { _, lit in
                 guard let lit, aloud else { return }
+                // An Advent prayer opened at today's part stays there while
+                // the voice reads the days before it, and follows it from
+                // today's heading on
+                if twin == nil, let today = adventToday, lit < today { return }
                 withAnimation(reduceMotion ? nil : Motion.travel(0.7)) {
                     proxy.scrollTo(lit, anchor: UnitPoint(x: 0.5, y: 0.3))
                 }
