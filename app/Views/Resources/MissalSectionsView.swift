@@ -426,7 +426,7 @@ struct MissalPassageText: View {
 
                 case .lines(let lines):
                     if index == capIndex {
-                        DropCapText(text: lines, bodySize: bodySize, textColor: color)
+                        DropCapText(text: lines, bodySize: bodySize, textColor: color, marksRubrics: true)
                             .fixedSize(horizontal: false, vertical: true)
                     } else {
                         Rubric.line(lines, noteSize: max(11, bodySize - 3))
@@ -520,7 +520,8 @@ struct MissalPairedPassageText: View {
                 DropCapText(
                     text: pair.primary,
                     bodySize: size,
-                    textColor: AppColors.cream.opacity(0.92)
+                    textColor: AppColors.cream.opacity(0.92),
+                    marksRubrics: true
                 )
                 .fixedSize(horizontal: false, vertical: true)
             } else {
@@ -591,7 +592,8 @@ struct MissalColumnPassageText: View {
                 DropCapText(
                     text: text,
                     bodySize: columnSize,
-                    textColor: AppColors.cream.opacity(0.92)
+                    textColor: AppColors.cream.opacity(0.92),
+                    marksRubrics: true
                 )
             } else {
                 Rubric.line(text, noteSize: max(11, columnSize - 3))
