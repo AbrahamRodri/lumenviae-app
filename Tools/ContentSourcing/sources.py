@@ -886,11 +886,11 @@ PROVENANCE = {
 }
 
 CARLO = dict(
-    imageset="carlo_acutis", status="flagged",
+    imageset="carlo_acutis", status="removed",
     work="Photograph of Carlo Acutis (head and shoulders, red polo, mountains behind)",
     creator="Unknown; the widely circulated family photograph (c. 2005–06)",
     licence="Not established — almost certainly in copyright (a modern photograph; the Acutis family / Associazione Amici di Carlo Acutis control the official images)",
-    note="Used in CarloAcutisView (CachedAssetImage(\"carlo_acutis\")). Do not ship without permission. "
+    note="Removed from the app 23 Nov 2026 (copyright take-off; the original is kept in reports/rig/copyright-takeoff/removed/). CarloAcutisView draws his icon without it; a My Prayer that chose it hangs the Saved painting. To bring a photograph back: "
          "Replacement options, in order: (1) written permission from the Associazione Carlo Acutis (carloacutis.com) for this photograph; "
          "(2) a freely licensed photograph on Commons (fetch.py --search 'Carlo Acutis' lists any, with licence; as of the last check most Commons "
          "images of him were deleted as non-free, so expect none); (3) no photograph: the page draws the votive candle or a monogram instead. "
