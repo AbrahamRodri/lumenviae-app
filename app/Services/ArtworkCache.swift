@@ -67,16 +67,23 @@ final class ArtworkCache {
     /// main actor; the result is memoized under the URL. Failures are not
     /// memoized: the next page to ask tries again, which is how a set
     /// opened offline gets its plate once the connection is back.
-    func image(for artwork: SetArtwork, setId: Int) async -> UIImage? {
-        if let hit = cached(artwork.url) { return hit }
+    ///
+    /// `url` is the copy wanted (`SetArtwork.url(forPixelWidth:)`): a
+    /// smaller one where the API lists it. A set saved for offline keeps
+    /// the original on disk, and that is read first whatever is wanted,
+    /// since it costs no download. It is then kept under the wanted URL,
+    /// which is harmless: every URL in `SetArtwork.urls` draws the same
+    /// painting.
+    func image(for artwork: SetArtwork, setId: Int, url: String? = nil) async -> UIImage? {
+        let url = url ?? artwork.url
+        if let hit = cached(url) { return hit }
 
-        if let running = inFlight[artwork.url] {
+        if let running = inFlight[url] {
             return await running.value
         }
 
         let local = OfflineContentService.shared.localArtworkURL(setId: setId, remote: artwork.url)
         let session = session
-        let url = artwork.url
 
         let task = Task<UIImage?, Never> {
             await Self.load(remote: url, local: local, session: session)
