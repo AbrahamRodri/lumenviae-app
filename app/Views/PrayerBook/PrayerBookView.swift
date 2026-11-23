@@ -153,6 +153,13 @@ struct PrayerBookView: View {
             PrayersNovenaShelf(now: now)
                 .padding(.horizontal, 18)
 
+            // In Advent, its two prayers, today's part named (absent out
+            // of season, and nothing else moves)
+            // The schedule's day (the real one in a release build), read
+            // again whenever `now` moves on, so the shelf follows the day
+            PrayersThisSeasonShelf(day: Calendar.current.startOfDay(for: ScheduleService.today))
+                .padding(.horizontal, 18)
+
             PrayersEverydayShelf()
                 .padding(.horizontal, 18)
 

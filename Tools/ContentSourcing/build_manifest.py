@@ -157,7 +157,7 @@ def markdown(m) -> str:
             "(`sources.py`, `TEXTS`; build_credits.py renders the same list into the app's Sources & Credits page).", "",
             "| Work | Maker and edition | Where in the app | Source | Licence |", "|---|---|---|---|---|"]
     for t in S.TEXTS:
-        out.append("| {} | {} | {} | {} | {} |".format(cell(t["title"]), cell(t["maker"]), cell(t["detail"]), cell(t["source"]), cell(t["licence"])))
+        out.append("| {} | {} | {} | {} | {} |".format(cell(t["title"]), cell(t["maker"]), cell(t["detail"]), cell(t.get("source", "")), cell(t["licence"])))
     out += ["", "## Flagged", ""]
     for f in m["flagged"]:
         out += [f"- **`{f['imageset']}`**: {f['work']}. Creator: {f['creator']}. Licence: {f['licence']}.", "", f"  {f['note']}", ""]

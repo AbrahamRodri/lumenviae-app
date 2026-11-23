@@ -983,16 +983,19 @@ struct LibraryBookView: View {
         .frame(maxWidth: .infinity)
     }
 
+    /// The book's terms. Its printed edition is credited under About's
+    /// Sources & Credits; the text's host is not named as its source
+    /// (copyright review, item 19)
     private func creditText(_ info: LibraryBookInfo) -> String {
         if info.librivoxID != nil {
             return String(
-                localized: "Text: Project Gutenberg eBook #\(info.gutenbergID). Recording: LibriVox volunteers. Public domain.",
-                comment: "Spiritual Reading, the credit at the foot of a book's page with a recording; the number is the eBook's number"
+                localized: "Recording: LibriVox volunteers. Public domain.",
+                comment: "Spiritual Reading, the credit at the foot of a book's page with a recording"
             )
         }
         return String(
-            localized: "Text: Project Gutenberg eBook #\(info.gutenbergID). Public domain.",
-            comment: "Spiritual Reading, the credit at the foot of a book's page without a recording; the number is the eBook's number"
+            localized: "Public domain.",
+            comment: "Spiritual Reading, the credit at the foot of a book's page without a recording"
         )
     }
 

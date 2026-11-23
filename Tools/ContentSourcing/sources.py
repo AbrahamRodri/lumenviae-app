@@ -991,23 +991,23 @@ FALLBACK_SOURCES = [
 TEXTS = [
     dict(title="The Holy Bible", maker="Douay-Rheims translation, Bishop Challoner's revision (1749–52)",
          detail="The Scriptural Rosary's verses, the consecration's readings, the Gospel meditation sets and the daily quotations",
-         source="Project Gutenberg #8300 and the Original Douay-Rheims API (thedouayrheims.com)", licence="Public domain"),
+         source="The Original Douay-Rheims API (thedouayrheims.com)", licence="Public domain"),
     dict(title="True Devotion to the Blessed Virgin Mary", maker="St. Louis de Montfort, translated by Frederick William Faber (1862; twelfth London edition, 1904)",
          detail="Bundled whole, and read in the consecration", source="Resources/TrueDevotionBook.json, from the 1904 printing", licence="Public domain"),
     dict(title="The Imitation of Christ", maker="Thomas à Kempis, translated by William Benham",
-         detail="On the Spiritual Reading shelf, in the consecration's readings and the daily quotations", source="Project Gutenberg #1653", licence="Public domain"),
+         detail="On the Spiritual Reading shelf, in the consecration's readings and the daily quotations", licence="Public domain"),
     dict(title="The Story of a Soul", maker="St. Thérèse of Lisieux, translated by Thomas N. Taylor (1912)",
-         detail="On the Spiritual Reading shelf", source="Project Gutenberg #16772; read by Susan Morin for LibriVox (8021)", licence="Public domain"),
+         detail="On the Spiritual Reading shelf", source="Read by Susan Morin for LibriVox (8021)", licence="Public domain"),
     dict(title="The Confessions", maker="St. Augustine, translated by E. B. Pusey",
-         detail="On the Spiritual Reading shelf", source="Project Gutenberg #3296; read for LibriVox (2601)", licence="Public domain"),
+         detail="On the Spiritual Reading shelf", source="Read for LibriVox (2601)", licence="Public domain"),
     dict(title="The Dolorous Passion of Our Lord Jesus Christ", maker="Anne Catherine Emmerich, Burns & Lambert's English (1862)",
-         detail="Cut into the bundled Sorrowful meditations", source="Project Gutenberg #10866", licence="Public domain"),
+         detail="Cut into the bundled Sorrowful meditations", licence="Public domain"),
     dict(title="The Glories of Mary", maker="St. Alphonsus Liguori, the Dunigan translation (New York, 1852)",
-         detail="On the Spiritual Reading shelf, cut into the bundled Seven Sorrows meditations, and in the daily quotations", source="Project Gutenberg #72411; read by Ann Boulais for LibriVox (8533) from the 1888 Kenedy printing of the same translation", licence="Public domain"),
+         detail="On the Spiritual Reading shelf, cut into the bundled Seven Sorrows meditations, and in the daily quotations", source="Read by Ann Boulais for LibriVox (8533) from the 1888 Kenedy printing of the same translation", licence="Public domain"),
     dict(title="The Practice of the Presence of God", maker="Brother Lawrence of the Resurrection, the Fleming H. Revell edition (1895)",
-         detail="On the Spiritual Reading shelf", source="Project Gutenberg #13871; read by Kirsten Ferreri for LibriVox (564)", licence="Public domain"),
+         detail="On the Spiritual Reading shelf", source="Read by Kirsten Ferreri for LibriVox (564)", licence="Public domain"),
     dict(title="Maxims and Counsels of St. Francis de Sales for Every Day of the Year", maker="translated by Ella McMahon (1884)",
-         detail="In the daily quotations", source="Project Gutenberg #73661", licence="Public domain"),
+         detail="In the daily quotations", licence="Public domain"),
     dict(title="Meditations and Devotions", maker="John Henry Newman (Longmans, 1893)",
          detail="In the daily quotations", source="Internet Archive (a2514634smrn00newmuoft)", licence="Public domain"),
     dict(title="The Divine Comedy", maker="Dante, translated by Henry Wadsworth Longfellow (1867)",
@@ -1020,7 +1020,7 @@ TEXTS = [
     dict(title="The Roman Missal of 1962", maker="the Missale Meum project",
          detail="Today's Mass, fetched when opened", source="missalemeum.com, MIT licence", licence="MIT"),
     dict(title="The Roman Breviary of 1962", maker="The Divinum Officium Project",
-         detail="The Hours of Prayer, fetched when opened", source="divinumofficium.com, by way of Lumen Viae's own server", licence="Free to use, with the project's credit"),
+         detail="The Hours of Prayer, fetched when opened", source="divinumofficium.com, MIT licence, by way of Lumen Viae's own server", licence="MIT"),
     dict(title="Gregorian chant: recordings and scores", maker="Verbum Gloriae (verbumgloriae.es)",
          detail="The Chant Library's 104 recordings and their scores", source="verbumgloriae.es, copyleft licence", licence="Copyleft (share alike, no attribution required)"),
     # Credited by source, not called public domain as a whole: several
@@ -1038,4 +1038,24 @@ TEXTS = [
          detail="The app's type", source="Google Fonts", licence="SIL Open Font License 1.1"),
     dict(title="Phosphor Icons and Christicons", maker="Phosphor (Helena Zhang and Tobias Fried); Christicons",
          detail="The app's glyphs, beside those drawn for it", source="phosphoricons.com (MIT); christicons.com (free for commercial use)", licence="MIT; free for commercial use"),
+]
+
+
+# ---------------------------------------------------------------- licences
+# The notices two licences ask to go with the app (copyright review, item
+# 20): MIT's copyright and permission notice, and the OFL's copyright notice
+# and licence with the fonts. Each holder's line is as the licence or the
+# font file prints it; the licence texts are licences/mit.txt and ofl.txt,
+# kept as published. build_credits.py sets them under Licences.
+
+LICENCES = [
+    dict(name="MIT License", text="licences/mit.txt", holders=[
+        ("Phosphor Icons", "Copyright (c) 2023 Phosphor Icons"),
+        ("Divinum Officium", "Copyright (c) 2026 Divinum Officium"),
+        ("Missale Meum", "Copyright (c) 2022 Marcin Molenda"),
+    ]),
+    dict(name="SIL Open Font License 1.1", text="licences/ofl.txt", holders=[
+        ("Cinzel", "Copyright 2020 The Cinzel Project Authors (https://github.com/NDISCOVER/Cinzel)"),
+        ("EB Garamond", "Copyright 2017 The EB Garamond Project Authors (https://github.com/octaviopardo/EBGaramond12)"),
+    ]),
 ]
