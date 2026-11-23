@@ -3516,7 +3516,7 @@
       "length": 9,
       "list_title": "Guadalupe",
       "note": null,
-      "origin": "Traditional Mexican novena, author unknown · English as published by EWTN, “Novena to the Virgin of Guadalupe”",
+      "origin": "Novena by Fr. José Francisco Valdés, a religious of the Province of San Diego, Mexico · English as published by EWTN, “Novena to the Virgin of Guadalupe”",
       "painting": null,
       "prayer_id": "our_lady_of_guadalupe_novena",
       "search_words": [
@@ -10448,7 +10448,7 @@
       "latin_title": null,
       "list_title": null,
       "note": "Said on the beads of the Rosary, above all at three in the afternoon, the hour of Our Lord's death.",
-      "origin": "St Faustina Kowalska · 1935",
+      "origin": "Prayers given to St Faustina Kowalska (Diary, 476) · 1935",
       "origin_credit": true,
       "search_words": [
         "divine mercy",
@@ -11525,7 +11525,7 @@
       "latin_title": null,
       "list_title": null,
       "note": "Nine days before her feast, December 3 to 11: each day the Act of Contrition, the prayer of the day, an Our Father, a Hail Mary and a Glory Be.",
-      "origin": "Traditional Mexican novena, author unknown · English as published by EWTN, “Novena to the Virgin of Guadalupe”",
+      "origin": "Novena by Fr. José Francisco Valdés, a religious of the Province of San Diego, Mexico · English as published by EWTN, “Novena to the Virgin of Guadalupe”",
       "origin_credit": true,
       "search_words": [
         "guadalupe",
@@ -11538,6 +11538,6 @@
       "title": "The Novena to Our Lady of Guadalupe"
     }
   ],
-  "updated_at": "2026-11-17T15:30:00Z",
-  "version": "a0a315b90bad00ed"
+  "updated_at": "2026-11-23T18:00:00Z",
+  "version": "da28f7092130427f"
 }
