@@ -211,7 +211,8 @@ struct AboutView: View {
 
 /// The app's sources, in the sheet grammar: the paintings in the order
 /// the Rosary prays them, then every text, recording and typeface, each
-/// with its maker, edition and licence. The list is generated from
+/// with its maker, edition and licence, then the notices the MIT and OFL
+/// licences ask for. The list is generated from
 /// Tools/ContentSourcing/sources.py (`SourcesAndCredits`), so a painting
 /// taken through fetch.py is credited the same day.
 struct SourcesCreditsSheet: View {
@@ -236,6 +237,12 @@ struct SourcesCreditsSheet: View {
                     creditRow(work)
                 }
 
+                SheetSectionLabel(String(localized: "Licences", comment: "About, Sources & Credits: the line under the heading, or a section label"))
+                    .padding(.top, 28)
+                ForEach(SourcesAndCredits.licences) { notice in
+                    licenceNotice(notice)
+                }
+
                 Text("Lumen Viae is made by one person, for the greater glory of God. If a credit here is wrong or missing, write through Send Feedback and it will be put right.")
                     .font(AppFonts.italicFont(14))
                     .foregroundColor(AppColors.textSecondary)
@@ -247,6 +254,35 @@ struct SourcesCreditsSheet: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .sheetGround()
+    }
+
+    /// A licence as it asks to be given: its name, each holder's copyright
+    /// line, and its text, in English as published (never translated)
+    private func licenceNotice(_ notice: LicenceNotice) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(verbatim: notice.name)
+                .font(AppFonts.semiboldBodyFont(16))
+                .foregroundColor(AppColors.cream)
+            ForEach(notice.holders, id: \.self) { holder in
+                Text(verbatim: holder)
+                    .font(AppFonts.italicFont(14))
+                    .foregroundColor(AppColors.cream.opacity(0.8))
+            }
+            Text(verbatim: notice.text)
+                .font(AppFonts.bodyFont(13))
+                .foregroundColor(AppColors.textSecondary)
+                .lineSpacing(3)
+                .padding(.top, 8)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, SheetMetrics.gutter)
+        .padding(.vertical, 14)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.16))
+                .frame(height: AppLine.hairline)
+                .padding(.horizontal, SheetMetrics.gutter)
+        }
     }
 
     /// One work: its name, its maker, where and when, and its terms

@@ -26,6 +26,19 @@ struct CreditedWork: Identifiable, Hashable {
     var id: String { title + maker }
 }
 
+/// A licence's notice as the licence asks it to be given: who holds
+/// the copyright of each work under it, and the licence's own text.
+struct LicenceNotice: Identifiable, Hashable {
+    /// The licence's name, "MIT License"
+    let name: String
+    /// Each work's copyright line, as its licence or font file prints it
+    let holders: [String]
+    /// The licence as published, a paragraph to a line
+    let text: String
+
+    var id: String { name }
+}
+
 enum SourcesAndCredits {
 
     /// The paintings, the mysteries' first in the order the Rosary prays
@@ -147,20 +160,20 @@ enum SourcesAndCredits {
 
     /// The texts, the recordings, the type and the glyphs
     static let texts: [CreditedWork] = [
-        CreditedWork(title: "The Holy Bible", maker: "Douay-Rheims translation, Bishop Challoner's revision (1749–52)", detail: "The Scriptural Rosary's verses, the consecration's readings, the Gospel meditation sets and the daily quotations. Project Gutenberg #8300 and the Original Douay-Rheims API (thedouayrheims.com).", licence: "Public domain"),
+        CreditedWork(title: "The Holy Bible", maker: "Douay-Rheims translation, Bishop Challoner's revision (1749–52)", detail: "The Scriptural Rosary's verses, the consecration's readings, the Gospel meditation sets and the daily quotations. The Original Douay-Rheims API (thedouayrheims.com).", licence: "Public domain"),
         CreditedWork(title: "True Devotion to the Blessed Virgin Mary", maker: "St. Louis de Montfort, translated by Frederick William Faber (1862; twelfth London edition, 1904)", detail: "Bundled whole, and read in the consecration. Resources/TrueDevotionBook.json, from the 1904 printing.", licence: "Public domain"),
-        CreditedWork(title: "The Imitation of Christ", maker: "Thomas à Kempis, translated by William Benham", detail: "On the Spiritual Reading shelf, in the consecration's readings and the daily quotations. Project Gutenberg #1653.", licence: "Public domain"),
-        CreditedWork(title: "The Story of a Soul", maker: "St. Thérèse of Lisieux, translated by Thomas N. Taylor (1912)", detail: "On the Spiritual Reading shelf. Project Gutenberg #16772; read by Susan Morin for LibriVox (8021).", licence: "Public domain"),
-        CreditedWork(title: "The Confessions", maker: "St. Augustine, translated by E. B. Pusey", detail: "On the Spiritual Reading shelf. Project Gutenberg #3296; read for LibriVox (2601).", licence: "Public domain"),
-        CreditedWork(title: "The Dolorous Passion of Our Lord Jesus Christ", maker: "Anne Catherine Emmerich, Burns & Lambert's English (1862)", detail: "Cut into the bundled Sorrowful meditations. Project Gutenberg #10866.", licence: "Public domain"),
-        CreditedWork(title: "The Glories of Mary", maker: "St. Alphonsus Liguori, the Dunigan translation (New York, 1852)", detail: "On the Spiritual Reading shelf, cut into the bundled Seven Sorrows meditations, and in the daily quotations. Project Gutenberg #72411; read by Ann Boulais for LibriVox (8533) from the 1888 Kenedy printing of the same translation.", licence: "Public domain"),
-        CreditedWork(title: "The Practice of the Presence of God", maker: "Brother Lawrence of the Resurrection, the Fleming H. Revell edition (1895)", detail: "On the Spiritual Reading shelf. Project Gutenberg #13871; read by Kirsten Ferreri for LibriVox (564).", licence: "Public domain"),
-        CreditedWork(title: "Maxims and Counsels of St. Francis de Sales for Every Day of the Year", maker: "translated by Ella McMahon (1884)", detail: "In the daily quotations. Project Gutenberg #73661.", licence: "Public domain"),
+        CreditedWork(title: "The Imitation of Christ", maker: "Thomas à Kempis, translated by William Benham", detail: "On the Spiritual Reading shelf, in the consecration's readings and the daily quotations.", licence: "Public domain"),
+        CreditedWork(title: "The Story of a Soul", maker: "St. Thérèse of Lisieux, translated by Thomas N. Taylor (1912)", detail: "On the Spiritual Reading shelf. Read by Susan Morin for LibriVox (8021).", licence: "Public domain"),
+        CreditedWork(title: "The Confessions", maker: "St. Augustine, translated by E. B. Pusey", detail: "On the Spiritual Reading shelf. Read for LibriVox (2601).", licence: "Public domain"),
+        CreditedWork(title: "The Dolorous Passion of Our Lord Jesus Christ", maker: "Anne Catherine Emmerich, Burns & Lambert's English (1862)", detail: "Cut into the bundled Sorrowful meditations.", licence: "Public domain"),
+        CreditedWork(title: "The Glories of Mary", maker: "St. Alphonsus Liguori, the Dunigan translation (New York, 1852)", detail: "On the Spiritual Reading shelf, cut into the bundled Seven Sorrows meditations, and in the daily quotations. Read by Ann Boulais for LibriVox (8533) from the 1888 Kenedy printing of the same translation.", licence: "Public domain"),
+        CreditedWork(title: "The Practice of the Presence of God", maker: "Brother Lawrence of the Resurrection, the Fleming H. Revell edition (1895)", detail: "On the Spiritual Reading shelf. Read by Kirsten Ferreri for LibriVox (564).", licence: "Public domain"),
+        CreditedWork(title: "Maxims and Counsels of St. Francis de Sales for Every Day of the Year", maker: "translated by Ella McMahon (1884)", detail: "In the daily quotations.", licence: "Public domain"),
         CreditedWork(title: "Meditations and Devotions", maker: "John Henry Newman (Longmans, 1893)", detail: "In the daily quotations. Internet Archive (a2514634smrn00newmuoft).", licence: "Public domain"),
         CreditedWork(title: "The Divine Comedy", maker: "Dante, translated by Henry Wadsworth Longfellow (1867)", detail: "In the daily quotations. Paradiso XXXIII.", licence: "Public domain"),
         CreditedWork(title: "The World's First Love", maker: "Fulton J. Sheen (1952)", detail: "One line in the daily quotations, the Rosary as \"the book of the blind\"; in Spanish, El primer amor del mundo. Credited here rather than under the line.", licence: "Short quotation, credited"),
         CreditedWork(title: "The Roman Missal of 1962", maker: "the Missale Meum project", detail: "Today's Mass, fetched when opened. missalemeum.com, MIT licence.", licence: "MIT"),
-        CreditedWork(title: "The Roman Breviary of 1962", maker: "The Divinum Officium Project", detail: "The Hours of Prayer, fetched when opened. divinumofficium.com, by way of Lumen Viae's own server.", licence: "Free to use, with the project's credit"),
+        CreditedWork(title: "The Roman Breviary of 1962", maker: "The Divinum Officium Project", detail: "The Hours of Prayer, fetched when opened. divinumofficium.com, MIT licence, by way of Lumen Viae's own server.", licence: "MIT"),
         CreditedWork(title: "Gregorian chant: recordings and scores", maker: "Verbum Gloriae (verbumgloriae.es)", detail: "The Chant Library's 104 recordings and their scores. verbumgloriae.es, copyleft licence.", licence: "Copyleft (share alike, no attribution required)"),
         CreditedWork(title: "Prayers of the Church", maker: "the 1910 Raccolta, the Roman Ritual, Missal and Breviary, the app's own renderings from the Latin, and the prayer books and publishers named under each prayer", detail: "The Prayer Book. Each prayer's source is named under it.", licence: "Credited under each prayer"),
         CreditedWork(title: "Novena to Our Lady, Undoer of Knots", maker: "Fr. Juan Ramón Celeiro, as printed by Ascension Press", detail: "The Undoer of Knots novena, in English and Spanish. ascensionpress.com.", licence: "Used with credit"),
@@ -168,5 +181,62 @@ enum SourcesAndCredits {
         CreditedWork(title: "The Litany of St Joseph, 2021 invocations", maker: "USCCB", detail: "The English of the invocations added in 2021 (Congregation for Divine Worship, Prot. N. 133/21). usccb.org.", licence: "Used with credit"),
         CreditedWork(title: "Cinzel and EB Garamond", maker: "Natanael Gama; Georg Duffner and Octavio Pardo", detail: "The app's type. Google Fonts.", licence: "SIL Open Font License 1.1"),
         CreditedWork(title: "Phosphor Icons and Christicons", maker: "Phosphor (Helena Zhang and Tobias Fried); Christicons", detail: "The app's glyphs, beside those drawn for it. phosphoricons.com (MIT); christicons.com (free for commercial use).", licence: "MIT; free for commercial use")
+    ]
+
+    /// The notices the MIT and OFL licences ask to go with the app: each
+    /// holder's copyright line, then the licence as published
+    static let licences: [LicenceNotice] = [
+        LicenceNotice(name: "MIT License", holders: ["Copyright (c) 2023 Phosphor Icons", "Copyright (c) 2026 Divinum Officium", "Copyright (c) 2022 Marcin Molenda"], text: """
+            Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+            The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+            THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+            """),
+        LicenceNotice(name: "SIL Open Font License 1.1", holders: ["Copyright 2020 The Cinzel Project Authors (https://github.com/NDISCOVER/Cinzel)", "Copyright 2017 The EB Garamond Project Authors (https://github.com/octaviopardo/EBGaramond12)"], text: """
+            This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is copied below, and is also available with a FAQ at: http://scripts.sil.org/OFL
+
+            SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+
+            PREAMBLE
+
+            The goals of the Open Font License (OFL) are to stimulate worldwide development of collaborative font projects, to support the font creation efforts of academic and linguistic communities, and to provide a free and open framework in which fonts may be shared and improved in partnership with others.
+
+            The OFL allows the licensed fonts to be used, studied, modified and redistributed freely as long as they are not sold by themselves. The fonts, including any derivative works, can be bundled, embedded, redistributed and/or sold with any software provided that any reserved names are not used by derivative works. The fonts and derivatives, however, cannot be released under any other type of license. The requirement for fonts to remain under this license does not apply to any document created using the fonts or their derivatives.
+
+            DEFINITIONS
+
+            \"Font Software\" refers to the set of files released by the Copyright Holder(s) under this license and clearly marked as such. This may include source files, build scripts and documentation.
+
+            \"Reserved Font Name\" refers to any names specified as such after the copyright statement(s).
+
+            \"Original Version\" refers to the collection of Font Software components as distributed by the Copyright Holder(s).
+
+            \"Modified Version\" refers to any derivative made by adding to, deleting, or substituting -- in part or in whole -- any of the components of the Original Version, by changing formats or by porting the Font Software to a new environment.
+
+            \"Author\" refers to any designer, engineer, programmer, technical writer or other person who contributed to the Font Software.
+
+            PERMISSION & CONDITIONS
+
+            Permission is hereby granted, free of charge, to any person obtaining a copy of the Font Software, to use, study, copy, merge, embed, modify, redistribute, and sell modified and unmodified copies of the Font Software, subject to the following conditions:
+
+            1) Neither the Font Software nor any of its individual components, in Original or Modified Versions, may be sold by itself.
+
+            2) Original or Modified Versions of the Font Software may be bundled, redistributed and/or sold with any software, provided that each copy contains the above copyright notice and this license. These can be included either as stand-alone text files, human-readable headers or in the appropriate machine-readable metadata fields within text or binary files as long as those fields can be easily viewed by the user.
+
+            3) No Modified Version of the Font Software may use the Reserved Font Name(s) unless explicit written permission is granted by the corresponding Copyright Holder. This restriction only applies to the primary font name as presented to the users.
+
+            4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font Software shall not be used to promote, endorse or advertise any Modified Version, except to acknowledge the contribution(s) of the Copyright Holder(s) and the Author(s) or with their explicit written permission.
+
+            5) The Font Software, modified or unmodified, in part or in whole, must be distributed entirely under this license, and must not be distributed under any other license. The requirement for fonts to remain under this license does not apply to any document created using the Font Software.
+
+            TERMINATION
+
+            This license becomes null and void if any of the above conditions are not met.
+
+            DISCLAIMER
+
+            THE FONT SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER DEALINGS IN THE FONT SOFTWARE.
+            """)
     ]
 }

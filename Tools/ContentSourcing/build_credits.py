@@ -11,6 +11,7 @@ credited. A painting is listed only when its imageset is on disk.
 """
 
 import json
+import re
 from pathlib import Path
 
 import sources as S
@@ -54,6 +55,28 @@ def paintings():
     return sorted(rows, key=key)
 
 
+def licence_paragraphs(path):
+    """A licence's paragraphs, each on one line, so the sheet wraps them to
+    the phone's width; the published text's rules of dashes are left out"""
+    paras, cur = [], []
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        # A heading in capitals ("PREAMBLE") and a numbered condition
+        # ("1) Neither the Font Software...") each stand as their own
+        heading = line.isupper() and len(line) < 40 and not line.endswith(".")
+        if not line or set(line) == {"-"} or heading or re.match(r"\d\) ", line):
+            if cur:
+                paras.append(" ".join(cur))
+            cur = []
+        if heading:
+            paras.append(line)
+        elif line and set(line) != {"-"}:
+            cur.append(line)
+    if cur:
+        paras.append(" ".join(cur))
+    return paras
+
+
 def build():
     lines = ['//',
              '//  SourcesAndCredits.swift',
@@ -83,6 +106,19 @@ def build():
              '    var id: String { title + maker }',
              '}',
              '',
+             '/// A licence\'s notice as the licence asks it to be given: who holds',
+             '/// the copyright of each work under it, and the licence\'s own text.',
+             'struct LicenceNotice: Identifiable, Hashable {',
+             '    /// The licence\'s name, "MIT License"',
+             '    let name: String',
+             '    /// Each work\'s copyright line, as its licence or font file prints it',
+             '    let holders: [String]',
+             '    /// The licence as published, a paragraph to a line',
+             '    let text: String',
+             '',
+             '    var id: String { name }',
+             '}',
+             '',
              'enum SourcesAndCredits {',
              '',
              '    /// The paintings, the mysteries\' first in the order the Rosary prays',
@@ -94,11 +130,21 @@ def build():
     lines[-1] = lines[-1].rstrip(',')
     lines += ['    ]', '', '    /// The texts, the recordings, the type and the glyphs', '    static let texts: [CreditedWork] = [']
     for t in S.TEXTS:
-        lines.append(f'        CreditedWork(title: "{esc(t["title"])}", maker: "{esc(t["maker"])}", detail: "{esc(t["detail"])}. {esc(t["source"])}.", licence: "{esc(t["licence"])}"),')
+        detail = ". ".join(x for x in [t["detail"], t.get("source")] if x)
+        lines.append(f'        CreditedWork(title: "{esc(t["title"])}", maker: "{esc(t["maker"])}", detail: "{esc(detail)}.", licence: "{esc(t["licence"])}"),')
+    lines[-1] = lines[-1].rstrip(',')
+    lines += ['    ]', '', '    /// The notices the MIT and OFL licences ask to go with the app: each', '    /// holder\'s copyright line, then the licence as published', '    static let licences: [LicenceNotice] = [']
+    for l in S.LICENCES:
+        holders = ", ".join(f'"{esc(line)}"' for _, line in l["holders"])
+        lines.append(f'        LicenceNotice(name: "{esc(l["name"])}", holders: [{holders}], text: """')
+        for para in licence_paragraphs(HERE / l["text"]):
+            lines.append(f'            {esc(para)}')
+            lines.append('')
+        lines[-1] = '            """),'
     lines[-1] = lines[-1].rstrip(',')
     lines += ['    ]', '}', '']
     OUT.write_text("\n".join(lines))
-    print(f"wrote {OUT.relative_to(ROOT)}: {len(paintings())} paintings, {len(S.TEXTS)} texts")
+    print(f"wrote {OUT.relative_to(ROOT)}: {len(paintings())} paintings, {len(S.TEXTS)} texts, {len(S.LICENCES)} licences")
 
 
 if __name__ == "__main__":

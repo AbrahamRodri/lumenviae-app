@@ -110,7 +110,7 @@ GENERATORS = [
         "sources-credits",
         inputs=["Tools/ContentSourcing/sources.py", "Tools/ContentSourcing/build_credits.py",
                 "Tools/ContentSourcing/fetched.json", "app/Assets.xcassets/*.imageset",
-                "app/Data/SourcesAndCredits.swift"],
+                "Tools/ContentSourcing/licences/*.txt", "app/Data/SourcesAndCredits.swift"],
         outputs=["app/Data/SourcesAndCredits.swift"],
         steps=[["python3", "Tools/ContentSourcing/build_credits.py"]],
         regenerate="cd Tools/ContentSourcing && python3 build_credits.py",
