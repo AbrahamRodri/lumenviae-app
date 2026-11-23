@@ -19,8 +19,8 @@ nonisolated enum OfflineTesting {
 
     static let isOn: Bool = {
         #if DEBUG
-            return ProcessInfo.processInfo.arguments.contains("-LVOffline")
-                || UserDefaults.standard.bool(forKey: "LVOffline")
+            // The argument domain reads -LVOffline YES (and NO) as the default
+            return UserDefaults.standard.bool(forKey: "LVOffline")
         #else
             return false
         #endif
