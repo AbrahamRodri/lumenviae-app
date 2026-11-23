@@ -22,6 +22,9 @@ struct PrayerPageSectionView: View {
     let size: CGFloat
     let opacity: (Int) -> Double
     let open: (PrayerPage.SaidPrayer) -> Void
+    /// The stanza holding today's heading in an Advent prayer, marked
+    /// TODAY beside it (`AdventPrayerPlace`)
+    var today: Int? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -57,9 +60,18 @@ struct PrayerPageSectionView: View {
     }
 
     private func stanzaView(_ stanza: PrayerPage.Stanza) -> some View {
-        VStack(alignment: .leading, spacing: (size * 0.5).rounded()) {
-            ForEach(Array(stanza.parts.enumerated()), id: \.offset) { _, part in
-                PrayerPagePartView(part: part, size: size, showsDropCap: stanza.index == 0, open: open)
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            VStack(alignment: .leading, spacing: (size * 0.5).rounded()) {
+                ForEach(Array(stanza.parts.enumerated()), id: \.offset) { _, part in
+                    PrayerPagePartView(part: part, size: size, showsDropCap: stanza.index == 0, open: open)
+                }
+            }
+            if stanza.index == today {
+                Spacer(minLength: 0)
+                Text(String(localized: "TODAY", comment: "Advent prayers: beside today's antiphon or this week's collect, in small gold capitals"))
+                    .font(AppFonts.labelFont(9.5))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

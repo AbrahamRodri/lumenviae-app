@@ -153,6 +153,11 @@ struct PrayerBookView: View {
             PrayersNovenaShelf(now: now)
                 .padding(.horizontal, 18)
 
+            // In Advent, its two prayers, today's part named (absent out
+            // of season, and nothing else moves)
+            PrayersThisSeasonShelf(day: Calendar.current.startOfDay(for: now))
+                .padding(.horizontal, 18)
+
             PrayersEverydayShelf()
                 .padding(.horizontal, 18)
 

@@ -573,6 +573,7 @@ struct PrayAlongView: View {
                 filtering: whole, keeping: { section in section.stanzas.contains { kept.contains($0.index) } })
         } ?? whole
         let following = aloud && voice.isPlaying
+        let adventToday = AdventPrayerPlace.stanza(of: prayer.id, in: stanzas, on: ScheduleService.today)
 
         return ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
@@ -660,7 +661,8 @@ struct PrayAlongView: View {
                                     section: section,
                                     size: textSize,
                                     opacity: { stanzaOpacity($0, following: following) },
-                                    open: { saidPrayer = $0 }
+                                    open: { saidPrayer = $0 },
+                                    today: twin == nil ? adventToday : nil
                                 )
                                 .animation(Motion.crossfade, value: litStanza)
                             }
@@ -720,9 +722,7 @@ struct PrayAlongView: View {
             // In Advent, the O Antiphons open at today's antiphon and the
             // wreath's collects at this week's Sunday, not at the top
             .task(id: prayer.id) {
-                guard twin == nil,
-                      let place = AdventPrayerPlace.stanza(of: prayer.id, in: stanzas, on: ScheduleService.today)
-                else { return }
+                guard twin == nil, let place = adventToday else { return }
                 try? await Task.sleep(for: .milliseconds(120))
                 proxy.scrollTo(place, anchor: UnitPoint(x: 0.5, y: 0.1))
             }

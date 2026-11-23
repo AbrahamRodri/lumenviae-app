@@ -71,6 +71,41 @@ struct AdventPrayerPlaceTests {
         }
     }
 
+    // MARK: This Season on the Prayers tab
+
+    @Test func thisSeasonShowsTheWreathFromTheEveAndTheAntiphonsFirstFrom17December() throws {
+        let wreath = AdventPrayerPlace.wreathID, antiphons = AdventPrayerPlace.antiphonsID
+        #expect(AdventPrayerPlace.seasonPrayers(on: try day(2026, 11, 27)).isEmpty)
+        #expect(AdventPrayerPlace.seasonPrayers(on: try day(2026, 11, 28)) == [wreath])
+        #expect(AdventPrayerPlace.seasonPrayers(on: try day(2026, 11, 29)) == [wreath])
+        #expect(AdventPrayerPlace.seasonPrayers(on: try day(2026, 12, 16)) == [wreath])
+        #expect(AdventPrayerPlace.seasonPrayers(on: try day(2026, 12, 17)) == [antiphons, wreath])
+        #expect(AdventPrayerPlace.seasonPrayers(on: try day(2026, 12, 23)) == [antiphons, wreath])
+        #expect(AdventPrayerPlace.seasonPrayers(on: try day(2026, 12, 24)) == [wreath])
+        #expect(AdventPrayerPlace.seasonPrayers(on: try day(2026, 12, 26)).isEmpty)
+        // No year is written in: 2027's Advent begins Sunday 28 November
+        #expect(AdventPrayerPlace.seasonPrayers(on: try day(2027, 11, 26)).isEmpty)
+        #expect(AdventPrayerPlace.seasonPrayers(on: try day(2027, 11, 27)) == [wreath])
+    }
+
+    @Test func aCardNamesTodaysPartAsTheBookPrintsIt() throws {
+        let wreath = try stanzas(AdventPrayerPlace.wreathID, .english)
+        #expect(AdventPrayerPlace.todaysPart(of: AdventPrayerPlace.wreathID, in: wreath, on: try day(2026, 11, 29))
+            == "The First Sunday of Advent")
+        let antiphons = try stanzas(AdventPrayerPlace.antiphonsID, .english)
+        #expect(AdventPrayerPlace.todaysPart(of: AdventPrayerPlace.antiphonsID, in: antiphons, on: try day(2026, 12, 21))
+            == "December 21")
+    }
+
+    @Test func theWreathCardReadsThisSundaysCollectOnSundayAndItsEve() throws {
+        let wreath = AdventPrayerPlace.wreathID
+        #expect(PrayersThisSeasonShelf.action(for: wreath, on: try day(2026, 11, 28)) == "Read this Sunday's collect")
+        #expect(PrayersThisSeasonShelf.action(for: wreath, on: try day(2026, 11, 29)) == "Read this Sunday's collect")
+        #expect(PrayersThisSeasonShelf.action(for: wreath, on: try day(2026, 12, 2)) == "Read this week's collect")
+        #expect(PrayersThisSeasonShelf.action(for: AdventPrayerPlace.antiphonsID, on: try day(2026, 12, 21))
+            == "Read today's antiphon")
+    }
+
     @Test func anyOtherPrayerOpensAtTheTop() throws {
         let text = try stanzas("memorare", .english)
         #expect(AdventPrayerPlace.stanza(of: "memorare", in: text, on: try day(2026, 12, 18)) == nil)

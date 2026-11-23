@@ -56,6 +56,38 @@ enum AdventPrayerPlace {
         return min((days + 1) / 7 + 1, 4)
     }
 
+    /// The Prayers tab's This Season cards for a day, in order: from 17
+    /// to 23 December the O Antiphons and then the wreath; from the eve of
+    /// the First Sunday of Advent to 24 December the wreath; else none
+    /// (design's BUILD.md, the website's `Book.advent_cards/2`)
+    static func seasonPrayers(on date: Date, calendar: Calendar = .current) -> [String] {
+        var ids: [String] = []
+        if antiphonDay(on: date, calendar: calendar) != nil { ids.append(antiphonsID) }
+        if adventWeek(on: date, calendar: calendar) != nil { ids.append(wreathID) }
+        return ids
+    }
+
+    /// Today's part as its heading prints it, without its brackets or the
+    /// closing stop: "December 21", "The First Sunday of Advent"
+    static func todaysPart(of prayerID: String, in stanzas: [String], on date: Date, calendar: Calendar = .current) -> String? {
+        guard let place = stanza(of: prayerID, in: stanzas, on: date, calendar: calendar) else { return nil }
+        var words = stanzas[place].components(separatedBy: "\n").first?
+            .components(separatedBy: "|||").first?
+            .trimmingCharacters(in: .whitespaces) ?? ""
+        if words.hasPrefix("[") { words.removeFirst() }
+        if words.hasSuffix("]") { words.removeLast() }
+        if words.hasSuffix(".") { words.removeLast() }
+        return words.isEmpty ? nil : words
+    }
+
+    /// Whether the wreath's card reads "this Sunday's collect": on a
+    /// Sunday of Advent and on its Saturday eve; on the other days, this
+    /// week's
+    static func isSundayOrEve(_ date: Date, calendar: Calendar = .current) -> Bool {
+        let weekday = calendar.component(.weekday, from: date)
+        return weekday == 1 || weekday == 7
+    }
+
     /// A stanza that is only a rubric, "[December 18.]", in one language
     /// or paired with its Latin
     static func isHeading(_ stanza: String) -> Bool {
