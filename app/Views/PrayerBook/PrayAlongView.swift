@@ -717,6 +717,15 @@ struct PrayAlongView: View {
                 twinPage = nil
                 proxy.scrollTo("top", anchor: .top)
             }
+            // In Advent, the O Antiphons open at today's antiphon and the
+            // wreath's collects at this week's Sunday, not at the top
+            .task(id: prayer.id) {
+                guard twin == nil,
+                      let place = AdventPrayerPlace.stanza(of: prayer.id, in: stanzas, on: ScheduleService.today)
+                else { return }
+                try? await Task.sleep(for: .milliseconds(120))
+                proxy.scrollTo(place, anchor: UnitPoint(x: 0.5, y: 0.1))
+            }
             .onChange(of: twinPage) { _, _ in
                 proxy.scrollTo("top", anchor: .top)
             }

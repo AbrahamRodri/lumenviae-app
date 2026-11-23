@@ -3770,7 +3770,7 @@ transition entirely.
   (`AppRouter.destination(of:)`, the paths the widgets use):
   `rosary/today` (today's mysteries' page), `rosary/continue` (the
   Rosary left off today, as the Pray button takes it up, else today's
-  mysteries' page), `novena/<id>`, `missal/today`, `prayer/<id>`
+  mysteries' page), `novena/<id>`, `missal/today`, `prayer/<id>` (or `prayers/<id>`)
   (`angelus` as the bell opens it; an unknown prayer stays Home),
   `record`, `office/now`, `consecration/today` (the tab), `chant` (the
   Chant Library) and `chant/<id>` (that chant's page over the library;
