@@ -1,6 +1,150 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "credits.licence.publicDomain" : {
+      "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Public domain"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dominio público"
+          }
+        }
+      }
+    },
+    "credits.licence.publicDomainPDArt" : {
+      "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Public domain (PD-Art: faithful 2D reproduction of a work whose author died more than 100 years ago)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dominio público (PD-Art: reproducción fiel en 2D de una obra cuyo autor murió hace más de cien años)"
+          }
+        }
+      }
+    },
+    "credits.licence.publicDomainOldMaster" : {
+      "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Public domain (old master)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dominio público (maestro antiguo)"
+          }
+        }
+      }
+    },
+    "credits.licence.copyleft" : {
+      "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copyleft (share alike, no attribution required)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copyleft (compartir igual, sin atribución obligatoria)"
+          }
+        }
+      }
+    },
+    "credits.licence.creditedUnderEachPrayer" : {
+      "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Credited under each prayer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con su crédito bajo cada oración"
+          }
+        }
+      }
+    },
+    "credits.licence.mitCommercial" : {
+      "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MIT; free for commercial use"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MIT; libre para uso comercial"
+          }
+        }
+      }
+    },
+    "credits.licence.shortQuotation" : {
+      "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short quotation, credited"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cita breve, con su crédito"
+          }
+        }
+      }
+    },
+    "credits.licence.usedWithCredit" : {
+      "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Used with credit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usado con crédito"
+          }
+        }
+      }
+    },
     "" : {
 
     },
