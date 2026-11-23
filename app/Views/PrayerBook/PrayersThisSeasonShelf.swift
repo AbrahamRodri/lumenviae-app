@@ -65,7 +65,7 @@ struct PrayersSeasonCard: View {
     /// wreath's Mary, when a Spanish title or the largest text wraps the
     /// card to four lines): it is drawn this tall from the card's top and
     /// dissolves into the card beneath
-    private static let paintingMaxHeight: CGFloat = 160
+    private static let paintingMaxHeight: CGFloat = 128
 
     /// The frames' paintings: Fra Angelico's Annunciation for the wreath,
     /// cut between the angel and Mary, and Isaiah for the O Antiphons
@@ -74,7 +74,7 @@ struct PrayersSeasonCard: View {
         case AdventPrayerPlace.wreathID:
             return PrayerBookPainting(
                 asset: "feast_annunciation", fallback: PrayerBookPainting.prayer(prayerID).asset,
-                focal: UnitPoint(x: 0.55, y: 0.4), caption: "The Annunciation")
+                focal: UnitPoint(x: 0.6, y: 0.4), caption: "The Annunciation")
         case AdventPrayerPlace.antiphonsID:
             return PrayerBookPainting(
                 asset: "advent_isaiah", fallback: PrayerBookPainting.prayer(prayerID).asset,
