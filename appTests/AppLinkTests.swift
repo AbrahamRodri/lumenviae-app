@@ -174,7 +174,7 @@ struct AppLinkTests {
     }
 
     @Test func novenaOpensItsPage() throws {
-        #expect(try opened("lumenviae://novena/undoer_of_knots").routes == [.novena(id: "undoer_of_knots")])
+        #expect(try opened("lumenviae://novena/debug_knots").routes == [.novena(id: "debug_knots")])
     }
 
     @Test func aNovenaWithNoPageStaysHome() throws {

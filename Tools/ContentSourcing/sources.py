@@ -1028,8 +1028,6 @@ TEXTS = [
     # each prayer (product-research's credits audit, 15 Nov 2026)
     dict(title="Prayers of the Church", maker="the 1910 Raccolta, the Roman Ritual, Missal and Breviary, the app's own renderings from the Latin, and the prayer books and publishers named under each prayer",
          detail="The Prayer Book", source="Each prayer's source is named under it", licence="Credited under each prayer"),
-    dict(title="Novena to Our Lady, Undoer of Knots", maker="Fr. Juan Ramón Celeiro, as printed by Ascension Press",
-         detail="The Undoer of Knots novena, in English and Spanish", source="ascensionpress.com", licence="Used with credit"),
     dict(title="Novenas from EWTN", maker="EWTN; the Novena to St Joseph by Fr. Lawrence G. Lovasik, S.V.D. (1956); the Novena to the Holy Spirit by the Holy Ghost Fathers",
          detail="The Efficacious Novena to the Sacred Heart, the Novena to the Holy Spirit, the Novena to St Joseph and the Guadalupe novena (its Spanish from EWTN Español); the St Jude novena's Spanish from EWTN Español and ACI Prensa", source="ewtn.com; aciprensa.com", licence="Used with credit"),
     dict(title="The Litany of St Joseph, 2021 invocations", maker="USCCB",

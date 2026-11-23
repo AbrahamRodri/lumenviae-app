@@ -89,7 +89,9 @@ struct NovenaTwinTests {
     }
 
     @Test func theBundledNovenasThatNameTheirDaysAreCut() throws {
-        for novena in LibraryContent.prayerBook.novenas where novena.prayerID == "undoer_of_knots_novena" {
+        let cut = LibraryContent.prayerBook.novenas.filter { $0.prayerID == "holy_spirit_novena" }
+        #expect(!cut.isEmpty)
+        for novena in cut {
             let prayer = try #require(PrayerBook.prayer(novena.prayerID))
             let stanzas = PrayAlongView.stanzas(prayer.english)
             let twin = try #require(NovenaTwin(stanzas: stanzas, length: novena.length))

@@ -479,28 +479,31 @@ struct NovenaSpanishTests {
 struct NovenaWithTheRosaryTests {
     /// Only a novena whose days pray the Rosary has a page of its own and
     /// PRAY IT WITH THE ROSARY; the rest are read a day at a time in the book
+    /// (The book's one such novena, the Undoer of Knots, was taken off for
+    /// copyright on 23 Nov 2026; the debug build's sample stands in.)
     @Test func onlyANovenaPrayedWithTheRosaryHasItsPage() throws {
         let book = LibraryContent.prayerBook.novenas
-        let knots = try #require(book.first { $0.id == "undoer_of_knots" })
         let jude = try #require(book.first { $0.id == "st_jude" })
-        #expect(knots.praysTheRosary)
+        #expect(NovenaDayContext.debugKnots.praysTheRosary)
         #expect(!jude.praysTheRosary)
-        #expect(NovenaDayContext.novena("undoer_of_knots") != nil)
+        #expect(NovenaDayContext.novena("debug_knots") != nil)
         #expect(NovenaDayContext.novena("st_jude") == nil)
-        #expect(book.filter(\.praysTheRosary).map(\.id) == ["undoer_of_knots"])
+        #expect(NovenaDayContext.novena("undoer_of_knots") == nil)
+        #expect(book.filter(\.praysTheRosary).map(\.id) == [])
     }
 
-    /// A novena begun on a build that let any novena be begun: its
-    /// reminders are taken down, its progress kept; the Rosary's novena,
-    /// and a novena the book no longer holds, are left alone
+    /// A novena begun on a build that let any novena be begun, or one the
+    /// book no longer holds (the Undoer of Knots, mid-novena when it was
+    /// taken off): its reminders are taken down, its progress kept; a
+    /// novena prayed with the Rosary is left alone
     @Test func aBegunNovenaWithoutTheRosaryIsSilenced() {
-        let book = LibraryContent.prayerBook.novenas
+        let book = LibraryContent.prayerBook.novenas + [NovenaDayContext.debugKnots]
         let begun = Date(timeIntervalSince1970: 1_794_700_000)
         let progress = Dictionary(
-            uniqueKeysWithValues: ["st_jude", "undoer_of_knots", "gone"].map {
+            uniqueKeysWithValues: ["st_jude", "undoer_of_knots", "debug_knots"].map {
                 ($0, NovenaProgress(novenaID: $0, length: 9, beginning: begun))
             })
-        #expect(NovenaStore.unreachable(progress, book: book) == ["st_jude"])
+        #expect(NovenaStore.unreachable(progress, book: book) == ["st_jude", "undoer_of_knots"])
     }
 }
 
@@ -511,7 +514,7 @@ struct SilentNovenaDayTests {
     /// on, and AMEN stands only on the day's last words (the mission:
     /// "with the voice off every step is read and moved with Next")
     @Test func theDaysWordsAreStepsBeforeAmen() throws {
-        let day = try #require(NovenaDayContext.resolve(novenaID: "undoer_of_knots", day: 1))
+        let day = try #require(NovenaDayContext.resolve(novenaID: "debug_knots", day: 1))
         let vm = ScripturalRosaryViewModel(category: .joyful, form: .plain, showsOpeningPrayers: false)
         vm.novena = day
         #expect(vm.isSilentNovena)

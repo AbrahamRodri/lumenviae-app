@@ -60,7 +60,7 @@ struct RecordingContractTests {
         // exported, so the export stays a true list of what is recorded.
         let awaitingRecording: Set<String> = [
             "st_bridget_twelve_years", "advent_wreath_collects", "immaculate_conception_novena",
-            "st_andrew_novena", "o_antiphons", "undoer_of_knots_novena",
+            "st_andrew_novena", "o_antiphons",
             // api #246 and #247 (14 Nov 2026), the novenas' twins
             "holy_spirit_novena", "st_joseph_novena", "our_mother_of_perpetual_help_novena",
             "our_lady_of_guadalupe_novena", "st_jude_novena", "st_therese_novena",
