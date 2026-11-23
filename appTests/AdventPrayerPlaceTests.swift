@@ -46,10 +46,13 @@ struct AdventPrayerPlaceTests {
 
     @Test func theCollectsOpenAtThisWeeksSunday() throws {
         let text = try stanzas(AdventPrayerPlace.wreathID, .english)
-        // Advent 2026 begins Sunday 29 November
+        // Advent 2026 begins Sunday 29 November; each week runs from its
+        // Sunday's eve, so a Saturday reads the coming Sunday's collect
         let weeks: [(Date, String)] = [
+            (try day(2026, 11, 28), "First Sunday"),
             (try day(2026, 11, 29), "First Sunday"),
-            (try day(2026, 12, 5), "First Sunday"),
+            (try day(2026, 12, 4), "First Sunday"),
+            (try day(2026, 12, 5), "Second Sunday"),
             (try day(2026, 12, 6), "Second Sunday"),
             (try day(2026, 12, 13), "Third Sunday"),
             (try day(2026, 12, 20), "Fourth Sunday"),
@@ -63,7 +66,7 @@ struct AdventPrayerPlaceTests {
 
     @Test func theCollectsOpenAtTheTopOutsideAdvent() throws {
         let text = try stanzas(AdventPrayerPlace.wreathID, .english)
-        for date in [try day(2026, 11, 28), try day(2026, 12, 25)] {
+        for date in [try day(2026, 11, 27), try day(2026, 12, 25)] {
             #expect(AdventPrayerPlace.stanza(of: AdventPrayerPlace.wreathID, in: text, on: date) == nil)
         }
     }

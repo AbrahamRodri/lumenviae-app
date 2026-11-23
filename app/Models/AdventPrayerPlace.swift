@@ -40,16 +40,20 @@ enum AdventPrayerPlace {
         return day
     }
 
-    /// The week of Advent, 1 to 4, from its First Sunday to 24 December
+    /// The week of Advent, 1 to 4, from the eve of its First Sunday to
+    /// 24 December. Each week runs from its Sunday's eve, so a Saturday
+    /// reads the coming Sunday's collect (the website's rule,
+    /// `Book.advent_cards/2`, and design's This Season frame)
     static func adventWeek(on date: Date, calendar: Calendar = .current) -> Int? {
         let year = calendar.component(.year, from: date)
         guard let start = ScheduleService.adventStart(year: year, calendar: calendar),
               let christmasEve = calendar.date(from: DateComponents(year: year, month: 12, day: 24))
         else { return nil }
         let day = calendar.startOfDay(for: date)
-        guard day >= calendar.startOfDay(for: start), day <= christmasEve else { return nil }
-        let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: start), to: day).day ?? 0
-        return min(days / 7 + 1, 4)
+        let first = calendar.startOfDay(for: start)
+        let days = calendar.dateComponents([.day], from: first, to: day).day ?? 0
+        guard days >= -1, day <= christmasEve else { return nil }
+        return min((days + 1) / 7 + 1, 4)
     }
 
     /// A stanza that is only a rubric, "[December 18.]", in one language
