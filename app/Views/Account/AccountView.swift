@@ -129,25 +129,18 @@ struct AccountView: View {
                     // The Prayer Book's own: whether it speaks at all.
                     // Apart from the Rosary's Audio on purpose — that one
                     // says what the voice reads, this one whether the book
-                    // makes a sound. Before any answer it shows the default
-                    // and says the book will ask; only a tap here answers
-                    // the question
+                    // makes a sound. Silent until Audio is chosen, here or
+                    // on the pray-along page's switch
                     AccountSection(title: String(localized: "Prayers Tab", comment: "Settings: a section heading"), icon: "lv-prayer-book") {
                         RosaryChoiceSettingsRow(
                             icon: PrayerBookAudio.icon,
                             title: String(localized: "Audio", comment: "Settings: a row\'s name"),
                             options: PrayerBookAudio.options,
                             value: Binding(
-                                get: { PrayerBookStore.shared.praysAloud },
+                                get: { PrayerBookStore.shared.hasChosenAloud && PrayerBookStore.shared.praysAloud },
                                 set: { PrayerBookStore.shared.chooseAloud($0) }
                             ),
-                            isAnswered: PrayerBookStore.shared.hasChosenAloud,
-                            note: { aloud in
-                                PrayerBookAudio.note(
-                                    for: aloud,
-                                    answered: PrayerBookStore.shared.hasChosenAloud
-                                )
-                            }
+                            note: { aloud in PrayerBookAudio.note(for: aloud) }
                         )
                     }
                     .padding(.top, 30)
@@ -869,7 +862,9 @@ struct ChantsSavedLine: View {
 // MARK: - Toggle Row
 
 struct ToggleRow: View {
-    let icon: String
+    /// A switch row carries no icon unless there is a reason for one
+    /// (Abraham, 17 Nov 2026: "gearing torwards no")
+    var icon: String? = nil
     let title: String
     var subtitle: String? = nil
     @Binding var isOn: Bool
@@ -884,9 +879,11 @@ struct ToggleRow: View {
             withAnimation(Motion.settle) { isOn.toggle() }
         } label: {
             HStack(spacing: 16) {
-                AppIcon(icon, size: 18)
-                    .foregroundColor(AppColors.textSecondary)
-                    .frame(width: 24)
+                if let icon {
+                    AppIcon(icon, size: 18)
+                        .foregroundColor(AppColors.textSecondary)
+                        .frame(width: 24)
+                }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
@@ -1479,7 +1476,6 @@ struct AfterTheRosarySheet: View {
 
                 ForEach(RosaryClosingExtra.allCases, id: \.self) { extra in
                     ToggleRow(
-                        icon: extra.icon,
                         title: extra.title,
                         subtitle: extra.detail,
                         isOn: Binding(

@@ -18,6 +18,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct FirstUseTourOverlay: View {
 
@@ -28,8 +29,21 @@ struct FirstUseTourOverlay: View {
     /// VoiceOver's place, moved to the card's words at each stop
     @AccessibilityFocusState private var wordsFocused: Bool
 
+    /// The height of a strip under the clock whose touches the tour
+    /// leaves to the page (the Spanish beta strip, while it stands)
+    var passesTopBand: CGFloat = 0
+
     /// Room left around a control inside the light
     private static let margin: CGFloat = 8
+
+    /// The key window's inset under the clock
+    private static var windowTopInset: CGFloat {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap(\.windows)
+            .first(where: \.isKeyWindow)?
+            .safeAreaInsets.top ?? 0
+    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -53,13 +67,20 @@ struct FirstUseTourOverlay: View {
                     ? CGRect(x: screen.midX, y: screen.midY, width: 0, height: 0)
                     : clipped
 
+                // The Spanish strip's band, under the clock, keeps its
+                // touches: its ✕ once answered nothing while the tour ran
+                // The overlay ignores the safe area, so its own reading of
+                // the inset under the clock is 0: the window's is used
+                let passThrough = passesTopBand > 0
+                    ? max(geometry.safeAreaInsets.top, Self.windowTopInset) + passesTopBand : 0
+
                 Group {
                     if reduceMotion {
-                        mark(stop, hole: hole, in: geometry.size)
+                        mark(stop, hole: hole, in: geometry.size, passThrough: passThrough)
                             .id(stop)
                             .transition(.opacity)
                     } else {
-                        mark(stop, hole: hole, in: geometry.size)
+                        mark(stop, hole: hole, in: geometry.size, passThrough: passThrough)
                     }
                 }
                 .animation(reduceMotion ? Motion.crossfade : Motion.travel(0.45), value: stop)
@@ -71,17 +92,17 @@ struct FirstUseTourOverlay: View {
         }
     }
 
-    private func mark(_ stop: FirstUseTourStop, hole: CGRect, in size: CGSize) -> some View {
+    private func mark(_ stop: FirstUseTourStop, hole: CGRect, in size: CGSize, passThrough: CGFloat) -> some View {
         ZStack(alignment: .topLeading) {
-            dimming(around: hole, stop: stop)
+            dimming(around: hole, stop: stop, passThrough: passThrough)
 
-            card(for: stop, near: hole, in: size)
+            card(for: stop, near: hole, in: size, below: passThrough)
         }
     }
 
     // MARK: - The Dimming
 
-    private func dimming(around hole: CGRect, stop: FirstUseTourStop) -> some View {
+    private func dimming(around hole: CGRect, stop: FirstUseTourStop, passThrough: CGFloat) -> some View {
         let radius = stop.isRound ? min(hole.width, hole.height) / 2 : 18
 
         return ZStack {
@@ -93,8 +114,10 @@ struct FirstUseTourOverlay: View {
                 .shadow(color: AppColors.gold.opacity(0.45), radius: 10)
         }
         // Every touch lands here and goes no further: the page under the
-        // tour cannot be pressed, and a stray tap does not end it
-        .contentShape(Rectangle())
+        // tour cannot be pressed, and a stray tap does not end it. Only
+        // the band above `passThrough` (the Spanish strip) is left
+        // to the page
+        .contentShape(TourTouchArea(top: passThrough))
         .onTapGesture {}
         .accessibilityHidden(true)
     }
@@ -104,7 +127,7 @@ struct FirstUseTourOverlay: View {
     private static let cardWidth: CGFloat = 320
     private static let gap: CGFloat = 16
 
-    private func card(for stop: FirstUseTourStop, near hole: CGRect, in size: CGSize) -> some View {
+    private func card(for stop: FirstUseTourStop, near hole: CGRect, in size: CGSize, below band: CGFloat) -> some View {
         let width = min(Self.cardWidth, size.width - 32)
         // Beneath the control when it stands in the top half of the
         // screen, above it otherwise
@@ -174,7 +197,8 @@ struct FirstUseTourOverlay: View {
             let top = below ? hole.maxY + Self.gap : hole.minY - Self.gap - card.height
             // Kept on the glass, clear of the island and the home
             // indicator, whatever the control's place or the text size
-            return -min(max(top, 60), size.height - card.height - 40)
+            // and clear of the Spanish strip, whose ✕ stays in reach
+            return -min(max(top, max(60, band + 8)), size.height - card.height - 40)
         }
         .offset(x: x)
         .accessibilityElement(children: .contain)
@@ -242,5 +266,14 @@ private nonisolated struct TourSpotlight: Shape {
             path.addRoundedRect(in: hole, cornerSize: CGSize(width: radius, height: radius))
         }
         return path
+    }
+}
+
+/// The tour's touch area: the whole glass but a band at its top
+private struct TourTouchArea: Shape {
+    let top: CGFloat
+
+    func path(in rect: CGRect) -> Path {
+        Path(CGRect(x: rect.minX, y: rect.minY + top, width: rect.width, height: max(0, rect.height - top)))
     }
 }

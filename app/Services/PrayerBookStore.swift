@@ -204,8 +204,9 @@ final class PrayerBookStore {
 
     // MARK: - Praying Aloud
 
-    /// Whether the pray-along screen speaks the prayers. Aloud until the
-    /// reader says otherwise; the last choice stands.
+    /// Whether the pray-along screen speaks the prayers, once the reader
+    /// has chosen; the last choice stands. Read it with `hasChosenAloud`:
+    /// a reader who never chose prays in silence.
     var praysAloud: Bool {
         didSet {
             defaults.set(praysAloud, forKey: Key.aloud)
@@ -214,14 +215,13 @@ final class PrayerBookStore {
     }
 
     /// Whether the reader has ever said how the book should pray. Until
-    /// they have, the pray-along screen asks before it makes a sound —
-    /// these are prayers said in the pew, before the tabernacle and
-    /// beside someone asleep, and a voice nobody asked for is no way to
-    /// begin them.
+    /// they have, the book is silent: these are prayers said in the pew,
+    /// before the tabernacle and beside someone asleep, and a voice
+    /// nobody asked for is no way to begin them. Audio is a tap on the
+    /// pray-along page's Silent | Audio switch, or in Settings.
     private(set) var hasChosenAloud: Bool
 
-    /// The reader's answer, from the question itself, the order page's
-    /// switch, or the speaker at the head of the pray-along page
+    /// The reader's choice, from the pray-along page's switch or Settings
     func chooseAloud(_ aloud: Bool) {
         praysAloud = aloud
     }
@@ -241,7 +241,7 @@ final class PrayerBookStore {
     /// The pray-along screens open, each by its own id: one, or none. The
     /// bell's notification opens the Angelus only when none is — it once
     /// pushed a second pray-along beneath one being prayed, or beneath its
-    /// first-time "Aloud, or in silence?" question, unseen until closed.
+    /// first-time choice of Silent or Audio, unseen until closed.
     /// A set rather than a count, so an appearance reported twice cannot
     /// leave the book believing a prayer open after it has closed
     private(set) var openPrayAlongs: Set<UUID> = []

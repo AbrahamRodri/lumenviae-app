@@ -50,6 +50,7 @@ struct ContentView: View {
     @AppStorage(SpanishBeta.closedOnKey) private var spanishStripClosedOn = ""
     /// Read on coming to the front, so a strip closed yesterday returns
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.modelContext) private var modelContext
     @State private var spanishStripDay = SpanishBeta.dayStamp(Date())
     @State private var pendingWhatsNewRoute: AppRoute?
 
@@ -145,10 +146,13 @@ struct ContentView: View {
                 // without any alpha over the stack
                 .transition(.identity)
                 .overlay {
+                    // At rest the veil is clear: a launch that opens on the
+                    // tab (no turn to it) once left it standing, the page
+                    // blank. Each turn to the tab raises it and lifts it
                     AppColors.appGradient
                         .ignoresSafeArea()
                         .allowsHitTesting(false)
-                        .keyframeAnimator(initialValue: 1.0, trigger: consecrationArrivals) { view, opacity in
+                        .keyframeAnimator(initialValue: 0.0, trigger: consecrationArrivals) { view, opacity in
                             view.opacity(opacity)
                         } keyframes: { _ in
                             MoveKeyframe(1)
@@ -207,7 +211,9 @@ struct ContentView: View {
             .ignoresSafeArea(.keyboard)
 
             if firstUseTour.isRunning {
-                FirstUseTourOverlay(tour: firstUseTour)
+                FirstUseTourOverlay(
+                    tour: firstUseTour,
+                    passesTopBand: showsSpanishStrip ? SpanishBetaStrip.height : 0)
                     .transition(.opacity)
             }
         }
@@ -222,15 +228,11 @@ struct ContentView: View {
                 consecrationArrivals += 1
             }
         }
-        // A lumenviae:// link, from an App Store event: to Home, but never
-        // over a consecration day being prayed, whose stack is the tab's
-        // own, nor over a sheet — an editor's words live only while it is
-        // up, and going Home would close it. Then the app only comes forward
-        .onOpenURL { url in
-            guard !(router.selectedTab == .consecration && isConsecrationNavigating),
-                  !Self.isPresentingSheet else { return }
-            router.open(url)
-        }
+        // A lumenviae:// link, from a widget or an App Store event, is
+        // received at the scene's root (`AppLinkInbox`), so one that
+        // launched the app waits out the splash and is opened here
+        .onAppear { openPendingLink() }
+        .onChange(of: AppLinkInbox.shared.pending) { _, _ in openPendingLink() }
         .onChange(of: router.shortcutRequest) { _, request in
             guard let request else { return }
             router.shortcutRequest = nil
@@ -260,6 +262,11 @@ struct ContentView: View {
                 case .underWay(let today, let open) = progress.standing(on: PrayerDay.now),
                 let day = today ?? open.first
             else { return }
+            // The novena's page stands beneath the day, so the day's close
+            // comes back to it ("Day 2 is still open") and not to Home
+            if router.routes.last != .novena(id: request.novenaID) {
+                router.push(.novena(id: request.novenaID))
+            }
             router.push(.scripturalRosaryPrayer(ScripturalRosaryLaunch(
                 category: NovenaProgress.mysteriesToday(), form: .plain,
                 novenaID: request.novenaID, novenaDay: day)))
@@ -334,6 +341,26 @@ struct ContentView: View {
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { spanishStripDay = SpanishBeta.dayStamp(Date()) }
+            // The widgets' snapshot, on coming and going: a day prayed in
+            // a page that keeps no hook of its own is caught here
+            WidgetSnapshotStore.shared.refresh(modelContext: modelContext)
+        }
+        // At launch too: the scene is already active by the time this view
+        // watches its phase, so a first launch wrote nothing
+        .task { WidgetSnapshotStore.shared.refresh(modelContext: modelContext) }
+        // And as soon as what the widgets show changes: the Rosary's place,
+        // a novena's days, a prayer finished, a tab left
+        .onChange(of: PrayerResumeService.shared.inProgress) { _, _ in
+            WidgetSnapshotStore.shared.refresh(modelContext: modelContext)
+        }
+        .onChange(of: NovenaStore.shared.progress) { _, _ in
+            WidgetSnapshotStore.shared.refresh(modelContext: modelContext)
+        }
+        .onChange(of: router.completedPrayer == nil) { _, _ in
+            WidgetSnapshotStore.shared.refresh(modelContext: modelContext)
+        }
+        .onChange(of: router.selectedTab) { _, _ in
+            WidgetSnapshotStore.shared.refresh(modelContext: modelContext)
         }
         .sheet(item: $whatsNewRelease, onDismiss: {
             guard let route = pendingWhatsNewRoute else { return }
@@ -730,6 +757,18 @@ struct ContentView: View {
     }
 
     // MARK: - Links
+
+    /// Opens the link the app was opened with (`AppLinkInbox`): its page
+    /// over Home, but never over a consecration day being prayed, whose
+    /// stack is the tab's own, nor over a sheet — an editor's words live
+    /// only while it is up, and going Home would close it. Then the app
+    /// only comes forward
+    private func openPendingLink() {
+        guard let url = AppLinkInbox.shared.take(),
+              !(router.selectedTab == .consecration && isConsecrationNavigating),
+              !Self.isPresentingSheet else { return }
+        router.open(url)
+    }
 
     /// Whether a sheet or a cover stands over the app — an editor, a
     /// tray, a form — which SwiftUI keeps no list of, so it is read off

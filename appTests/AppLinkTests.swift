@@ -88,3 +88,147 @@ struct AppLinkTests {
         #expect(!AppRouter.angelusTapOpens(over: [.explore, .completion]))
     }
 }
+
+/// The widgets' links: each path opens its page over Home
+@Suite struct AppLinkPathTests {
+    private func opened(_ link: String) throws -> AppRouter {
+        let router = AppRouter()
+        router.switchTo(.prayers)
+        router.push(.spiritualReading)
+        router.open(try #require(URL(string: link)))
+        return router
+    }
+
+    @Test(arguments: [
+        ("lumenviae://home", AppRouter.LinkDestination.home),
+        ("lumenviae://rosary/today", .todaysMysteries),
+        ("lumenviae://rosary/continue", .continueRosary),
+        ("lumenviae://novena/undoer_of_knots", .novena(id: "undoer_of_knots")),
+        ("lumenviae://missal/today", .missalToday),
+        ("lumenviae://prayer/angelus", .prayer(id: "angelus")),
+        ("lumenviae://record", .record),
+        ("lumenviae://office/now", .officeNow),
+        ("lumenviae://consecration/today", .consecrationToday),
+        ("lumenviae://chant", .chantLibrary),
+        ("lumenviae://chant/rorate_caeli", .chant(id: "rorate_caeli")),
+        ("lumenviae://chant/o_sapientia_magnificat", .chant(id: "o_sapientia_magnificat")),
+        ("lumenviae:chant", .chantLibrary),
+        ("lumenviae://chant/rorate_caeli/score", .home),
+        ("lumenviae:rosary/today", .todaysMysteries),
+        ("LUMENVIAE://Rosary/Today", .todaysMysteries),
+        ("lumenviae://rosary", .home),
+        ("lumenviae://rosary/tomorrow", .home),
+        ("lumenviae://novena", .home),
+        ("lumenviae://nowhere/at/all", .home),
+    ])
+    func eachPathIsRead(_ link: String, _ destination: AppRouter.LinkDestination) throws {
+        #expect(AppRouter.destination(of: try #require(URL(string: link))) == destination)
+    }
+
+    @Test func anotherSchemeHasNoDestination() throws {
+        #expect(AppRouter.destination(of: try #require(URL(string: "https://lumenviae.org/rosary/today"))) == nil)
+    }
+
+    @Test func rosaryTodayOpensTodaysMysteries() throws {
+        let router = try opened("lumenviae://rosary/today")
+        #expect(router.selectedTab == .home)
+        #expect(router.routes == [.meditationSelection(category: ScheduleService.categoryForToday())])
+    }
+
+    /// The O Antiphons' In-App Event (3 Dec) opens the Chant Library
+    @Test func chantOpensTheLibrary() throws {
+        let router = try opened("lumenviae://chant")
+        #expect(router.selectedTab == (AppTab.barTabs.contains(.chant) ? .chant : .home))
+        #expect(router.routes == (AppTab.barTabs.contains(.chant) ? [] : [.chantLibrary]))
+    }
+
+    @Test(arguments: ["rorate_caeli", "o_sapientia_magnificat", "o_emmanuel_magnificat", "Rorate_Caeli"])
+    func aChantOpensItsPageOverTheLibrary(_ id: String) throws {
+        let router = try opened("lumenviae://chant/\(id)")
+        let page = AppRoute.chant(id: id.lowercased())
+        if AppTab.barTabs.contains(.chant) {
+            #expect(router.selectedTab == .chant)
+            #expect(router.routes == [page])
+        } else {
+            #expect(router.routes == [.chantLibrary, page])
+        }
+    }
+
+    @Test func aChantTheAppLacksOpensTheLibrary() throws {
+        let router = try opened("lumenviae://chant/no_such_chant")
+        #expect(router.selectedTab == (AppTab.barTabs.contains(.chant) ? .chant : .home))
+        #expect(!router.routes.contains(.chant(id: "no_such_chant")))
+    }
+
+    /// A link that launches the app is held until the home page opens it,
+    /// and is given once
+    @Test func theInboxHoldsALinkUntilTaken() throws {
+        let inbox = AppLinkInbox()
+        let url = try #require(URL(string: "lumenviae://chant/rorate_caeli"))
+        inbox.receive(url)
+        #expect(inbox.pending == url)
+        #expect(inbox.take() == url)
+        #expect(inbox.take() == nil)
+    }
+
+    @Test func novenaOpensItsPage() throws {
+        #expect(try opened("lumenviae://novena/undoer_of_knots").routes == [.novena(id: "undoer_of_knots")])
+    }
+
+    @Test func aNovenaWithNoPageStaysHome() throws {
+        // St Joseph's is in the book but not prayed with the Rosary: no page
+        let router = try opened("lumenviae://novena/st_joseph")
+        #expect(router.selectedTab == .home)
+        #expect(router.path.isEmpty)
+    }
+
+    @Test func missalTodayOpensTheMass() throws {
+        #expect(try opened("lumenviae://missal/today").routes == [.missal])
+    }
+
+    @Test func recordOpensThePrayerRecord() throws {
+        #expect(try opened("lumenviae://record").routes == [.prayerRecord])
+    }
+
+    @Test func officeNowOpensTheHours() throws {
+        #expect(try opened("lumenviae://office/now").routes == [.office])
+    }
+
+    @Test func consecrationTodayTurnsToItsTab() throws {
+        let router = try opened("lumenviae://consecration/today")
+        #expect(router.selectedTab == .consecration)
+        #expect(router.path.isEmpty)
+    }
+
+    @Test func theAngelusIsPrayedAsTheBellOpensIt() throws {
+        let router = try opened("lumenviae://prayer/angelus")
+        #expect(router.shortcutRequest == .angelus)
+        #expect(router.path.isEmpty)
+    }
+
+    @Test func aPrayerOpensOnThePrayAlong() throws {
+        #expect(try opened("lumenviae://prayer/memorare").routes == [.devotionPrayer(id: "memorare")])
+    }
+
+    @Test func anUnknownPrayerStaysHome() throws {
+        let router = try opened("lumenviae://prayer/no_such_prayer")
+        #expect(router.selectedTab == .home)
+        #expect(router.path.isEmpty)
+    }
+
+    @Test func rosaryContinueTakesUpTheRosaryOrOpensTodaysMysteries() throws {
+        let router = try opened("lumenviae://rosary/continue")
+        if let request = router.shortcutRequest {
+            #expect([.todaysRosary, .scripturalRosary, .rosaryAloud, .sevenSorrows].contains(request))
+        } else {
+            #expect(router.routes == [.meditationSelection(category: ScheduleService.categoryForToday())])
+        }
+    }
+
+    @Test func aLinkPathLeavesAPrayerAlone() throws {
+        let router = AppRouter()
+        router.push(.guidedRosary(.joyful))
+        router.open(try #require(URL(string: "lumenviae://missal/today")))
+        #expect(router.routes == [.guidedRosary(.joyful)])
+    }
+}

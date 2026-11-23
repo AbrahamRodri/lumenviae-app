@@ -27,6 +27,12 @@ import SwiftUI
 
 /// What the simple Rosary's beginner's path says over a set's choices,
 /// and the way to say no
+/// A quiet link under a Rosary page's PRAY
+struct RosaryConfirmFootLink {
+    let title: String
+    let action: () -> Void
+}
+
 struct RosaryConfirmPrompt {
     let text: String
     let decline: String
@@ -52,6 +58,9 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
     /// The simple Rosary's beginner's path: a line over the choices
     /// saying what this Rosary is, and a plain way to say no
     var prompt: RosaryConfirmPrompt? = nil
+
+    /// A quiet link under PRAY (a set's "Read the first meditation")
+    var footLink: RosaryConfirmFootLink? = nil
 
     let onBack: () -> Void
     let onPray: () -> Void
@@ -115,7 +124,7 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
                 .background(alignment: .top) {
                     paintingPlate
                 }
-                .padding(.bottom, Self.footClearance)
+                .padding(.bottom, Self.footClearance + (footLink == nil ? 0 : 44))
                 .onGeometryChange(for: CGFloat.self) { proxy in
                     proxy.frame(in: .global).minY
                 } action: { top in
@@ -320,11 +329,24 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
     /// Tinted in `backgroundDeep`, where the page's gradient ends, so it
     /// only ever deepens.
     private var prayFoot: some View {
-        GoldCTAButton(title: String(
-            localized: "Pray",
-            comment: "A Rosary's own page: the gold button that begins the Rosary"
-        ), glyph: .play, action: onPray)
-            .disabled(!prayEnabled)
+        VStack(spacing: 2) {
+            GoldCTAButton(title: String(
+                localized: "Pray",
+                comment: "A Rosary's own page: the gold button that begins the Rosary"
+            ), glyph: .play, action: onPray)
+                .disabled(!prayEnabled)
+            if let footLink {
+                Button(action: footLink.action) {
+                    Text(footLink.title.uppercased())
+                        .font(AppFonts.labelFont(10))
+                        .tracking(2.4)
+                        .foregroundColor(AppColors.gold)
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(QuietGlyphButtonStyle())
+            }
+        }
             .padding(.horizontal, 24)
             .padding(.top, 40)
             .padding(.bottom, 8)
@@ -343,6 +365,166 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
                 .ignoresSafeArea(edges: .bottom)
                 .allowsHitTesting(false)
             )
+    }
+}
+
+// MARK: - SetSettingsCard
+
+/// A meditation set's settings before it is prayed, as one card of rows
+/// (Abraham's pick, design's set page B: "the main part of this page is
+/// ... to choose the settings before you pray"): Voice and speed, Show
+/// words and beads (the player's own setting), and Save for offline, a
+/// switch that shows how far a save has come and offers Try again when
+/// some of it did not come down. Switch rows carry no icon.
+struct SetSettingsCard: View {
+    let category: MysteryCategory?
+    /// Where the set stands on the device; nil until the set has loaded,
+    /// when what it weighs offline is not yet known
+    let offline: OfflineContentService.SetOfflineState?
+    let onOffline: () -> Void
+
+    @Environment(UserSettings.self) private var settings
+    @State private var showsVoice = false
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Button {
+                showsVoice = true
+            } label: {
+                row(String(localized: "Voice and speed", comment: "A meditation set's page, its settings card: the row opening the voice and its speed")) {
+                    Text(RosaryInfoRow.voiceValue(
+                        voice: NarrationVoiceCatalog.shared.chosenVoice.displayName,
+                        rate: PlaybackSpeedChoice.rateLabel(AudioService.shared.appRate)))
+                        .font(AppFonts.readingFont(17))
+                        .foregroundColor(AppColors.textSecondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+                    AppIcon("ph-caret-right", size: 12).foregroundColor(AppColors.gold.opacity(0.7))
+                }
+            }
+            .buttonStyle(SacredCardButtonStyle())
+            .accessibilityElement(children: .combine)
+            .accessibilityHint(String(localized: "Choose the voice and its speed", comment: "A Rosary's own page: VoiceOver hint on the Voice & speed row"))
+            rule
+
+            Button {
+                withAnimation(Motion.settle) { settings.rosaryShowsWordsAndBeads.toggle() }
+            } label: {
+                row(String(localized: "Show words and beads", comment: "A meditation set's page, its settings card: the switch for the player's words and beads")) {
+                    BeadSwitch(isOn: settings.rosaryShowsWordsAndBeads)
+                }
+            }
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(String(localized: "Show words and beads", comment: "A meditation set's page, its settings card: the switch for the player's words and beads"))
+            .accessibilityValue(settings.rosaryShowsWordsAndBeads ? Text("On") : Text("Off"))
+            .accessibilityAddTraits(.isButton)
+
+            if let offline {
+                rule
+                offlineRow(offline)
+            }
+        }
+        .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(AppColors.cardBackground.opacity(0.6)))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
+        )
+        .sheet(isPresented: $showsVoice) {
+            VoiceAndSpeedSheet(category: category)
+                .presentationDetents([.large])
+                .sheetGround()
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+        }
+    }
+
+    private var title: String {
+        String(localized: "setPage.saveForOffline", defaultValue: "Save for offline", comment: "A meditation set's page, its settings card: the switch that keeps the set on the device")
+    }
+
+    @ViewBuilder
+    private func offlineRow(_ state: OfflineContentService.SetOfflineState) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Button(action: onOffline) {
+                row(title) {
+                    ZStack(alignment: .trailing) {
+                        switch state {
+                        case .saving(let fraction):
+                            Text(String(
+                                localized: "Saving, \(Int(fraction * 100)) percent",
+                                comment: "A meditation set's page, its settings card: in place of the offline switch while the set is saved"))
+                                .font(AppFonts.readingItalicFont(16))
+                                .foregroundColor(AppColors.textSecondary)
+                                .contentTransition(.numericText())
+                                .transition(.opacity)
+                        default:
+                            BeadSwitch(isOn: state == .saved)
+                                .transition(.opacity)
+                        }
+                    }
+                    .animation(Motion.crossfade, value: Self.isSaving(state))
+                }
+            }
+            .buttonStyle(.plain)
+            .disabled(Self.isSaving(state))
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(title)
+            .accessibilityValue(Self.spoken(state))
+            .accessibilityAddTraits(.isButton)
+
+            if state == .failed {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Some of it didn't download. What finished is saved.")
+                        .font(AppFonts.italicFont(14))
+                        .foregroundColor(AppColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    QuietGoldButton(
+                        title: String(
+                            localized: "Try again",
+                            comment: "A meditation set's page: button that tries the download or the load again"),
+                        leadingIcon: "ph-arrow-counter-clockwise",
+                        leadingIconSize: 11,
+                        size: 10,
+                        color: AppColors.gold,
+                        horizontalPadding: 0,
+                        action: onOffline)
+                }
+                .padding(.horizontal, 18)
+                .padding(.bottom, 8)
+            }
+        }
+    }
+
+    private static func isSaving(_ state: OfflineContentService.SetOfflineState) -> Bool {
+        if case .saving = state { return true }
+        return false
+    }
+
+    private static func spoken(_ state: OfflineContentService.SetOfflineState) -> Text {
+        switch state {
+        case .saved: return Text("On")
+        case .saving(let fraction): return Text("Saving on this device, \(Int(fraction * 100)) percent")
+        case .available, .failed: return Text("Off")
+        }
+    }
+
+    private var rule: some View {
+        Rectangle().fill(AppColors.gold.opacity(0.14)).frame(height: AppLine.hairline)
+            .padding(.horizontal, 18)
+    }
+
+    private func row<Trailing: View>(_ name: String, @ViewBuilder trailing: () -> Trailing) -> some View {
+        HStack(spacing: 12) {
+            Text(name)
+                .font(AppFonts.readingFont(18))
+                .foregroundColor(AppColors.cream)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 12)
+            trailing()
+        }
+        .padding(.horizontal, 18)
+        .frame(minHeight: 56)
+        .contentShape(Rectangle())
     }
 }
 
@@ -767,7 +949,6 @@ private struct VoiceAndSpeedSheet: View {
                         switchRow(
                             extra.title,
                             detail: extra.detail,
-                            icon: extra.icon,
                             isOn: Binding(
                                 get: { settings.isChosen(extra) },
                                 set: { settings.setChosen(extra, $0) }
@@ -786,11 +967,11 @@ private struct VoiceAndSpeedSheet: View {
     }
 
     /// A ruled row whose whole width is its switch
-    private func switchRow(_ title: String, detail: String, icon: String, isOn: Binding<Bool>) -> some View {
+    private func switchRow(_ title: String, detail: String, isOn: Binding<Bool>) -> some View {
         Button {
             withAnimation(Motion.settle) { isOn.wrappedValue.toggle() }
         } label: {
-            SheetRow(title, detail: detail, icon: icon, detailLineLimit: nil) {
+            SheetRow(title, detail: detail, detailLineLimit: nil) {
                 BeadSwitch(isOn: isOn.wrappedValue)
             }
         }

@@ -362,6 +362,10 @@ struct TabBarItem: View {
                 Text(tab.title)
                     .font(AppFonts.labelFont(9))
                     .tracking(1.5)
+                    // One line, shrunk a little where it must: at the
+                    // largest sizes CONSAGRACIÓN broke as CONSAGRACIO / N
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
                     .foregroundColor(foregroundColor)
 
                 Circle()

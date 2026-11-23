@@ -294,20 +294,23 @@ struct PrayerIntentionPause: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(
-                String(
-                    localized: "… your intention",
-                    comment: "Pray-along page: the pause in a prayer where the reader names what they ask for")
-            )
-            .font(AppFonts.readingItalicFont(max(15, size - 2)))
-            .foregroundColor(AppColors.gold)
-            .underline(pattern: .dot, color: AppColors.gold)
+            // The intention written with the novena stands where the
+            // prayer asks for it, in place of the prompt (Abraham, 17 Nov
+            // 2026: "keep your intention it should be just replaced")
             if let intention, !intention.isEmpty {
                 Text(intention)
                     .font(AppFonts.italicFont(max(15, size - 2)))
                     .foregroundColor(AppColors.goldLight)
                     .fixedSize(horizontal: false, vertical: true)
             } else {
+                Text(
+                    String(
+                        localized: "… your intention",
+                        comment: "Pray-along page: the pause in a prayer where the reader names what they ask for")
+                )
+                .font(AppFonts.readingItalicFont(max(15, size - 2)))
+                .foregroundColor(AppColors.gold)
+                .underline(pattern: .dot, color: AppColors.gold)
                 Text(
                     String(
                         localized: "Pause, and name it in your heart.",

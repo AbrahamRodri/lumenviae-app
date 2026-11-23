@@ -300,13 +300,7 @@ struct ConsecrationDayOverviewView: View {
     /// completion date against the Marian calendar.
     private var feast: MarianFeastDay? {
         guard let progress = viewModel.progress else { return nil }
-        let parts = Calendar.current.dateComponents(
-            [.month, .day],
-            from: progress.expectedCompletionDate
-        )
-        return MarianFeastDay.all.first {
-            $0.month == parts.month && $0.day == parts.day
-        }
+        return MarianFeastDay.feast(keptOn: progress.expectedCompletionDate)
     }
 
     /// The ruled line over the date. A feast that has already gone by
@@ -477,7 +471,9 @@ struct ConsecrationDayOverviewView: View {
     /// readings open on their own theme line — a few words — so the next
     /// paragraph comes along rather than leaving the page half empty.
     private func preview(of reading: ConsecrationReading) -> String {
+        // A direction ("Read again from day 27.") is not the reading
         ReadingText.paragraphs(of: reading.text)
+            .filter { !PrayerMarkup.isRubric($0) }
             .prefix(2)
             .joined(separator: " ")
     }

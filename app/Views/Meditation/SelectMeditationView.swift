@@ -175,7 +175,7 @@ struct SelectMeditationView: View {
     private var otherWaysToPray: some View {
         VStack(alignment: .leading, spacing: 12) {
             ShelfHeading(title: String(
-                localized: "Ways to pray",
+                localized: "Other ways to pray",
                 comment: "Mysteries' page: heading over the Rosary's other two forms, the Scriptural Rosary and the Audio Rosary"
             ))
 

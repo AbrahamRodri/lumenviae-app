@@ -365,6 +365,10 @@ private struct OnboardingContinueButton: View {
             trailingIcon: icon,
             action: action
         )
+        // "Choose my consecration day" wraps at a large text size: its two
+        // lines centred, not ragged left beside the arrow ("not aligned
+        // well it looks very odd", Abraham, 17 Nov 2026)
+        .multilineTextAlignment(.center)
     }
 }
 
@@ -855,7 +859,14 @@ private struct JourneyStepView: View {
             Text(dayRangeLabel(phase))
                 .font(AppFonts.bodyFont(12))
                 .foregroundColor(phase.accentColor)
-                .frame(width: 52, alignment: .leading)
+                // Wide enough for "Consecration" (and "consagración") on a
+                // line of its own: at 52 the last station's word was cut
+                // (Abraham, 17 Nov 2026: "the consecration word itself is
+                // just cut off")
+                .lineLimit(2)
+                .minimumScaleFactor(0.85)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(width: 72, alignment: .leading)
 
             // The phase's accent — the same quiet hue journey the 33 days
             // themselves walk, brightening toward the consecration
@@ -896,7 +907,10 @@ private struct JourneyStepView: View {
     private func dayRangeLabel(_ phase: ConsecrationPhase) -> String {
         let range = phase.dayRange
         if phase == .consecrationDay {
-            return String(localized: "Consecration Day", comment: "Consecration introduction, page 4: the path's last station, day 34")
+            // One word where the others give their days; the card's own
+            // line beneath still names it Consecration Day (Abraham, 17
+            // Nov 2026: "Have instead of consecration day final")
+            return String(localized: "Final", comment: "Consecration introduction, page 4: the path's last station, day 34, in the column where the others give their days")
         }
         return range.count == 1
             ? String(localized: "Day \(range.lowerBound)", comment: "Consecration introduction, page 4: a station of the path that is one day long")

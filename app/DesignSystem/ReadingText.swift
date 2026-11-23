@@ -65,6 +65,9 @@ enum ReadingTypography {
 /// above the chapter — set as a title, not as a first sentence. The
 /// first paragraph of prose can open with an illuminated drop cap; a
 /// title never takes one, and the versal falls to the prose beneath it.
+/// A paragraph wholly in square brackets is a direction to the reader,
+/// set small, italic and red without its brackets, and never takes the
+/// versal either.
 struct ReadingText: View {
 
     /// EB Garamond Regular reads best for sustained text at 15pt and up;
@@ -163,7 +166,7 @@ struct ReadingText: View {
     /// not a rule, not a title.
     private var dropCapIndex: Int? {
         guard showsDropCap else { return nil }
-        return paragraphs.firstIndex { !isRule($0) && !isHeading($0) }
+        return paragraphs.firstIndex { !isRule($0) && !isHeading($0) && !PrayerMarkup.isRubric($0) }
     }
 
     private var font: Font {
@@ -206,6 +209,15 @@ struct ReadingText: View {
                     .lineSpacing((size * 0.3).rounded())
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.bottom, (size * 0.25).rounded())
+            } else if PrayerMarkup.isRubric(paragraph) {
+                // A paragraph wholly in square brackets is a direction to
+                // the reader ("Read again from day 27."), set as the Prayer
+                // Book sets one: small, italic and red, out of its brackets
+                Text(PrayerMarkup.rubric(paragraph))
+                    .font(AppFonts.readingItalicFont(max(12, size - 2)))
+                    .foregroundColor(Rubric.text)
+                    .lineSpacing(ReadingTypography.lineSpacing(for: size))
+                    .fixedSize(horizontal: false, vertical: true)
             } else if index == capIndex {
                 DropCapText(
                     text: paragraph,

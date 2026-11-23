@@ -21,13 +21,39 @@ struct MarianFeastDay: Identifiable, Hashable {
 
     // MARK: - Date Calculations
 
-    /// Get the feast day date for a given year
+    /// The day the feast is kept in `year`: its month and day, except the
+    /// Annunciation, which the 1960 calendar (the one the Hours of Prayer
+    /// read) moves when 25 March is taken. In Holy Week or Easter Week it
+    /// goes to the Monday after Low Sunday (5 April 2027); on a Sunday of
+    /// Lent, to the Monday. The other feasts here are never moved. The
+    /// website keeps the same rule (`Consecration.Plan.feast_date/2`).
     func date(for year: Int) -> Date? {
-        var components = DateComponents()
-        components.year = year
-        components.month = month
-        components.day = day
-        return Calendar.current.date(from: components)
+        let calendar = Calendar.current
+        guard let date = calendar.date(from: DateComponents(year: year, month: month, day: day)) else {
+            return nil
+        }
+        guard id == "annunciation",
+              let easter = ScheduleService.easterSunday(year: year, calendar: calendar),
+              let palmSunday = calendar.date(byAdding: .day, value: -7, to: easter),
+              let lowSunday = calendar.date(byAdding: .day, value: 7, to: easter)
+        else { return date }
+        if date >= palmSunday && date <= lowSunday {
+            return calendar.date(byAdding: .day, value: 1, to: lowSunday)
+        }
+        if calendar.component(.weekday, from: date) == 1 {
+            return calendar.date(byAdding: .day, value: 1, to: date)
+        }
+        return date
+    }
+
+    /// The feast kept on `date`'s day, if any: by the day it is kept that
+    /// year, so a moved Annunciation is found on the day it moved to
+    static func feast(keptOn date: Date) -> MarianFeastDay? {
+        let calendar = Calendar.current
+        let year = calendar.component(.year, from: date)
+        return all.first { feast in
+            feast.date(for: year).map { calendar.isDate($0, inSameDayAs: date) } ?? false
+        }
     }
 
     /// Get the start date (Day 1) for this feast day in a given year
@@ -227,8 +253,6 @@ extension MarianFeastDay {
         guard let end = calendar.date(byAdding: .day, value: 33, to: calendar.startOfDay(for: start)) else {
             return nil
         }
-        let month = calendar.component(.month, from: end)
-        let day = calendar.component(.day, from: end)
-        return all.first { $0.month == month && $0.day == day }
+        return feast(keptOn: end)
     }
 }

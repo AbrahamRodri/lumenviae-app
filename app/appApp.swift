@@ -15,12 +15,31 @@ import UserNotifications
 
 @main
 struct appApp: App {
+    /// The app's store, kept where it has always been. With the widgets'
+    /// App Group on, SwiftData's default puts a new store in the group's
+    /// container, and every install's prayer history, journal and reading
+    /// places would seem to vanish on the update. The widgets read their
+    /// own snapshot (`WidgetSnapshotStore`), never this store.
+    static let modelContainer: ModelContainer = {
+        let schema = Schema([
+            PrayerSession.self, JournalEntry.self, ConsecrationProgress.self, TrueDevotionReadingProgress.self,
+            BookReadingProgress.self,
+        ])
+        let configuration = ModelConfiguration(schema: schema, groupContainer: .none)
+        do {
+            return try ModelContainer(for: schema, configurations: configuration)
+        } catch {
+            // As the modifier did: the app opens rather than stop at launch
+            return try! ModelContainer(
+                for: schema, configurations: ModelConfiguration(schema: schema, isStoredInMemoryOnly: true))
+        }
+    }()
+
 
     @Environment(\.scenePhase) private var scenePhase
 
     /// Whether the app has finished loading (splash screen complete)
     @State private var isLaunched = false
-    @State private var showsTranslationNotice = false
 
     /// True after the user completes onboarding once
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
@@ -83,25 +102,19 @@ struct appApp: App {
                     }
                 }
             }
-            // The first time the app opens in Spanish, a short notice that
-            // its words were translated with AI (Settings keeps the same
-            // line under the language row). Never in English. A new reader
-            // meets it over the introduction; anyone past it, on the home
-            // page, ahead of What's New (ContentView.presentFirstLook)
+            // The Spanish notice is never laid over the introduction: a new
+            // reader meets it on the home page once the welcome is done,
+            // ahead of the tour (ContentView.presentFirstLook), where it
+            // once stood over the welcome's first slide and the tour
+            // followed straight after, three introductions in a row
+            // A lumenviae:// link is held here, where the scene always
+            // listens, and ContentView opens it once it is drawn: a link
+            // that launched the app came while the splash stood
+            .onOpenURL { AppLinkInbox.shared.receive($0) }
             .onChange(of: isLaunched) { _, launched in
                 // A new install reads at the phone's own text size
                 if launched, !hasSeenOnboarding {
                     userSettings.startTextSizeFromPhone(UIApplication.shared.preferredContentSizeCategory)
-                }
-                if launched, !hasSeenOnboarding, SpanishBeta.owesSheet() {
-                    showsTranslationNotice = true
-                }
-            }
-            // Seen however it leaves, a swipe included
-            .sheet(isPresented: $showsTranslationNotice, onDismiss: { SpanishBeta.markSheetSeen() }) {
-                SpanishBetaSheet {
-                    SpanishBeta.markSheetSeen()
-                    showsTranslationNotice = false
                 }
             }
             // The phone's Larger Text is followed up to the app's cap and
@@ -111,7 +124,7 @@ struct appApp: App {
             }
         }
         .environment(userSettings)
-        .modelContainer(for: [PrayerSession.self, JournalEntry.self, ConsecrationProgress.self, TrueDevotionReadingProgress.self, BookReadingProgress.self])
+        .modelContainer(Self.modelContainer)
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 resetAlternateIconIfNeeded()
@@ -144,9 +157,20 @@ struct appApp: App {
     /// While the icon picker is disabled, devices that previously chose an
     /// alternate icon fall back to the primary one. Removing this once
     /// `AppIconPickerRows.isEnabled` is true restores their choice.
+    ///
+    /// An icon the App Store sets is left alone: the gilded icon is a
+    /// Product Page Optimization treatment (Abraham, 16 Nov 2026: "Yes,
+    /// test this against the painting icon"), and someone who installs
+    /// from the treatment's page gets the app with it already set. Put
+    /// back, their icon would change on first launch under iOS's alert.
     private func resetAlternateIconIfNeeded() {
         guard !AppIconPickerRows.isEnabled,
-              UIApplication.shared.alternateIconName != nil else { return }
+              let name = UIApplication.shared.alternateIconName,
+              !Self.storeTestIcons.contains(name) else { return }
         UIApplication.shared.setAlternateIconName(nil)
     }
+
+    /// Alternate icons in the binary for an App Store product page test,
+    /// never offered by the picker and never reset at launch
+    static let storeTestIcons: Set<String> = ["AppIconGilded"]
 }

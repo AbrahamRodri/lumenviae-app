@@ -119,7 +119,7 @@ extension APIClientTests {
             favorites: FavoritesService(previewFavorites: [])
         )
         await vm.loadMeditationSets()
-        #expect(vm.meditationSets.map(\.id) == [8] + BundledMeditationSets.summaries(for: vm.category).map(\.id), "the server's set, then the bundled one")
+        #expect(vm.meditationSets.map(\.id) == [8], "the server's set alone: the bundled one stands only when there is no other")
         #expect(vm.errorMessage == nil)
         #expect(!vm.isLoading)
         #expect(StubProtocol.requests.first?.url?.query == "category=joyful")
@@ -135,6 +135,48 @@ extension APIClientTests {
         )
         await vm.loadMeditationSets()
         #expect(StubProtocol.requests.isEmpty)
+    }
+
+    @Test func aPageOpenedAgainShowsItsSetsAtOnceAndRefreshesQuietly() async {
+        let cache = MeditationSetsSessionCache()
+        StubProtocol.reset { _ in .init(body: #"{"data": [{"id": 8, "name": "Liguori", "category": "joyful"}]}"#) }
+        let first = MeditationSelectionViewModel(
+            category: .joyful,
+            apiService: APIService(session: StubProtocol.session),
+            favorites: FavoritesService(previewFavorites: []),
+            sessionCache: cache
+        )
+        await first.loadMeditationSets()
+
+        // The server has a new set by the time the page is opened again
+        StubProtocol.reset { _ in .init(body: #"{"data": [{"id": 8, "name": "Liguori", "category": "joyful"}, {"id": 9, "name": "Sheen", "category": "joyful"}]}"#) }
+        let again = MeditationSelectionViewModel(
+            category: .joyful,
+            apiService: APIService(session: StubProtocol.session),
+            favorites: FavoritesService(previewFavorites: []),
+            sessionCache: cache
+        )
+        #expect(!again.isLoading, "no spinner: the session's sets stand from the first frame")
+        #expect(again.meditationSets.map(\.id) == [8])
+        await again.loadMeditationSets()
+        #expect(again.meditationSets.map(\.id) == [8, 9], "refreshed behind the list")
+        #expect(StubProtocol.requests.count == 1)
+    }
+
+    @Test func aQuietRefreshThatFailsKeepsTheSetsOnShow() async {
+        let cache = MeditationSetsSessionCache()
+        cache.keep([try! JSONDecoder().decode(MeditationSetSummary.self, from: Data(#"{"id": 8, "name": "Liguori", "category": "joyful"}"#.utf8))], for: .joyful)
+        StubProtocol.reset { _ in .init(status: 503) }
+        let vm = MeditationSelectionViewModel(
+            category: .joyful,
+            apiService: APIService(session: StubProtocol.session),
+            favorites: FavoritesService(previewFavorites: []),
+            sessionCache: cache
+        )
+        await vm.loadMeditationSets()
+        #expect(vm.meditationSets.map(\.id) == [8])
+        #expect(vm.errorMessage == nil)
+        #expect(!vm.isLoading)
     }
 
     @Test func everyCategoryHasABundledSetThatStandsWithNoServer() async {
@@ -163,5 +205,14 @@ extension APIClientTests {
         await vm.loadMeditationSets()
         #expect(vm.meditationSets.last?.id == LuminousMeditationData.summary.id)
         #expect(vm.errorMessage == nil, "a shelf with a set on it is no failure")
+    }
+}
+
+@Suite("Mysteries' page: first frames")
+struct MeditationPickerFirstFrameTests {
+    @Test func aPageWithNothingLoadedOpensOnTheSpinner() {
+        let viewModel = MeditationSelectionViewModel(category: .joyful)
+        #expect(viewModel.isLoading)
+        #expect(viewModel.errorMessage == nil)
     }
 }

@@ -136,7 +136,7 @@ struct PlaybackSettingsSheet: View {
 
     /// The sheet's height, for its detent: the header, the voices and
     /// the prayers' speed under their labels, and the speed's note
-    static let height: CGFloat = 360
+    static let height: CGFloat = 320
 
     /// The detents the player gives it: its own height, or at the
     /// accessibility text sizes the whole glass, where the rows once
@@ -164,9 +164,10 @@ struct PlaybackSettingsSheet: View {
                     comment: "Playback settings sheet: section label over the narration voices"
                 ))
 
+                // No line under the voices here (Abraham, 17 Nov 2026:
+                // "voice we don't need that subtitle"); Settings keeps it
                 NarrationVoiceChoice()
                     .padding(.horizontal, SheetMetrics.gutter)
-                SheetNote(UserSettings.narrationVoiceCaption)
 
                 SheetSectionLabel(String(
                     localized: "Prayer Speed",

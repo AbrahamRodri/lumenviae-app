@@ -2,13 +2,26 @@
 //  ConsecrationDateSelectionView.swift
 //  Lumen Viae
 //
-//  The final onboarding step: choosing the consecration day. The feast
-//  chosen stands in one card — the soonest by default — with its
-//  Consecration Day and its Day 1; the other feasts are a short ruled
-//  list beneath it, three of them until the rest are asked for, and a
-//  tap on one moves it into the card. The one act begins on the chosen
-//  feast's Day 1: today, or a later day the consecration then waits for
-//  on a page of its own (`ConsecrationScheduledView`).
+//  The final onboarding step: choosing the consecration day (Abraham's
+//  pick, option A, 16 Nov 2026, as revised the same night). The feasts
+//  stand in one list in the order they come, the soonest first, and
+//  never move: a tap lights a row in place. A row is the feast's name
+//  and the day it is kept this year, SOONEST under the first row's date.
+//  Above the one act, two dates side by side say what the choice means,
+//  YOU BEGIN and YOU CONSECRATE, each on one line, stacked where they
+//  cannot stand side by side; only they and the act change with the
+//  choice. The act begins on the chosen feast's Day 1: today, or a later
+//  day the consecration then waits for on a page of its own
+//  (`ConsecrationScheduledView`).
+//
+//  It once lifted the chosen feast into a card of its own over the
+//  others, so the list reshuffled at every tap, and stood a panel of
+//  dates, a countdown and a note above the act; Abraham found both hard
+//  to follow ("its kind of confusing with how the dates move around").
+//  Then a sentence over the act, a SOONEST pill beside the name and a
+//  line saying why the Annunciation had moved: "looks cluttered the text
+//  above the begin should not be two lines and the soonest looks weirdly
+//  places and the moved from march 25 is also clutter".
 //
 //  Only a preparation that can still begin on its Day 1 is offered, so
 //  each one runs its full 33 days and ends on its feast. Joining partway
@@ -32,12 +45,8 @@ struct ConsecrationDateSelectionView: View {
 
     /// The feast chosen; until one is, the soonest
     @State private var selectedID: String?
-    @State private var showsAllFeasts = false
     @State private var showCustomStart: Bool = false
     @State private var customStartDay: Int = 1
-
-    /// How many other feasts stand before "Show more feasts"
-    private static let othersShown = 3
 
     // MARK: - Body
 
@@ -58,17 +67,10 @@ struct ConsecrationDateSelectionView: View {
                     }
 
                     if let selected {
-                        chosenCard(selected, isSoonest: selected.id == preparations.first?.id)
-                            .padding(.top, 22)
-                            .devotionalEntrance(delay: 0.08)
-
-                        otherFeasts(preparations.filter { $0.id != selected.id })
+                        feastList(preparations, selectedID: selected.id)
                             .padding(.top, 26)
-                            .devotionalEntrance(delay: 0.16)
+                            .devotionalEntrance(delay: 0.08)
                     }
-
-                    customStartLink
-                        .padding(.top, 6)
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
@@ -80,7 +82,7 @@ struct ConsecrationDateSelectionView: View {
 
             if let selected {
                 foot(selected)
-                    .devotionalEntrance(delay: 0.24)
+                    .devotionalEntrance(delay: 0.16)
             }
         }
         .sheet(isPresented: $showCustomStart) {
@@ -103,7 +105,7 @@ struct ConsecrationDateSelectionView: View {
                 .multilineTextAlignment(.center)
                 .accessibilityAddTraits(.isHeader)
 
-            Text("The 33 days end on a feast of Mary: your Consecration Day.")
+            Text("The 33 days end on a feast of Mary.")
                 .font(AppFonts.italicFont(17))
                 .foregroundColor(AppColors.accentSoft)
                 .multilineTextAlignment(.center)
@@ -129,205 +131,151 @@ struct ConsecrationDateSelectionView: View {
         .multilineTextAlignment(.center)
     }
 
-    // MARK: - The Chosen Feast
+    // MARK: - The Feasts
 
-    private func chosenCard(_ preparation: FeastPreparation, isSoonest: Bool) -> some View {
-        let days = preparation.daysUntilStart()
+    /// Every feast in the order it comes, all nine, the chosen one lit
+    /// where it stands; the list scrolls under the foot. No Show more:
+    /// rows appearing were part of what Abraham found hard to follow
+    /// (design-designer's ruling, 16 Nov 2026).
+    private func feastList(_ shown: [FeastPreparation], selectedID: String) -> some View {
+        let soonestID = shown.first?.id
 
-        return VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .center, spacing: 12) {
-                if isSoonest {
-                    soonestBadge
-                        .transition(.opacity)
-                }
-
-                Spacer(minLength: 0)
-
-                FeastRadio(isOn: true)
-            }
-
-            Text(preparation.feast.name)
-                .font(AppFonts.headlineFont(19))
-                .foregroundColor(AppColors.cream)
-                .fixedSize(horizontal: false, vertical: true)
-                .contentTransition(.opacity)
-                .padding(.top, 14)
-
-            Text(Self.longDate(preparation.feastDate, weekday: true))
-                .font(AppFonts.bodyFont(16))
-                .foregroundColor(AppColors.accentSoft)
-                .contentTransition(.opacity)
-                .padding(.top, 4)
-
-            ConsecrationIntroRule(opacity: 0.22)
-                .padding(.top, 16)
-
-            dayOneRow(preparation, days: days)
-                .padding(.top, 14)
-        }
-        .animation(Motion.crossfade, value: preparation.id)
-        .sacredCard(padding: 18, elevated: true, ruleOpacity: 0.7)
-        .haloGlow(AppColors.gold, radius: 8, intensity: 0.12)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(chosenLabel(preparation, days: days, isSoonest: isSoonest))
-    }
-
-    /// Outlined, not filled: the page's one filled gold shape is its act
-    private var soonestBadge: some View {
-        Text("SOONEST")
-            .font(AppFonts.labelFont(10))
-            .tracking(2.5)
-            .foregroundColor(AppColors.goldLight)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 4)
-            .background(Capsule().fill(AppColors.gold.opacity(0.15)))
-            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.6), lineWidth: AppLine.hairline))
-    }
-
-    /// DAY 1 · its date · how far off. Side by side where they fit, and
-    /// the countdown beneath at the larger text sizes.
-    private func dayOneRow(_ preparation: FeastPreparation, days: Int) -> some View {
-        let label = Text("DAY 1")
-            .font(AppFonts.labelFont(10.5))
-            .tracking(2.5)
-            .foregroundColor(AppColors.gold)
-
-        let date = (days == 0 ? Text("Today") : Text(Self.longDate(preparation.start, weekday: true)))
-            .font(AppFonts.bodyFont(15))
-            .foregroundColor(AppColors.cream)
-
-        let countdown = Text(Self.countdown(days))
-            .font(AppFonts.italicFont(15))
-            .foregroundColor(AppColors.textSecondary)
-
-        return ViewThatFits(in: .horizontal) {
-            HStack(alignment: .firstTextBaseline, spacing: 10) {
-                label
-                date
-                Spacer(minLength: 8)
-                if days > 0 { countdown }
-            }
-
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    label
-                    date
-                }
-                if days > 0 { countdown }
-            }
-        }
-        .contentTransition(.opacity)
-    }
-
-    private func chosenLabel(_ preparation: FeastPreparation, days: Int, isSoonest: Bool) -> String {
-        let feast = preparation.feast.name
-        let feastDate = Self.longDate(preparation.feastDate, weekday: true)
-        let start = Self.longDate(preparation.start, weekday: true)
-        let countdown = Self.countdown(days)
-        // One sentence per case, so a translation never glues English pieces
-        switch (isSoonest, days == 0) {
-        case (true, true):
-            return String(
-                localized: "Chosen: \(feast), \(feastDate). the soonest. Day 1 is today.",
-                comment: "VoiceOver, consecration feast chooser: the chosen feast (name, then date), the soonest of the feasts, beginning today"
-            )
-        case (true, false):
-            return String(
-                localized: "Chosen: \(feast), \(feastDate). the soonest. Day 1 is \(start), \(countdown).",
-                comment: "VoiceOver, consecration feast chooser: the chosen feast (name, then date), the soonest of the feasts, then the date Day 1 falls on and how far off it is, like in 12 days"
-            )
-        case (false, true):
-            return String(
-                localized: "Chosen: \(feast), \(feastDate). Day 1 is today.",
-                comment: "VoiceOver, consecration feast chooser: the chosen feast (name, then date), beginning today"
-            )
-        case (false, false):
-            return String(
-                localized: "Chosen: \(feast), \(feastDate). Day 1 is \(start), \(countdown).",
-                comment: "VoiceOver, consecration feast chooser: the chosen feast (name, then date), then the date Day 1 falls on and how far off it is, like in 12 days"
-            )
-        }
-    }
-
-    // MARK: - Other Feasts
-
-    private func otherFeasts(_ others: [FeastPreparation]) -> some View {
-        let shown = showsAllFeasts ? others : Array(others.prefix(Self.othersShown))
-
-        return VStack(alignment: .leading, spacing: 0) {
-            Text("OTHER FEASTS")
-                .font(AppFonts.labelFont(10.5))
-                .tracking(2.5)
-                .foregroundColor(AppColors.textSecondary)
-                .padding(.bottom, 6)
-                .accessibilityAddTraits(.isHeader)
-
+        return VStack(spacing: 0) {
             ForEach(Array(shown.enumerated()), id: \.element.id) { index, preparation in
+                let isChosen = preparation.id == selectedID
+                let afterChosen = index > 0 && shown[index - 1].id == selectedID
                 VStack(spacing: 0) {
+                    // A rule between two unlit rows; beside the lit row its
+                    // own edge stands in, the rule clear but keeping its
+                    // place, so a tap moves nothing
                     if index > 0 {
-                        ConsecrationIntroRule(opacity: 0.12)
+                        ConsecrationIntroRule(opacity: isChosen || afterChosen ? 0 : 0.12)
+                            .padding(.horizontal, 4)
                     }
-                    feastRow(preparation)
+                    feastRow(preparation, isChosen: isChosen, isSoonest: preparation.id == soonestID)
                 }
-                .transition(.opacity)
-            }
-
-            if !showsAllFeasts && others.count > Self.othersShown {
-                Button {
-                    withAnimation(Motion.crossfade) {
-                        showsAllFeasts = true
-                    }
-                } label: {
-                    Text("Show more feasts")
-                        .font(AppFonts.italicFont(16))
-                        .foregroundColor(AppColors.gold)
-                        .frame(maxWidth: .infinity, minHeight: 44)
-                }
-                .buttonStyle(SacredCardButtonStyle())
-                .padding(.top, 4)
-                .transition(.opacity)
-                .accessibilityHint("Shows \(others.count - Self.othersShown) more")
             }
         }
-        .animation(Motion.crossfade, value: shown.map(\.id))
     }
 
-    private func feastRow(_ preparation: FeastPreparation) -> some View {
+    private func feastRow(_ preparation: FeastPreparation, isChosen: Bool, isSoonest: Bool) -> some View {
         Button {
-            withAnimation(Motion.crossfade) {
+            withAnimation(Motion.choice) {
                 selectedID = preparation.id
             }
         } label: {
             HStack(spacing: 14) {
-                FeastRadio(isOn: false)
+                FeastRadio(isOn: isChosen)
+                    .frame(width: 22)
 
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(preparation.feast.name)
-                        .font(AppFonts.bodyFont(16))
-                        .foregroundColor(AppColors.cream)
-                        .multilineTextAlignment(.leading)
-                        .fixedSize(horizontal: false, vertical: true)
+                feastName(preparation)
+                // The name takes the width up to 12 pt before the date before
+                // it wraps; beside a Spacer it was given only half the room
+                // left, and "Nuestra Señora de Lourdes" broke after Señora
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.trailing, 12)
+                .layoutPriority(1)
 
-                    Text("Begins \(Self.longDate(preparation.start, weekday: false))")
-                        .font(AppFonts.bodyFont(13))
-                        .foregroundColor(AppColors.textSecondary)
-                }
-
-                Spacer(minLength: 8)
-
-                Text(Self.shortDate(preparation.feastDate))
-                    .font(AppFonts.bodyFont(15))
-                    .foregroundColor(AppColors.accentSoft)
+                Text(Self.rowDate(preparation.feastDate))
+                    .font(AppFonts.bodyFont(16))
+                    .foregroundColor(isChosen ? AppColors.cream : AppColors.accentSoft)
+                    .lineLimit(1)
+                    .fixedSize()
+                    // Hung under the date and given no width of its own,
+                    // so LA MÁS PRÓXIMA never narrows the feast's name
+                    .overlay(alignment: .topTrailing) {
+                        if isSoonest {
+                            soonestWord.offset(y: 26)
+                        }
+                    }
+                    .padding(.bottom, isSoonest ? 14 : 0)
             }
-            .frame(minHeight: 52)
-            .padding(.vertical, 6)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .frame(minHeight: 60)
+            .background {
+                if isChosen {
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(AppColors.gold.opacity(0.10))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .strokeBorder(AppColors.gold.opacity(0.6), lineWidth: AppLine.hairline)
+                        )
+                        .transition(.opacity)
+                }
+            }
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel(
-            "\(preparation.feast.name), \(Self.longDate(preparation.feastDate, weekday: true)). Day 1 is \(Self.longDate(preparation.start, weekday: true))."
-        )
-        .accessibilityHint("Chooses this feast")
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Self.rowLabel(preparation, isSoonest: isSoonest))
+        .accessibilityAddTraits(isChosen ? [.isButton, .isSelected] : [.isButton])
+    }
+
+    private func feastName(_ preparation: FeastPreparation) -> some View {
+        Text(preparation.feast.name)
+            .font(AppFonts.bodyFont(17))
+            .foregroundColor(AppColors.cream)
+            .multilineTextAlignment(.leading)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    /// A small word under the first row's date, with no pill, so the
+    /// feast's name stands alone on its line
+    private var soonestWord: some View {
+        Text("SOONEST")
+            .font(AppFonts.labelFont(8))
+            .tracking(1.6)
+            .foregroundColor(AppColors.gold)
+            .lineLimit(1)
+            .fixedSize()
+    }
+
+    /// The feast and its date; "the soonest" when it is. A moved feast is
+    /// read by the day it is kept, with nothing said of its own day
+    static func rowLabel(_ preparation: FeastPreparation, isSoonest: Bool) -> String {
+        let feast = preparation.feast.name
+        let date = footDate(preparation.feastDate, standsAlone: false)
+        return isSoonest
+            ? String(
+                localized: "\(feast), \(date), the soonest.",
+                comment: "VoiceOver, consecration feast chooser: a feast's row (name, then date), the soonest of the feasts")
+            : String(
+                localized: "\(feast), \(date).",
+                comment: "VoiceOver, consecration feast chooser: a feast's row (name, then date)")
+    }
+
+    // MARK: - Foot
+
+    /// The two dates the choice means, the page's one act, and the way to
+    /// begin partway. Only the dates and the act change with the feast
+    /// chosen.
+    private func foot(_ preparation: FeastPreparation) -> some View {
+        let days = preparation.daysUntilStart()
+
+        return VStack(spacing: 16) {
+            FeastSpan(
+                begin: Self.footDate(preparation.start),
+                consecrate: Self.footDate(preparation.feastDate),
+                spokenBegin: Self.footDate(preparation.start, standsAlone: false),
+                spokenConsecrate: Self.footDate(preparation.feastDate, standsAlone: false)
+            )
+            .animation(Motion.crossfade, value: preparation.id)
+
+            VStack(spacing: 4) {
+                GoldCTAButton(title: Self.beginTitle(preparation, days: days), glyph: .chevron) {
+                    viewModel.startConsecration(on: preparation.start)
+                }
+                .animation(Motion.crossfade, value: preparation.id)
+
+                customStartLink
+            }
+        }
+        .padding(.horizontal, 20)
+        // Air between where the list fades out and the two labels, so a
+        // half-faded row never crowds YOU BEGIN (design, 16 Nov)
+        .padding(.top, 24)
+        .padding(.bottom, bottomClearance)
     }
 
     // MARK: - Custom Start Link
@@ -338,7 +286,7 @@ struct ConsecrationDateSelectionView: View {
         } label: {
             HStack(spacing: 6) {
                 Text("Start at any day instead")
-                    .font(AppFonts.bodyFont(14))
+                    .font(AppFonts.bodyFont(15))
                 AppIcon("ph-caret-right", size: 11)
             }
             .foregroundColor(AppColors.textSecondary)
@@ -347,41 +295,11 @@ struct ConsecrationDateSelectionView: View {
         .accessibilityHint("For praying along with a book or a group")
     }
 
-    // MARK: - Foot
-
-    /// The page's one act and the line beneath it
-    private func foot(_ preparation: FeastPreparation) -> some View {
-        let days = preparation.daysUntilStart()
-
-        return VStack(spacing: 10) {
-            GoldCTAButton(title: Self.beginTitle(preparation, days: days), glyph: .chevron) {
-                viewModel.startConsecration(on: preparation.start)
-            }
-            .animation(Motion.crossfade, value: preparation.id)
-
-            // True as it stands: a consecration chosen ahead can be put
-            // back and another feast chosen until Day 1 (its waiting page
-            // offers it); once begun, it can only be restarted
-            Text(days == 0
-                 ? "Your first day's prayers open right away."
-                 : "You can choose another feast until Day 1 begins.")
-                .font(AppFonts.italicFont(14))
-                .foregroundColor(AppColors.textSecondary)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .contentTransition(.opacity)
-                .animation(Motion.crossfade, value: days == 0)
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 10)
-        .padding(.bottom, bottomClearance)
-    }
-
     private var scrollFootFade: some View {
         VStack(spacing: 0) {
             Color.black
             LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom)
-                .frame(height: 24)
+                .frame(height: 36)
         }
     }
 
@@ -391,15 +309,6 @@ struct ConsecrationDateSelectionView: View {
     static func longDate(_ date: Date, weekday: Bool, today: Date = Date()) -> String {
         var style = Date.FormatStyle.dateTime.month(.wide).day()
         if weekday { style = style.weekday(.wide) }
-        if !Calendar.current.isDate(date, equalTo: today, toGranularity: .year) {
-            style = style.year()
-        }
-        return date.formatted(style)
-    }
-
-    /// "Nov 21" — the year only when it is not this one
-    static func shortDate(_ date: Date, today: Date = Date()) -> String {
-        var style = Date.FormatStyle.dateTime.month(.abbreviated).day()
         if !Calendar.current.isDate(date, equalTo: today, toGranularity: .year) {
             style = style.year()
         }
@@ -420,14 +329,36 @@ struct ConsecrationDateSelectionView: View {
         )
     }
 
-    /// "Begin today", or "Begin on October 19"
-    static func beginTitle(_ preparation: FeastPreparation, days: Int, today: Date = Date()) -> String {
+    /// "Begin today", or "Begin on October 19": no year, since every
+    /// feast offered falls within the twelve months ahead
+    static func beginTitle(_ preparation: FeastPreparation, days: Int) -> String {
         days <= 0
             ? String(localized: "Begin today", comment: "Consecration feast chooser: the gold act when the chosen preparation's Day 1 is today")
             : String(
-                localized: "Begin on \(longDate(preparation.start, weekday: false, today: today))",
+                localized: "Begin on \(preparation.start.formatted(.dateTime.month(.wide).day()))",
                 comment: "Consecration feast chooser: the gold act naming the date Day 1 falls on, like Begin on October 19"
             )
+    }
+
+    /// A feast's date on its row: "Thu, Feb 11"; in Spanish "jue, 11 feb".
+    /// No year: the list runs in the order the feasts come, within the
+    /// twelve months ahead.
+    static func rowDate(_ date: Date) -> String {
+        date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day())
+    }
+
+    /// A day in the foot, standing alone under its label: "Saturday,
+    /// January 9"; in Spanish "Miércoles 3 de marzo", without the comma
+    /// the system puts after the weekday and with a capital, since it
+    /// begins its line; inside a sentence (`standsAlone: false`, the
+    /// VoiceOver labels, which braille shows) the weekday keeps its small
+    /// letter, "Comienzas el lunes 5 de abril"
+    static func footDate(_ date: Date, standsAlone: Bool = true) -> String {
+        let words = date.formatted(.dateTime.weekday(.wide).month(.wide).day())
+        guard AppLanguage.isSpanish else { return words }
+        let joined = words.replacingOccurrences(of: ", ", with: " ")
+        guard standsAlone else { return joined }
+        return joined.prefix(1).uppercased() + joined.dropFirst()
     }
 
     // MARK: - Custom Start Sheet
@@ -498,6 +429,71 @@ struct ConsecrationDateSelectionView: View {
             value: 34 - day,
             to: Calendar.current.startOfDay(for: Date())
         ) ?? Date()
+    }
+}
+
+// MARK: - FeastSpan
+
+/// YOU BEGIN over Day 1's date, a thin gold arrow, YOU CONSECRATE over the
+/// feast's, right-aligned. Each date stays on one line; where the two
+/// cannot stand side by side (the largest text, a narrow phone) they are
+/// stacked, left-aligned, and the arrow is left out.
+private struct FeastSpan: View {
+    let begin: String
+    let consecrate: String
+    /// The same two days as they are said inside a sentence
+    let spokenBegin: String
+    let spokenConsecrate: String
+
+    private var beginLabel: String {
+        String(localized: "You begin", comment: "Consecration feast chooser, over Begin: small capitals over Day 1's date")
+    }
+
+    private var consecrateLabel: String {
+        String(localized: "You consecrate", comment: "Consecration feast chooser, over Begin: small capitals over the feast's date, the day of consecration")
+    }
+
+    var body: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(alignment: .lastTextBaseline, spacing: 12) {
+                part(beginLabel, begin, alignment: .leading)
+                Spacer(minLength: 0)
+                AppIcon("ph-arrow-right", size: 22)
+                    .foregroundColor(AppColors.gold.opacity(0.8))
+                    .alignmentGuide(.lastTextBaseline) { $0[.bottom] - 2 }
+                Spacer(minLength: 0)
+                part(consecrateLabel, consecrate, alignment: .trailing)
+            }
+
+            VStack(alignment: .leading, spacing: 12) {
+                part(beginLabel, begin, alignment: .leading)
+                part(consecrateLabel, consecrate, alignment: .leading)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(
+            String(
+                localized: "You begin \(spokenBegin). You consecrate \(spokenConsecrate).",
+                comment: "VoiceOver, consecration feast chooser: the two dates over Begin, Day 1's then the feast's"))
+    }
+
+    private func part(_ label: String, _ date: String, alignment: HorizontalAlignment) -> some View {
+        VStack(alignment: alignment, spacing: 6) {
+            Text(label.uppercased())
+                .font(AppFonts.labelFont(9.5))
+                .tracking(2.1)
+                .foregroundColor(AppColors.gold)
+                .lineLimit(1)
+                .fixedSize()
+
+            Text(date)
+                .font(AppFonts.bodyFont(17))
+                .foregroundColor(AppColors.cream)
+                .lineLimit(1)
+                .fixedSize()
+                .contentTransition(.opacity)
+        }
     }
 }
 

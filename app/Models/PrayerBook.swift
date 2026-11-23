@@ -40,12 +40,32 @@ struct BookPrayer: Identifiable, Hashable {
     /// stands at the prayer's foot. Nil where the origin is short
     var shortCredit: String? = nil
 
-    /// The credit under the title: the short one where there is one
-    var creditUnderTitle: String? { shortCredit ?? origin }
+    /// Whether the origin credits someone or something real, and so is
+    /// owed a line at the foot (the book's `origin_credit`); nil where the
+    /// book does not say, which keeps the foot
+    var originCredit: Bool? = nil
 
-    /// The whole origin at the foot, only where the title carries a cut
-    /// of it, so nothing is said twice
-    var creditAtFoot: String? { shortCredit == nil ? nil : origin }
+    /// The foot's own words where the book gives them (a Spanish prayer,
+    /// api #292), nil there meaning no foot; when false, the foot is
+    /// read from `origin` and `originCredit`
+    var footLine: String? = nil
+    var hasOwnFootLine = false
+
+    /// The credit under the title: only a short credit naming an author,
+    /// who must be credited on the page; a general origin ("Western
+    /// Church · 13th–16th century") is not said there (Abraham, 16 Nov
+    /// 2026: "no need to say western church 13-16th century")
+    var creditUnderTitle: String? { shortCredit }
+
+    /// The whole origin, once, quietly at the prayer's foot, only where it
+    /// credits an author, a book or a publisher: a tradition and a century
+    /// alone is not said on the page at all (Abraham, 17 Nov 2026: "if no
+    /// souce needed for credits leave it like 13 centry church is odd").
+    /// The Sources page and the share text still give it.
+    var creditAtFoot: String? {
+        if hasOwnFootLine { return footLine }
+        return originCredit == false ? nil : origin
+    }
 
     /// When or how it is said, in one plain sentence
     let note: String?
@@ -386,8 +406,8 @@ enum PrayerBook {
         LibraryContent.prayerBook.prayers.map { prayer in
             (prayer.id, inSpanish(BookPrayer(
                 id: prayer.id, title: prayer.title, latinTitle: prayer.latinTitle,
-                origin: prayer.origin, shortCredit: prayer.shortCredit, note: prayer.note,
-                english: prayer.english, latin: prayer.latin
+                origin: prayer.origin, shortCredit: prayer.shortCredit, originCredit: prayer.originCredit,
+                note: prayer.note, english: prayer.english, latin: prayer.latin
             )))
         },
         uniquingKeysWith: { first, _ in first }
@@ -405,20 +425,31 @@ enum PrayerBook {
         spanish: Bool = SpanishContent.isActive
     ) -> BookPrayer {
         guard spanish else { return prayer }
-        let spanishWords: (title: String, text: String, origin: String?, shortCredit: String?)?
+        let spanishWords: (title: String, text: String, origin: String?, shortCredit: String?, foot: String?)?
         if let translation = translations[prayer.id] {
-            spanishWords = (translation.title, translation.text, translation.origin, translation.shortCredit)
+            spanishWords = (
+                translation.title, translation.text, translation.origin, translation.shortCredit,
+                translation.footCredit
+            )
         } else if let rosary = SpanishContent.prayers[prayer.id] {
-            spanishWords = (rosary.title, rosary.lines, nil, nil)
+            spanishWords = (rosary.title, rosary.lines, nil, nil, nil)
         } else {
             spanishWords = nil
         }
         guard let spanishWords else { return prayer }
         // Credited in Spanish where the book says it in Spanish, and not
-        // at all otherwise: never an English line on a Spanish page
+        // at all otherwise: never an English line on a Spanish page. The
+        // foot is the book's own line for the Spanish (`foot_credit`, which
+        // may credit only the source of the Spanish wording: "Según el
+        // Compendio..."). A book from before that line shows the whole
+        // Spanish origin, since a missing field must never hide a credit
+        // (orch-lead, 17 Nov 2026)
+        let footLinesServed = translations.values.contains { $0.footCredit != nil }
         return BookPrayer(
             id: prayer.id, title: spanishWords.title, latinTitle: prayer.latinTitle,
-            origin: spanishWords.origin, shortCredit: spanishWords.shortCredit, note: prayer.note,
+            origin: spanishWords.origin, shortCredit: spanishWords.shortCredit,
+            originCredit: nil, footLine: spanishWords.foot, hasOwnFootLine: footLinesServed,
+            note: prayer.note,
             english: spanishWords.text, latin: prayer.latin
         )
     }
@@ -951,30 +982,16 @@ enum PrayerBookAudio {
     static let icon = "lv-prayer-book"
 
     /// The quieter way first, as the setting's `false`, as the Rosary's
-    /// pills set theirs
+    /// pills set theirs, in the pray-along switch's own words
     static let options: [RosaryChoice.Option] = [
-        RosaryChoice.Option(value: false, name: String(
-            localized: "In Silence",
-            comment: "Prayers Tab Audio option: no sound"
-        )),
-        RosaryChoice.Option(value: true, name: String(
-            localized: "With a Voice",
-            comment: "Prayers Tab Audio option: a voice reads the prayers"
-        )),
+        RosaryChoice.Option(value: false, name: PrayAlongView.silentWord),
+        RosaryChoice.Option(value: true, name: PrayAlongView.audioWord),
     ]
 
-    /// What the chosen option does. Until the reader has answered, the
-    /// pill shows the default, Aloud, but the book has not yet spoken:
-    /// it asks the first time (`PrayAlongView.howToPrayQuestion`), so the line
-    /// says that instead.
-    static func note(for aloud: Bool, answered: Bool = true) -> String {
-        guard answered else {
-            return String(
-                localized: "Not chosen yet. You'll be asked the first time you pray from the Prayers tab.",
-                comment: "Settings, Prayers Tab Audio: the line before the reader has chosen"
-            )
-        }
-        return aloud
+    /// What the chosen option does. The book is silent until Audio is
+    /// tapped, here or on the pray-along page's switch.
+    static func note(for aloud: Bool) -> String {
+        aloud
             ? String(
                 localized: "A voice reads each prayer to you.",
                 comment: "Settings, Prayers Tab Audio: the line under the chosen option"

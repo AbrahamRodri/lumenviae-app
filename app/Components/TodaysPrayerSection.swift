@@ -230,17 +230,26 @@ struct TodaysPrayerRow: Equatable {
         // Chosen ahead: the day it begins, never a count
         guard progress.hasBegun(asOf: now) else {
             let start = progress.startDate
+            // A start in another year names it (OCT 19, 2027), as Android
+            // does: a start after New Year read as this year's
+            let inAnotherYear = !Calendar.current.isDate(start, equalTo: now, toGranularity: .year)
+            let shortDate = inAnotherYear
+                ? start.formatted(.dateTime.month(.abbreviated).day().year())
+                : start.formatted(.dateTime.month(.abbreviated).day())
+            let longDate = inAnotherYear
+                ? start.formatted(.dateTime.weekday(.wide).month(.wide).day().year())
+                : start.formatted(.dateTime.weekday(.wide).month(.wide).day())
             return TodaysPrayerRow(
                 painting: coronation,
                 focal: coronationFocal,
                 name: name,
                 subtitle: invitation,
                 fact: String(
-                    localized: "BEGINS \(start.formatted(.dateTime.month(.abbreviated).day()).uppercased())",
+                    localized: "BEGINS \(shortDate.uppercased())",
                     comment: "Home, Today's Prayer: small capitals for a consecration chosen to start later; the date is like OCT 19"
                 ),
                 spoken: String(
-                    localized: "\(name). \(invitation). Begins \(start.formatted(.dateTime.weekday(.wide).month(.wide).day()))",
+                    localized: "\(name). \(invitation). Begins \(longDate)",
                     comment: "VoiceOver for a consecration chosen to start later; the date is like Monday, October 19"
                 )
             )

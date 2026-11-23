@@ -237,11 +237,11 @@ enum ChantLibraryData {
         // Not feasts but days of the Office: the O antiphons ring round
         // the Magnificat at Vespers from the 17th to the 23rd, one a day
         ChantFeast(id: "o_sapientia", name: "Advent's “O Wisdom”", rule: .fixed(month: 12, day: 17), chantID: "o_sapientia_magnificat", painting: "advent_isaiah"),
-        ChantFeast(id: "o_adonai", name: "Advent's “O Lord and Ruler”", rule: .fixed(month: 12, day: 18), chantID: "o_adonai_magnificat", painting: "advent_isaiah"),
+        ChantFeast(id: "o_adonai", name: "Advent's “O Adonai”", rule: .fixed(month: 12, day: 18), chantID: "o_adonai_magnificat", painting: "advent_isaiah"),
         ChantFeast(id: "o_radix", name: "Advent's “O Root of Jesse”", rule: .fixed(month: 12, day: 19), chantID: "o_radix_magnificat", painting: "advent_isaiah"),
         ChantFeast(id: "o_clavis", name: "Advent's “O Key of David”", rule: .fixed(month: 12, day: 20), chantID: "o_clavis_magnificat", painting: "advent_isaiah"),
-        ChantFeast(id: "o_oriens", name: "Advent's “O Morning Star”", rule: .fixed(month: 12, day: 21), chantID: "o_oriens_magnificat", painting: "advent_isaiah"),
-        ChantFeast(id: "o_rex", name: "Advent's “O King of the Nations”", rule: .fixed(month: 12, day: 22), chantID: "o_rex_magnificat", painting: "advent_isaiah"),
+        ChantFeast(id: "o_oriens", name: "Advent's “O Day-Spring”", rule: .fixed(month: 12, day: 21), chantID: "o_oriens_magnificat", painting: "advent_isaiah"),
+        ChantFeast(id: "o_rex", name: "Advent's “O King of the Gentiles”", rule: .fixed(month: 12, day: 22), chantID: "o_rex_magnificat", painting: "advent_isaiah"),
         ChantFeast(id: "o_emmanuel", name: "Advent's “O Emmanuel”", rule: .fixed(month: 12, day: 23), chantID: "o_emmanuel_magnificat", painting: "advent_isaiah"),
         ChantFeast(id: "christmas", name: "Christmas Day", rule: .fixed(month: 12, day: 25), chantID: "adeste_fideles", painting: "christmas_shepherds")
     ]

@@ -38,6 +38,13 @@ struct NovenaPrayedView: View {
         return NovenaDays(length: prayed.length, prayed: prayedDays, here: prayed.dayNumber, open: [])
     }
 
+    /// The novena just finished, from the history: its dates and its
+    /// intention stand under the title (design's FINISHED.md)
+    private var finished: FinishedNovena? {
+        guard isLast else { return nil }
+        return NovenaStore.shared.lastFinished(prayed.novenaID)
+    }
+
     private var title: String {
         isLast
             ? String(localized: "Nine days prayed", comment: "Novena, after its last day is prayed: the title")
@@ -72,11 +79,34 @@ struct NovenaPrayedView: View {
                 VStack(spacing: 14) {
                     Spacer(minLength: 0)
                     NovenaDashes(days: days)
-                    Text(title)
-                        .font(AppFonts.titleFont(30))
-                        .foregroundColor(AppColors.cream)
-                        .multilineTextAlignment(.center)
-                        .accessibilityAddTraits(.isHeader)
+                    VStack(spacing: 0) {
+                        Text(title)
+                            .font(AppFonts.titleFont(30))
+                            .foregroundColor(AppColors.cream)
+                            .multilineTextAlignment(.center)
+                            .accessibilityAddTraits(.isHeader)
+                        if let finished {
+                            Text(
+                                NovenaSpan.finishLine(
+                                    NovenaSpan.range(
+                                        from: finished.firstDate(length: prayed.length), to: finished.lastDate()))
+                            )
+                            .font(AppFonts.readingItalicFont(17))
+                            .foregroundColor(AppColors.textSecondary)
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.top, 10)
+                            if let intention = finished.intention {
+                                Text(intention)
+                                    .font(AppFonts.readingItalicFont(19))
+                                    .foregroundColor(AppColors.cream)
+                                    .multilineTextAlignment(.center)
+                                    .lineLimit(3)
+                                    .truncationMode(.tail)
+                                    .padding(.top, 14)
+                            }
+                        }
+                    }
                     VStack(spacing: 6) {
                         if !isLast, let line = progress?.nextDayLine(after: prayed.dayNumber) {
                             Text(line)

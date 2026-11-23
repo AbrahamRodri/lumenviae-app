@@ -5,11 +5,12 @@
 //  Prayers said one after another on a screen of their own — an order
 //  of prayer (Morning Prayers, Before Confession) or a single prayer.
 //
-//  The words stand on the dark page all the way up, with no painting
-//  behind them (Abraham, 15 Nov 2026: "it cuts at the top and that
-//  doesnt look good it might as well be all dark"); the order's painting
-//  comes forward at the Amen. The page is the prayer, a quiet
-//  head (×, the order, its beads, ALOUD or SILENT) and one way on at the
+//  The order's painting stands behind the whole page, fixed and veiled,
+//  with no edge anywhere (Abraham, 16 Nov 2026: "i like having the
+//  picture behind"; on 15 Nov a veil riding on the words had cut a band
+//  under the head: "it cuts at the top"); it comes forward at the Amen.
+//  The page is the prayer, a quiet
+//  head (×, the order, its beads, the Silent | Audio switch) and one way on at the
 //  foot: NEXT with the next prayer's name, or AMEN on the last.
 //
 //  Aloud, the voice reads each prayer (the server's ElevenLabs
@@ -23,8 +24,9 @@
 //
 //  The Angelus rings the church bell as it begins and as it ends — when
 //  it is prayed aloud. In silence the book makes no sound at all, and
-//  until the reader has once said which it is to be, it asks before it
-//  makes any, in the foot where NEXT will stand (`howToPrayQuestion`).
+//  it is silent until the reader taps Audio on the head's switch: it
+//  never asks, and never speaks unbidden (Abraham's pick, option B,
+//  16 Nov 2026).
 //
 
 import SwiftUI
@@ -36,6 +38,7 @@ struct PrayAlongView: View {
     @Environment(AppRouter.self) private var router
     @Environment(UserSettings.self) private var settings
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.scenePhase) private var scenePhase
 
     private let store: PrayerBookStore
@@ -57,7 +60,9 @@ struct PrayAlongView: View {
 
     /// Each prayer's stanzas measured once, for following the voice
     @State private var measures = StanzaMeasures()
-    @State private var asksHowToPray = false
+    /// Whether the page has made its first sound, the Angelus's bell
+    /// with it; a later Audio only takes the voice up again
+    @State private var hasSounded = false
 
     /// A prayer named in a direction ("Our Father, Hail Mary"), opened to read
     @State private var saidPrayer: PrayerPage.SaidPrayer?
@@ -132,6 +137,13 @@ struct PrayAlongView: View {
             || (prayers.count == 1 && ["angelus", "regina_caeli"].contains(prayers.first?.id))
     }
 
+    /// Whether a painting stands behind the page: not for a prayer of the
+    /// reader's own that has no picture
+    private var hangsPainting: Bool {
+        guard let prayer, CustomPrayer.uuid(in: prayer.id) != nil else { return true }
+        return launch.art != nil || MyPrayersStore.shared.prayer(withPrayerID: prayer.id)?.art != nil
+    }
+
     /// The painting the Prayers page hangs over this order, or over this
     /// prayer: the same one the reader tapped to come here
     private var painting: PrayerBookPainting {
@@ -175,6 +187,14 @@ struct PrayAlongView: View {
             AppColors.background.ignoresSafeArea()
 
             if let prayer {
+                // Fixed behind the scroll, so the words run over it and
+                // never carry it away; the plain page under Reduce
+                // Transparency, and for a prayer of the reader's with no
+                // picture of its own
+                if !reduceTransparency, hangsPainting {
+                    PrayAlongGround(painting: painting)
+                }
+
                 // Under the Amen's veil the page is still drawn, but
                 // VoiceOver should find only the Amen
                 VStack(spacing: 0) {
@@ -227,9 +247,10 @@ struct PrayAlongView: View {
 
     // MARK: - Header
 
-    /// ×, the order's name, ALOUD or SILENT and the menu; and beneath,
-    /// the beads. The name stands in the room between the two sides,
-    /// which the menu made too narrow to keep it centred on the glass.
+    /// ×, the order's name, the Silent | Audio switch and the menu; and
+    /// beneath, the beads. The name stands in the room between the two
+    /// sides, and gives way first when there is not room for all: the
+    /// switch keeps its whole width at any text size and in Spanish.
     private var header: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
@@ -249,12 +270,15 @@ struct PrayAlongView: View {
                     .tracking(2.5)
                     .foregroundColor(AppColors.goldLight)
                     .lineLimit(1)
+                    .truncationMode(.tail)
                     .minimumScaleFactor(0.75)
                     .padding(.horizontal, 8)
                     .frame(maxWidth: .infinity)
                     .accessibilityAddTraits(.isHeader)
 
                 voiceSwitch
+                    .fixedSize()
+                    .layoutPriority(1)
 
                 moreMenu
             }
@@ -267,38 +291,64 @@ struct PrayAlongView: View {
         .padding(.top, 2)
     }
 
-    /// The way of praying, said in a word: a tap switches it. A speaker
-    /// glyph read as a volume control and said nothing of silence.
+    /// The way of praying: one capsule of two halves, Silent and Audio,
+    /// the chosen half filled gold. Silent until Audio is tapped. Each
+    /// half answers to 44 points though drawn 30 tall. It was a single
+    /// pill reading VOICE or SILENT, with a question in the foot the
+    /// first time; Abraham found that cluttered.
     private var voiceSwitch: some View {
-        Button {
-            toggleAloud()
-        } label: {
-            HStack(spacing: 7) {
-                if aloud {
-                    Circle()
-                        .fill(AppColors.gold)
-                        .frame(width: 6, height: 6)
-                        .shadow(color: AppColors.gold.opacity(0.8), radius: 3)
-                }
-                Text(aloud ? "VOICE" : "SILENT")
-                    .font(AppFonts.labelFont(9.5))
-                    .tracking(2)
-                    .foregroundColor(aloud ? AppColors.goldLight : AppColors.cream.opacity(0.85))
-            }
-            .padding(.horizontal, 12)
-            .frame(height: 30)
-            .overlay(
-                Capsule()
-                    .strokeBorder(AppColors.gold.opacity(aloud ? 0.55 : 0.4), lineWidth: AppLine.hairline)
-            )
-            .frame(minHeight: 44)
-            .contentShape(Rectangle())
+        HStack(spacing: 0) {
+            voiceHalf(Self.silentWord, chosen: !aloud) { if aloud { setAloud(false) } }
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.55))
+                .frame(width: AppLine.hairline, height: 30)
+            voiceHalf(Self.audioWord, chosen: aloud) { if !aloud { setAloud(true) } }
         }
-        .buttonStyle(QuietGlyphButtonStyle())
-        .animation(Motion.crossfade, value: aloud)
-        .accessibilityLabel(aloud ? Text("Praying with a voice") : Text("Praying in silence"))
-        .accessibilityHint(aloud ? Text("Double-tap to pray in silence") : Text("Double-tap to hear a voice read the prayers"))
+        .frame(height: 30)
+        .overlay(
+            Capsule()
+                .strokeBorder(AppColors.gold.opacity(0.55), lineWidth: AppLine.hairline)
+        )
+        .clipShape(Capsule())
+        .frame(minHeight: 44)
+        .contentShape(Rectangle())
+        .animation(Motion.choice, value: aloud)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(Text(PrayerBookAudio.title))
     }
+
+    private func voiceHalf(_ word: String, chosen: Bool, choose: @escaping () -> Void) -> some View {
+        Button(action: choose) {
+            Text(word.uppercased())
+                .font(AppFonts.labelFont(9.5))
+                .tracking(9.5 * 0.16)
+                .lineLimit(1)
+                .foregroundColor(chosen ? AppColors.background : AppColors.cream.opacity(0.9))
+                .padding(.horizontal, 14)
+                .frame(height: 30)
+                .background {
+                    if chosen {
+                        LinearGradient(
+                            colors: [AppColors.goldLight, AppColors.gold],
+                            startPoint: .leading, endPoint: .trailing)
+                    }
+                }
+                // Drawn 30 tall, touched 44
+                .padding(.vertical, 7)
+                .contentShape(Rectangle())
+                .padding(.vertical, -7)
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityAddTraits(chosen ? [.isSelected] : [])
+    }
+
+    /// The switch's two words, as Settings says them too
+    static let silentWord = String(
+        localized: "Silent",
+        comment: "The pray-along screen's switch, and Settings' Prayers Tab Audio: the half that keeps the book silent, beside Audio")
+    static let audioWord = String(
+        localized: "Audio",
+        comment: "The pray-along screen's switch, and Settings' Prayers Tab Audio: the half that has a voice read the prayers, beside Silent; also Settings' row name")
 
     /// What the page does less often, for the prayer on it: its
     /// language, Save, Share, Learn by heart and Hear it sung. The prayer's own
@@ -568,14 +618,13 @@ struct PrayAlongView: View {
                                 .fixedSize(horizontal: false, vertical: true)
                                 .accessibilityAddTraits(.isHeader)
 
-                            // Where the prayer comes from, quietly: the
-                            // book credits every prayer it prints. On a
-                            // Spanish page the prayer carries the book's
-                            // Spanish credit, or none
+                            // An author named, who must be credited on the
+                            // page; the general origin stands at the foot.
+                            // Plain text, never a link: the publisher's page
+                            // is reached from the foot alone (design ruling,
+                            // 17 Nov 2026)
                             if let origin = prayer.creditUnderTitle, !origin.isEmpty {
-                                NovenaCreditLine(
-                                    origin: origin, url: novena?.sourceURL(spanish: SpanishContent.isActive), size: 15,
-                                    color: AppColors.textSecondary)
+                                NovenaCreditLine(origin: origin, url: nil, size: 15, color: AppColors.textSecondary)
                             }
 
                             if let novena, let twin {
@@ -618,8 +667,8 @@ struct PrayAlongView: View {
 
                             AITranslationNote(prayerID: prayer.id)
 
-                            // A long source, cut short under the title,
-                            // whole at the foot, as the website sets it
+                            // Where the prayer comes from, once, quietly at
+                            // the foot; under the title only an author
                             if let source = prayer.creditAtFoot, !source.isEmpty {
                                 PrayerSourceFoot(
                                     source: source, url: novena?.sourceURL(spanish: SpanishContent.isActive),
@@ -632,7 +681,7 @@ struct PrayAlongView: View {
 
                     // Clear of the foot, so the last line can be read
                     // above NEXT
-                    Color.clear.frame(height: asksHowToPray ? 280 : 220)
+                    Color.clear.frame(height: aloud ? 280 : 220)
                 }
                 .opacity(pageOpacity)
             }
@@ -710,93 +759,32 @@ struct PrayAlongView: View {
     /// or when a prayer has none.
     private var foot: some View {
         VStack(spacing: 12) {
-            if asksHowToPray {
-                howToPrayQuestion
-                    .transition(.opacity)
-            } else {
-                way
-                    .transition(.opacity)
-            }
+            way
         }
-        .animation(Motion.crossfade, value: asksHowToPray)
         .padding(.horizontal, 22)
         .padding(.top, 64)
         .padding(.bottom, 34)
         .frame(maxWidth: .infinity)
         .background(
-            // While it asks, the ground is whole under the question's own
-            // words, which no prayer line may show through
-            LinearGradient(
-                stops: [
-                    .init(color: AppColors.background.opacity(0), location: 0),
-                    .init(color: AppColors.background.opacity(0.92), location: asksHowToPray ? 0.2 : 0.4),
-                    .init(color: AppColors.background, location: asksHowToPray ? 0.3 : 0.7)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+            // The words fade out over the foot's first 64 points, and
+            // beneath them the ground is whole: under NEXT and AMEN, and
+            // under the note above them aloud, which no prayer line may
+            // show through. It faded by proportion, and a note made the
+            // foot taller, so the note sat on fading words.
+            VStack(spacing: 0) {
+                LinearGradient(
+                    colors: [AppColors.background.opacity(0), AppColors.background],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 64)
+                AppColors.background
+            }
             // A view set as a background stops at the safe area; the words
             // must not show beneath the act, under the home indicator
             .ignoresSafeArea(edges: .bottom)
             .allowsHitTesting(false)
         )
-    }
-
-    /// The book's one question, asked the first time it would speak, in
-    /// the foot where NEXT will stand: the prayer it is about stays on the
-    /// page above it. A sheet once asked it over the lower half of the
-    /// prayer. Answering is the way on; VOICE or SILENT at the head of the
-    /// page owns the choice afterward.
-    private var howToPrayQuestion: some View {
-        VStack(spacing: 12) {
-            VStack(spacing: 4) {
-                Text(String(
-                    localized: "With a voice, or in silence?",
-                    comment: "The pray-along's foot, the first time the Prayers tab's book would speak: its question"
-                ))
-                .font(AppFonts.readingFont(18))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.center)
-                .accessibilityAddTraits(.isHeader)
-                footNote(String(
-                    localized: "Change this any time with VOICE or SILENT at the top of the page, or in Settings.",
-                    comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the note under the question; VOICE and SILENT are the words on the pray-along screen's switch and must match them"
-                ))
-            }
-            HStack(spacing: 12) {
-                howToPrayAnswer(
-                    String(localized: "In silence", comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the answer that keeps the book silent"),
-                    icon: "ph-book-open", aloud: false)
-                howToPrayAnswer(
-                    String(localized: "With a voice", comment: "The pray-along's foot, the first time the Prayers tab's book would speak: the answer that has a voice read the prayers"),
-                    icon: "ph-speaker-high", aloud: true)
-            }
-        }
-    }
-
-    private func howToPrayAnswer(_ title: String, icon: String, aloud chosen: Bool) -> some View {
-        Button {
-            setAloud(chosen)
-        } label: {
-            HStack(spacing: 8) {
-                AppIcon(icon, size: 16)
-                    .foregroundColor(AppColors.gold)
-                Text(title)
-                    .font(AppFonts.readingFont(17))
-                    .foregroundColor(AppColors.cream)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-            }
-            .padding(.horizontal, 14)
-            .frame(maxWidth: .infinity, minHeight: 56)
-            .background(Capsule().fill(AppColors.background.opacity(0.35)))
-            .overlay(
-                Capsule()
-                    .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline)
-            )
-            .contentShape(Capsule())
-        }
-        .buttonStyle(SacredCardButtonStyle())
     }
 
     /// NEXT or AMEN, the pause disc beside it aloud
@@ -1043,17 +1031,16 @@ struct PrayAlongView: View {
         voice.onPrevious = { if index > 0 { goTo(index - 1) } }
         voice.onTransport = { transport($0) }
 
-        if store.hasChosenAloud {
-            startSounding()
-        } else {
-            asksHowToPray = true
-        }
+        // Silent until Audio is tapped; a reader who chose Audio before
+        // is read to at once, as they asked
+        startSounding()
     }
 
     /// The page's first sound, once the reader has said the book may
     /// make one: the Angelus's bell, then the voice. In silence, nothing.
     private func startSounding() {
         guard isShowing, aloud, !finished else { return }
+        hasSounded = true
         if isAngelus { ringBell() }
         startVoice()
     }
@@ -1109,18 +1096,10 @@ struct PrayAlongView: View {
         turn.arrived()
     }
 
-    /// VOICE or SILENT at the head: while the foot still asks, a tap on
-    /// it is the answer
-    private func toggleAloud() {
-        setAloud(!aloud)
-    }
-
-    /// The one way the page's choice is made, from the head's switch or
-    /// the foot's question: the question is answered, and the voice
-    /// starts or stops to match, whichever place was tapped first
+    /// The one way the page's choice is made, from the head's switch: the
+    /// voice starts or stops to match
     private func setAloud(_ chosen: Bool) {
-        let answering = asksHowToPray
-        asksHowToPray = false
+        let firstSound = !hasSounded
         store.chooseAloud(chosen)
         advanceTask?.cancel()
         advanceTask = nil
@@ -1128,7 +1107,7 @@ struct PrayAlongView: View {
         if aloud {
             // The page's first sound, the Angelus's bell included, when
             // this is the answer; the voice again otherwise
-            if answering { startSounding() } else { startVoice() }
+            if firstSound { startSounding() } else { startVoice() }
         } else {
             voice.stop()
             litStanza = nil
@@ -1319,6 +1298,44 @@ final class StanzaMeasures {
     }
 }
 
+// MARK: - The ground
+
+/// The page's ground: the order's painting from the top edge to the foot,
+/// under one veil of the theme's ground that never ends in an edge: about
+/// 55 percent behind the head and title, 80 by a third of the way down,
+/// 88 from the middle to the foot (design, PICTURE-AND-ORIGIN.md). Fixed,
+/// so the words scroll over it; hidden from VoiceOver, which reads the
+/// words.
+private struct PrayAlongGround: View {
+    let painting: PrayerBookPainting
+
+    var body: some View {
+        ZStack {
+            // The painting hangs off a clear view, so its fill never
+            // widens the page it stands behind
+            Color.clear
+                .overlay {
+                    CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
+                }
+                .clipped()
+
+            LinearGradient(
+                stops: [
+                    .init(color: AppColors.background.opacity(0.55), location: 0),
+                    .init(color: AppColors.background.opacity(0.80), location: 0.33),
+                    .init(color: AppColors.background.opacity(0.88), location: 0.5),
+                    .init(color: AppColors.background.opacity(0.88), location: 1),
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        }
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+}
+
 // MARK: - A stanza on the page
 
 /// One stanza of the prayer. A stanza of plain verse — lines and rubrics,
@@ -1414,10 +1431,6 @@ private struct PrayAlongVerseLine: View {
 @available(iOS 18.0, *)
 private struct HangingIndentRenderer: TextRenderer {
     let indent: CGFloat
-
-    var displayPadding: EdgeInsets {
-        EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: indent)
-    }
 
     func draw(layout: Text.Layout, in context: inout GraphicsContext) {
         for (i, line) in layout.enumerated() {

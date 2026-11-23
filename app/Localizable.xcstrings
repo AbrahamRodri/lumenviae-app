@@ -201,6 +201,39 @@
         }
       }
     },
+    "%@ at 6 AM" : {
+      "comment" : "Widgets, the Angelus on the Lock Screen's line above the clock: the morning bell",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ a las 6 a. m."
+          }
+        }
+      }
+    },
+    "%@ at 6 PM" : {
+      "comment" : "Widgets, the Angelus on the Lock Screen's line above the clock: the evening bell",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ a las 6 p. m."
+          }
+        }
+      }
+    },
+    "%@ at noon" : {
+      "comment" : "Widgets, the Angelus on the Lock Screen's line above the clock: the noon bell",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ al mediodía"
+          }
+        }
+      }
+    },
     "%@ colors" : {
       "localizations" : {
         "es" : {
@@ -287,6 +320,17 @@
         }
       }
     },
+    "%@ mystery" : {
+      "comment" : "Widgets, Continue Your Rosary: which mystery the hand is on, its number as an ordinal figure, like 4th mystery",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ misterio"
+          }
+        }
+      }
+    },
     "%@ of %@" : {
       "comment" : "Chant player: time sung so far of the recording's length, like 0:55 of 4:12\nVoiceOver value, the reading's scrubber: time heard of the whole, as clock times like 3:05 of 27:40\nVoiceOver, chant player: time sung so far of the recording's length, both in words, like 55 seconds of 4 minutes 12 seconds",
       "localizations" : {
@@ -300,6 +344,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ de %2$@"
+          }
+        }
+      }
+    },
+    "%@ sorrow" : {
+      "comment" : "Widgets, Continue Your Rosary: which sorrow of the chaplet the hand is on, its number as an ordinal figure, like 4th sorrow",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ dolor"
           }
         }
       }
@@ -858,11 +913,29 @@
         }
       }
     },
+    "%@, %@, the soonest." : {
+      "comment" : "VoiceOver, consecration feast chooser: a feast's row (name, then date), the soonest of the feasts",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %2$@, la más próxima."
+          }
+        }
+      }
+    },
     "%@, %@." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "%1$@, %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "%1$@, %2$@."
           }
         }
@@ -3636,6 +3709,17 @@
         }
       }
     },
+    "A Word for Today" : {
+      "comment" : "Widgets: the title of the daily quotation widget",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una palabra para hoy"
+          }
+        }
+      }
+    },
     "A beginner's Rosary is a Rosary. Pray it as you can." : {
       "comment" : "Daily prayer reminder notification for readers learning the Rosary: its text under the title. Warm and inviting, never scolding; under about 75 characters",
       "localizations" : {
@@ -4302,6 +4386,17 @@
         }
       }
     },
+    "A week" : {
+      "comment" : "Consecration, scheduled page: how long one of the three weeks of the preparation is, under its name",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una semana"
+          }
+        }
+      }
+    },
     "A word with your Mother" : {
       "comment" : "Daily prayer reminder notification for readers wanting to grow closer to Mary: its title, shown in bold. Warm and inviting, never scolding; under about 35 characters",
       "localizations" : {
@@ -4636,6 +4731,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Novedades desde tu última actualización. Toca una para abrirla."
+          }
+        }
+      }
+    },
+    "Address copied" : {
+      "comment" : "Spanish beta notice sheet: VoiceOver announcement when the support address was copied because no mail app could open",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dirección copiada"
           }
         }
       }
@@ -5215,6 +5321,17 @@
         }
       }
     },
+    "Angelus" : {
+      "comment" : "Widgets, the Angelus on the Lock Screen: its short name, in a small circle and in Angelus at 12:00",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ángelus"
+          }
+        }
+      }
+    },
     "Anne Catherine Emmerich" : {
       "comment" : "The name of the bundled Sorrowful meditation set, the visionary whose words it reads, shown on the mysteries' page and over the player",
       "localizations" : {
@@ -5512,7 +5629,7 @@
       }
     },
     "Audio" : {
-      "comment" : "Settings: a row's name",
+      "comment" : "The pray-along screen's switch, and Settings' Prayers Tab Audio: the half that has a voice read the prayers, beside Silent; also Settings' row name",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -6666,17 +6783,6 @@
         }
       }
     },
-    "Change this any time with VOICE or SILENT at the top of the page, or in Settings." : {
-      "comment" : "The pray-along's foot, the first time the Prayers tab's book would speak: the note under the question; VOICE and SILENT are the words on the pray-along screen's switch and must match them",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cámbialo cuando quieras con VOZ o SILENCIO en la parte de arriba de la página, o en Configuración."
-          }
-        }
-      }
-    },
     "Chant" : {
       "comment" : "Explore page: heading of a section of the browse page\nFirst-use tour: small capitals naming the Chant tab, the Chant Library\nLock Screen: the line under a chant's title when no set is being sung\nThe Chant tab's page title: the library of Gregorian chant\nThe Chapel: name of a section (tile) of the page, on its title line, its folded row while arranging and its chip in the hidden-sections tray",
       "localizations" : {
@@ -7138,84 +7244,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Elige tu fiesta"
-          }
-        }
-      }
-    },
-    "Chooses this feast" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elige esta fiesta"
-          }
-        }
-      }
-    },
-    "Chosen: %@, %@. Day 1 is %@, %@." : {
-      "comment" : "VoiceOver, consecration feast chooser: the chosen feast (name, then date), then the date Day 1 falls on and how far off it is, like in 12 days",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Chosen: %1$@, %2$@. Day 1 is %3$@, %4$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elegida: %1$@, %2$@. El día 1 es %3$@, %4$@."
-          }
-        }
-      }
-    },
-    "Chosen: %@, %@. Day 1 is today." : {
-      "comment" : "VoiceOver, consecration feast chooser: the chosen feast (name, then date), beginning today",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Chosen: %1$@, %2$@. Day 1 is today."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elegida: %1$@, %2$@. El día 1 es hoy."
-          }
-        }
-      }
-    },
-    "Chosen: %@, %@. the soonest. Day 1 is %@, %@." : {
-      "comment" : "VoiceOver, consecration feast chooser: the chosen feast (name, then date), the soonest of the feasts, then the date Day 1 falls on and how far off it is, like in 12 days",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Chosen: %1$@, %2$@. the soonest. Day 1 is %3$@, %4$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elegida: %1$@, %2$@. La más próxima. El día 1 es %3$@, %4$@."
-          }
-        }
-      }
-    },
-    "Chosen: %@, %@. the soonest. Day 1 is today." : {
-      "comment" : "VoiceOver, consecration feast chooser: the chosen feast (name, then date), the soonest of the feasts, beginning today",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Chosen: %1$@, %2$@. the soonest. Day 1 is today."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elegida: %1$@, %2$@. La más próxima. El día 1 es hoy."
           }
         }
       }
@@ -8313,7 +8341,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El día %1$lld quedó sin rezar. Puedes rezarlo ahora o seguir con el día %2$lld."
+            "value" : "El día %1$lld sigue abierto. Puedes rezarlo ahora o seguir con el día %2$lld."
           }
         }
       }
@@ -8325,7 +8353,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El día %lld quedó sin rezar. Puedes rezarlo ahora."
+            "value" : "El día %lld sigue abierto. Puedes rezarlo ahora."
           }
         }
       }
@@ -8439,6 +8467,17 @@
         }
       }
     },
+    "Day 1 opens here on %@." : {
+      "comment" : "Consecration, scheduled page: the quiet line at the foot saying when the first day's prayers open, like Day 1 opens here on Saturday, January 9.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El día 1 se abre aquí el %@."
+          }
+        }
+      }
+    },
     "Days %@ are still open. You can pray them now, or go on with Day %lld." : {
       "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
       "extractionState" : "manual",
@@ -8446,7 +8485,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los días %1$@ quedaron sin rezar. Puedes rezarlos ahora o seguir con el día %2$lld."
+            "value" : "Los días %1$@ siguen abiertos. Puedes rezarlos ahora o seguir con el día %2$lld."
           }
         }
       }
@@ -8458,7 +8497,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los días %@ quedaron sin rezar. Puedes rezarlos ahora."
+            "value" : "Los días %@ siguen abiertos. Puedes rezarlos ahora."
           }
         }
       }
@@ -10022,6 +10061,17 @@
         }
       }
     },
+    "Final" : {
+      "comment" : "Consecration introduction, page 4: the path's last station, day 34, in the column where the others give their days",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Final"
+          }
+        }
+      }
+    },
     "Find a chant, a prayer or a mystery, chants first" : {
       "comment" : "VoiceOver hint on the Chant page's search glass: the app's one search, with chants listed first",
       "localizations" : {
@@ -10115,6 +10165,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Primeras letras"
+          }
+        }
+      }
+    },
+    "First, %@" : {
+      "comment" : "Widgets, Today's Mysteries: the first mystery to be prayed, its article in lower case, like First, the Annunciation",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero, %@"
           }
         }
       }
@@ -10294,6 +10355,17 @@
         }
       }
     },
+    "For the feast of %@" : {
+      "comment" : "Widgets, Consecration chosen ahead: the feast its 33 days end on, by its date, like For the feast of 2 February",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para la fiesta del %@"
+          }
+        }
+      }
+    },
     "For the greater glory of God" : {
       "localizations" : {
         "es" : {
@@ -10442,6 +10514,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fuente"
+          }
+        }
+      }
+    },
+    "From %@" : {
+      "comment" : "A meditation set's page: the one line under its name, the book its meditations are from",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De %@"
           }
         }
       }
@@ -11770,6 +11853,17 @@
         }
       }
     },
+    "If you don't see Language, add English in Settings > General > Language & Region." : {
+      "comment" : "Spanish beta notice sheet, under Use the app in English: what to do when Settings shows no Language row (a phone with one language)",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si no ves Idioma, agrega inglés en Configuración > General > Idioma y región."
+          }
+        }
+      }
+    },
     "If you find a mistake, tell us." : {
       "localizations" : {
         "es" : {
@@ -11896,17 +11990,6 @@
         }
       }
     },
-    "In Silence" : {
-      "comment" : "Prayers Tab Audio option: no sound",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En silencio"
-          }
-        }
-      }
-    },
     "In Time of Trouble" : {
       "comment" : "Prayers tab: the name of an order of prayer, a few prayers said together",
       "localizations" : {
@@ -11958,17 +12041,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En honor de sus lágrimas · %lld de 3"
-          }
-        }
-      }
-    },
-    "In silence" : {
-      "comment" : "The pray-along's foot, the first time the Prayers tab's book would speak: the answer that keeps the book silent",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En silencio"
           }
         }
       }
@@ -12821,7 +12893,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mira cómo funciona"
+            "value" : "Ver cómo funciona"
           }
         }
       }
@@ -13535,6 +13607,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "MOVIENDO"
+          }
+        }
+      }
+    },
+    "Mail couldn't open, so we copied our address: %@. Paste it in your email app." : {
+      "comment" : "Spanish beta notice sheet, under Report a mistake when no mail app could open: the support address was copied to the clipboard",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo abrir el correo, así que copiamos nuestra dirección: %@. Pégala en tu app de correo."
           }
         }
       }
@@ -14479,6 +14562,17 @@
         }
       }
     },
+    "NOVENA" : {
+      "comment" : "Novena page: the kicker over its name, beside the painting",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NOVENA"
+          }
+        }
+      }
+    },
     "NOVENA · %lld DAYS" : {
       "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
       "extractionState" : "manual",
@@ -15050,6 +15144,17 @@
         }
       }
     },
+    "Nine days in a row. Once you begin, each day shows its date here." : {
+      "comment" : "Novena page, not begun: under THE NINE DAYS and their nine dashes",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueve días seguidos. Cuando empieces, cada día mostrará aquí su fecha."
+          }
+        }
+      }
+    },
     "Nine days in a row: a novena, as the Apostles prayed for nine days before Pentecost." : {
       "comment" : "Streak milestone: the line of blessing shown when it is reached, saying what the run of days means",
       "localizations" : {
@@ -15073,14 +15178,25 @@
         }
       }
     },
-    "Nine days with the Rosary; the app keeps your day" : {
-      "comment" : "Pray-along page, a novena read as text: the line under PRAY IT AS A NOVENA",
+    "Nine days, one day at a time. The app keeps your day." : {
+      "comment" : "Pray-along page, a novena read as text: the line under PRAY IT WITH THE ROSARY",
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nueve días con el Rosario; la app lleva la cuenta de tu día"
+            "value" : "Nueve días, uno a la vez. La app lleva la cuenta de tu día."
+          }
+        }
+      }
+    },
+    "Nine days, with the Rosary" : {
+      "comment" : "Novena page, not begun: the line under its name, beside the painting; never a length of time",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueve días, con el Rosario"
           }
         }
       }
@@ -15382,17 +15498,6 @@
         }
       }
     },
-    "Not chosen yet. You'll be asked the first time you pray from the Prayers tab." : {
-      "comment" : "Settings, Prayers Tab Audio: the line before the reader has chosen",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aún sin elegir. Se te preguntará la primera vez que reces desde la pestaña Oraciones."
-          }
-        }
-      }
-    },
     "Not now" : {
       "localizations" : {
         "es" : {
@@ -15667,6 +15772,17 @@
         }
       }
     },
+    "O God, come to my assistance." : {
+      "comment" : "Widgets, Hours of Prayer: the first words of every hour of the Divine Office (Deus in adjutorium), in the breviary's English",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dios mío, ven en mi auxilio."
+          }
+        }
+      }
+    },
     "OF MARY, NEVER ENOUGH" : {
       "localizations" : {
         "es" : {
@@ -15694,16 +15810,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ABRIR EL LIBRO"
-          }
-        }
-      }
-    },
-    "OTHER FEASTS" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OTRAS FIESTAS"
           }
         }
       }
@@ -16011,6 +16117,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Una vez abierto, este libro se lee sin conexión."
+          }
+        }
+      }
+    },
+    "Once you begin, each day shows its date here." : {
+      "comment" : "Novena page, not begun: under THE DAYS of a novena not nine days long",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando empieces, cada día mostrará aquí su fecha."
           }
         }
       }
@@ -16881,14 +16998,14 @@
         }
       }
     },
-    "PRAY IT AS A NOVENA" : {
+    "PRAY IT WITH THE ROSARY" : {
       "comment" : "Pray-along page, a novena read as text: the row leading to the novena prayed day by day",
       "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "REZARLA COMO NOVENA"
+            "value" : "RÉZALA CON EL ROSARIO"
           }
         }
       }
@@ -16898,7 +17015,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "REZA ESTAS"
+            "value" : "REZAR ESTAS"
           }
         }
       }
@@ -17730,7 +17847,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reza el Rosario de hoy"
+            "value" : "Rezar el Rosario de hoy"
           }
         }
       }
@@ -17800,6 +17917,17 @@
         }
       }
     },
+    "Pray the Angelus" : {
+      "comment" : "Widgets, the Angelus at its hour: the invitation",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezar el Ángelus"
+          }
+        }
+      }
+    },
     "Pray the Litany of Loreto" : {
       "comment" : "Marian Library, her titles: door praying the Litany of Loreto",
       "localizations" : {
@@ -17807,6 +17935,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rezar la Letanía de Loreto"
+          }
+        }
+      }
+    },
+    "Pray the Queen of Heaven" : {
+      "comment" : "Widgets, the Angelus at its hour in the Easter season: the invitation, when the Regina Caeli is said in its place",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezar la Reina del Cielo"
           }
         }
       }
@@ -19183,6 +19322,17 @@
         }
       }
     },
+    "Regina Cæli" : {
+      "comment" : "Widgets, the Angelus on the Lock Screen: the Easter season's song, the Regina Caeli, in a small circle; keep the Latin",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regina Cæli"
+          }
+        }
+      }
+    },
     "Remembering how God's Son became man, said three times a day when the church bell rings." : {
       "comment" : "Prayers tab: one sentence saying what an order of prayer is",
       "localizations" : {
@@ -20116,6 +20266,17 @@
         }
       }
     },
+    "Saving, %lld percent" : {
+      "comment" : "A meditation set's page, its settings card: in place of the offline switch while the set is saved",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardando, %lld por ciento"
+          }
+        }
+      }
+    },
     "Saving…" : {
       "comment" : "Prayer screen, More menu: the download row while the narration is being saved",
       "localizations" : {
@@ -20848,16 +21009,6 @@
         }
       }
     },
-    "Show more feasts" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar más fiestas"
-          }
-        }
-      }
-    },
     "Show my intention in the reminder" : {
       "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
       "extractionState" : "manual",
@@ -20931,12 +21082,13 @@
         }
       }
     },
-    "Shows %lld more" : {
+    "Show words and beads" : {
+      "comment" : "A meditation set's page, its settings card: the switch for the player's words and beads",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Muestra %lld más"
+            "value" : "Mostrar palabras y cuentas"
           }
         }
       }
@@ -21042,6 +21194,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Silencio, en pausa, quedan %@"
+          }
+        }
+      }
+    },
+    "Silent" : {
+      "comment" : "The pray-along screen's switch, and Settings' Prayers Tab Audio: the half that keeps the book silent, beside Audio",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En silencio"
           }
         }
       }
@@ -21813,7 +21976,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mejor comenzar en cualquier día"
+            "value" : "Empezar en cualquier día"
           }
         }
       }
@@ -23014,12 +23177,14 @@
         }
       }
     },
-    "The 33 days end on a feast of Mary: your Consecration Day." : {
+    "The 33 days end on a feast of Mary." : {
+      "comment" : "Consecration feast chooser: the line under Choose your feast",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los 33 días terminan en una fiesta de María: tu día de consagración."
+            "value" : "Los 33 días terminan en una fiesta de María."
           }
         }
       }
@@ -24542,6 +24707,17 @@
         }
       }
     },
+    "The first meditation" : {
+      "comment" : "A meditation set's page: the kicker over the first meditation, read in a sheet",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La primera meditación"
+          }
+        }
+      }
+    },
     "The first meditation  ·  %@" : {
       "localizations" : {
         "es" : {
@@ -25092,6 +25268,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La reflexión"
+          }
+        }
+      }
+    },
+    "The road there · begins in %lld days" : {
+      "comment" : "Consecration, scheduled page: small capitals over the five parts of the preparation, like The road there · begins in 53 days",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El camino · comienza en %lld días"
+          }
+        }
+      }
+    },
+    "The road there · begins today" : {
+      "comment" : "Consecration, scheduled page: small capitals over the five parts of the preparation, on Day 1 itself",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El camino · comienza hoy"
+          }
+        }
+      }
+    },
+    "The road there · begins tomorrow" : {
+      "comment" : "Consecration, scheduled page: small capitals over the five parts of the preparation, when Day 1 is tomorrow",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El camino · comienza mañana"
           }
         }
       }
@@ -26607,6 +26816,17 @@
         }
       }
     },
+    "Twelve days" : {
+      "comment" : "Consecration, scheduled page: how long the first part of the preparation is, under its name",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doce días"
+          }
+        }
+      }
+    },
     "Twentieth Day" : {
       "comment" : "Consecration: heading naming day 20 of the preparation by its ordinal",
       "localizations" : {
@@ -26952,6 +27172,17 @@
         }
       }
     },
+    "Voice and speed" : {
+      "comment" : "A meditation set's page, its settings card: the row opening the voice and its speed",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voz y velocidad"
+          }
+        }
+      }
+    },
     "WED" : {
       "comment" : "Prayer Record calendar: column head for Wednesday, three-letter small capitals",
       "localizations" : {
@@ -27006,13 +27237,13 @@
         }
       }
     },
-    "Ways to pray" : {
+    "Other ways to pray" : {
       "comment" : "Mysteries' page: heading over the Rosary's other two forms, the Scriptural Rosary and the Audio Rosary",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formas de rezar"
+            "value" : "Otras formas de rezar"
           }
         }
       }
@@ -27712,39 +27943,6 @@
         }
       }
     },
-    "With a Voice" : {
-      "comment" : "Prayers Tab Audio option: a voice reads the prayers",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con voz"
-          }
-        }
-      }
-    },
-    "With a voice" : {
-      "comment" : "The pray-along's foot, the first time the Prayers tab's book would speak: the answer that has a voice read the prayers",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con voz"
-          }
-        }
-      }
-    },
-    "With a voice, or in silence?" : {
-      "comment" : "The pray-along's foot, the first time the Prayers tab's book would speak: its question",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Con voz o en silencio?"
-          }
-        }
-      }
-    },
     "With the Rosary. Begin any day." : {
       "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
       "extractionState" : "manual",
@@ -27871,6 +28069,17 @@
         }
       }
     },
+    "Write what you pray for." : {
+      "comment" : "VoiceOver hint: the novena's intention row",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escribe lo que pides."
+          }
+        }
+      }
+    },
     "Write your own prayers and gather them into playlists, each with a painting or a photo of your own" : {
       "comment" : "What's New sheet: one plain line under My Prayers, the reader's own prayers and playlists, saying what it is",
       "localizations" : {
@@ -27986,6 +28195,42 @@
         }
       }
     },
+    "You begin" : {
+      "comment" : "Consecration feast chooser, over Begin: small capitals over Day 1's date",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comienzas"
+          }
+        }
+      }
+    },
+    "You begin %@. You consecrate %@." : {
+      "comment" : "VoiceOver, consecration feast chooser: the two dates over Begin, Day 1's then the feast's",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comienzas el %1$@. Te consagras el %2$@."
+          }
+        }
+      }
+    },
+    "You consecrate" : {
+      "comment" : "Consecration feast chooser, over Begin: small capitals over the feast's date, the day of consecration",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te consagras"
+          }
+        }
+      }
+    },
     "You can change the time or turn it off in Settings." : {
       "localizations" : {
         "es" : {
@@ -28003,16 +28248,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Puedes cambiarlo cuando quieras con el botón Aa."
-          }
-        }
-      }
-    },
-    "You can choose another feast until Day 1 begins." : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puedes elegir otra fiesta hasta que comience el día 1."
           }
         }
       }
@@ -28253,6 +28488,17 @@
         }
       }
     },
+    "Your Consecration to Mary" : {
+      "comment" : "Consecration, scheduled page: kicker over the chosen feast's name while the preparation has not begun",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu consagración a María"
+          }
+        }
+      }
+    },
     "Your Current Time" : {
       "comment" : "Onboarding, A Daily Reminder slide, when it is run again: a choice card keeping the reminder time already set",
       "localizations" : {
@@ -28435,16 +28681,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tus favoritos"
-          }
-        }
-      }
-    },
-    "Your first day's prayers open right away." : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las oraciones de tu primer día se abren enseguida."
           }
         }
       }
@@ -29089,6 +29325,78 @@
         }
       }
     },
+    "novena.finished.lastPrayed" : {
+      "comment" : "Prayers tab, novena card, finished and not begun again: the last day's date, like Last prayed November 24",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Last prayed %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezada por última vez el %@"
+          }
+        }
+      }
+    },
+    "novena.finished.prayed" : {
+      "comment" : "Novena page, finished: under its filled dashes, when it was prayed, like Prayed November 16 to 24",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Prayed %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezada %@"
+          }
+        }
+      }
+    },
+    "novena.finished.spoken" : {
+      "comment" : "VoiceOver, a finished novena's dashes when it is not nine days long: like 7 days prayed, November 16 to 22.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld days prayed, %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld días rezados, %2$@."
+          }
+        }
+      }
+    },
+    "novena.finished.spokenNine" : {
+      "comment" : "VoiceOver, a finished novena's dashes: like Nine days prayed, November 16 to 24.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Nine days prayed, %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueve días rezados, %@."
+          }
+        }
+      }
+    },
     "novena.intention.title" : {
       "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
       "extractionState" : "manual",
@@ -29305,6 +29613,42 @@
         }
       }
     },
+    "novena.span.sameMonth" : {
+      "comment" : "Novena finished: the days it was prayed within one month: the month, Day 1's day, the last day's, like November 16 to 24",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ to %3$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "del %2$@ al %3$@ de %1$@"
+          }
+        }
+      }
+    },
+    "novena.span.twoMonths" : {
+      "comment" : "Novena finished: the days it was prayed across two months, like November 28 to December 6",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ to %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "del %1$@ al %2$@"
+          }
+        }
+      }
+    },
     "open" : {
       "comment" : "Novena page, its sheets and the Prayers tab's novena card (NovenaPageView.swift)",
       "extractionState" : "manual",
@@ -29425,6 +29769,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "dila y luego muéstrala"
+          }
+        }
+      }
+    },
+    "setPage.saveForOffline" : {
+      "comment" : "A meditation set's page, its settings card: the switch that keeps the set on the device",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save for offline"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar sin conexión"
           }
         }
       }
@@ -29783,6 +30145,150 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "donde vas"
+          }
+        }
+      }
+    },
+    "widget.angelus.atEighteen" : {
+      "comment" : "Widgets, the Angelus through the hour of its 6 PM bell: the kicker over Pray the Angelus",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It is six in the evening"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son las seis de la tarde"
+          }
+        }
+      }
+    },
+    "widget.angelus.atNoon" : {
+      "comment" : "Widgets, the Angelus through the hour of its noon bell: the kicker over Pray the Angelus",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It is noon"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es mediodía"
+          }
+        }
+      }
+    },
+    "widget.angelus.atSix" : {
+      "comment" : "Widgets, the Angelus through the hour of its 6 AM bell: the kicker over Pray the Angelus",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It is six in the morning"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son las seis de la mañana"
+          }
+        }
+      }
+    },
+    "widget.angelus.evening" : {
+      "comment" : "Widgets, the Angelus: the 6 PM bell's name, under its time",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evening"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarde"
+          }
+        }
+      }
+    },
+    "widget.angelus.morning" : {
+      "comment" : "Widgets, the Angelus: the 6 AM bell's name, under its time",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Morning"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mañana"
+          }
+        }
+      }
+    },
+    "widget.novena" : {
+      "comment" : "Widgets, Novena: the kicker over the novena's name",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novena"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novena"
+          }
+        }
+      }
+    },
+    "widget.novena.notYet" : {
+      "comment" : "Widgets, Novena: today's day of the novena is still to pray; never a reproach",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not yet prayed today"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy aún sin rezar"
+          }
+        }
+      }
+    },
+    "widget.novena.prayedToday" : {
+      "comment" : "Widgets, Novena: today's day of the novena has been prayed",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prayed today"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezada hoy"
           }
         }
       }
