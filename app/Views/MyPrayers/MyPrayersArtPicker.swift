@@ -55,7 +55,7 @@ enum MyPrayersPaintings {
             ),
             assets: [
                 "devotion_st_joseph", "saint_joseph_carpenter", "devotion_guardian_angels", "prayer_tobias_angel",
-                "saint_michael", "devotion_holy_trinity", "feast_all_saints", "devotion_holy_souls", "carlo_acutis",
+                "saint_michael", "devotion_holy_trinity", "feast_all_saints", "devotion_holy_souls",
                 "saint_ignatius", "saint_francis_desert", "saint_anthony", "saint_benedict", "saint_thomas_aquinas",
                 "saint_jude", "saint_peter_tears", "saint_paul_conversion", "saint_matthew_calling",
                 "saint_john_baptist_birth", "saint_teresa_purgatory", "saint_gertrude", "saint_bonaventure",
