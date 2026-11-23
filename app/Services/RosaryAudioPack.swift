@@ -100,7 +100,7 @@ final class RosaryAudioPack {
 
     /// Fail a stalled clip in 20s; the clips are small
     private let session: URLSession = {
-        let config = URLSessionConfiguration.default
+        let config = URLSessionConfiguration.app
         config.timeoutIntervalForRequest = 20
         config.timeoutIntervalForResource = 120
         return URLSession(configuration: config)

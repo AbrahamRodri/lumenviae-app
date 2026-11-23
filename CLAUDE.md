@@ -4137,6 +4137,14 @@ it the YES, or the next launch argument is read as its value): every
 recording, bell and sound preview plays at no volume, and the unit tests'
 host is always silent. Never in a release build.
 
+**Offline can be walked on a simulator** with `-LVOffline YES`
+(`OfflineTesting`, debug only): every http and https request the app's
+sessions make fails as a phone with no signal does, so the bundled books,
+the kept copies and every "comes with a connection" line can be seen. A
+new `URLSession` starts from `URLSessionConfiguration.app`, not
+`.default`, or it stays online under the flag. The system player's
+streams and the shelf's background downloads are not reached.
+
 `Tools/dev` is the door to everyday tasks: `Tools/dev check` runs lint,
 the generated-file check, the build and the tests. Run tests with
 `Tools/dev test`, which uses its own simulator ("LumenViae Dev"), never
