@@ -115,12 +115,12 @@ struct SetArtworkView: View {
                 loaded = nil
                 self.loadedURL = nil
             }
+            failed = false
             if let hit = ArtworkCache.shared.cached(wanted) {
                 loaded = hit
                 loadedURL = wanted
                 return
             }
-            failed = false
 
             let image = await ArtworkCache.shared.image(for: artwork, setId: setId, url: wanted)
             guard !Task.isCancelled else { return }

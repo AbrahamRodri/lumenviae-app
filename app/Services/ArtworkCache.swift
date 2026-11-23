@@ -71,7 +71,9 @@ final class ArtworkCache {
     /// `url` is the copy wanted (`SetArtwork.url(forPixelWidth:)`): a
     /// smaller one where the API lists it. A set saved for offline keeps
     /// the original on disk, and that is read first whatever is wanted,
-    /// since it costs no download.
+    /// since it costs no download. It is then kept under the wanted URL,
+    /// which is harmless: every URL in `SetArtwork.urls` draws the same
+    /// painting.
     func image(for artwork: SetArtwork, setId: Int, url: String? = nil) async -> UIImage? {
         let url = url ?? artwork.url
         if let hit = cached(url) { return hit }
