@@ -9,6 +9,7 @@
 //  class is read and named in the Missal's words.
 //
 
+import Foundation
 import Testing
 @testable import app
 
@@ -138,5 +139,39 @@ struct OfficeHoursTests {
         #expect(section.displayName(.latinUnderEnglish) == "Psalms")
         #expect(section.displayName(.english) == "Psalms")
         #expect(section.displayName(.latin) == "Psalmi")
+    }
+}
+
+/// A small rubric inside a line comes in `marked_lines`, in braces
+@Suite struct OfficeMarkedLinesTests {
+    private func cell(_ json: String) throws -> OfficeCell {
+        try JSONDecoder().decode(OfficeCell.self, from: Data(json.utf8))
+    }
+
+    @Test func markedLinesAreDrawnWhereTheServerSendsThem() throws {
+        let decoded = try cell("""
+        {"title": null, "note": null,
+         "lines": ["word and deed: strikes his breast through my fault"],
+         "marked_lines": ["word and deed: {strikes his breast} through my fault"]}
+        """)
+        #expect(decoded.shownLines == ["word and deed: {strikes his breast} through my fault"])
+    }
+
+    @Test func plainLinesStandWhereNoneAreMarked() throws {
+        let null = try cell(#"{"title": null, "note": null, "lines": ["Amen."], "marked_lines": null}"#)
+        let absent = try cell(#"{"title": null, "note": null, "lines": ["Amen."]}"#)
+        #expect(null.shownLines == ["Amen."])
+        #expect(absent.shownLines == ["Amen."])
+    }
+
+    @Test func markedLinesThatDoNotMatchTheLinesAreSetAside() throws {
+        let decoded = try cell(#"{"title": null, "note": null, "lines": ["a", "b"], "marked_lines": ["{a}"]}"#)
+        #expect(decoded.shownLines == ["a", "b"])
+    }
+
+    @Test func aCachedCellKeepsItsMarks() throws {
+        let original = OfficeCell(title: nil, note: nil, lines: ["x y"], markedLines: ["x {y}"])
+        let again = try JSONDecoder().decode(OfficeCell.self, from: JSONEncoder().encode(original))
+        #expect(again == original)
     }
 }
