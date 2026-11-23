@@ -61,6 +61,11 @@ struct PrayersSeasonCard: View {
     let open: () -> Void
 
     private static let paintingWidth: CGFloat = 108
+    /// Past this height a painting cut 108 wide loses half its scene (the
+    /// wreath's Mary, when a Spanish title or the largest text wraps the
+    /// card to four lines): it is drawn this tall from the card's top and
+    /// dissolves into the card beneath
+    private static let paintingMaxHeight: CGFloat = 160
 
     /// The frames' paintings: Fra Angelico's Annunciation for the wreath,
     /// cut between the angel and Mary, and Isaiah for the O Antiphons
@@ -83,10 +88,22 @@ struct PrayersSeasonCard: View {
         Button(action: open) {
             HStack(spacing: 0) {
                 GeometryReader { proxy in
+                    let height = max(proxy.size.height, 120)
+                    let drawn = min(height, Self.paintingMaxHeight)
                     PrayersPaintingThumb(
                         painting: Self.painting(for: prayer.id),
                         width: Self.paintingWidth,
-                        height: max(proxy.size.height, 120))
+                        height: drawn)
+                        .mask(
+                            LinearGradient(
+                                stops: [
+                                    .init(color: .black, location: 0),
+                                    .init(color: .black, location: height > drawn ? 0.7 : 1),
+                                    .init(color: height > drawn ? .clear : .black, location: 1),
+                                ],
+                                startPoint: .top, endPoint: .bottom)
+                        )
+                        .frame(height: height, alignment: .top)
                 }
                 .frame(width: Self.paintingWidth)
 
