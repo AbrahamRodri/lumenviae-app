@@ -573,6 +573,7 @@ struct PrayAlongView: View {
                 filtering: whole, keeping: { section in section.stanzas.contains { kept.contains($0.index) } })
         } ?? whole
         let following = aloud && voice.isPlaying
+        let adventToday = AdventPrayerPlace.stanza(of: prayer.id, in: stanzas, on: ScheduleService.today)
 
         return ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
@@ -709,6 +710,10 @@ struct PrayAlongView: View {
             )
             .onChange(of: litStanza) { _, lit in
                 guard let lit, aloud else { return }
+                // An Advent prayer opened at today's part stays there while
+                // the voice reads the days before it, and follows it from
+                // today's heading on
+                if twin == nil, let today = adventToday, lit < today { return }
                 withAnimation(reduceMotion ? nil : Motion.travel(0.7)) {
                     proxy.scrollTo(lit, anchor: UnitPoint(x: 0.5, y: 0.3))
                 }
@@ -720,9 +725,7 @@ struct PrayAlongView: View {
             // In Advent, the O Antiphons open at today's antiphon and the
             // wreath's collects at this week's Sunday, not at the top
             .task(id: prayer.id) {
-                guard twin == nil,
-                      let place = AdventPrayerPlace.stanza(of: prayer.id, in: stanzas, on: ScheduleService.today)
-                else { return }
+                guard twin == nil, let place = adventToday else { return }
                 try? await Task.sleep(for: .milliseconds(120))
                 proxy.scrollTo(place, anchor: UnitPoint(x: 0.5, y: 0.1))
             }
