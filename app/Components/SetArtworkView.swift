@@ -50,6 +50,11 @@ struct SetArtworkView: View {
     /// its identity must move together.
     @State private var loadedURL: String?
     @State private var failed = false
+    /// The plate's size in points, which decides the copy of the painting
+    /// fetched (a smaller one where the API lists it). Zero until
+    /// measured, when nothing is fetched yet.
+    @State private var drawnSize: CGSize = .zero
+    @Environment(\.displayScale) private var displayScale
 
     init(setId: Int, artwork: SetArtwork?, category: MysteryCategory?) {
         self.init(setId: setId, artwork: artwork, fallback: .categoryPainting(category))
@@ -61,9 +66,10 @@ struct SetArtworkView: View {
         self.fallback = fallback
         // A revisited page finds its plate already decoded and shows it on
         // the first frame rather than after a fade.
-        let cached = artwork.flatMap { ArtworkCache.shared.cached($0.url) }
-        _loaded = State(initialValue: cached)
-        _loadedURL = State(initialValue: cached == nil ? nil : artwork?.url)
+        // Any copy of it already decoded will do for the first frame.
+        let hit = artwork?.urls.lazy.compactMap { url in ArtworkCache.shared.cached(url).map { (url, $0) } }.first
+        _loaded = State(initialValue: hit?.1)
+        _loadedURL = State(initialValue: hit?.0)
     }
 
     var body: some View {
@@ -75,7 +81,7 @@ struct SetArtworkView: View {
                     AppColors.cardBackground
                 }
 
-                if let loaded, loadedURL == artwork.url {
+                if let loaded, let loadedURL, artwork.urls.contains(loadedURL) {
                     FocalFill(uiImage: loaded, focal: artwork.focalPoint)
                         .transition(.opacity)
                 }
@@ -89,7 +95,8 @@ struct SetArtworkView: View {
             }
         }
         .animation(.easeOut(duration: 0.35), value: loaded != nil)
-        .task(id: artwork?.url) {
+        .onGeometryChange(for: CGSize.self) { $0.size } action: { drawnSize = $0 }
+        .task(id: wantedURL) {
             guard let artwork else {
                 loaded = nil
                 loadedURL = nil
@@ -97,21 +104,30 @@ struct SetArtworkView: View {
                 return
             }
 
-            if loadedURL == artwork.url, loaded != nil { return }
+            // Not measured yet: nothing to ask for
+            guard let wanted = wantedURL else { return }
+            if loadedURL == wanted, loaded != nil { return }
 
             // Do not leave the previous set's painting in a cell SwiftUI
-            // has reused while the new painting is being resolved.
-            loaded = ArtworkCache.shared.cached(artwork.url)
-            loadedURL = loaded == nil ? nil : artwork.url
+            // has reused while the new painting is being resolved; another
+            // copy of this one stays up until the wanted one arrives.
+            if let loadedURL, !artwork.urls.contains(loadedURL) {
+                loaded = nil
+                self.loadedURL = nil
+            }
+            if let hit = ArtworkCache.shared.cached(wanted) {
+                loaded = hit
+                loadedURL = wanted
+                return
+            }
             failed = false
-            if loaded != nil { return }
 
-            let image = await ArtworkCache.shared.image(for: artwork, setId: setId)
+            let image = await ArtworkCache.shared.image(for: artwork, setId: setId, url: wanted)
             guard !Task.isCancelled else { return }
             if let image {
                 loaded = image
-                loadedURL = artwork.url
-            } else {
+                loadedURL = wanted
+            } else if loaded == nil {
                 failed = true
             }
         }
@@ -128,8 +144,20 @@ struct SetArtworkView: View {
     /// The curator's description of the set's painting, once it is the
     /// painting on screen. The bundled fallbacks are decorative and stay
     /// hidden from VoiceOver, as they always were.
+    /// The copy to fetch for the plate, once measured: as wide as the
+    /// painting is drawn when it fills the plate (a wide painting in a tall
+    /// plate is drawn wider than the plate), in pixels
+    private var wantedURL: String? {
+        guard let artwork, drawnSize.width > 0, drawnSize.height > 0 else { return nil }
+        var points = drawnSize.width
+        if let size = artwork.intrinsicSize {
+            points = max(points, drawnSize.height * size.width / size.height)
+        }
+        return artwork.url(forPixelWidth: Double(points * displayScale))
+    }
+
     private var accessibilityText: String? {
-        guard let artwork, !failed, loaded != nil, loadedURL == artwork.url else { return nil }
+        guard let artwork, !failed, loaded != nil, let loadedURL, artwork.urls.contains(loadedURL) else { return nil }
         guard let alt = artwork.alt, !alt.isEmpty else { return nil }
         return alt
     }
