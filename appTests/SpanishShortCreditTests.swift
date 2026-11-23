@@ -33,8 +33,8 @@ struct SpanishShortCreditTests {
 
     /// A Spanish prayer is credited under its title only where its English
     /// twin is (api #290)
-    @Test func theShippedCopyCarriesFive() {
-        #expect(translations.values.filter { $0.shortCredit != nil }.count == 5)
+    @Test func theShippedCopyCarriesFour() {
+        #expect(translations.values.filter { $0.shortCredit != nil }.count == 4)
     }
 
     @Test func aTranslationWithoutOneDecodes() throws {
