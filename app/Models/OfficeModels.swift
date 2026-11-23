@@ -214,6 +214,22 @@ nonisolated struct OfficeCell: Codable, Hashable {
     let title: String?
     let note: String?
     let lines: [String]
+    /// The same lines with a small rubric the engine prints inside a line
+    /// in braces ("word and deed: {strikes his breast} through my
+    /// fault"); null when the cell has none, and from a server before it
+    /// was sent
+    var markedLines: [String]? = nil
+
+    /// The lines to draw: the marked ones where the server sent them
+    var shownLines: [String] {
+        if let markedLines, markedLines.count == lines.count { return markedLines }
+        return lines
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case title, note, lines
+        case markedLines = "marked_lines"
+    }
 }
 
 // MARK: - OfficeSource
