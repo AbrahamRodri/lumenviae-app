@@ -108,9 +108,13 @@ struct MeditationSetTile: View {
                 if painted {
                     ZStack {
                         AppColors.cardBackground
+                        // The tile is one button named by its set: the
+                        // painting's description read inside it came twice,
+                        // and in English in a Spanish app
                         SetArtworkView(
                             setId: setId, artwork: artwork,
                             fallback: category.map { .categoryPaintingWhileLoading($0) } ?? .nothing)
+                            .accessibilityHidden(true)
                         LinearGradient(
                             stops: [
                                 .init(color: .black.opacity(0.08), location: 0),
@@ -176,6 +180,7 @@ struct MeditationSetRow: View {
                             setId: setId, artwork: artwork,
                             fallback: category.map { .categoryPaintingWhileLoading($0) } ?? .nothing)
                             .background(AppColors.cardBackground)
+                            .accessibilityHidden(true)
                             .frame(width: 44, height: 44)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                             .overlay(
