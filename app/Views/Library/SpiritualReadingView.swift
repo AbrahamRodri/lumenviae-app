@@ -148,7 +148,7 @@ struct SpiritualReadingView: View {
     /// The shelf names its sources the way the Office names Divinum
     /// Officium — this work is other people's gift.
     private var credit: some View {
-        Text("Texts from Project Gutenberg. Recordings by LibriVox volunteers. All in the public domain.")
+        Text("Every book here is in the public domain. Recordings by LibriVox volunteers.")
             .font(AppFonts.italicFont(12))
             .foregroundColor(AppColors.textSecondary.opacity(0.8))
             .multilineTextAlignment(.center)

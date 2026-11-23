@@ -247,20 +247,20 @@ Every text the app bundles or fetches that is not its own writing, with the edit
 
 | Work | Maker and edition | Where in the app | Source | Licence |
 |---|---|---|---|---|
-| The Holy Bible | Douay-Rheims translation, Bishop Challoner's revision (1749–52) | The Scriptural Rosary's verses, the consecration's readings, the Gospel meditation sets and the daily quotations | Project Gutenberg #8300 and the Original Douay-Rheims API (thedouayrheims.com) | Public domain |
+| The Holy Bible | Douay-Rheims translation, Bishop Challoner's revision (1749–52) | The Scriptural Rosary's verses, the consecration's readings, the Gospel meditation sets and the daily quotations | The Original Douay-Rheims API (thedouayrheims.com) | Public domain |
 | True Devotion to the Blessed Virgin Mary | St. Louis de Montfort, translated by Frederick William Faber (1862; twelfth London edition, 1904) | Bundled whole, and read in the consecration | Resources/TrueDevotionBook.json, from the 1904 printing | Public domain |
-| The Imitation of Christ | Thomas à Kempis, translated by William Benham | On the Spiritual Reading shelf, in the consecration's readings and the daily quotations | Project Gutenberg #1653 | Public domain |
-| The Story of a Soul | St. Thérèse of Lisieux, translated by Thomas N. Taylor (1912) | On the Spiritual Reading shelf | Project Gutenberg #16772; read by Susan Morin for LibriVox (8021) | Public domain |
-| The Confessions | St. Augustine, translated by E. B. Pusey | On the Spiritual Reading shelf | Project Gutenberg #3296; read for LibriVox (2601) | Public domain |
-| The Dolorous Passion of Our Lord Jesus Christ | Anne Catherine Emmerich, Burns & Lambert's English (1862) | Cut into the bundled Sorrowful meditations | Project Gutenberg #10866 | Public domain |
-| The Glories of Mary | St. Alphonsus Liguori, the Dunigan translation (New York, 1852) | On the Spiritual Reading shelf, cut into the bundled Seven Sorrows meditations, and in the daily quotations | Project Gutenberg #72411; read by Ann Boulais for LibriVox (8533) from the 1888 Kenedy printing of the same translation | Public domain |
-| The Practice of the Presence of God | Brother Lawrence of the Resurrection, the Fleming H. Revell edition (1895) | On the Spiritual Reading shelf | Project Gutenberg #13871; read by Kirsten Ferreri for LibriVox (564) | Public domain |
-| Maxims and Counsels of St. Francis de Sales for Every Day of the Year | translated by Ella McMahon (1884) | In the daily quotations | Project Gutenberg #73661 | Public domain |
+| The Imitation of Christ | Thomas à Kempis, translated by William Benham | On the Spiritual Reading shelf, in the consecration's readings and the daily quotations | — | Public domain |
+| The Story of a Soul | St. Thérèse of Lisieux, translated by Thomas N. Taylor (1912) | On the Spiritual Reading shelf | Read by Susan Morin for LibriVox (8021) | Public domain |
+| The Confessions | St. Augustine, translated by E. B. Pusey | On the Spiritual Reading shelf | Read for LibriVox (2601) | Public domain |
+| The Dolorous Passion of Our Lord Jesus Christ | Anne Catherine Emmerich, Burns & Lambert's English (1862) | Cut into the bundled Sorrowful meditations | — | Public domain |
+| The Glories of Mary | St. Alphonsus Liguori, the Dunigan translation (New York, 1852) | On the Spiritual Reading shelf, cut into the bundled Seven Sorrows meditations, and in the daily quotations | Read by Ann Boulais for LibriVox (8533) from the 1888 Kenedy printing of the same translation | Public domain |
+| The Practice of the Presence of God | Brother Lawrence of the Resurrection, the Fleming H. Revell edition (1895) | On the Spiritual Reading shelf | Read by Kirsten Ferreri for LibriVox (564) | Public domain |
+| Maxims and Counsels of St. Francis de Sales for Every Day of the Year | translated by Ella McMahon (1884) | In the daily quotations | — | Public domain |
 | Meditations and Devotions | John Henry Newman (Longmans, 1893) | In the daily quotations | Internet Archive (a2514634smrn00newmuoft) | Public domain |
 | The Divine Comedy | Dante, translated by Henry Wadsworth Longfellow (1867) | In the daily quotations | Paradiso XXXIII | Public domain |
 | The World's First Love | Fulton J. Sheen (1952) | One line in the daily quotations, the Rosary as "the book of the blind"; in Spanish, El primer amor del mundo | Credited here rather than under the line | Short quotation, credited |
 | The Roman Missal of 1962 | the Missale Meum project | Today's Mass, fetched when opened | missalemeum.com, MIT licence | MIT |
-| The Roman Breviary of 1962 | The Divinum Officium Project | The Hours of Prayer, fetched when opened | divinumofficium.com, by way of Lumen Viae's own server | Free to use, with the project's credit |
+| The Roman Breviary of 1962 | The Divinum Officium Project | The Hours of Prayer, fetched when opened | divinumofficium.com, MIT licence, by way of Lumen Viae's own server | MIT |
 | Gregorian chant: recordings and scores | Verbum Gloriae (verbumgloriae.es) | The Chant Library's 104 recordings and their scores | verbumgloriae.es, copyleft licence | Copyleft (share alike, no attribution required) |
 | Prayers of the Church | the 1910 Raccolta, the Roman Ritual, Missal and Breviary, the app's own renderings from the Latin, and the prayer books and publishers named under each prayer | The Prayer Book | Each prayer's source is named under it | Credited under each prayer |
 | Novena to Our Lady, Undoer of Knots | Fr. Juan Ramón Celeiro, as printed by Ascension Press | The Undoer of Knots novena, in English and Spanish | ascensionpress.com | Used with credit |
