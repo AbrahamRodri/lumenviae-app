@@ -37,13 +37,14 @@ struct ShortCreditTests {
         #expect(try JSONDecoder().decode(PrayerBookDocument.Prayer.self, from: Data(without.utf8)).shortCredit == nil)
     }
 
-    /// Only a real author is credited under the title (api #290): the five
-    /// novenas whose author is named, Undoer of Knots among them
-    @Test func fivePrayersCarryAShortCredit() {
+    /// Only a real author is credited under the title (api #290): the four
+    /// novenas whose author is named (the Undoer of Knots, a fifth, was
+    /// taken off for copyright on 23 Nov 2026)
+    @Test func fourPrayersCarryAShortCredit() {
         let carrying = LibraryContent.prayerBook.prayers.filter { $0.shortCredit != nil }
         #expect(
             Set(carrying.map(\.id)) == [
-                "efficacious_novena", "st_therese_novena", "undoer_of_knots_novena", "holy_spirit_novena",
+                "efficacious_novena", "st_therese_novena", "holy_spirit_novena",
                 "st_joseph_novena",
             ])
         #expect(carrying.allSatisfy { ($0.origin ?? "").count > ($0.shortCredit ?? "").count })

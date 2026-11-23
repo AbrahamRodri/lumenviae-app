@@ -67,21 +67,24 @@ final class NovenaStore {
         history =
             defaults.data(forKey: Key.history)
             .flatMap { try? decoder.decode([FinishedNovena].self, from: $0) } ?? []
-        // A novena begun before only the Rosary's had a page can no
-        // longer be opened or ended: its reminders are taken down, so none
-        // opens a plain Rosary that never marks the day. Its progress stays.
+        // A novena begun before only the Rosary's had a page, or one the
+        // book no longer holds (the Undoer of Knots, taken off for
+        // copyright on 23 Nov 2026), can no longer be opened or ended: its
+        // reminders are taken down, so none names a novena the app does
+        // not show. Its progress stays, should the novena come back.
         for id in Self.unreachable(progress, book: LibraryContent.prayerBook.novenas) {
             removeReminders(of: id)
         }
     }
 
-    /// The novenas under way whose days in the book pray no Rosary (the
-    /// book itself, never the Spanish-sensitive lookup, so a Spanish app
-    /// does not silence the Rosary's novena for its missing Spanish)
+    /// The novenas under way whose days in the book pray no Rosary, or
+    /// that the book no longer holds (the book itself, never the
+    /// Spanish-sensitive lookup, so a Spanish app does not silence the
+    /// Rosary's novena for its missing Spanish)
     static func unreachable(
         _ progress: [String: NovenaProgress], book: [PrayerBookDocument.Novena]
     ) -> [String] {
-        progress.keys.filter { id in book.first { $0.id == id }.map { !$0.praysTheRosary } ?? false }.sorted()
+        progress.keys.filter { id in book.first { $0.id == id }.map { !$0.praysTheRosary } ?? true }.sorted()
     }
 
     // MARK: - Changing a novena

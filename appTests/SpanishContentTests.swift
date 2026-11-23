@@ -157,28 +157,28 @@ struct SpanishContentTests {
     /// A Spanish page credits a prayer in Spanish where the book does, and
     /// never in English: no Spanish credit, no line
     @Test func aPrayerIsCreditedInSpanishOrNotAtAll() {
-        var english = bookPrayer("undoer_of_knots_novena")
+        var english = bookPrayer("our_lady_of_guadalupe_novena")
         english = BookPrayer(
-            id: english.id, title: english.title, latinTitle: nil, origin: "Novena by Fr. Juan Ramón Celeiro",
+            id: english.id, title: english.title, latinTitle: nil, origin: "Novena by Fr. José Francisco Valdés",
             note: nil, english: english.english, latin: nil)
         var translation = PrayerBookTranslations.Translation(
             id: english.id, title: "Novena", text: "Palabras", aiTranslated: nil)
         #expect(
             PrayerBook.inSpanish(english, translations: [english.id: translation], spanish: true).origin == nil)
-        translation.origin = "Novena del P. Juan Ramón Celeiro, según la publica Ascension Press"
+        translation.origin = "Novena del R. P. Fr. José Francisco Valdés"
         #expect(
             PrayerBook.inSpanish(english, translations: [english.id: translation], spanish: true).origin
                 == translation.origin)
         #expect(
             PrayerBook.inSpanish(english, translations: [english.id: translation], spanish: false).origin
-                == "Novena by Fr. Juan Ramón Celeiro")
+                == "Novena by Fr. José Francisco Valdés")
     }
 
-    /// The shipped Spanish book credits the Undoer of Knots novena in Spanish
+    /// The shipped Spanish book credits the Guadalupe novena in Spanish
     @Test func theShippedSpanishBookCarriesTheNovenasCredit() {
         #expect(
             LibraryContent.prayerBookSpanishStore.seed?.translations
-                .first { $0.id == "undoer_of_knots_novena" }?.origin?.hasPrefix("Novena del P.") == true)
+                .first { $0.id == "our_lady_of_guadalupe_novena" }?.origin?.hasPrefix("Novena del R. P.") == true)
     }
 
     /// Before the server's book has Spanish, the Rosary's prayers the book
