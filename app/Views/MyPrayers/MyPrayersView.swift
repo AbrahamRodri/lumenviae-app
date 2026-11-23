@@ -179,8 +179,8 @@ struct MyPlaylistCard: View {
                         painting: MyPlaylistView.painting(of: playlist), width: 92, height: 92, radius: 12)
                     VStack(alignment: .leading, spacing: 3) {
                         Text("PLAYLIST")
-                            .font(AppFonts.labelFont(9))
-                            .tracking(2.2)
+                            .font(AppFonts.labelFont(12))
+                            .tracking(1.7)
                             .foregroundColor(AppColors.gold)
                         Text(playlist.displayName)
                             .font(AppFonts.titleFont(18))
@@ -249,8 +249,8 @@ struct MyPrayersInvite: View {
                 HStack(spacing: 8) {
                     AppIcon("ph-plus", size: 12)
                     Text(action)
-                        .font(AppFonts.labelFont(9.5))
-                        .tracking(2)
+                        .font(AppFonts.labelFont(12))
+                        .tracking(1.5)
                 }
                 .foregroundColor(AppColors.gold)
                 .frame(minHeight: 44)

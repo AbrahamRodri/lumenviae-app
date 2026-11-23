@@ -36,8 +36,8 @@ struct PrayersShelfHeading: View {
             if let seeAll {
                 Button(action: seeAll) {
                     Text("SEE ALL")
-                        .font(AppFonts.labelFont(9.5))
-                        .tracking(2)
+                        .font(AppFonts.labelFont(12))
+                        .tracking(1.5)
                         .foregroundColor(AppColors.gold)
                         .frame(minHeight: 44)
                         .contentShape(Rectangle())
@@ -46,8 +46,8 @@ struct PrayersShelfHeading: View {
                 .accessibilityLabel("See all: \(title)")
             } else if let label {
                 Text(label)
-                    .font(AppFonts.labelFont(9.5))
-                    .tracking(2)
+                    .font(AppFonts.labelFont(12))
+                    .tracking(1.5)
                     .foregroundColor(AppColors.gold)
             }
         }
@@ -183,8 +183,8 @@ struct PrayersNowCard: View {
 
             VStack(alignment: .leading, spacing: 4) {
                 (offered ? Text("\(hour) · PRAYED") : Text("NOW · \(hour)"))
-                    .font(AppFonts.labelFont(9.5))
-                    .tracking(2.2)
+                    .font(AppFonts.labelFont(12))
+                    .tracking(1.7)
                     .foregroundColor(AppColors.gold)
                     .contentTransition(.opacity)
                 Text(title)
@@ -249,8 +249,8 @@ struct PrayersPrayButton: View {
                     .overlay(Circle().strokeBorder(AppColors.gold, lineWidth: 1.2))
                     .haloGlow(AppColors.gold, radius: 10, intensity: 0.22)
                 Text(title)
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2)
+                    .font(AppFonts.labelFont(12))
+                    .tracking(1.5)
                     .foregroundColor(AppColors.gold)
             }
             .frame(minHeight: 44)

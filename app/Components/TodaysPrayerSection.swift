@@ -100,8 +100,8 @@ struct TodaysPrayerSection: View {
             Spacer()
 
             Text(Self.dateLine(fixedNow ?? .now))
-                .font(AppFonts.labelFont(9.5))
-                .tracking(2)
+                .font(AppFonts.labelFont(12))
+                .tracking(1.5)
                 .foregroundColor(AppColors.textSecondary)
         }
     }
@@ -465,8 +465,8 @@ struct TodaysPrayerRowView: View {
             // A space while there is nothing to say, so every row keeps
             // its height and the list does not jump when the feast arrives
             Text(row.fact ?? " ")
-                .font(AppFonts.labelFont(9))
-                .tracking(2)
+                .font(AppFonts.labelFont(12))
+                .tracking(1.5)
                 .foregroundColor(AppColors.textSecondary)
                 .lineLimit(1)
                 .contentTransition(.opacity)
