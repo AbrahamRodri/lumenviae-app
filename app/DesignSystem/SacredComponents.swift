@@ -511,6 +511,12 @@ struct DropCapText: View {
     /// and passes 0.
     var minimumLength: Int = 80
 
+    /// The Hours' and the Missal's lines may carry a small rubric in
+    /// braces ("{strikes his breast}"): such a paragraph is set plain,
+    /// with the note drawn as the other lines draw it, so a brace never
+    /// prints (ios-review, #206)
+    var marksRubrics = false
+
     /// The versal against the body — standing proud of the first line
     /// by more than half its height, as a versal initial should. It is
     /// no longer part of that line's text box (see `illuminated`), so
@@ -524,7 +530,12 @@ struct DropCapText: View {
     private var gutter: CGFloat { (bodySize * 0.1).rounded() }
 
     var body: some View {
-        if text.count >= minimumLength, let cut = VersalCut.of(text) {
+        if marksRubrics, text.contains("{") {
+            Rubric.line(text, noteSize: max(11, bodySize - 3))
+                .font(AppFonts.readingFont(bodySize))
+                .foregroundColor(textColor)
+                .lineSpacing(ReadingTypography.lineSpacing(for: bodySize))
+        } else if text.count >= minimumLength, let cut = VersalCut.of(text) {
             if cut.opensOnQuotation {
                 gildedQuotation(cut)
             } else {
