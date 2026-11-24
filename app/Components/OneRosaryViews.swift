@@ -87,7 +87,7 @@ struct OneRosaryRailView: View {
     static func windowTop(fullHeight: CGFloat, large: Bool = false) -> CGFloat {
         // At the accessibility sizes, three beads level with the words'
         // middle, under the larger head
-        large ? fullHeight * 0.5 - rowHeight : fullHeight * 0.38
+        large ? fullHeight * 0.5 - rowHeight : fullHeight * (0.38 - OneRosaryColumn<EmptyView>.roomForTheHailMary)
     }
 
     /// The window's height: about half the glass, and never past the top
@@ -651,12 +651,19 @@ struct OneRosaryColumn<Words: View>: View {
     static func wordsTop(fullHeight: CGFloat, large: Bool = false) -> CGFloat {
         // At the accessibility sizes the painting gives up room: the
         // words begin higher, with the larger head above them
-        large ? fullHeight * 0.38 + largeHeadHeight - headHeight : fullHeight * 0.55
+        large ? fullHeight * 0.38 + largeHeadHeight - headHeight : fullHeight * (0.55 - roomForTheHailMary)
     }
+
+    /// The share of the glass the painting gives up at the ordinary sizes
+    /// so the whole Hail Mary, Amen included, stands above Back and Next
+    /// at the default text size on a 6.3-inch phone, paused, where its
+    /// last two lines lay under the fade (#137's rule). The words, the
+    /// painting's fold and the rail's window move up together.
+    static let roomForTheHailMary: CGFloat = 0.07
 
     /// The painting's share of the glass on the players, so it
     /// has dissolved by the time the words begin
-    static var paintingFraction: CGFloat { 0.65 }
+    static var paintingFraction: CGFloat { 0.65 - roomForTheHailMary }
 
     static func paintingFraction(large: Bool) -> CGFloat { large ? 0.48 : paintingFraction }
 
