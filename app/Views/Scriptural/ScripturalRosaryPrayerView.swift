@@ -222,7 +222,8 @@ struct ScripturalRosaryPrayerView: View {
 
             case .stops:
                 RosaryStopsSheet(
-                    title: viewModel.novena.map(\.goToTitle) ?? viewModel.displayName,
+                    title: viewModel.novena.map(\.goToTitle) ?? viewModel.category.devotionTitle,
+                    kicker: viewModel.novena == nil ? viewModel.displayName : nil,
                     stops: viewModel.stops,
                     current: viewModel.currentStop,
                     mysteryNames: MysteryData.mysteries(for: viewModel.category).map(\.name),
@@ -583,6 +584,8 @@ extension ScripturalRosaryPrayerView {
                     PrayerPaintingStage(
                         painting: painting,
                         seatedFraction: OneRosaryColumn<EmptyView>.paintingFraction(large: playerIsLarge),
+                        titleShadeAt: playerIsLarge
+                            ? OneRosaryColumn<EmptyView>.largeTitleShadeAt(fullHeight: fullHeight) : nil,
                         paintingID: viewModel.currentMysteryIndex,
                         chromeHidden: chromeHidden,
                         quiet: !showsWordsAndBeads,

@@ -347,7 +347,8 @@ struct MysteryPrayerView: View {
 
             case .stops:
                 RosaryStopsSheet(
-                    title: meditationSet.name,
+                    title: (meditationSet.mysteryCategory ?? .joyful).devotionTitle,
+                    kicker: meditationSet.name,
                     stops: viewModel.stops,
                     current: viewModel.currentStop,
                     mysteryNames: (0..<viewModel.totalMysteries).map { index in
@@ -892,6 +893,8 @@ extension MysteryPrayerView {
                     PrayerPaintingStage(
                         painting: painting,
                         seatedFraction: OneRosaryColumn<EmptyView>.paintingFraction(large: playerIsLarge),
+                        titleShadeAt: playerIsLarge
+                            ? OneRosaryColumn<EmptyView>.largeTitleShadeAt(fullHeight: fullHeight) : nil,
                         paintingID: viewModel.currentMysteryIndex,
                         chromeHidden: chromeHidden,
                         quiet: !showsWordsAndBeads,

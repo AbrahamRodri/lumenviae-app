@@ -87,7 +87,7 @@ struct OneRosaryRailView: View {
     static func windowTop(fullHeight: CGFloat, large: Bool = false) -> CGFloat {
         // At the accessibility sizes, three beads level with the words'
         // middle, under the larger head
-        large ? fullHeight * 0.5 - rowHeight : fullHeight * 0.38
+        large ? fullHeight * 0.5 - rowHeight : fullHeight * (0.38 - OneRosaryColumn<EmptyView>.roomForTheHailMary)
     }
 
     /// The window's height: about half the glass, and never past the top
@@ -651,12 +651,27 @@ struct OneRosaryColumn<Words: View>: View {
     static func wordsTop(fullHeight: CGFloat, large: Bool = false) -> CGFloat {
         // At the accessibility sizes the painting gives up room: the
         // words begin higher, with the larger head above them
-        large ? fullHeight * 0.38 + largeHeadHeight - headHeight : fullHeight * 0.55
+        large ? fullHeight * 0.38 + largeHeadHeight - headHeight : fullHeight * (0.55 - roomForTheHailMary)
+    }
+
+    /// The share of the glass the painting gives up at the ordinary sizes
+    /// so the whole Hail Mary, Amen included, stands above Back and Next
+    /// at the default text size on a 6.3-inch phone, paused, where its
+    /// last two lines lay under the fade (#137's rule). The words, the
+    /// painting's fold and the rail's window move up together.
+    static var roomForTheHailMary: CGFloat { 0.07 }
+
+    /// Where the column's head, the title first, begins at the
+    /// accessibility sizes, as a share of the glass: the painting's shade
+    /// is at full strength by then (`PrayerPaintingStage.titleShadeAt`)
+    static func largeTitleShadeAt(fullHeight: CGFloat) -> CGFloat? {
+        guard fullHeight > 0 else { return nil }
+        return (wordsTop(fullHeight: fullHeight, large: true) - largeHeadHeight) / fullHeight
     }
 
     /// The painting's share of the glass on the players, so it
     /// has dissolved by the time the words begin
-    static var paintingFraction: CGFloat { 0.65 }
+    static var paintingFraction: CGFloat { 0.65 - roomForTheHailMary }
 
     static func paintingFraction(large: Bool) -> CGFloat { large ? 0.48 : paintingFraction }
 
@@ -1501,6 +1516,9 @@ struct SimpleRosaryWords: View {
     /// The words' own height, and the lit line's
     @State private var viewportHeight: CGFloat = 0
     @State private var lineHeights: [Int: CGFloat] = [:]
+    /// Whether the words have been scrolled from their top: the fade over
+    /// them then deepens to about a line (`scrolledFade`)
+    @State private var scrolledDown = false
 
     /// Where the lit line's top is scrolled to: a line's room above it
     /// for the line before, the rest of the words' height for it
@@ -1508,6 +1526,11 @@ struct SimpleRosaryWords: View {
     /// The dissolve over the words' top edge, laid in the room the column
     /// keeps above them (`OneRosaryColumn` reads it for that room)
     static let topFade: CGFloat = 14
+    /// How much deeper the top fade runs once the words are scrolled, so
+    /// a line passing under the bead's name dissolves whole rather than
+    /// standing sliced through under it ("Hail, holy Queen" under HAIL,
+    /// HOLY QUEEN). At rest it is not drawn, and the first line is clear.
+    static let scrolledFade: CGFloat = 28
     /// A lit line taller than this share of the words is scrolled
     /// through as it is said
     static let tallLineShare: CGFloat = 0.8
@@ -1537,10 +1560,13 @@ struct SimpleRosaryWords: View {
 
     /// `litLineAnchor` measured below the top fade, so a lit line rests
     /// where it did before the scroll reached up into the fade's room
+    /// and below the deeper fade a scrolled column wears, so the line
+    /// being said is never the one dissolving
     private var litAnchor: UnitPoint {
-        guard viewportHeight > Self.topFade else { return Self.litLineAnchor }
-        let words = viewportHeight - Self.topFade
-        return UnitPoint(x: 0, y: (Self.topFade + Self.litLineAnchor.y * words) / viewportHeight)
+        let fade = Self.topFade + Self.scrolledFade
+        guard viewportHeight > fade else { return Self.litLineAnchor }
+        let words = viewportHeight - fade
+        return UnitPoint(x: 0, y: (fade + Self.litLineAnchor.y * words) / viewportHeight)
     }
 
     var body: some View {
@@ -1565,6 +1591,13 @@ struct SimpleRosaryWords: View {
                 .padding(.top, Self.topFade)
                 .padding(.bottom, 24)
                 .animation(reduceMotion ? nil : Motion.crossfade, value: highlighted)
+                .onGeometryChange(for: Bool.self) { $0.frame(in: .scrollView).minY < -2 } action: { scrolled in
+                    if reduceMotion {
+                        scrolledDown = scrolled
+                    } else {
+                        withAnimation(Motion.crossfade) { scrolledDown = scrolled }
+                    }
+                }
             }
             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { viewportHeight = $0 }
             // The foot of a long prayer dissolves under Back and Next, and
@@ -1584,7 +1617,7 @@ struct SimpleRosaryWords: View {
                         startPoint: .top,
                         endPoint: .bottom
                     )
-                    .frame(height: Self.topFade)
+                    .frame(height: Self.topFade + (scrolledDown ? Self.scrolledFade : 0))
                     LinearGradient(
                         stops: [
                             .init(color: .black, location: 0),
@@ -1758,7 +1791,13 @@ struct NovenaDashes: View {
 /// each mystery by name (and its meditation's title where it says more),
 /// the closing prayers. Set as the Consecration's day index is.
 struct RosaryStopsSheet: View {
+    /// What is moved through: the mysteries ("Joyful Mysteries"), or a
+    /// novena's day
     let title: String
+    /// The small line over it: who is read (the set's author, the form),
+    /// or "Go to" where the title already says it all. The set's author
+    /// as the title read as "go to St. Alphonsus Liguori".
+    var kicker: String? = nil
     let stops: [RosaryStop]
     let current: RosaryStop
     let mysteryNames: [String]
@@ -1779,7 +1818,8 @@ struct RosaryStopsSheet: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
                 SheetHeader(
-                    kicker: String(localized: "Go to", comment: "Simple Rosary: kicker over the sheet listing the parts of the Rosary to go to"),
+                    kicker: kicker
+                        ?? String(localized: "Go to", comment: "Simple Rosary: kicker over the sheet listing the parts of the Rosary to go to"),
                     title: title
                 )
                 ForEach(stops, id: \.self) { stop in
