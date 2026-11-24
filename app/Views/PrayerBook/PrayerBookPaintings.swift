@@ -325,10 +325,12 @@ struct PrayerBookPainting: Equatable {
             "ave_maris_stella": p("feast_annunciation", 0.7, 0.5, "The Annunciation"),
             // The six the server added in Nov 2026 (design row b1f86b5b)
             "st_bridget_twelve_years": blood,
-            "advent_wreath_collects": p("joyful_visitation", 0.5, 0.3, "The Visitation"),
+            // The two Advent prayers hang their This Season cards' paintings
+            // (approved 23 Nov), so a card and the prayer it opens agree
+            "advent_wreath_collects": p("feast_annunciation", 0.6, 0.4, "The Annunciation"),
             "immaculate_conception_novena": immaculate,
             "st_andrew_novena": p("joyful_nativity", 0.5, 0.35, "The Nativity"),
-            "o_antiphons": p("feast_annunciation", 0.7, 0.5, "The Annunciation"),
+            "o_antiphons": p("advent_isaiah", 0.5, 0.3, "Isaiah"),
             // The novenas' prayers the server added on 14 Nov 2026 (api #246, #247),
             // each from a painting already in the book, none beside its twin
             "holy_spirit_novena": pentecost,

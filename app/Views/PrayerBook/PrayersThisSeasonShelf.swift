@@ -67,21 +67,11 @@ struct PrayersSeasonCard: View {
     /// dissolves into the card beneath
     private static let paintingMaxHeight: CGFloat = 128
 
-    /// The frames' paintings: Fra Angelico's Annunciation for the wreath,
-    /// cut between the angel and Mary, and Isaiah for the O Antiphons
+    /// The prayer's own painting, the one its reader and Explore hang:
+    /// Fra Angelico's Annunciation for the wreath, cut between the angel
+    /// and Mary, and Isaiah for the O Antiphons (PrayerBookPainting.prayer)
     static func painting(for prayerID: String) -> PrayerBookPainting {
-        switch prayerID {
-        case AdventPrayerPlace.wreathID:
-            return PrayerBookPainting(
-                asset: "feast_annunciation", fallback: PrayerBookPainting.prayer(prayerID).asset,
-                focal: UnitPoint(x: 0.6, y: 0.4), caption: "The Annunciation")
-        case AdventPrayerPlace.antiphonsID:
-            return PrayerBookPainting(
-                asset: "advent_isaiah", fallback: PrayerBookPainting.prayer(prayerID).asset,
-                focal: UnitPoint(x: 0.5, y: 0.3), caption: "Isaiah")
-        default:
-            return PrayerBookPainting.prayer(prayerID)
-        }
+        PrayerBookPainting.prayer(prayerID)
     }
 
     var body: some View {
