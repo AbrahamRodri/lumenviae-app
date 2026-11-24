@@ -222,7 +222,8 @@ struct ScripturalRosaryPrayerView: View {
 
             case .stops:
                 RosaryStopsSheet(
-                    title: viewModel.novena.map(\.goToTitle) ?? viewModel.displayName,
+                    title: viewModel.novena.map(\.goToTitle) ?? viewModel.category.devotionTitle,
+                    kicker: viewModel.novena == nil ? viewModel.displayName : nil,
                     stops: viewModel.stops,
                     current: viewModel.currentStop,
                     mysteryNames: MysteryData.mysteries(for: viewModel.category).map(\.name),

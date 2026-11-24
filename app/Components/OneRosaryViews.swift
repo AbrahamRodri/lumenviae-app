@@ -1758,7 +1758,13 @@ struct NovenaDashes: View {
 /// each mystery by name (and its meditation's title where it says more),
 /// the closing prayers. Set as the Consecration's day index is.
 struct RosaryStopsSheet: View {
+    /// What is moved through: the mysteries ("Joyful Mysteries"), or a
+    /// novena's day
     let title: String
+    /// The small line over it: who is read (the set's author, the form),
+    /// or "Go to" where the title already says it all. The set's author
+    /// as the title read as "go to St. Alphonsus Liguori".
+    var kicker: String? = nil
     let stops: [RosaryStop]
     let current: RosaryStop
     let mysteryNames: [String]
@@ -1779,7 +1785,8 @@ struct RosaryStopsSheet: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
                 SheetHeader(
-                    kicker: String(localized: "Go to", comment: "Simple Rosary: kicker over the sheet listing the parts of the Rosary to go to"),
+                    kicker: kicker
+                        ?? String(localized: "Go to", comment: "Simple Rosary: kicker over the sheet listing the parts of the Rosary to go to"),
                     title: title
                 )
                 ForEach(stops, id: \.self) { stop in
