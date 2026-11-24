@@ -126,6 +126,15 @@ extension InProgressPrayer {
         ).runningLabel(bead: beadIndex)
     }
 
+    /// The set's name as the app reads it now. A bundled set is named
+    /// from the app, in its language: stored as "The Gospel" in English,
+    /// it read so on a Spanish Home where it is "El Evangelio". A server
+    /// set keeps the name it was saved with, which was already in the
+    /// app's language then.
+    var displaySetName: String {
+        BundledMeditationSets.byID[meditationSetId]?.name ?? setName
+    }
+
     /// Where it stopped, as running text: "Third Joyful Mystery",
     /// "Third Sorrow of Mary"
     var placeLabel: String {

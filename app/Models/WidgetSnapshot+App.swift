@@ -165,7 +165,7 @@ extension WidgetSnapshot {
         return Rosary(
             category: prayer.category,
             form: kind.rawValue,
-            setName: kind == .meditationSet ? prayer.setName : "",
+            setName: kind == .meditationSet ? prayer.displaySetName : "",
             mysteryIndex: prayer.mysteryIndex,
             beadIndex: prayer.beadIndex,
             savedAt: prayer.savedAt,
