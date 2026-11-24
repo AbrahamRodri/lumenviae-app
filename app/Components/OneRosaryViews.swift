@@ -661,6 +661,14 @@ struct OneRosaryColumn<Words: View>: View {
     /// painting's fold and the rail's window move up together.
     static let roomForTheHailMary: CGFloat = 0.07
 
+    /// Where the column's head, the title first, begins at the
+    /// accessibility sizes, as a share of the glass: the painting's shade
+    /// is at full strength by then (`PrayerPaintingStage.titleShadeAt`)
+    static func largeTitleShadeAt(fullHeight: CGFloat) -> CGFloat? {
+        guard fullHeight > 0 else { return nil }
+        return (wordsTop(fullHeight: fullHeight, large: true) - largeHeadHeight) / fullHeight
+    }
+
     /// The painting's share of the glass on the players, so it
     /// has dissolved by the time the words begin
     static var paintingFraction: CGFloat { 0.65 - roomForTheHailMary }

@@ -584,6 +584,8 @@ extension ScripturalRosaryPrayerView {
                     PrayerPaintingStage(
                         painting: painting,
                         seatedFraction: OneRosaryColumn<EmptyView>.paintingFraction(large: playerIsLarge),
+                        titleShadeAt: playerIsLarge
+                            ? OneRosaryColumn<EmptyView>.largeTitleShadeAt(fullHeight: fullHeight) : nil,
                         paintingID: viewModel.currentMysteryIndex,
                         chromeHidden: chromeHidden,
                         quiet: !showsWordsAndBeads,
