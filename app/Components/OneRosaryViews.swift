@@ -659,7 +659,7 @@ struct OneRosaryColumn<Words: View>: View {
     /// at the default text size on a 6.3-inch phone, paused, where its
     /// last two lines lay under the fade (#137's rule). The words, the
     /// painting's fold and the rail's window move up together.
-    static let roomForTheHailMary: CGFloat = 0.07
+    static var roomForTheHailMary: CGFloat { 0.07 }
 
     /// Where the column's head, the title first, begins at the
     /// accessibility sizes, as a share of the glass: the painting's shade
