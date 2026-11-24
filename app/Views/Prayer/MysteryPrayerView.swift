@@ -43,6 +43,9 @@ struct MysteryPrayerView: View {
     /// The bead controls' measured height, so the hint can stand just
     /// above them
     @State private var controlsHeight: CGFloat = 0
+    /// How far the words, the painting's fold and the rail have risen so
+    /// the prayer shown stands whole (`OneRosaryColumn.wordsLift`)
+    @State private var wordsLift: CGFloat = 0
 
     /// True while a tap on the artwork has cleared the chrome
     @State private var chromeHidden = false
@@ -823,10 +826,11 @@ extension MysteryPrayerView {
                 + geometry.safeAreaInsets.top
                 + geometry.safeAreaInsets.bottom
             let rail = rail
+            let shownLift = playerIsLarge ? 0 : wordsLift
             // The words' first line at one height on every step; the head
             // stands in its room above them
             let preferredTop = max(
-                OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight, large: playerIsLarge)
+                OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight, large: playerIsLarge, lift: shownLift)
                     - OneRosaryColumn<EmptyView>.headHeight(large: playerIsLarge)
                     - geometry.safeAreaInsets.top,
                 12 + 44 + 14
@@ -851,6 +855,17 @@ extension MysteryPrayerView {
                     .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { controlsHeight = $0 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // A prayer that would stand whole with a little more room is
+            // given it, the painting folding higher (design, 24 Nov: the
+            // Spanish Ave María, its step on two lines, ran under the foot)
+            .onPreferenceChange(SimpleRosaryWordsOverflow.self) { overflow in
+                guard let overflow, !playerIsLarge, showsWordsAndBeads else { return }
+                let lift = OneRosaryColumn<EmptyView>.wordsLift(
+                    current: wordsLift, overflow: overflow, fullHeight: fullHeight)
+                guard lift != wordsLift else { return }
+                withAnimation(Motion.crossfade) { wordsLift = lift }
+            }
+            .onChange(of: wordsSize) { _, _ in wordsLift = 0 }
             .overlay(alignment: .top) {
                 OneRosaryHeader(onClose: { router.popToRoot() }) {
                     RosaryStopsPill(
@@ -877,7 +892,8 @@ extension MysteryPrayerView {
                 complete: oneRosaryComplete,
                 closing: oneRosaryOnClose,
                 hidden: !showsWordsAndBeads,
-                large: playerIsLarge
+                large: playerIsLarge,
+                lift: shownLift
             ) { index in
                 if case .strand(let bead) = rail.target(at: index) { oneRosaryGoToBead(bead) }
             }
@@ -892,7 +908,8 @@ extension MysteryPrayerView {
                     // cross, drawn once
                     PrayerPaintingStage(
                         painting: painting,
-                        seatedFraction: OneRosaryColumn<EmptyView>.paintingFraction(large: playerIsLarge),
+                        seatedFraction: OneRosaryColumn<EmptyView>.paintingFraction(
+                            large: playerIsLarge, lift: shownLift, fullHeight: fullHeight),
                         titleShadeAt: playerIsLarge
                             ? OneRosaryColumn<EmptyView>.largeTitleShadeAt(fullHeight: fullHeight) : nil,
                         paintingID: viewModel.currentMysteryIndex,

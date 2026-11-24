@@ -378,4 +378,25 @@ struct OneRosaryTests {
     @Test func aStepWithNoCountIsUnchanged() {
         #expect(OneRosaryStepLabel.keepingCountTogether("THE APOSTLES' CREED") == "THE APOSTLES' CREED")
     }
+
+    // MARK: - Room for the prayer
+
+    /// The Spanish Ave María, its step on two lines, ran 40 points under
+    /// the foot: the words rise by what they lack, and keep it
+    @Test func aPrayerThatNearlyFitsIsGivenItsRoom() {
+        let lift = OneRosaryColumn<EmptyView>.wordsLift(current: 0, overflow: 40, fullHeight: 874)
+        #expect(lift == 40)
+        // Once given, the room is kept: the next prayer shown has room to spare
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: lift, overflow: -60, fullHeight: 874) == 40)
+        // A prayer measured again with the room given needs no more
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: lift, overflow: 0, fullHeight: 874) == 40)
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: lift, overflow: 12, fullHeight: 874) == 52)
+    }
+
+    /// The Creed and a meditation scroll where the words are: no room
+    /// the painting could give would hold them whole
+    @Test func aPrayerThatCannotFitLeavesThePaintingWhereItIs() {
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: 0, overflow: 400, fullHeight: 874) == 0)
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: 30, overflow: 200, fullHeight: 874) == 30)
+    }
 }

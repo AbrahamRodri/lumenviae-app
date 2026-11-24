@@ -84,22 +84,22 @@ struct OneRosaryRailView: View {
     /// Where the rail's window begins, from the top of the glass: lower
     /// than the strand's, and lowered with the words (`OneRosaryColumn
     /// .wordsTop`), so the hand's bead stays level with them
-    static func windowTop(fullHeight: CGFloat, large: Bool = false) -> CGFloat {
+    static func windowTop(fullHeight: CGFloat, large: Bool = false, lift: CGFloat = 0) -> CGFloat {
         // At the accessibility sizes, three beads level with the words'
         // middle, under the larger head
-        large ? fullHeight * 0.5 - rowHeight : fullHeight * (0.38 - OneRosaryColumn<EmptyView>.roomForTheHailMary)
+        large ? fullHeight * 0.5 - rowHeight : fullHeight * (0.38 - OneRosaryColumn<EmptyView>.roomForTheHailMary) - lift
     }
 
     /// The window's height: about half the glass, and never past the top
     /// of Back and Next, cut to an odd number of rows, so with the hand at
     /// the middle both edges fall on the gap between two beads and never
     /// through one
-    static func windowHeight(fullHeight: CGFloat, large: Bool = false) -> CGFloat {
+    static func windowHeight(fullHeight: CGFloat, large: Bool = false, lift: CGFloat = 0) -> CGFloat {
         // At the accessibility sizes the rail is the bead under the hand
         // and one either side; the step line keeps the count. Five rows,
         // since the window's fade clears the outermost one at each end
         if large { return rowHeight * 5 }
-        let room = min(fullHeight * 0.52, fullHeight * 0.8 + rowHeight - windowTop(fullHeight: fullHeight))
+        let room = min(fullHeight * 0.52, fullHeight * 0.8 + rowHeight - windowTop(fullHeight: fullHeight, lift: lift))
         var rows = Int((room / rowHeight).rounded(.down))
         if rows % 2 == 0 { rows -= 1 }
         return CGFloat(max(rows, 3)) * rowHeight
@@ -511,10 +511,11 @@ extension View {
         closing: Bool = false,
         hidden: Bool = false,
         large: Bool = false,
+        lift: CGFloat = 0,
         onTap: @escaping (Int) -> Void
     ) -> some View {
-        let windowTop = max(OneRosaryRailView.windowTop(fullHeight: fullHeight, large: large) - topInset, 0)
-        let windowHeight = OneRosaryRailView.windowHeight(fullHeight: fullHeight, large: large)
+        let windowTop = max(OneRosaryRailView.windowTop(fullHeight: fullHeight, large: large, lift: lift) - topInset, 0)
+        let windowHeight = OneRosaryRailView.windowHeight(fullHeight: fullHeight, large: large, lift: lift)
         let row = OneRosaryRailView.rowHeight
         let beadInset: CGFloat = 26
 
@@ -648,10 +649,29 @@ struct OneRosaryColumn<Words: View>: View {
     /// painting's fold (`paintingFraction`) lowered with them, so the
     /// painting keeps its height and no dark band stands under a short
     /// prayer
-    static func wordsTop(fullHeight: CGFloat, large: Bool = false) -> CGFloat {
+    static func wordsTop(fullHeight: CGFloat, large: Bool = false, lift: CGFloat = 0) -> CGFloat {
         // At the accessibility sizes the painting gives up room: the
         // words begin higher, with the larger head above them
-        large ? fullHeight * 0.38 + largeHeadHeight - headHeight : fullHeight * (0.55 - roomForTheHailMary)
+        large ? fullHeight * 0.38 + largeHeadHeight - headHeight : fullHeight * (0.55 - roomForTheHailMary) - lift
+    }
+
+    /// The most the words may rise over `wordsTop` to hold a prayer whole
+    /// (`wordsLift`), as a share of the glass: the painting then folds
+    /// about where it does at the accessibility sizes
+    static var maximumLift: CGFloat { 0.12 }
+
+    /// How far the words, the painting's fold and the rail's window rise
+    /// so the prayer being shown stands whole, read from the words
+    /// themselves (`SimpleRosaryWordsOverflow`): the room a prayer still
+    /// needs (`overflow`) is added to what is already given. It only
+    /// grows during a Rosary, so the painting does not move from one
+    /// prayer to the next, and only to make a prayer fit: a prayer that
+    /// would not fit within `maximumLift` (the Creed, a meditation)
+    /// scrolls where the words are, as it did.
+    nonisolated static func wordsLift(current: CGFloat, overflow: CGFloat, fullHeight: CGFloat) -> CGFloat {
+        let wanted = (current + overflow).rounded(.up)
+        guard overflow > 0.5, wanted <= fullHeight * maximumLift else { return current }
+        return wanted
     }
 
     /// The share of the glass the painting gives up at the ordinary sizes
@@ -673,7 +693,9 @@ struct OneRosaryColumn<Words: View>: View {
     /// has dissolved by the time the words begin
     static var paintingFraction: CGFloat { 0.65 - roomForTheHailMary }
 
-    static func paintingFraction(large: Bool) -> CGFloat { large ? 0.48 : paintingFraction }
+    static func paintingFraction(large: Bool, lift: CGFloat = 0, fullHeight: CGFloat = 0) -> CGFloat {
+        large ? 0.48 : paintingFraction - (fullHeight > 0 ? lift / fullHeight : 0)
+    }
 
     /// Where the column's head stands with the words and beads put away:
     /// anchored low, just over Back and Next, as a caption under the
@@ -1497,6 +1519,18 @@ struct SpokenRosaryWords: View {
     }
 }
 
+/// How much taller the prayer's words are than the room they are shown
+/// in (negative when they stand whole with room to spare), so the player
+/// can give them the room (`OneRosaryColumn.wordsLift`). The largest wins
+/// while one prayer's words crossfade into the next's.
+nonisolated struct SimpleRosaryWordsOverflow: PreferenceKey {
+    static let defaultValue: CGFloat? = nil
+    static func reduce(value: inout CGFloat?, nextValue: () -> CGFloat?) {
+        guard let next = nextValue() else { return }
+        value = max(value ?? next, next)
+    }
+}
+
 /// A prayer's words as the simple Rosary sets them: every prayer at one
 /// size, the Creed as the Glory Be, never shrunk to fit. A long prayer
 /// scrolls in the room it has; where the recording is timed, the line
@@ -1519,6 +1553,10 @@ struct SimpleRosaryWords: View {
     /// Whether the words have been scrolled from their top: the fade over
     /// them then deepens to about a line (`scrolledFade`)
     @State private var scrolledDown = false
+    /// The words' whole height, and how far their foot stands below the
+    /// glass: the foot's fade is drawn only while words are hidden there
+    @State private var contentHeight: CGFloat = 0
+    @State private var hiddenBelow = false
 
     /// Where the lit line's top is scrolled to: a line's room above it
     /// for the line before, the rest of the words' height for it
@@ -1598,8 +1636,22 @@ struct SimpleRosaryWords: View {
                         withAnimation(Motion.crossfade) { scrolledDown = scrolled }
                     }
                 }
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { contentHeight = $0 }
+                .onGeometryChange(for: CGFloat.self) { $0.frame(in: .scrollView).maxY } action: { foot in
+                    let hidden = foot > viewportHeight + 1
+                    guard hidden != hiddenBelow else { return }
+                    if reduceMotion {
+                        hiddenBelow = hidden
+                    } else {
+                        withAnimation(Motion.crossfade) { hiddenBelow = hidden }
+                    }
+                }
             }
             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { viewportHeight = $0 }
+            .preference(
+                key: SimpleRosaryWordsOverflow.self,
+                value: contentHeight > 0 && viewportHeight > 0 ? contentHeight - viewportHeight : nil
+            )
             // The foot of a long prayer dissolves under Back and Next, and
             // a line scrolled up dissolves before the bead's name over it
             // rather than being sliced at the scroll's edge. The fade lies
@@ -1618,11 +1670,13 @@ struct SimpleRosaryWords: View {
                         endPoint: .bottom
                     )
                     .frame(height: Self.topFade + (scrolledDown ? Self.scrolledFade : 0))
+                    // Only while words go on below the edge: a prayer that
+                    // stands whole keeps its last line at full strength
                     LinearGradient(
                         stops: [
                             .init(color: .black, location: 0),
                             .init(color: .black, location: 0.86),
-                            .init(color: .clear, location: 1),
+                            .init(color: hiddenBelow ? .clear : .black, location: 1),
                         ],
                         startPoint: .top,
                         endPoint: .bottom
