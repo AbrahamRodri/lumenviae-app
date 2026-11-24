@@ -95,11 +95,18 @@ extension DateFormatter {
     /// and in the language's own order and words in any other ("lun, 2 nov"):
     /// English keeps its fixed pattern, every other language its locale's
     /// template.
-    static func designed(english pattern: String, template: String) -> DateFormatter {
+    ///
+    /// The other languages take the app's language as their locale, not
+    /// the phone's: Spanish read on a phone set to the United States drew
+    /// es_US's month-first "lun., nov. 23" where Spanish writes "lun 23 nov".
+    static func designed(
+        english pattern: String, template: String, language: String = AppLanguage.code
+    ) -> DateFormatter {
         let formatter = DateFormatter()
-        if AppLanguage.code.hasPrefix("en") {
+        if language.hasPrefix("en") {
             formatter.dateFormat = pattern
         } else {
+            formatter.locale = Locale(identifier: language)
             formatter.setLocalizedDateFormatFromTemplate(template)
         }
         return formatter
