@@ -278,6 +278,10 @@ struct AppSearchBestCard: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .frame(minHeight: 140)
+        // The words decide the height, never the room offered: a topic's
+        // card ("Prayers to Mary", 34 prayers) once stood some 350 points
+        // tall over the keyboard and hid every prayer found under it
+        .fixedSize(horizontal: false, vertical: true)
         .background(AppColors.cardBackground)
         .contentShape(RoundedRectangle(cornerRadius: 18))
     }
