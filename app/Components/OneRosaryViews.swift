@@ -1501,6 +1501,9 @@ struct SimpleRosaryWords: View {
     /// The words' own height, and the lit line's
     @State private var viewportHeight: CGFloat = 0
     @State private var lineHeights: [Int: CGFloat] = [:]
+    /// Whether the words have been scrolled from their top: the fade over
+    /// them then deepens to about a line (`scrolledFade`)
+    @State private var scrolledDown = false
 
     /// Where the lit line's top is scrolled to: a line's room above it
     /// for the line before, the rest of the words' height for it
@@ -1508,6 +1511,11 @@ struct SimpleRosaryWords: View {
     /// The dissolve over the words' top edge, laid in the room the column
     /// keeps above them (`OneRosaryColumn` reads it for that room)
     static let topFade: CGFloat = 14
+    /// How much deeper the top fade runs once the words are scrolled, so
+    /// a line passing under the bead's name dissolves whole rather than
+    /// standing sliced through under it ("Hail, holy Queen" under HAIL,
+    /// HOLY QUEEN). At rest it is not drawn, and the first line is clear.
+    static let scrolledFade: CGFloat = 28
     /// A lit line taller than this share of the words is scrolled
     /// through as it is said
     static let tallLineShare: CGFloat = 0.8
@@ -1537,10 +1545,13 @@ struct SimpleRosaryWords: View {
 
     /// `litLineAnchor` measured below the top fade, so a lit line rests
     /// where it did before the scroll reached up into the fade's room
+    /// and below the deeper fade a scrolled column wears, so the line
+    /// being said is never the one dissolving
     private var litAnchor: UnitPoint {
-        guard viewportHeight > Self.topFade else { return Self.litLineAnchor }
-        let words = viewportHeight - Self.topFade
-        return UnitPoint(x: 0, y: (Self.topFade + Self.litLineAnchor.y * words) / viewportHeight)
+        let fade = Self.topFade + Self.scrolledFade
+        guard viewportHeight > fade else { return Self.litLineAnchor }
+        let words = viewportHeight - fade
+        return UnitPoint(x: 0, y: (fade + Self.litLineAnchor.y * words) / viewportHeight)
     }
 
     var body: some View {
@@ -1565,6 +1576,13 @@ struct SimpleRosaryWords: View {
                 .padding(.top, Self.topFade)
                 .padding(.bottom, 24)
                 .animation(reduceMotion ? nil : Motion.crossfade, value: highlighted)
+                .onGeometryChange(for: Bool.self) { $0.frame(in: .scrollView).minY < -2 } action: { scrolled in
+                    if reduceMotion {
+                        scrolledDown = scrolled
+                    } else {
+                        withAnimation(Motion.crossfade) { scrolledDown = scrolled }
+                    }
+                }
             }
             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { viewportHeight = $0 }
             // The foot of a long prayer dissolves under Back and Next, and
@@ -1584,7 +1602,7 @@ struct SimpleRosaryWords: View {
                         startPoint: .top,
                         endPoint: .bottom
                     )
-                    .frame(height: Self.topFade)
+                    .frame(height: Self.topFade + (scrolledDown ? Self.scrolledFade : 0))
                     LinearGradient(
                         stops: [
                             .init(color: .black, location: 0),
