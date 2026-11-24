@@ -1,6 +1,78 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "novena.missing" : {
+      "comment" : "Novena page: shown when the novena is missing, as one taken out of the app",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This novena is no longer in the app."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta novena ya no está en la app."
+          }
+        }
+      }
+    },
+    "novena.missing.seeNovenas" : {
+      "comment" : "Novena page, when the novena is missing: goes to the Prayers tab, where the novenas are",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See the novenas"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver las novenas"
+          }
+        }
+      }
+    },
+    "chant.missing" : {
+      "comment" : "Chant page: shown when the chant is missing, as one taken out of the app",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This chant is no longer in the app."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este canto ya no está en la app."
+          }
+        }
+      }
+    },
+    "chant.missing.seeChants" : {
+      "comment" : "Chant page, when the chant is missing: goes to the Chant tab",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See the chants"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver los cantos"
+          }
+        }
+      }
+    },
     "credits.licence.publicDomain" : {
       "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
       "extractionState" : "manual",
