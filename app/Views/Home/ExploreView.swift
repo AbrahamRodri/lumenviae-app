@@ -127,6 +127,12 @@ struct ExploreView: View {
                     }
                     .scrollPosition(id: $scrolledID, anchor: .top)
                     .scrollDismissesKeyboard(.interactively)
+                    // The pictures dissolve as they pass under the field,
+                    // as the Prayers page's do under its head, rather than
+                    // cut off hard against it. At rest the page's own top
+                    // padding and the 4 here keep its first line clear of
+                    // the band.
+                    .topChromeFade(height: 24, inset: 4)
                 }
                 .animation(Motion.crossfade, value: results.isEmpty)
             }
