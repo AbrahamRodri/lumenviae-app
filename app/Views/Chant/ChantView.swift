@@ -120,9 +120,24 @@ struct ChantView: View {
                     proxy.safeAreaInsets.top
                 } action: { barFoot = $0 }
             } else {
-                Text("This chant could not be found.")
+                // A chant taken out of the library (or an old link to one):
+                // say so, and give a way on rather than a dead end
+                VStack(spacing: 18) {
+                    Text(
+                        String(
+                            localized: "chant.missing", defaultValue: "This chant is no longer in the app.",
+                            comment: "Chant page: shown when the chant is missing, as one taken out of the app")
+                    )
                     .font(AppFonts.readingItalicFont(16))
                     .foregroundColor(AppColors.textSecondary)
+                    .multilineTextAlignment(.center)
+                    QuietGoldButton(
+                        title: String(
+                            localized: "chant.missing.seeChants", defaultValue: "See the chants",
+                            comment: "Chant page, when the chant is missing: goes to the Chant tab")
+                    ) { router.switchTo(.chant) }
+                }
+                .padding(.horizontal, 36)
             }
         }
         .navigationBarBackButtonHidden(true)

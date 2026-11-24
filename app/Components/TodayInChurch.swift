@@ -27,18 +27,41 @@ final class TodayInChurch {
 
     private(set) var proper: MissalProper?
 
+    /// The breviary's day, read only in a Spanish app: the Missal's titles
+    /// are English, so there the feast is named as the Hours of Prayer name
+    /// it, in Latin, never in English
+    private(set) var office: OfficeDay?
+
+    private let spanish: Bool
+
     private let api = MissalAPIService.shared
     private let diskCache = MissalCacheService.shared
 
     /// A day already known, for previews and snapshots; the app starts
     /// empty and loads
-    init(proper: MissalProper? = nil) {
+    init(proper: MissalProper? = nil, office: OfficeDay? = nil, spanish: Bool = SpanishContent.isActive) {
         self.proper = proper
+        self.office = office
+        self.spanish = spanish
     }
 
     /// The feast, once known. Until then the ledger names the thing itself.
+    /// In Spanish, the Hours of Prayer's own name for the day
+    /// (`OfficeViewModel.feastTitle`), so Home's Mass row and that page
+    /// never name one feast in two languages.
     var title: String {
-        proper?.info.title ?? String(localized: "Today's Mass", comment: "The day's Mass, named before its feast is known")
+        let untitled = String(localized: "Today's Mass", comment: "The day's Mass, named before its feast is known")
+        guard spanish else { return proper?.info.title ?? untitled }
+        return OfficeViewModel.feastTitle(
+            missal: proper?.info.title, breviary: office?.celebration?.title,
+            rank: office?.celebration?.rank, spanish: true
+        ) ?? untitled
+    }
+
+    /// Whether `title` names the feast yet, rather than the Mass itself:
+    /// in Spanish only once the breviary's day has come
+    var namesFeast: Bool {
+        spanish ? office?.celebration?.title != nil : proper != nil
     }
 
     /// "Feast  ·  Red vestments", whichever parts the day carries — the
@@ -76,15 +99,17 @@ final class TodayInChurch {
         // launch tab and does not rebuild on foreground, so an app left
         // open overnight kept yesterday's feast, rank, and vestment
         // colour on screen while THE MASS opened the right one.
-        guard proper == nil || loadedDay != day else { return }
+        guard proper == nil || loadedDay != day || (spanish && office == nil) else { return }
 
         // A new day lets go of the last one's feast before it looks for
         // its own: kept while the store missed and the fetch failed, it
         // set yesterday's feast beside today's date until a load came good
         if loadedDay != day {
             proper = nil
+            office = nil
             loadedDay = nil
         }
+        if spanish { await loadOffice(day: day) }
 
         if let stored = diskCache.loadProper(for: day)?.first {
             proper = stored
@@ -102,5 +127,21 @@ final class TodayInChurch {
         guard MissalAPIService.dayString(for: .now) == day else { return }
         proper = fetched.first
         loadedDay = day
+    }
+
+    /// The breviary's day for the Spanish title: the disk first, then our
+    /// own /office API. A day the API cannot give leaves the Missal's
+    /// name out, and the row says "Today's Mass" rather than English.
+    @MainActor
+    private func loadOffice(day: String) async {
+        if office?.date == day { return }
+        if let stored = OfficeCacheService.shared.loadDay(for: day) {
+            office = stored
+            return
+        }
+        guard let fetched = try? await OfficeAPIService.shared.fetchDay(day: day) else { return }
+        OfficeCacheService.shared.saveDay(fetched, for: day)
+        guard MissalAPIService.dayString(for: .now) == day else { return }
+        office = fetched
     }
 }

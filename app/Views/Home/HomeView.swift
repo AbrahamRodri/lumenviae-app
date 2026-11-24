@@ -228,7 +228,7 @@ struct ResumePrayerCard: View {
     /// the English name it was stored under; a meditation set by its own
     /// name
     private var resumeLine: String {
-        let name = session.spokenForm.map(ScripturalRosaryViewModel.formName(for:)) ?? session.setName
+        let name = session.spokenForm.map(ScripturalRosaryViewModel.formName(for:)) ?? session.displaySetName
         guard let bead = session.beadLabel else { return name }
         return "\(name) · \(bead)"
     }
