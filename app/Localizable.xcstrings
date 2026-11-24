@@ -50,7 +50,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dominio público (maestro antiguo)"
+            "value" : "Dominio público (antiguo maestro)"
           }
         }
       }
@@ -86,7 +86,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con su crédito bajo cada oración"
+            "value" : "Fuente indicada bajo cada oración"
           }
         }
       }
@@ -122,7 +122,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cita breve, con su crédito"
+            "value" : "Cita breve, con su fuente"
           }
         }
       }
@@ -140,7 +140,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usado con crédito"
+            "value" : "Usado citando la fuente"
           }
         }
       }
