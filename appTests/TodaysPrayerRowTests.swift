@@ -227,4 +227,38 @@ struct TodaysPrayerRowTests {
         #expect(known.mark == .silk(.white))
         #expect(!known.isPrayed)
     }
+
+    private var clementProper: MissalProper {
+        MissalProper(
+            info: MissalInfo(
+                id: nil, title: "St. Clement I", description: nil, date: nil, rank: 3, colors: ["r"],
+                tempora: nil, tags: nil, commemorations: nil
+            ),
+            sections: []
+        )
+    }
+
+    /// In Spanish the row names the feast as the Hours of Prayer do, in
+    /// Latin, never in the Missal's English
+    @Test func massInSpanishIsNamedAsTheHoursNameIt() {
+        let clement = OfficeDay(
+            date: "2026-11-23",
+            celebration: OfficeCelebration(title: "S. Clementis Papæ et Martyris", rank: "III. classis"),
+            detail: nil, note: nil, letter: nil
+        )
+        let today = TodayInChurch(proper: clementProper, office: clement, spanish: true)
+        #expect(today.title == "S. Clementis Papæ et Martyris")
+        #expect(
+            today.title
+                == OfficeViewModel.feastTitle(
+                    missal: "St. Clement I", breviary: "S. Clementis Papæ et Martyris",
+                    rank: "III. classis", spanish: true))
+        #expect(TodaysPrayerRow.mass(today).subtitle == "S. Clementis Papæ et Martyris")
+    }
+
+    @Test func massInSpanishWithoutTheBreviaryDayNeverSaysTheEnglish() {
+        let today = TodayInChurch(proper: clementProper, office: nil, spanish: true)
+        #expect(!today.namesFeast)
+        #expect(TodaysPrayerRow.mass(today).subtitle == "Prayers and readings for today")
+    }
 }

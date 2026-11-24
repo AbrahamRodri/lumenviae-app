@@ -336,8 +336,7 @@ struct TodaysPrayerRow: Equatable {
     /// what the Mass holds, and the fact waits.
     static func mass(_ today: TodayInChurch) -> TodaysPrayerRow {
         let name = String(localized: "Today's Mass", comment: "Home, Today's Prayer: name of the row opening the day's Mass")
-        let known = today.proper != nil
-        let subtitle = known
+        let subtitle = today.namesFeast
             ? today.title
             : String(localized: "Prayers and readings for today", comment: "Home, Today's Prayer: line under Today's Mass while the day's feast is loading")
 
