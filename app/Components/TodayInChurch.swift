@@ -109,8 +109,17 @@ final class TodayInChurch {
             office = nil
             loadedDay = nil
         }
-        if spanish { await loadOffice(day: day) }
+        // In Spanish the breviary's day is asked for beside the Missal,
+        // never before it: our /office engine sleeps when idle, and the
+        // rank and vestment once waited on it waking
+        async let breviary: Void = loadOffice(day: day)
+        async let missal: Void = loadProper(day: day)
+        _ = await (breviary, missal)
+    }
 
+    /// The Missal's propers for the day: the disk first, then Missale Meum
+    @MainActor
+    private func loadProper(day: String) async {
         if let stored = diskCache.loadProper(for: day)?.first {
             proper = stored
             loadedDay = day
@@ -134,7 +143,7 @@ final class TodayInChurch {
     /// name out, and the row says "Today's Mass" rather than English.
     @MainActor
     private func loadOffice(day: String) async {
-        if office?.date == day { return }
+        guard spanish, office?.date != day else { return }
         if let stored = OfficeCacheService.shared.loadDay(for: day) {
             office = stored
             return
