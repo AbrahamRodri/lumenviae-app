@@ -61,6 +61,13 @@ struct MeditationSetTile: View {
                                         : !painted ? AppColors.textSecondary.opacity(0.55)
                                         : AppColors.cream.opacity(0.8)
                                 )
+                                // On a painting the pin stands on a dark
+                                // disc, so a pale picture can't take it
+                                .background {
+                                    if painted {
+                                        Circle().fill(.black.opacity(0.35)).frame(width: 28, height: 28)
+                                    }
+                                }
                                 .frame(width: 44, height: 44)
                                 .contentShape(Rectangle())
                         }
@@ -83,11 +90,9 @@ struct MeditationSetTile: View {
                     .fixedSize(horizontal: false, vertical: true)
 
                 if !labels.isEmpty {
-                    Text(labelLine)
-                        .font(AppFonts.labelFont(9.5))
-                        .tracking(1.6)
-                        .foregroundColor(!painted ? AppColors.accentSoft : AppColors.cream.opacity(0.8))
-                        .lineLimit(2)
+                    MeditationLabelLine(
+                        labels: labels, size: 9.5,
+                        color: !painted ? AppColors.accentSoft : AppColors.cream.opacity(0.8))
                 }
             }
             // Words over a painting get a breath of shadow, so a pale
@@ -115,11 +120,13 @@ struct MeditationSetTile: View {
                             setId: setId, artwork: artwork,
                             fallback: category.map { .categoryPaintingWhileLoading($0) } ?? .nothing)
                             .accessibilityHidden(true)
+                        // Strong enough for a white engraving (Faber's) to
+                        // hold the cream title; a dark painting barely
+                        // changes. The pin has a disc of its own above.
                         LinearGradient(
                             stops: [
-                                .init(color: .black.opacity(0.08), location: 0),
-                                .init(color: .black.opacity(0.22), location: 0.45),
-                                .init(color: .black.opacity(0.72), location: 1)
+                                .init(color: .black.opacity(0), location: 0.4),
+                                .init(color: .black.opacity(0.78), location: 1)
                             ],
                             startPoint: .top,
                             endPoint: .bottom
@@ -139,8 +146,41 @@ struct MeditationSetTile: View {
         }
         .buttonStyle(SacredCardButtonStyle())
     }
+}
 
-    private var labelLine: String { MeditationLabel.displayLine(labels) }
+// MARK: - MeditationLabelLine
+
+/// A set's kinds, "REFLECTIONS · SAINTS" on one line where it fits; where
+/// it does not, each kind on a line of its own and no dot, so no line
+/// ever begins with one (it wrapped as "REFLECTIONS / · SAINTS").
+struct MeditationLabelLine: View {
+    let labels: [String]
+    let size: CGFloat
+    let color: Color
+
+    var body: some View {
+        ViewThatFits(in: .horizontal) {
+            styled(Text(MeditationLabel.displayLine(labels)))
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
+            VStack(alignment: .leading, spacing: 3) {
+                ForEach(Array(labels.enumerated()), id: \.offset) { _, label in
+                    styled(Text(MeditationLabel.displayName(label).uppercased()))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+        // One reading, in the one-line form, whichever is drawn
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(MeditationLabel.displayLine(labels)))
+    }
+
+    private func styled(_ text: Text) -> some View {
+        text
+            .font(AppFonts.labelFont(size))
+            .tracking(1.6)
+            .foregroundColor(color)
+    }
 }
 
 // MARK: - Row
@@ -197,10 +237,7 @@ struct MeditationSetRow: View {
                             .multilineTextAlignment(.leading)
 
                         if !labels.isEmpty {
-                            Text(MeditationLabel.displayLine(labels))
-                                .font(AppFonts.labelFont(10))
-                                .tracking(1.6)
-                                .foregroundColor(AppColors.accentSoft)
+                            MeditationLabelLine(labels: labels, size: 10, color: AppColors.accentSoft)
                         }
                     }
 
