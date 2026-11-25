@@ -248,18 +248,22 @@ struct SpanishContentTests {
         #expect(Set(spanish.translations.groups.map(\.id)) == Set(english.groups.map(\.id)))
     }
 
-    /// Where the Spanish name is the Latin (Salve Regina, Ave María), the
-    /// chant is named once: no second title under it, and VoiceOver says
-    /// it once (ios-review, 15 Nov)
+    /// Where the Spanish name is the Latin (Ave Maris Stella, Ave María),
+    /// the chant is named once: no second title under it, and VoiceOver
+    /// says it once (ios-review, 15 Nov)
     @Test func aChantWhoseSpanishNameIsItsLatinIsNamedOnce() throws {
         let english = LibraryContent.chantLibraryStore.seed!
         let spanish = try #require(LibraryContent.chantLibrarySpanishStore.seed)
         let named = spanish.laidOver(english).chants.map(Chant.init(document:))
-        let salve = try #require(named.first { $0.latinTitle == "Salve Regina" && $0.setting != nil })
-        #expect(salve.secondTitle == nil)
-        #expect(salve.spokenName == "Salve Regina")
-        #expect(salve.englishWithLatin == "Salve Regina")
-        #expect(salve.subtitleLine == salve.distinctSetting)
+        let stella = try #require(named.first { $0.id == "ave_maris_stella_feasts" })
+        #expect(stella.secondTitle == nil)
+        #expect(stella.spokenName == "Ave Maris Stella")
+        #expect(stella.englishWithLatin == "Ave Maris Stella")
+        #expect(stella.subtitleLine == stella.distinctSetting)
+        // The Salve has a Spanish name of its own, said under the Latin
+        // (design's round 9 look check: "La Salve · melodía sencilla")
+        let salve = try #require(named.first { $0.id == "salve_regina_simple" })
+        #expect(salve.subtitleLine == "La Salve · melodía sencilla")
         // Folded, so "Ave María" over "Ave Maria" is one name too
         #expect(named.filter { SearchText.fold($0.englishTitle) == SearchText.fold($0.latinTitle) }.allSatisfy { $0.secondTitle == nil })
         // English keeps both names
