@@ -4129,6 +4129,10 @@ Spiritual Reading book's page with
 (`missal`, `howToPray`, `mysteries:joyful`, `prayer:sorrowful:1:4`,
 `rosaryAloudPrayer:joyful`…; `AppRouter.launchRoute` lists them), which
 the App Store screenshots use (`Tools/AppStore/screenshots`).
+`search` (or `search:prayers`, `search:chant`, led by that page's kind)
+opens the one search, and `SIMCTL_CHILD_LUMEN_VIAE_SEARCH=<words>` types
+words into it with the keyboard up: a simulator tap cannot type into the
+search field, so walks of search use these.
 
 **Testing is silent** (Abraham, 15 Nov 2026: "are you able to do testing
 without audio from now on so I dont hear it"). Launch every debug run,
