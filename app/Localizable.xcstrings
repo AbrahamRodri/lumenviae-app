@@ -20414,7 +20414,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descargar"
+            "value" : "Guardar sin conexión"
           }
         }
       }
@@ -20425,7 +20425,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descargar"
+            "value" : "Guardar sin conexión"
           }
         }
       }
@@ -21291,7 +21291,7 @@
         }
       }
     },
-    "Show Words and Beads" : {
+    "Show words and beads" : {
       "comment" : "The Rosary's player, text sheet: switch that shows the prayer's words and the beads at the edge",
       "localizations" : {
         "es" : {

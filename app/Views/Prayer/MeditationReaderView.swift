@@ -642,7 +642,7 @@ struct ReaderTextOptionsSheet: View {
 
                 SheetToggleRow(
                     title: String(
-                        localized: "Show Words and Beads",
+                        localized: "Show words and beads",
                         comment: "The Rosary's player, text sheet: switch that shows the prayer's words and the beads at the edge"
                     ),
                     detail: String(
