@@ -408,8 +408,23 @@ private struct ThresholdStepView: View {
     /// visual language as the Home hero
     private var arch: GothicArchShape { GothicArchShape(riseRatio: 0.34) }
 
+    /// The arch's height on a tall phone, then the steps it gives way by
+    /// where the page would not fit (a 4.7-inch phone), so the act stays
+    /// on the glass, above the tab bar, rather than under its fade
+    private static let archHeights: [CGFloat] = [292, 230, 180]
+
     var body: some View {
-        StaticSlide {
+        ViewThatFits(in: .vertical) {
+            ForEach(Self.archHeights, id: \.self) { height in
+                page(archHeight: height)
+            }
+            ScrollView(showsIndicators: false) {
+                page(archHeight: Self.archHeights.last ?? 292)
+            }
+        }
+    }
+
+    private func page(archHeight: CGFloat) -> some View {
             VStack(spacing: 0) {
                 Spacer(minLength: 10)
 
@@ -418,7 +433,7 @@ private struct ThresholdStepView: View {
                 // mystery this 33-day path ends on
                 arch
                     .fill(AppColors.cardBackground)
-                    .frame(height: 292)
+                    .frame(height: archHeight)
                     .overlay(
                         CachedAssetImage("glorious_coronation")
                             .aspectRatio(contentMode: .fill)
@@ -482,7 +497,6 @@ private struct ThresholdStepView: View {
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 120)
-        }
     }
 
     private var completedNote: some View {
