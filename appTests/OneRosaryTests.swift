@@ -384,19 +384,27 @@ struct OneRosaryTests {
     /// The Spanish Ave María, its step on two lines, ran 40 points under
     /// the foot: the words rise by what they lack, and keep it
     @Test func aPrayerThatNearlyFitsIsGivenItsRoom() {
-        let lift = OneRosaryColumn<EmptyView>.wordsLift(current: 0, overflow: 40, fullHeight: 874)
+        let lift = OneRosaryColumn<EmptyView>.wordsLift(current: 0, overflow: 40, maximum: 180)
         #expect(lift == 40)
         // Once given, the room is kept: the next prayer shown has room to spare
-        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: lift, overflow: -60, fullHeight: 874) == 40)
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: lift, overflow: -60, maximum: 180) == 40)
         // A prayer measured again with the room given needs no more
-        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: lift, overflow: 0, fullHeight: 874) == 40)
-        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: lift, overflow: 12, fullHeight: 874) == 52)
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: lift, overflow: 0, maximum: 180) == 40)
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: lift, overflow: 12, maximum: 180) == 52)
+    }
+
+    /// The column may rise until its head meets the header, and no further
+    @Test func theColumnRisesNoHigherThanTheHeader() {
+        #expect(OneRosaryColumn<EmptyView>.maximumLift(preferredTop: 188, headerFoot: 70) == 118)
+        #expect(OneRosaryColumn<EmptyView>.maximumLift(preferredTop: 60, headerFoot: 70) == 0)
+        // The iPhone SE's English Hail Mary: 118 points short, and given them
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: 0, overflow: 118, maximum: 118) == 118)
     }
 
     /// The Creed and a meditation scroll where the words are: no room
     /// the painting could give would hold them whole
     @Test func aPrayerThatCannotFitLeavesThePaintingWhereItIs() {
-        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: 0, overflow: 400, fullHeight: 874) == 0)
-        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: 30, overflow: 200, fullHeight: 874) == 30)
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: 0, overflow: 400, maximum: 180) == 0)
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: 30, overflow: 200, maximum: 180) == 30)
     }
 }

@@ -532,6 +532,9 @@ extension ScripturalRosaryPrayerView {
                 + geometry.safeAreaInsets.bottom
             let rail = rail
             let shownLift = playerIsLarge ? 0 : wordsLift
+            let unliftedTop = OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight, large: playerIsLarge)
+                - OneRosaryColumn<EmptyView>.headHeight(large: playerIsLarge)
+                - geometry.safeAreaInsets.top
             // The words' first line at one height on every step; the head
             // stands in its room above them
             let preferredTop = max(
@@ -566,7 +569,8 @@ extension ScripturalRosaryPrayerView {
             .onPreferenceChange(SimpleRosaryWordsOverflow.self) { overflow in
                 guard let overflow, !playerIsLarge, showsWordsAndBeads else { return }
                 let lift = OneRosaryColumn<EmptyView>.wordsLift(
-                    current: wordsLift, overflow: overflow, fullHeight: fullHeight)
+                    current: wordsLift, overflow: overflow,
+                    maximum: OneRosaryColumn<EmptyView>.maximumLift(preferredTop: unliftedTop, headerFoot: 12 + 44 + 14))
                 guard lift != wordsLift else { return }
                 withAnimation(Motion.crossfade) { wordsLift = lift }
             }

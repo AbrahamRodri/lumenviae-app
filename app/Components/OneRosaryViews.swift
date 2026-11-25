@@ -655,23 +655,28 @@ struct OneRosaryColumn<Words: View>: View {
         large ? fullHeight * 0.38 + largeHeadHeight - headHeight : fullHeight * (0.55 - roomForTheHailMary) - lift
     }
 
-    /// The most the words may rise over `wordsTop` to hold a prayer whole
-    /// (`wordsLift`), as a share of the glass: the painting then folds
-    /// about where it does at the accessibility sizes
-    static var maximumLift: CGFloat { 0.12 }
-
     /// How far the words, the painting's fold and the rail's window rise
     /// so the prayer being shown stands whole, read from the words
     /// themselves (`SimpleRosaryWordsOverflow`): the room a prayer still
     /// needs (`overflow`) is added to what is already given. It only
     /// grows during a Rosary, so the painting does not move from one
     /// prayer to the next, and only to make a prayer fit: a prayer that
-    /// would not fit within `maximumLift` (the Creed, a meditation)
-    /// scrolls where the words are, as it did.
-    nonisolated static func wordsLift(current: CGFloat, overflow: CGFloat, fullHeight: CGFloat) -> CGFloat {
+    /// would not fit within `maximum` (the Creed, a meditation) scrolls
+    /// where the words are, as it did. `maximum` is how far the column
+    /// can rise before its head would meet the header
+    /// (`maximumLift(preferredTop:headerFoot:)`): on a 4.7-inch phone the
+    /// Hail Mary needs most of it, where a fixed share of the glass held
+    /// none of it (round 8, the iPhone SE).
+    nonisolated static func wordsLift(current: CGFloat, overflow: CGFloat, maximum: CGFloat) -> CGFloat {
         let wanted = (current + overflow).rounded(.up)
-        guard overflow > 0.5, wanted <= fullHeight * maximumLift else { return current }
+        guard overflow > 0.5, wanted <= maximum else { return current }
         return wanted
+    }
+
+    /// How far the column may rise from `preferredTop` (its place with no
+    /// lift) before its head stands at the header's foot
+    nonisolated static func maximumLift(preferredTop: CGFloat, headerFoot: CGFloat) -> CGFloat {
+        max(preferredTop - headerFoot, 0)
     }
 
     /// The share of the glass the painting gives up at the ordinary sizes
@@ -1569,6 +1574,10 @@ struct SimpleRosaryWords: View {
     /// standing sliced through under it ("Hail, holy Queen" under HAIL,
     /// HOLY QUEEN). At rest it is not drawn, and the first line is clear.
     static let scrolledFade: CGFloat = 28
+    /// The part of the room kept under the last line (24) that only a
+    /// scrolling prayer needs, for its foot to dissolve into: a prayer
+    /// that stands whole may leave it under Back and Next
+    static let footSlack: CGFloat = 18
     /// A lit line taller than this share of the words is scrolled
     /// through as it is said
     static let tallLineShare: CGFloat = 0.8
@@ -1638,7 +1647,7 @@ struct SimpleRosaryWords: View {
                 }
                 .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { contentHeight = $0 }
                 .onGeometryChange(for: CGFloat.self) { $0.frame(in: .scrollView).maxY } action: { foot in
-                    let hidden = foot > viewportHeight + 1
+                    let hidden = foot > viewportHeight + Self.footSlack + 1
                     guard hidden != hiddenBelow else { return }
                     if reduceMotion {
                         hiddenBelow = hidden
@@ -1650,7 +1659,8 @@ struct SimpleRosaryWords: View {
             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { viewportHeight = $0 }
             .preference(
                 key: SimpleRosaryWordsOverflow.self,
-                value: contentHeight > 0 && viewportHeight > 0 ? contentHeight - viewportHeight : nil
+                value: contentHeight > 0 && viewportHeight > 0
+                    ? contentHeight - Self.footSlack - viewportHeight : nil
             )
             // The foot of a long prayer dissolves under Back and Next, and
             // a line scrolled up dissolves before the bead's name over it
