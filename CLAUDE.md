@@ -1147,7 +1147,7 @@ write concurrent code here:
     Nothing needs a tap; the voice and Next do it all. The first time a
     bead can be tapped, a one-time line under the prayer says so
     (`OneRosaryTapHint`). There is no swipe anywhere on the player.
-  - **Show Words and Beads** (`userSettings.rosaryShowsWordsAndBeads`, on
+  - **Show words and beads** (`userSettings.rosaryShowsWordsAndBeads`, on
     by default) is a switch in the player's Aa sheet: off, the prayer's
     words and the rail stand down, and the pill and the mystery's name
     stay, for someone who prays with the voice and the painting alone.
