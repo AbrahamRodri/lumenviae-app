@@ -401,6 +401,20 @@ struct OneRosaryTests {
         #expect(OneRosaryColumn<EmptyView>.wordsLift(current: 0, overflow: 118, maximum: 118) == 118)
     }
 
+    /// The foot's fade stands only while words are below the glass. The
+    /// rise grows the glass under a foot that stays put, so the same foot
+    /// is judged again against the taller glass: the Spanish Ave María on
+    /// the iPhone SE kept "muerte. Amén." faded after the rise had made
+    /// it whole
+    @Test func theFootFadeGoesOnceTheRiseMakesThePrayerWhole() {
+        let foot: CGFloat = 400
+        #expect(SimpleRosaryWords.hidesWordsBelow(foot: foot, viewport: 330))
+        // Risen by 60: the same foot, now inside the slack
+        #expect(!SimpleRosaryWords.hidesWordsBelow(foot: foot, viewport: 390))
+        // The room under the last line may stand past the glass by the slack
+        #expect(!SimpleRosaryWords.hidesWordsBelow(foot: foot, viewport: 400 - SimpleRosaryWords.footSlack))
+    }
+
     /// The Creed and a meditation scroll where the words are: no room
     /// the painting could give would hold them whole
     @Test func aPrayerThatCannotFitLeavesThePaintingWhereItIs() {

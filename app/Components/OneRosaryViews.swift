@@ -1562,6 +1562,17 @@ struct SimpleRosaryWords: View {
     /// glass: the foot's fade is drawn only while words are hidden there
     @State private var contentHeight: CGFloat = 0
     @State private var hiddenBelow = false
+    /// The words' foot as last measured, kept beside the glass's height
+    /// rather than read once: the column rises (`wordsLift`) by growing
+    /// the glass under a foot that stays where it is, and judged only when
+    /// the foot moved, the fade stayed over a prayer the rise had made
+    /// whole (round 8: "muerte. Amén." on the iPhone SE)
+    @State private var measuredFoot = MeasuredFoot()
+
+    /// Not observed, so a scroll's every frame does not redraw the words
+    final class MeasuredFoot {
+        var foot: CGFloat = 0
+    }
 
     /// Where the lit line's top is scrolled to: a line's room above it
     /// for the line before, the rest of the words' height for it
@@ -1578,6 +1589,23 @@ struct SimpleRosaryWords: View {
     /// scrolling prayer needs, for its foot to dissolve into: a prayer
     /// that stands whole may leave it under Back and Next
     static let footSlack: CGFloat = 18
+
+    /// Whether words stand below the glass, so the foot's fade is drawn:
+    /// the words' foot (with the room kept under the last line) past the
+    /// glass by more than `footSlack`
+    nonisolated static func hidesWordsBelow(foot: CGFloat, viewport: CGFloat) -> Bool {
+        foot > viewport + footSlack + 1
+    }
+
+    private func judgeFoot(viewport: CGFloat) {
+        let hidden = Self.hidesWordsBelow(foot: measuredFoot.foot, viewport: viewport)
+        guard hidden != hiddenBelow else { return }
+        if reduceMotion {
+            hiddenBelow = hidden
+        } else {
+            withAnimation(Motion.crossfade) { hiddenBelow = hidden }
+        }
+    }
     /// A lit line taller than this share of the words is scrolled
     /// through as it is said
     static let tallLineShare: CGFloat = 0.8
@@ -1647,16 +1675,14 @@ struct SimpleRosaryWords: View {
                 }
                 .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { contentHeight = $0 }
                 .onGeometryChange(for: CGFloat.self) { $0.frame(in: .scrollView).maxY } action: { foot in
-                    let hidden = foot > viewportHeight + Self.footSlack + 1
-                    guard hidden != hiddenBelow else { return }
-                    if reduceMotion {
-                        hiddenBelow = hidden
-                    } else {
-                        withAnimation(Motion.crossfade) { hiddenBelow = hidden }
-                    }
+                    measuredFoot.foot = foot
+                    judgeFoot(viewport: viewportHeight)
                 }
             }
-            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { viewportHeight = $0 }
+            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                viewportHeight = height
+                judgeFoot(viewport: height)
+            }
             .preference(
                 key: SimpleRosaryWordsOverflow.self,
                 value: contentHeight > 0 && viewportHeight > 0
