@@ -535,6 +535,12 @@ struct ExploreView: View {
                          matchText: "true devotion summary marks false devotions montfort", route: .trueDevotion, inLearnMore: true) { router.push(.trueDevotion) },
             LibraryEntry(id: "spiritualReading", icon: "ph-book-open", title: String(localized: "Spiritual Reading", comment: "Explore page and search: the name of a door to a page of the app"),
                          matchText: "spiritual reading books imitation of christ story of a soul confessions augustine therese kempis library") { router.push(.spiritualReading) },
+            // The Rosary itself, so "rosary" and "rosario" find it before
+            // its other forms: it opens the day's mysteries' page, as
+            // Home's PRAY THE ROSARY does. It stands first, and wins a tie
+            // as well (`AppSearch.Page.rosaryID`).
+            LibraryEntry(id: AppSearch.Page.rosaryID, icon: "lv-rosary", title: String(localized: "Pray the Rosary", comment: "Explore page and search: the name of a door to a page of the app"),
+                         matchText: "rosary rosario holy rosary today's mysteries beads pray the rosary rezar") { openTodaysMysteries() },
             // The Rosary's two forms beside the meditation sets, found by
             // name and opening the day's mysteries' page, where they stand
             // under WAYS TO PRAY with the sets beneath
