@@ -100,8 +100,8 @@ struct PrayersSeasonCard: View {
                 VStack(alignment: .leading, spacing: 6) {
                     if let part {
                         Text(part.uppercased())
-                            .font(AppFonts.labelFont(9.5))
-                            .tracking(2.2)
+                            .font(AppFonts.labelFont(12))
+                            .tracking(1.7)
                             .foregroundColor(AppColors.gold)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -111,8 +111,8 @@ struct PrayersSeasonCard: View {
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                     Text(action.uppercased())
-                        .font(AppFonts.labelFont(10))
-                        .tracking(2)
+                        .font(AppFonts.labelFont(12))
+                        .tracking(1.5)
                         .foregroundColor(AppColors.gold)
                         .fixedSize(horizontal: false, vertical: true)
                 }

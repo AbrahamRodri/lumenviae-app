@@ -1165,8 +1165,8 @@ struct NovenaShelfCard: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(kicker)
-                        .font(AppFonts.labelFont(9.5))
-                        .tracking(2.2)
+                        .font(AppFonts.labelFont(12))
+                        .tracking(1.7)
                         .foregroundColor(AppColors.gold)
                     Text(novena.title)
                         .font(AppFonts.titleFont(19))
@@ -1182,8 +1182,8 @@ struct NovenaShelfCard: View {
                         .padding(.vertical, 4)
                     }
                     Text(line)
-                        .font(progress == nil ? AppFonts.readingItalicFont(15) : AppFonts.labelFont(10))
-                        .tracking(progress == nil ? 0 : 2)
+                        .font(progress == nil ? AppFonts.readingItalicFont(15) : AppFonts.labelFont(12))
+                        .tracking(progress == nil ? 0 : 1.5)
                         .foregroundColor(progress == nil ? AppColors.textSecondary : AppColors.gold)
                 }
                 .padding(16)

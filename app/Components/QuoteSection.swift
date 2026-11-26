@@ -56,8 +56,8 @@ struct QuoteSection: View {
             VStack(spacing: 4) {
                 if showsCredit {
                     Text("— \(author)")
-                        .font(AppFonts.labelFont(10))
-                        .tracking(2.5)
+                        .font(AppFonts.labelFont(12))
+                        .tracking(1.9)
                         .foregroundColor(AppColors.gold)
                         .multilineTextAlignment(.center)
                 }

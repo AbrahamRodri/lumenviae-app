@@ -352,8 +352,8 @@ private struct PrayersAllTopics: View {
                 ForEach(PrayerBookPart.allCases) { part in
                     VStack(alignment: .leading, spacing: 12) {
                         Text(part.title)
-                            .font(AppFonts.labelFont(9.5))
-                            .tracking(2.4)
+                            .font(AppFonts.labelFont(12))
+                            .tracking(1.8)
                             .textCase(.uppercase)
                             .foregroundColor(AppColors.gold)
                             .accessibilityAddTraits(.isHeader)

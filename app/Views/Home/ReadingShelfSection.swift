@@ -60,8 +60,8 @@ struct ReadingShelfSection: View {
             Button(action: { router.push(.spiritualReading) }) {
                 HStack(spacing: 5) {
                     Text("ALL BOOKS")
-                        .font(AppFonts.labelFont(10))
-                        .tracking(1.5)
+                        .font(AppFonts.labelFont(12))
+                        .tracking(1.2)
                     AppIcon("ph-caret-right", size: 9)
                 }
                 .foregroundColor(AppColors.gold)

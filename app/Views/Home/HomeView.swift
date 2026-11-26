@@ -62,7 +62,7 @@ struct HomeView: View {
                         }
 
                         // Starts clear of the dissolve below the header
-                        DayPrayerLabel(label: viewModel.dayLabel)
+                        DayPrayerLabel(label: viewModel.dayLabel, size: 12, tracking: 2.4)
                             .padding(.top, PrayerResumeService.shared.inProgress == nil ? 30 : 22)
                             .devotionalEntrance(delay: 0.04)
 
@@ -285,8 +285,8 @@ struct ResumePrayerCard: View {
 
                     VStack(alignment: .leading, spacing: 3) {
                         Text("CONTINUE YOUR ROSARY")
-                            .font(AppFonts.labelFont(9))
-                            .tracking(2)
+                            .font(AppFonts.labelFont(12))
+                            .tracking(1.5)
                             .foregroundColor(AppColors.gold.opacity(0.8))
 
                         Text(mysteryLabel)
@@ -547,8 +547,8 @@ struct SacredMysteriesSection: View {
             Button(action: { onViewAll?() }) {
                 HStack(spacing: 5) {
                     Text("VIEW ALL")
-                        .font(AppFonts.labelFont(10))
-                        .tracking(1.5)
+                        .font(AppFonts.labelFont(12))
+                        .tracking(1.2)
                     AppIcon("ph-caret-right", size: 9)
                 }
                 .foregroundColor(AppColors.gold)
