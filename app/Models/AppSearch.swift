@@ -81,6 +81,17 @@ enum AppSearch {
         let matchText: String
         /// The door's glyph, which its row wears
         var icon: String = "ph-book-open"
+
+        /// The Rosary's own door (Pray the Rosary), which wins a tie with
+        /// any other hit, so "rosary" finds the Rosary before the
+        /// Scriptural Rosary
+        static let rosaryID = "rosary"
+
+        /// The doors that are ways of praying the Rosary: their card hangs
+        /// today's mysteries' painting, as Home's arch does
+        static let rosaryWayIDs: Set<String> = [rosaryID, "scripturalRosary", "rosaryAloud"]
+
+        var isRosaryWay: Bool { Self.rosaryWayIDs.contains(id) }
     }
 
     /// One thing found
@@ -107,6 +118,12 @@ enum AppSearch {
             case .chant(let chant): return "chant:\(chant.id)"
             case .meditationSet(let summary): return "set:\(summary.id)"
             }
+        }
+
+        /// The Rosary's own door
+        var isTheRosary: Bool {
+            if case .page(let page) = self { return page.id == Page.rosaryID }
+            return false
         }
 
         var kind: Kind {
@@ -324,7 +341,8 @@ enum AppSearch {
             if closest.closeness > (best?.closeness ?? .none) {
                 best = closest
             } else if let held = best, closest.closeness == held.closeness {
-                best = Closest(hit: held.hit, closeness: held.closeness, ties: held.ties + closest.ties)
+                let hit = closest.hit.isTheRosary && !held.hit.isTheRosary ? closest.hit : held.hit
+                best = Closest(hit: hit, closeness: held.closeness, ties: held.ties + closest.ties)
             }
         }
         guard let best, best.isClear(for: needle) else { return nil }
@@ -362,7 +380,11 @@ enum AppSearch {
             if closeness > (best?.closeness ?? .none) {
                 best = Closest(hit: hit, closeness: closeness, ties: 1)
             } else if let held = best, closeness == held.closeness {
-                best = Closest(hit: held.hit, closeness: held.closeness, ties: held.ties + 1)
+                // The Rosary wins a tie: "rosary" answers The Scriptural
+                // Rosary as well as Pray the Rosary, and the card once
+                // named the Scriptural Rosary, as if it were the Rosary
+                let kept = hit.isTheRosary && !held.hit.isTheRosary ? hit : held.hit
+                best = Closest(hit: kept, closeness: held.closeness, ties: held.ties + 1)
             }
         }
         return best

@@ -179,12 +179,16 @@ enum LibraryReadings {
     }
 
     /// The page a shelf stands in: the Marian Library, St. Carlo's page,
-    /// or the Devotion in Summary. How to Pray's shelves are its own
-    /// lessons' and name no page.
+    /// the Devotion in Summary, or How to Pray (Montfort's methods and the
+    /// beginners' questions), so a reading is put away with its page
+    /// (`ArchivedPages.hides(shelf:)`). How to Pray's readings named no
+    /// page once, and while it was archived its six questions still
+    /// stood in search, in English in a Spanish app.
     static func page(of shelf: ReadingShelf) -> AppRoute? {
         if MarianLibraryData.sections.contains(where: { $0.id == shelf.id }) { return .marianLibrary }
         if CarloAcutisData.shelves.contains(where: { $0.id == shelf.id }) { return .carloAcutis }
         if shelf.id == TrueDevotionData.teaching.id { return .trueDevotion }
+        if shelf.id == HowToPrayData.methods.id || shelf.id == HowToPrayData.questions.id { return .howToPray }
         return nil
     }
 

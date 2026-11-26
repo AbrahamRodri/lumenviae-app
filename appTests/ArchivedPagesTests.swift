@@ -5,8 +5,9 @@
 //  An archived page has no door anywhere: the page itself, the passages
 //  of In Scripture, the readings on its shelves, and the doors other
 //  readings hang on it all stand down, while the pages around them —
-//  the True Devotion book, Your First Rosary, and How to Pray's
-//  readings (the beginners' questions, Montfort's methods) — stay open.
+//  the True Devotion book and Your First Rosary — stay open. How to
+//  Pray's readings (the beginners' questions, Montfort's methods) go
+//  with How to Pray.
 //
 
 import Foundation
@@ -44,18 +45,24 @@ struct ArchivedPagesTests {
     }
 
     @Test func readingsGoWithTheirPage() {
-        for shelf in MarianLibraryData.sections + CarloAcutisData.shelves + [TrueDevotionData.teaching] {
+        let shelves =
+            MarianLibraryData.sections + CarloAcutisData.shelves
+            + [TrueDevotionData.teaching, HowToPrayData.methods, HowToPrayData.questions]
+        for shelf in shelves {
             #expect(ArchivedPages.hides(shelf: shelf), "\(shelf.id)")
             for entry in shelf.entries {
                 #expect(ArchivedPages.hides(.libraryReading(id: entry.id)), "\(entry.id)")
             }
         }
-        for shelf in [HowToPrayData.methods, HowToPrayData.questions] {
-            #expect(!ArchivedPages.hides(shelf: shelf), "\(shelf.id)")
-            for entry in shelf.entries {
-                #expect(!ArchivedPages.hides(.libraryReading(id: entry.id)), "\(entry.id)")
-            }
-        }
+    }
+
+    /// How to Pray's readings are its own, so search no longer finds the
+    /// beginners' questions while the page is put away
+    @Test func howToPraysReadingsAreNotSearched() {
+        let shelves = AppSearch.defaultShelves
+        #expect(!shelves.contains { $0.id == HowToPrayData.questions.id })
+        #expect(!shelves.contains { $0.id == HowToPrayData.methods.id })
+        #expect(LibraryReadings.page(of: HowToPrayData.questions) == .howToPray)
     }
 
     @Test func theRouterPushesNoArchivedPage() {

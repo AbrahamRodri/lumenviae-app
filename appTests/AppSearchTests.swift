@@ -284,6 +284,34 @@ struct AppSearchTests {
         #expect(!found.map(\.id).contains("page:missal"))
     }
 
+    /// "rosary" names the Scriptural Rosary as well as Pray the Rosary,
+    /// and the card once named the Scriptural Rosary as the best match:
+    /// the Rosary itself wins the tie, wherever it stands in the list
+    @Test func theRosaryItselfIsTheBestMatchForRosary() {
+        let pages = [
+            AppSearch.Page(id: "scripturalRosary", title: "The Scriptural Rosary", matchText: "scriptural rosary"),
+            AppSearch.Page(id: "rosaryAloud", title: "No Meditation", matchText: "audio rosary holy rosary"),
+            AppSearch.Page(id: AppSearch.Page.rosaryID, title: "Pray the Rosary", matchText: "rosary rosario"),
+        ]
+        let english = AppSearch.results(for: "rosary", from: .everywhere, pages: pages)
+        #expect(english.best?.id == "page:\(AppSearch.Page.rosaryID)")
+        #expect(english.sections.first { $0.kind == .pages }?.hits.first?.id == "page:scripturalRosary")
+
+        let spanish = [
+            AppSearch.Page(id: "scripturalRosary", title: "El Rosario de las Escrituras", matchText: "scriptural rosary"),
+            AppSearch.Page(id: AppSearch.Page.rosaryID, title: "Rezar el Rosario", matchText: "rosary rosario"),
+        ]
+        let rosario = AppSearch.results(for: "rosario", from: .everywhere, pages: spanish)
+        #expect(rosario.best?.id == "page:\(AppSearch.Page.rosaryID)")
+    }
+
+    @Test func theRosarysWaysAreTheRosaryWays() {
+        for id in [AppSearch.Page.rosaryID, "scripturalRosary", "rosaryAloud"] {
+            #expect(AppSearch.Page(id: id, title: "", matchText: "").isRosaryWay)
+        }
+        #expect(!AppSearch.Page(id: "office", title: "", matchText: "").isRosaryWay)
+    }
+
     @Test func emptyWordsFindNothing() {
         #expect(AppSearch.results(for: "   ", from: .chant).isEmpty)
     }

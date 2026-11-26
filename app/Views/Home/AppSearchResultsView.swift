@@ -311,14 +311,37 @@ struct AppSearchBestCard: View {
             AppSearchPicture.asset(category.cardImageName, focal: category.cardFocalPoint).view(size: size)
         case .mystery(let mystery):
             AppSearchResultsView.picture(of: mystery).view(size: size)
+        // A way of praying the Rosary hangs today's mysteries, the
+        // painting Home's arch hangs (design, round 10)
+        case .page(let page) where page.isRosaryWay:
+            let today = ScheduleService.categoryForToday()
+            AppSearchPicture.asset(today.cardImageName, focal: today.cardFocalPoint).view(size: size)
+        // Anything else with no painting: the card's own ground, and the
+        // page's glyph in the outlined window the mysteries' page's Other
+        // ways to pray wears, never a black square (design, round 10)
         case .reading, .page, .meditationSet:
             ZStack {
-                AppColors.backgroundDeep
-                AppIcon(icon, size: 26)
-                    .foregroundColor(AppColors.gold.opacity(0.8))
+                AppColors.cardBackground
+                Self.glyphWindow
+                    .fill(AppColors.background.opacity(0.6))
+                    .overlay(Self.glyphWindow.strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 0.8))
+                    .overlay(
+                        AppIcon(icon, size: 25)
+                            .foregroundColor(AppColors.gold)
+                    )
+                    .frame(width: 56, height: 70)
             }
+            .accessibilityHidden(true)
         }
     }
+
+    /// The window a glyph stands in: OtherWayRow's, at 1.4 times its size
+    private static let glyphWindow = UnevenRoundedRectangle(
+        topLeadingRadius: 28,
+        bottomLeadingRadius: 4,
+        bottomTrailingRadius: 4,
+        topTrailingRadius: 28
+    )
 
     private var icon: String {
         switch hit {

@@ -346,7 +346,10 @@ over the five devotions as painted banners, each opening its mysteries'
 page, where the Rosary's three forms stand (the Scriptural Rosary and
 the Rosary Aloud once had banners of their own beneath the five, as
 though they were other devotions; typed search still finds both, and
-opens the day's mysteries' page), and a quiet "New to the Rosary? · How to
+opens the day's mysteries' page, as it finds Pray the Rosary, which
+wins a tie so "rosary" and "rosario" name the Rosary itself first;
+the three hang today's mysteries' painting on the search's card, and
+any other door with no painting stands its glyph in an outlined window), and a quiet "New to the Rosary? · How to
 Pray" door under that (How to Pray was the fourth item of the index at
 the foot of the page, where a newcomer never reached it); then
 Prayers (the occasion orders as paintings with their names alone,
