@@ -39,6 +39,9 @@ struct ConsecrationDayOverviewView: View {
     /// any other a tap away on its road or its arrows.
     @State private var shownPhase: ConsecrationPhase?
     @State private var showRestartConfirm = false
+    /// Whether the day's painting has scrolled up behind the clock, so the
+    /// dark ground under it is needed (as a prayer topic's page has)
+    @State private var paintingGone = false
 
     /// The bilingual order the user chose for their profile, remembered
     /// so that stepping out to English and back to "Both" returns them
@@ -80,7 +83,9 @@ struct ConsecrationDayOverviewView: View {
     // MARK: - Body
 
     var body: some View {
-        ZStack {
+        GeometryReader { geo in
+        let safeTop = geo.safeAreaInsets.top
+        ZStack(alignment: .top) {
             AppColors.appGradient
                 .ignoresSafeArea()
 
@@ -88,6 +93,11 @@ struct ConsecrationDayOverviewView: View {
                 VStack(spacing: 0) {
                     heroSection
                         .devotionalEntrance()
+                        .onGeometryChange(for: Bool.self) { hero in
+                            hero.frame(in: .global).maxY < safeTop + 24
+                        } action: { gone in
+                            paintingGone = gone
+                        }
 
                     if viewModel.progress != nil {
                         countdownSection
@@ -125,6 +135,9 @@ struct ConsecrationDayOverviewView: View {
                     .devotionalEntrance(delay: 0.24)
                 }
             }
+
+            clockGround(safeTop: safeTop)
+        }
         }
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
@@ -138,6 +151,32 @@ struct ConsecrationDayOverviewView: View {
                 profileBilingualOrder = settings.prayerLanguage
             }
         }
+    }
+
+    /// The dark ground under the clock once the painting has gone, so the
+    /// day's cards dissolve beneath the status bar instead of running
+    /// under its time and battery (round 9 walk, 25 Nov)
+    private func clockGround(safeTop: CGFloat) -> some View {
+        VStack(spacing: 0) {
+            AppColors.backgroundDeep
+                .frame(height: safeTop)
+            LinearGradient(
+                stops: [
+                    .init(color: AppColors.backgroundDeep, location: 0),
+                    .init(color: AppColors.backgroundDeep.opacity(0.85), location: 0.35),
+                    .init(color: AppColors.backgroundDeep.opacity(0), location: 1)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 28)
+        }
+        .frame(maxWidth: .infinity)
+        .ignoresSafeArea(edges: .top)
+        .opacity(paintingGone ? 1 : 0)
+        .animation(Motion.crossfade, value: paintingGone)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 
     // MARK: - Hero

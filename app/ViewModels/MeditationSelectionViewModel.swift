@@ -42,6 +42,11 @@ final class MeditationSelectionViewModel {
     /// Error message if loading fails (nil on success)
     var errorMessage: String?
 
+    /// Whether the shelf holds only the built-in set because the server's
+    /// could not be reached and none were downloaded: the page then says
+    /// that more come with a connection
+    private(set) var showsOnlyBuiltIn = false
+
     // MARK: - Dependencies
 
     private let apiService: APIService
@@ -229,6 +234,7 @@ final class MeditationSelectionViewModel {
 
         // The bundled set for these mysteries stands only when there is no
         // other: no signal and nothing downloaded
+        showsOnlyBuiltIn = meditationSets.isEmpty
         if meditationSets.isEmpty {
             meditationSets = BundledMeditationSets.summaries(for: category)
         }
@@ -245,6 +251,7 @@ final class MeditationSelectionViewModel {
         guard let fresh = try? await apiService.fetchMeditationSets(category: category), !fresh.isEmpty else { return }
         sessionCache?.keep(fresh, for: category)
         if fresh != meditationSets { meditationSets = fresh }
+        showsOnlyBuiltIn = false
     }
 
     /// Clears the loaded list and fetches again (drives the Retry button).

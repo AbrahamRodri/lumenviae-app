@@ -378,4 +378,47 @@ struct OneRosaryTests {
     @Test func aStepWithNoCountIsUnchanged() {
         #expect(OneRosaryStepLabel.keepingCountTogether("THE APOSTLES' CREED") == "THE APOSTLES' CREED")
     }
+
+    // MARK: - Room for the prayer
+
+    /// The Spanish Ave María, its step on two lines, ran 40 points under
+    /// the foot: the words rise by what they lack, and keep it
+    @Test func aPrayerThatNearlyFitsIsGivenItsRoom() {
+        let lift = OneRosaryColumn<EmptyView>.wordsLift(current: 0, overflow: 40, maximum: 180)
+        #expect(lift == 40)
+        // Once given, the room is kept: the next prayer shown has room to spare
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: lift, overflow: -60, maximum: 180) == 40)
+        // A prayer measured again with the room given needs no more
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: lift, overflow: 0, maximum: 180) == 40)
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: lift, overflow: 12, maximum: 180) == 52)
+    }
+
+    /// The column may rise until its head meets the header, and no further
+    @Test func theColumnRisesNoHigherThanTheHeader() {
+        #expect(OneRosaryColumn<EmptyView>.maximumLift(preferredTop: 188, headerFoot: 70) == 118)
+        #expect(OneRosaryColumn<EmptyView>.maximumLift(preferredTop: 60, headerFoot: 70) == 0)
+        // The iPhone SE's English Hail Mary: 118 points short, and given them
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: 0, overflow: 118, maximum: 118) == 118)
+    }
+
+    /// The foot's fade stands only while words are below the glass. The
+    /// rise grows the glass under a foot that stays put, so the same foot
+    /// is judged again against the taller glass: the Spanish Ave María on
+    /// the iPhone SE kept "muerte. Amén." faded after the rise had made
+    /// it whole
+    @Test func theFootFadeGoesOnceTheRiseMakesThePrayerWhole() {
+        let foot: CGFloat = 400
+        #expect(SimpleRosaryWords.hidesWordsBelow(foot: foot, viewport: 330))
+        // Risen by 60: the same foot, now inside the slack
+        #expect(!SimpleRosaryWords.hidesWordsBelow(foot: foot, viewport: 390))
+        // The room under the last line may stand past the glass by the slack
+        #expect(!SimpleRosaryWords.hidesWordsBelow(foot: foot, viewport: 400 - SimpleRosaryWords.footSlack))
+    }
+
+    /// The Creed and a meditation scroll where the words are: no room
+    /// the painting could give would hold them whole
+    @Test func aPrayerThatCannotFitLeavesThePaintingWhereItIs() {
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: 0, overflow: 400, maximum: 180) == 0)
+        #expect(OneRosaryColumn<EmptyView>.wordsLift(current: 30, overflow: 200, maximum: 180) == 30)
+    }
 }

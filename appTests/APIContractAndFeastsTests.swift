@@ -80,6 +80,29 @@ struct MeditationSetDecodingTests {
         #expect(artwork.attribution?.creditLine == "The Annunciation  ·  Fra Angelico  ·  c. 1440")
     }
 
+    @Test func aPaintingFromBeforeVariantsIsDrawnFromItsOriginal() throws {
+        let artwork = try #require(try decode(MeditationSet.self, setJSON).artwork)
+        #expect(artwork.variants.isEmpty)
+        #expect(artwork.url(forPixelWidth: 300) == artwork.url)
+    }
+
+    @Test func theNarrowestCopyAtLeastAsWideAsDrawnIsChosen() throws {
+        let json = setJSON.replacingOccurrences(
+            of: #""image_alt": "The Annunciation","#,
+            with: #""image_alt": "The Annunciation", "image_variants": [{"width": 960, "url": "https://example.org/a-960.webp"}, {"width": 480, "url": "https://example.org/a-480.webp"}],"#)
+        let set = try decode(MeditationSet.self, json)
+        let artwork = try #require(set.artwork)
+        #expect(artwork.variants.map(\.width) == [480, 960], "narrowest first, whatever order they came in")
+        #expect(artwork.url(forPixelWidth: 132) == "https://example.org/a-480.webp")
+        #expect(artwork.url(forPixelWidth: 480) == "https://example.org/a-480.webp")
+        #expect(artwork.url(forPixelWidth: 525) == "https://example.org/a-960.webp")
+        #expect(artwork.url(forPixelWidth: 1206) == artwork.url, "wider than every copy: the original")
+        #expect(artwork.url(forPixelWidth: 0) == artwork.url, "not yet measured: the original, never a guess")
+        // A stored copy keeps them
+        let again = try decode(MeditationSet.self, String(decoding: try JSONEncoder().encode(set), as: UTF8.self))
+        #expect(again.artwork?.variants == artwork.variants)
+    }
+
     @Test func aSetWithNoPaintingHasNone() throws {
         let set = try decode(MeditationSet.self, #"{"id": 1, "name": "A", "category": "glorious", "description": null, "labels": null, "meditations": []}"#)
         #expect(set.artwork == nil)

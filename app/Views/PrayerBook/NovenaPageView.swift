@@ -83,13 +83,24 @@ struct NovenaPageView: View {
                         footHeight = $0
                     }
             } else {
-                Text(
-                    String(
-                        localized: "This novena could not be found.",
-                        comment: "Novena page: shown when the novena is missing")
-                )
-                .font(AppFonts.readingItalicFont(16))
-                .foregroundColor(AppColors.textSecondary)
+                // A novena taken out of the book (or an old link to one):
+                // say so, and give a way on rather than a dead end
+                VStack(spacing: 18) {
+                    Text(
+                        String(
+                            localized: "novena.missing", defaultValue: "This novena is no longer in the app.",
+                            comment: "Novena page: shown when the novena is missing, as one taken out of the app")
+                    )
+                    .font(AppFonts.readingItalicFont(16))
+                    .foregroundColor(AppColors.textSecondary)
+                    .multilineTextAlignment(.center)
+                    QuietGoldButton(
+                        title: String(
+                            localized: "novena.missing.seeNovenas", defaultValue: "See the novenas",
+                            comment: "Novena page, when the novena is missing: goes to the Prayers tab, where the novenas are")
+                    ) { router.switchTo(.prayers) }
+                }
+                .padding(.horizontal, 36)
                 .frame(maxHeight: .infinity)
             }
         }

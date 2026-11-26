@@ -82,6 +82,14 @@ nonisolated struct ArtworkAttribution: Codable, Hashable {
     }
 }
 
+/// A smaller copy of a set's painting, as the API lists it beside the
+/// original (`image_variants`): its width in pixels and its unsigned,
+/// immutable URL
+nonisolated struct ArtworkVariant: Codable, Hashable {
+    let width: Int
+    let url: String
+}
+
 /// A set's painting and how to crop it, lifted off the flat `image_*` keys
 /// once `image_url` says there is one.
 ///
@@ -99,6 +107,8 @@ nonisolated struct SetArtwork: Hashable {
     let height: Int?
     let alt: String?
     let attribution: ArtworkAttribution?
+    /// Smaller copies of the painting, narrowest first; often none
+    let variants: [ArtworkVariant]
 
     /// Builds the block from the flat keys, or nil when there is no
     /// painting. `image_url` alone decides; the rest default sensibly if
@@ -110,9 +120,11 @@ nonisolated struct SetArtwork: Hashable {
         width: Int?,
         height: Int?,
         alt: String?,
-        attribution: ArtworkAttribution?
+        attribution: ArtworkAttribution?,
+        variants: [ArtworkVariant]? = nil
     ) {
         guard let url, !url.isEmpty else { return nil }
+        self.variants = (variants ?? []).filter { $0.width > 0 && !$0.url.isEmpty }.sorted { $0.width < $1.width }
         self.url = url
         self.focalX = focalX ?? 0.5
         self.focalY = focalY ?? 0.5
@@ -121,6 +133,17 @@ nonisolated struct SetArtwork: Hashable {
         self.alt = alt
         self.attribution = attribution
     }
+
+    /// The copy to draw at `pixels` wide: the narrowest variant at least
+    /// that wide, else the original. A width not yet known asks for the
+    /// original, never a guess.
+    func url(forPixelWidth pixels: Double) -> String {
+        guard pixels > 0 else { return url }
+        return variants.first { Double($0.width) >= pixels }?.url ?? url
+    }
+
+    /// Every URL this painting may be drawn from, the original first
+    var urls: [String] { [url] + variants.map(\.url) }
 
     /// The pixel size, when the API sent one and it is usable.
     var intrinsicSize: CGSize? {
@@ -212,6 +235,9 @@ struct MeditationSet: nonisolated Codable, Identifiable, Hashable {
     nonisolated var source: String? { SetTranslation.pick(setTranslation?.source, englishSource) }
     nonisolated var imageAlt: String? { SetTranslation.pick(setTranslation?.imageAlt, englishImageAlt) }
     let imageAttribution: ArtworkAttribution?
+    /// Smaller WebP copies of the painting (`image_variants`), narrowest
+    /// first; nil from a server or a stored copy older than them
+    let imageVariants: [ArtworkVariant]?
 
     // Every key is listed — leaving `meditations` out of an explicit
     // CodingKeys does not throw, it decodes to nil and empties the prayer
@@ -233,6 +259,7 @@ struct MeditationSet: nonisolated Codable, Identifiable, Hashable {
         case imageHeight = "image_height"
         case englishImageAlt = "image_alt"
         case imageAttribution = "image_attribution"
+        case imageVariants = "image_variants"
     }
 
     init(
@@ -253,6 +280,7 @@ struct MeditationSet: nonisolated Codable, Identifiable, Hashable {
         imageHeight: Int? = nil,
         imageAlt: String? = nil,
         imageAttribution: ArtworkAttribution? = nil,
+        imageVariants: [ArtworkVariant]? = nil,
         translations: [MeditationTranslation]? = nil,
         setTranslation: SetTranslation? = nil
     ) {
@@ -275,6 +303,7 @@ struct MeditationSet: nonisolated Codable, Identifiable, Hashable {
         self.englishImageAlt = imageAlt
         self.setTranslation = setTranslation
         self.imageAttribution = imageAttribution
+        self.imageVariants = imageVariants
     }
 
     // MARK: - Computed Properties
@@ -299,7 +328,7 @@ struct MeditationSet: nonisolated Codable, Identifiable, Hashable {
         SetArtwork(
             url: imageUrl, focalX: imageFocalX, focalY: imageFocalY,
             width: imageWidth, height: imageHeight, alt: imageAlt,
-            attribution: imageAttribution
+            attribution: imageAttribution, variants: imageVariants
         )
     }
 
@@ -372,6 +401,9 @@ struct MeditationSetSummary: nonisolated Codable, Identifiable, Hashable {
     nonisolated var source: String? { SetTranslation.pick(setTranslation?.source, englishSource) }
     nonisolated var imageAlt: String? { SetTranslation.pick(setTranslation?.imageAlt, englishImageAlt) }
     let imageAttribution: ArtworkAttribution?
+    /// Smaller WebP copies of the painting (`image_variants`), narrowest
+    /// first; nil from a server or a stored copy older than them
+    let imageVariants: [ArtworkVariant]?
 
     enum CodingKeys: String, CodingKey {
         case id, category, labels
@@ -388,6 +420,7 @@ struct MeditationSetSummary: nonisolated Codable, Identifiable, Hashable {
         case imageHeight = "image_height"
         case englishImageAlt = "image_alt"
         case imageAttribution = "image_attribution"
+        case imageVariants = "image_variants"
     }
 
     init(
@@ -406,6 +439,7 @@ struct MeditationSetSummary: nonisolated Codable, Identifiable, Hashable {
         imageHeight: Int? = nil,
         imageAlt: String? = nil,
         imageAttribution: ArtworkAttribution? = nil,
+        imageVariants: [ArtworkVariant]? = nil,
         setTranslation: SetTranslation? = nil
     ) {
         self.id = id
@@ -424,6 +458,7 @@ struct MeditationSetSummary: nonisolated Codable, Identifiable, Hashable {
         self.englishImageAlt = imageAlt
         self.setTranslation = setTranslation
         self.imageAttribution = imageAttribution
+        self.imageVariants = imageVariants
     }
 
     // MARK: - Computed Properties
@@ -443,7 +478,7 @@ struct MeditationSetSummary: nonisolated Codable, Identifiable, Hashable {
         SetArtwork(
             url: imageUrl, focalX: imageFocalX, focalY: imageFocalY,
             width: imageWidth, height: imageHeight, alt: imageAlt,
-            attribution: imageAttribution
+            attribution: imageAttribution, variants: imageVariants
         )
     }
 }

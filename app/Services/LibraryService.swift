@@ -97,7 +97,7 @@ final class LibraryService {
     private let directory: URL
 
     private init() {
-        let config = URLSessionConfiguration.default
+        let config = URLSessionConfiguration.app
         config.timeoutIntervalForRequest = 20
         config.timeoutIntervalForResource = 120
         session = URLSession(configuration: config)

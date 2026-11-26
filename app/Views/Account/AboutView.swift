@@ -285,6 +285,32 @@ struct SourcesCreditsSheet: View {
         }
     }
 
+    /// A licence as the reader's language says it. The generated credits
+    /// carry it in English (sources.py), so each is given a catalog key
+    /// here; names that are names (CC0, MIT, the SIL Open Font License)
+    /// stand as they are. `SourcesCreditsTests` fails on a new licence
+    /// left out.
+    static let licenceKeys: [String: String] = [
+        "Public domain": "credits.licence.publicDomain",
+        "Public domain (PD-Art: faithful 2D reproduction of a work whose author died more than 100 years ago)": "credits.licence.publicDomainPDArt",
+        "Public domain (old master)": "credits.licence.publicDomainOldMaster",
+        "Copyleft (share alike, no attribution required)": "credits.licence.copyleft",
+        "Credited under each prayer": "credits.licence.creditedUnderEachPrayer",
+        "MIT; free for commercial use": "credits.licence.mitCommercial",
+        "Short quotation, credited": "credits.licence.shortQuotation",
+        "Used with credit": "credits.licence.usedWithCredit",
+    ]
+
+    /// Names that read the same in every language
+    static let licenceNames: Set<String> = ["CC0", "MIT", "SIL Open Font License 1.1"]
+
+    static func licenceName(_ licence: String, bundle: Bundle = .main) -> String {
+        guard let key = licenceKeys[licence] else { return licence }
+        // The keys are the catalog's (comment: Sources & Credits, a work's
+        // licence, set small in capitals under it)
+        return bundle.localizedString(forKey: key, value: licence, table: nil)
+    }
+
     /// One work: its name, its maker, where and when, and its terms
     private func creditRow(_ work: CreditedWork) -> some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -300,7 +326,7 @@ struct SourcesCreditsSheet: View {
                     .foregroundColor(AppColors.textSecondary)
                     .lineSpacing(3)
             }
-            Text(work.licence.uppercased())
+            Text(Self.licenceName(work.licence).uppercased())
                 .font(AppFonts.labelFont(10))
                 .tracking(1.5)
                 .foregroundColor(AppColors.gold.opacity(0.7))

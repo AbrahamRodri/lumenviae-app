@@ -386,7 +386,7 @@ final class LibraryContentSync {
         if let session {
             self.session = session
         } else {
-            let config = URLSessionConfiguration.default
+            let config = URLSessionConfiguration.app
             config.timeoutIntervalForRequest = 20
             config.timeoutIntervalForResource = 60
             self.session = URLSession(configuration: config)

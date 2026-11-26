@@ -159,7 +159,7 @@ struct Chant: Identifiable, Hashable {
 
     /// The name under the Latin title, where it is not the Latin's own:
     /// nil for a chant known by its Latin in the reader's language too
-    /// ("Magnificat", and in Spanish "Salve Regina", "Te Deum", "Ave
+    /// ("Magnificat", and in Spanish "Ave Maris Stella", "Te Deum", "Ave
     /// María"), so no row or voice says the one name twice
     var secondTitle: String? {
         SearchText.fold(englishTitle) == SearchText.fold(latinTitle) ? nil : englishTitle

@@ -364,7 +364,8 @@ final class AppRouter {
 
     /// A page named at launch by `LUMEN_VIAE_ROUTE`, for the App Store
     /// screenshots (`Tools/AppStore/screenshots`): `missal`, `office`,
-    /// `howToPray`, `explore`, `spiritualReading`, `allMysteries`,
+    /// `howToPray`, `explore`, `search[:prayers|chant]` (the one search,
+    /// with the words of `LUMEN_VIAE_SEARCH` typed in), `spiritualReading`, `allMysteries`,
     /// `settings`, `about`,
     /// `mysteries:<category>`, `scripturalRosary:<category>`,
     /// `rosaryAloud:<category>`, `scripturalRosaryPrayer:<category>[:<mystery>[:<bead>]]`,
@@ -384,6 +385,14 @@ final class AppRouter {
         case ("office", _): return (.office, nil)
         case ("howToPray", _): return (.howToPray, nil)
         case ("explore", _): return (.explore, nil)
+        // The one search, opened as a page's glass opens it (the words
+        // come from `LUMEN_VIAE_SEARCH`, read by ExploreView)
+        case ("search", _):
+            switch parts.count > 1 ? parts[1] : "" {
+            case "prayers": return (.search(from: .prayers), nil)
+            case "chant": return (.search(from: .chant), nil)
+            default: return (.search(from: .everywhere), nil)
+            }
         case ("spiritualReading", _): return (.spiritualReading, nil)
         case ("allMysteries", _): return (.allMysteries, nil)
         case ("settings", _): return (.settings, nil)
@@ -572,6 +581,16 @@ final class AppRouter {
         if route == .chantLibrary && AppTab.barTabs.contains(.chant) {
             switchTo(.chant)
             return
+        }
+        // An order of one prayer (the Angelus) has nothing to choose on
+        // its own page, a list of one row: every door to it prays it, the
+        // Now card's included, as the shortcut tile already did
+        if case .prayerOrder(let id) = route, let order = PrayerBook.order(id) {
+            let now = Date.now
+            if order.prayers(on: now).count == 1 {
+                append(.prayAlong(.order(order, on: now)))
+                return
+            }
         }
         append(route)
     }

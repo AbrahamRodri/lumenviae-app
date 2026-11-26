@@ -48,6 +48,9 @@ struct ScripturalRosaryPrayerView: View {
     /// Back, play and Next with what stands over them, measured so the
     /// words keep room when it grows (`OneRosaryColumn.columnTop`)
     @State private var footHeight: CGFloat = 0
+    /// How far the words, the painting's fold and the rail have risen so
+    /// the prayer shown stands whole (`OneRosaryColumn.wordsLift`)
+    @State private var wordsLift: CGFloat = 0
 
     /// An act the ⋯ tray asked for, run once the tray is actually gone.
     /// Sequenced on `onDismiss` rather than a timer: presenting into a
@@ -222,7 +225,8 @@ struct ScripturalRosaryPrayerView: View {
 
             case .stops:
                 RosaryStopsSheet(
-                    title: viewModel.novena.map(\.goToTitle) ?? viewModel.displayName,
+                    title: viewModel.novena.map(\.goToTitle) ?? viewModel.category.devotionTitle,
+                    kicker: viewModel.novena == nil ? viewModel.displayName : nil,
                     stops: viewModel.stops,
                     current: viewModel.currentStop,
                     mysteryNames: MysteryData.mysteries(for: viewModel.category).map(\.name),
@@ -527,10 +531,14 @@ extension ScripturalRosaryPrayerView {
                 + geometry.safeAreaInsets.top
                 + geometry.safeAreaInsets.bottom
             let rail = rail
+            let shownLift = playerIsLarge ? 0 : wordsLift
+            let unliftedTop = OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight, large: playerIsLarge)
+                - OneRosaryColumn<EmptyView>.headHeight(large: playerIsLarge)
+                - geometry.safeAreaInsets.top
             // The words' first line at one height on every step; the head
             // stands in its room above them
             let preferredTop = max(
-                OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight, large: playerIsLarge)
+                OneRosaryColumn<EmptyView>.wordsTop(fullHeight: fullHeight, large: playerIsLarge, lift: shownLift)
                     - OneRosaryColumn<EmptyView>.headHeight(large: playerIsLarge)
                     - geometry.safeAreaInsets.top,
                 12 + 44 + 14
@@ -555,6 +563,18 @@ extension ScripturalRosaryPrayerView {
                     .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { footHeight = $0 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // A prayer that would stand whole with a little more room is
+            // given it, the painting folding higher (design, 24 Nov: the
+            // Spanish Ave María, its step on two lines, ran under the foot)
+            .onPreferenceChange(SimpleRosaryWordsOverflow.self) { overflow in
+                guard let overflow, !playerIsLarge, showsWordsAndBeads else { return }
+                let lift = OneRosaryColumn<EmptyView>.wordsLift(
+                    current: wordsLift, overflow: overflow,
+                    maximum: OneRosaryColumn<EmptyView>.maximumLift(preferredTop: unliftedTop, headerFoot: 12 + 44 + 14))
+                guard lift != wordsLift else { return }
+                withAnimation(Motion.crossfade) { wordsLift = lift }
+            }
+            .onChange(of: simpleWordsSize) { _, _ in wordsLift = 0 }
             .overlay(alignment: .top) {
                 oneRosaryHeader
                     .padding(.top, 12)
@@ -569,7 +589,8 @@ extension ScripturalRosaryPrayerView {
                 complete: oneRosaryComplete,
                 closing: oneRosaryOnClose,
                 hidden: !showsWordsAndBeads,
-                large: playerIsLarge
+                large: playerIsLarge,
+                lift: shownLift
             ) { index in
                 if case .strand(let bead) = rail.target(at: index) { goToBead(bead) }
             }
@@ -582,7 +603,10 @@ extension ScripturalRosaryPrayerView {
                     // the rail's alone
                     PrayerPaintingStage(
                         painting: painting,
-                        seatedFraction: OneRosaryColumn<EmptyView>.paintingFraction(large: playerIsLarge),
+                        seatedFraction: OneRosaryColumn<EmptyView>.paintingFraction(
+                            large: playerIsLarge, lift: shownLift, fullHeight: fullHeight),
+                        titleShadeAt: playerIsLarge
+                            ? OneRosaryColumn<EmptyView>.largeTitleShadeAt(fullHeight: fullHeight) : nil,
                         paintingID: viewModel.currentMysteryIndex,
                         chromeHidden: chromeHidden,
                         quiet: !showsWordsAndBeads,

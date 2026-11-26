@@ -180,6 +180,27 @@ struct MeditationLabelTests {
 }
 
 @MainActor
+struct DesignedDateTests {
+    private var monday23Nov: Date {
+        var parts = DateComponents()
+        parts.year = 2026; parts.month = 11; parts.day = 23; parts.hour = 12
+        return Calendar(identifier: .gregorian).date(from: parts)!
+    }
+
+    @Test func englishKeepsTheDesignsPattern() {
+        let formatter = DateFormatter.designed(english: "EEE d MMM", template: "EEEdMMM", language: "en")
+        #expect(TodaysPrayerSection.dateLine(monday23Nov, formatter: formatter) == "MON 23 NOV")
+    }
+
+    /// The app's language decides the order, not the phone's region: es_US
+    /// once drew "LUN. NOV 23" on Home
+    @Test func spanishPutsTheDayBeforeTheMonth() {
+        let formatter = DateFormatter.designed(english: "EEE d MMM", template: "EEEdMMM", language: "es")
+        #expect(TodaysPrayerSection.dateLine(monday23Nov, formatter: formatter) == "LUN 23 NOV")
+    }
+}
+
+@MainActor
 struct VersalQuotationTests {
 
     @Test func aParagraphOnALetterTakesTheVersal() throws {

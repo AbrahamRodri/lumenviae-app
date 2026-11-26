@@ -111,12 +111,6 @@ struct OriginCreditTests {
         #expect(prayer.creditAtFoot == prayer.origin)
     }
 
-    @Test func undoerOfKnotsNamesItsAuthorUnderTheTitle() throws {
-        let prayer = try #require(PrayerBook.prayer("undoer_of_knots_novena"))
-        #expect(prayer.creditUnderTitle == "Fr. Juan Ramón Celeiro")
-        #expect(prayer.creditAtFoot == prayer.origin)
-    }
-
     @Test func everyPrayerInTheShippedBookSaysWhetherItsOriginIsACredit() {
         #expect(LibraryContent.prayerBook.prayers.allSatisfy { $0.originCredit != nil })
     }

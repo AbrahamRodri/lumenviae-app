@@ -109,11 +109,16 @@ struct TodaysPrayerSection: View {
     /// "TUE 13 OCT". A fixed pattern rather than a localized one: the
     /// locale's own short form puts the month first and hangs a comma
     /// off the weekday, and this line is set as engraved caps.
-    private static func dateLine(_ date: Date) -> String {
-        dateFormatter.string(from: date).uppercased()
+    /// In another language its own order, with the comma and the
+    /// abbreviations' points left off, as the English is: "LUN 23 NOV".
+    static func dateLine(_ date: Date, formatter: DateFormatter = dateFormatter) -> String {
+        formatter.string(from: date)
+            .replacingOccurrences(of: ",", with: "")
+            .replacingOccurrences(of: ".", with: "")
+            .uppercased()
     }
 
-    private static let dateFormatter: DateFormatter = {
+    static let dateFormatter: DateFormatter = {
         DateFormatter.designed(english: "EEE d MMM", template: "EEEdMMM")
     }()
 
@@ -331,8 +336,7 @@ struct TodaysPrayerRow: Equatable {
     /// what the Mass holds, and the fact waits.
     static func mass(_ today: TodayInChurch) -> TodaysPrayerRow {
         let name = String(localized: "Today's Mass", comment: "Home, Today's Prayer: name of the row opening the day's Mass")
-        let known = today.proper != nil
-        let subtitle = known
+        let subtitle = today.namesFeast
             ? today.title
             : String(localized: "Prayers and readings for today", comment: "Home, Today's Prayer: line under Today's Mass while the day's feast is loading")
 

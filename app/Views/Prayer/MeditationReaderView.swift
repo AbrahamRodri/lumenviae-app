@@ -280,8 +280,8 @@ struct MeditationReaderView: View {
 
             VStack(spacing: 10) {
                 Text(mysteryKicker.uppercased())
-                    .font(AppFonts.labelFont(10))
-                    .tracking(3)
+                    .font(AppFonts.labelFont(12))
+                    .tracking(2.2)
                     .foregroundColor(AppColors.gold)
                     .multilineTextAlignment(.center)
 
@@ -642,7 +642,7 @@ struct ReaderTextOptionsSheet: View {
 
                 SheetToggleRow(
                     title: String(
-                        localized: "Show Words and Beads",
+                        localized: "Show words and beads",
                         comment: "The Rosary's player, text sheet: switch that shows the prayer's words and the beads at the edge"
                     ),
                     detail: String(

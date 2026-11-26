@@ -112,13 +112,13 @@ final class ChantAssetStore {
             wifiSession = sessions.wifi
             anySession = sessions.any
         } else {
-            let wifi = URLSessionConfiguration.default
+            let wifi = URLSessionConfiguration.app
             // Wi-Fi only: never cellular or a hotspot, nor Low Data Mode
             wifi.allowsExpensiveNetworkAccess = false
             wifi.allowsConstrainedNetworkAccess = false
             wifi.timeoutIntervalForRequest = 30
             wifiSession = URLSession(configuration: wifi)
-            let any = URLSessionConfiguration.default
+            let any = URLSessionConfiguration.app
             any.timeoutIntervalForRequest = 30
             anySession = URLSession(configuration: any)
         }

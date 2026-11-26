@@ -566,7 +566,10 @@ def without_urls(document):
 def check(manifest):
     """--check: chants.json and the line files against the app's copy."""
     built = without_urls(offline_document(manifest))
-    shipped = without_urls(library())
+    # Only what this generator writes: the server's document also carries
+    # parts curated there (feasts, months, occasions), which are not built
+    # from chants.json
+    shipped = without_urls({k: v for k, v in library().items() if k in built})
     if built == shipped:
         print("chant_library.json holds chants.json and the line files")
         return

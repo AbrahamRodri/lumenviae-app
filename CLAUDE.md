@@ -1147,7 +1147,7 @@ write concurrent code here:
     Nothing needs a tap; the voice and Next do it all. The first time a
     bead can be tapped, a one-time line under the prayer says so
     (`OneRosaryTapHint`). There is no swipe anywhere on the player.
-  - **Show Words and Beads** (`userSettings.rosaryShowsWordsAndBeads`, on
+  - **Show words and beads** (`userSettings.rosaryShowsWordsAndBeads`, on
     by default) is a switch in the player's Aa sheet: off, the prayer's
     words and the rail stand down, and the pill and the mystery's name
     stay, for someone who prays with the voice and the painting alone.
@@ -4129,6 +4129,10 @@ Spiritual Reading book's page with
 (`missal`, `howToPray`, `mysteries:joyful`, `prayer:sorrowful:1:4`,
 `rosaryAloudPrayer:joyful`…; `AppRouter.launchRoute` lists them), which
 the App Store screenshots use (`Tools/AppStore/screenshots`).
+`search` (or `search:prayers`, `search:chant`, led by that page's kind)
+opens the one search, and `SIMCTL_CHILD_LUMEN_VIAE_SEARCH=<words>` types
+words into it with the keyboard up: a simulator tap cannot type into the
+search field, so walks of search use these.
 
 **Testing is silent** (Abraham, 15 Nov 2026: "are you able to do testing
 without audio from now on so I dont hear it"). Launch every debug run,
@@ -4136,6 +4140,14 @@ screenshot and recording with `-LVMuteAudio YES` (`SilentTesting`; give
 it the YES, or the next launch argument is read as its value): every
 recording, bell and sound preview plays at no volume, and the unit tests'
 host is always silent. Never in a release build.
+
+**Offline can be walked on a simulator** with `-LVOffline YES`
+(`OfflineTesting`, debug only): every http and https request the app's
+sessions make fails as a phone with no signal does, so the bundled books,
+the kept copies and every "comes with a connection" line can be seen. A
+new `URLSession` starts from `URLSessionConfiguration.app`, not
+`.default`, or it stays online under the flag. The system player's
+streams and the shelf's background downloads are not reached.
 
 `Tools/dev` is the door to everyday tasks: `Tools/dev check` runs lint,
 the generated-file check, the build and the tests. Run tests with

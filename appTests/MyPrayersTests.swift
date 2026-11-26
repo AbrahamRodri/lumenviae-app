@@ -105,6 +105,14 @@ struct MyPrayersTests {
         #expect(Set(MyPrayersPaintings.all).count == MyPrayersPaintings.all.count)
     }
 
+    /// A painting taken out of the app (St Carlo's photograph, 23 Nov 2026)
+    /// that a saved prayer or playlist still names hangs the Saved painting
+    @Test func aRemovedPaintingFallsBackToSaved() {
+        #expect(!MyPrayersPaintings.all.contains("carlo_acutis"))
+        let chosen = PrayerBookPainting.chosen("carlo_acutis", caption: "Mine")
+        #expect(chosen.resolvedAsset == PrayerBookPainting.saved.asset)
+    }
+
     private func photo(in book: MyPrayersStore) throws -> String {
         let image = UIGraphicsImageRenderer(size: CGSize(width: 40, height: 40)).image { context in
             UIColor.blue.setFill()

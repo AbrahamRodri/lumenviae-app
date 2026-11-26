@@ -41,7 +41,10 @@ every screen, so a debug build reads three launch variables:
 `SIMCTL_CHILD_LUMEN_VIAE_TAB=prayers` opens on a tab (an `AppTab` case),
 `SIMCTL_CHILD_LUMEN_VIAE_TODAY=2026-10-01` on another day, and
 `SIMCTL_CHILD_LUMEN_VIAE_CHANT=salve_regina_simple` on a chant's page (an
-unknown id opens its not-found page). Pass them to `xcrun simctl launch`.
+unknown id opens its not-found page). `SIMCTL_CHILD_LUMEN_VIAE_ROUTE=search`
+with `SIMCTL_CHILD_LUMEN_VIAE_SEARCH=novena` opens the one search with
+those words typed and the keyboard up (a tap cannot type into its field);
+`AppRouter.launchRoute` lists every route. Pass them to `xcrun simctl launch`.
 
 **Build products** go to `.build/DerivedData` in each checkout, and each
 xcodebuild log goes to `.build/logs/<step>.log`. This keeps two worktrees

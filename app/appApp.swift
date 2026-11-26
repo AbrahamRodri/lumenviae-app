@@ -53,6 +53,7 @@ struct appApp: App {
     @State private var libraryChecked = false
 
     init() {
+        OfflineTesting.start()
         FontRegistrar.registerBundledFonts()
         TrueDevotionLibrary.preload()
         // Before launch finishes, so a tap on the Angelus bell that

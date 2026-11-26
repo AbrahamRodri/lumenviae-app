@@ -129,6 +129,26 @@ struct CustomTabBar: View {
         .sensoryFeedback(.selection, trigger: selectedTab)
     }
 
+    private func tabRow(_ label: TabBarItem.LabelStyle) -> some View {
+        HStack(spacing: 0) {
+            ForEach(visibleTabs, id: \.self) { tab in
+                TabBarItem(
+                    tab: tab,
+                    isSelected: selectedTab == tab,
+                    label: label
+                ) {
+                    selectedTab = tab
+                }
+                .frame(minWidth: 44)
+                .firstUseTourStop(tourStop(for: tab))
+
+                if tab != visibleTabs.last {
+                    Spacer(minLength: 8)
+                }
+            }
+        }
+    }
+
     /// The bar proper. Kept separate from the fade above it so the raised
     /// Pray button anchors to the bar's own top edge — aligned to the
     /// outer stack it would ride up on the gradient instead.
@@ -145,21 +165,13 @@ struct CustomTabBar: View {
             // air around the short labels and the bar reads lopsided.
             // The trailing padding keeps the last tab clear of the
             // raised Pray medallion.
-            HStack(spacing: 0) {
-                ForEach(visibleTabs, id: \.self) { tab in
-                    TabBarItem(
-                        tab: tab,
-                        isSelected: selectedTab == tab
-                    ) {
-                        selectedTab = tab
-                    }
-                    .frame(minWidth: 44)
-                    .firstUseTourStop(tourStop(for: tab))
-
-                    if tab != visibleTabs.last {
-                        Spacer(minLength: 8)
-                    }
-                }
+            // The labels whole at one size: where the row would not fit at
+            // the full size (Spanish on a 4.7-inch phone, CONSAGRACIÓN
+            // cut to CONSAGRACIÓ…), every label steps down together
+            ViewThatFits(in: .horizontal) {
+                tabRow(TabBarItem.LabelStyle.regular)
+                tabRow(TabBarItem.LabelStyle.compact)
+                tabRow(TabBarItem.LabelStyle.tight)
             }
             .padding(.leading, 20)
             .padding(.trailing, 104)
@@ -341,7 +353,21 @@ struct TabBarItem: View {
 
     let tab: AppTab
     let isSelected: Bool
+    var label: LabelStyle = .regular
     let action: () -> Void
+
+    /// The label's size and spacing: the bar's own, then two smaller
+    /// steps for a row too wide for the glass (`CustomTabBar`)
+    struct LabelStyle {
+        let size: CGFloat
+        let tracking: CGFloat
+        /// The last step may still shrink, never cut
+        let fits: Bool
+
+        static let regular = LabelStyle(size: 9, tracking: 1.5, fits: true)
+        static let compact = LabelStyle(size: 8, tracking: 0.8, fits: true)
+        static let tight = LabelStyle(size: 7.5, tracking: 0.3, fits: false)
+    }
 
     private var foregroundColor: Color {
         isSelected ? AppColors.gold : AppColors.textSecondary
@@ -360,12 +386,14 @@ struct TabBarItem: View {
                 .foregroundColor(foregroundColor)
 
                 Text(tab.title)
-                    .font(AppFonts.labelFont(9))
-                    .tracking(1.5)
-                    // One line, shrunk a little where it must: at the
-                    // largest sizes CONSAGRACIÓN broke as CONSAGRACIO / N
+                    .font(AppFonts.labelFont(label.size))
+                    .tracking(label.tracking)
+                    // One line: at the largest sizes CONSAGRACIÓN broke as
+                    // CONSAGRACIO / N. Whole at its own width while the
+                    // bar measures which step fits; the last step shrinks
                     .lineLimit(1)
-                    .minimumScaleFactor(0.7)
+                    .fixedSize(horizontal: label.fits, vertical: false)
+                    .minimumScaleFactor(label.fits ? 1 : 0.7)
                     .foregroundColor(foregroundColor)
 
                 Circle()

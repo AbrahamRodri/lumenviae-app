@@ -108,11 +108,12 @@ struct Constants {
     /// The name stays Latin in every language; the tagline is translated.
     static let appTagline = String(localized: "LIGHT OF THE WAY", comment: "Tagline under the app's name, Lumen Viae, in capitals")
 
-    /// Where questions, feedback, and privacy notes go. The same address
-    /// the web app publishes on its own feedback and privacy pages —
-    /// `lumenviae.app` has no mailbox behind it, so mail addressed there
-    /// went nowhere.
-    static let supportEmail = "rodriguez.abrahamdev@gmail.com"
+    /// Where questions, feedback, and privacy notes go: the project's own
+    /// address, forwarded to Abraham (Cloudflare Email Routing, 25 Nov
+    /// 2026; his words on lv-play-email: "use lumenviae contact email set
+    /// up to where it redirects to my dev email"). It replaced his
+    /// personal address. `lumenviae.app` has no mailbox behind it.
+    static let supportEmail = "contact@lumenviae.org"
 
     // MARK: Tab Bar Labels
 

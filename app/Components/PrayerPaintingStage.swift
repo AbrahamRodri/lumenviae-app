@@ -45,6 +45,13 @@ struct PrayerPaintingStage: View {
     /// seats it higher, so the words stand on the dark ground beneath it
     var seatedFraction: CGFloat = 0.75
 
+    /// Where a title set over the painting begins, as a share of the
+    /// glass: the shade under it is at full strength by then. Only the
+    /// player at the accessibility sizes sets one, where the title stands
+    /// high on the painting and "THE ANNUNCIATION" lay on the angel's
+    /// white drapery
+    var titleShadeAt: CGFloat? = nil
+
     /// Identity for the crossfade: a new mystery is a new picture
     let paintingID: Int
 
@@ -345,6 +352,20 @@ struct PrayerPaintingStage: View {
                 startPoint: .top,
                 endPoint: .bottom
             )
+        }
+        .overlay {
+            if let titleShadeAt {
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear, location: max(titleShadeAt - 0.10, 0)),
+                        .init(color: AppColors.background.opacity(0.82), location: titleShadeAt),
+                        .init(color: AppColors.background.opacity(0.9), location: min(seatedFraction, 1)),
+                        .init(color: AppColors.background, location: 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
         }
         .drawingGroup()
         .ignoresSafeArea()

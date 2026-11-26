@@ -4,12 +4,12 @@
       {
         "id": "salve_regina_simple",
         "setting": "Melodía sencilla",
-        "title": "Salve Regina"
+        "title": "La Salve"
       },
       {
         "id": "salve_regina_solemn",
         "setting": "Melodía solemne",
-        "title": "Salve Regina"
+        "title": "La Salve"
       },
       {
         "id": "alma_redemptoris_simple",
@@ -635,6 +635,6 @@
       }
     ]
   },
-  "updated_at": "2026-11-17T16:30:00Z",
-  "version": "a809e0c71dec2a02"
+  "updated_at": "2026-11-25T17:40:00Z",
+  "version": "763cb2cc9b950a3c"
 }

@@ -61,6 +61,11 @@ struct ExploreView: View {
         self.origin = origin
     }
 
+    #if DEBUG
+    /// Whether `LUMEN_VIAE_SEARCH`'s words have been typed this launch
+    private static var launchWordsTyped = false
+    #endif
+
     /// Every category's set summaries, fetched once per visit
     @State private var sets: [MeditationSetSummary] = []
     @State private var isLoadingSets = false
@@ -127,6 +132,12 @@ struct ExploreView: View {
                     }
                     .scrollPosition(id: $scrolledID, anchor: .top)
                     .scrollDismissesKeyboard(.interactively)
+                    // The pictures dissolve as they pass under the field,
+                    // as the Prayers page's do under its head, rather than
+                    // cut off hard against it. At rest the page's own top
+                    // padding and the 4 here keep its first line clear of
+                    // the band.
+                    .topChromeFade(height: 24, inset: 4)
                 }
                 .animation(Motion.crossfade, value: results.isEmpty)
             }
@@ -168,6 +179,18 @@ struct ExploreView: View {
                 didFocusOnArrival = true
                 fieldFocused = true
             }
+            #if DEBUG
+            // Words typed at launch, for walks and screenshots a simulator
+            // cannot type into: `SIMCTL_CHILD_LUMEN_VIAE_ROUTE=search
+            // SIMCTL_CHILD_LUMEN_VIAE_SEARCH=novena`. Once, so a result
+            // opened and backed out of keeps what the reader sees
+            if query.isEmpty, !Self.launchWordsTyped,
+               let words = ProcessInfo.processInfo.environment["LUMEN_VIAE_SEARCH"], !words.isEmpty {
+                Self.launchWordsTyped = true
+                query = words
+                fieldFocused = true
+            }
+            #endif
         }
         // VoiceOver stays in the field and would hear nothing of the
         // results: what was found is said once the reader pauses. While

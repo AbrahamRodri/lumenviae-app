@@ -299,6 +299,13 @@ struct SelectMeditationView: View {
     /// The line under MEDITATIONS: what a meditation is, and what the
     /// mysteries are, for someone who has never prayed with either
     private var meditationsLead: String {
+        guard viewModel.showsOnlyBuiltIn else { return meditationsWhatLine }
+        return meditationsWhatLine + " " + String(
+            localized: "More meditations come with a connection.",
+            comment: "Mysteries' page with no signal and nothing downloaded: after the line under MEDITATIONS, saying the one built-in set is not all there is")
+    }
+
+    private var meditationsWhatLine: String {
         category == .sevenSorrows
             ? String(
                 localized: "Choose a meditation: a short reading for each of Mary's seven sorrows, to listen to or read in silence.",

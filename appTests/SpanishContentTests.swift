@@ -157,28 +157,28 @@ struct SpanishContentTests {
     /// A Spanish page credits a prayer in Spanish where the book does, and
     /// never in English: no Spanish credit, no line
     @Test func aPrayerIsCreditedInSpanishOrNotAtAll() {
-        var english = bookPrayer("undoer_of_knots_novena")
+        var english = bookPrayer("our_lady_of_guadalupe_novena")
         english = BookPrayer(
-            id: english.id, title: english.title, latinTitle: nil, origin: "Novena by Fr. Juan Ramón Celeiro",
+            id: english.id, title: english.title, latinTitle: nil, origin: "Novena by Fr. José Francisco Valdés",
             note: nil, english: english.english, latin: nil)
         var translation = PrayerBookTranslations.Translation(
             id: english.id, title: "Novena", text: "Palabras", aiTranslated: nil)
         #expect(
             PrayerBook.inSpanish(english, translations: [english.id: translation], spanish: true).origin == nil)
-        translation.origin = "Novena del P. Juan Ramón Celeiro, según la publica Ascension Press"
+        translation.origin = "Novena del R. P. Fr. José Francisco Valdés"
         #expect(
             PrayerBook.inSpanish(english, translations: [english.id: translation], spanish: true).origin
                 == translation.origin)
         #expect(
             PrayerBook.inSpanish(english, translations: [english.id: translation], spanish: false).origin
-                == "Novena by Fr. Juan Ramón Celeiro")
+                == "Novena by Fr. José Francisco Valdés")
     }
 
-    /// The shipped Spanish book credits the Undoer of Knots novena in Spanish
+    /// The shipped Spanish book credits the Guadalupe novena in Spanish
     @Test func theShippedSpanishBookCarriesTheNovenasCredit() {
         #expect(
             LibraryContent.prayerBookSpanishStore.seed?.translations
-                .first { $0.id == "undoer_of_knots_novena" }?.origin?.hasPrefix("Novena del P.") == true)
+                .first { $0.id == "our_lady_of_guadalupe_novena" }?.origin?.hasPrefix("Novena del R. P.") == true)
     }
 
     /// Before the server's book has Spanish, the Rosary's prayers the book
@@ -248,18 +248,22 @@ struct SpanishContentTests {
         #expect(Set(spanish.translations.groups.map(\.id)) == Set(english.groups.map(\.id)))
     }
 
-    /// Where the Spanish name is the Latin (Salve Regina, Ave María), the
-    /// chant is named once: no second title under it, and VoiceOver says
-    /// it once (ios-review, 15 Nov)
+    /// Where the Spanish name is the Latin (Ave Maris Stella, Ave María),
+    /// the chant is named once: no second title under it, and VoiceOver
+    /// says it once (ios-review, 15 Nov)
     @Test func aChantWhoseSpanishNameIsItsLatinIsNamedOnce() throws {
         let english = LibraryContent.chantLibraryStore.seed!
         let spanish = try #require(LibraryContent.chantLibrarySpanishStore.seed)
         let named = spanish.laidOver(english).chants.map(Chant.init(document:))
-        let salve = try #require(named.first { $0.latinTitle == "Salve Regina" && $0.setting != nil })
-        #expect(salve.secondTitle == nil)
-        #expect(salve.spokenName == "Salve Regina")
-        #expect(salve.englishWithLatin == "Salve Regina")
-        #expect(salve.subtitleLine == salve.distinctSetting)
+        let stella = try #require(named.first { $0.id == "ave_maris_stella_feasts" })
+        #expect(stella.secondTitle == nil)
+        #expect(stella.spokenName == "Ave Maris Stella")
+        #expect(stella.englishWithLatin == "Ave Maris Stella")
+        #expect(stella.subtitleLine == stella.distinctSetting)
+        // The Salve has a Spanish name of its own, said under the Latin
+        // (design's round 9 look check: "La Salve · melodía sencilla")
+        let salve = try #require(named.first { $0.id == "salve_regina_simple" })
+        #expect(salve.subtitleLine == "La Salve · melodía sencilla")
         // Folded, so "Ave María" over "Ave Maria" is one name too
         #expect(named.filter { SearchText.fold($0.englishTitle) == SearchText.fold($0.latinTitle) }.allSatisfy { $0.secondTitle == nil })
         // English keeps both names

@@ -1,6 +1,222 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "novena.missing" : {
+      "comment" : "Novena page: shown when the novena is missing, as one taken out of the app",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This novena is no longer in the app."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta novena ya no está en la app."
+          }
+        }
+      }
+    },
+    "novena.missing.seeNovenas" : {
+      "comment" : "Novena page, when the novena is missing: goes to the Prayers tab, where the novenas are",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See the novenas"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver las novenas"
+          }
+        }
+      }
+    },
+    "chant.missing" : {
+      "comment" : "Chant page: shown when the chant is missing, as one taken out of the app",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This chant is no longer in the app."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este canto ya no está en la app."
+          }
+        }
+      }
+    },
+    "chant.missing.seeChants" : {
+      "comment" : "Chant page, when the chant is missing: goes to the Chant tab",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See the chants"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver los cantos"
+          }
+        }
+      }
+    },
+    "credits.licence.publicDomain" : {
+      "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Public domain"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dominio público"
+          }
+        }
+      }
+    },
+    "credits.licence.publicDomainPDArt" : {
+      "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Public domain (PD-Art: faithful 2D reproduction of a work whose author died more than 100 years ago)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dominio público (PD-Art: reproducción fiel en 2D de una obra cuyo autor murió hace más de cien años)"
+          }
+        }
+      }
+    },
+    "credits.licence.publicDomainOldMaster" : {
+      "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Public domain (old master)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dominio público (antiguo maestro)"
+          }
+        }
+      }
+    },
+    "credits.licence.copyleft" : {
+      "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copyleft (share alike, no attribution required)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copyleft (compartir igual, sin atribución obligatoria)"
+          }
+        }
+      }
+    },
+    "credits.licence.creditedUnderEachPrayer" : {
+      "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Credited under each prayer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fuente indicada bajo cada oración"
+          }
+        }
+      }
+    },
+    "credits.licence.mitCommercial" : {
+      "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MIT; free for commercial use"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MIT; libre para uso comercial"
+          }
+        }
+      }
+    },
+    "credits.licence.shortQuotation" : {
+      "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short quotation, credited"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cita breve, con su fuente"
+          }
+        }
+      }
+    },
+    "credits.licence.usedWithCredit" : {
+      "comment" : "Sources & Credits: a work's licence, set small in capitals under it",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Used with credit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usado citando la fuente"
+          }
+        }
+      }
+    },
     "" : {
 
     },
@@ -207,7 +423,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ a las 6 a. m."
+            "value" : "%@ a las 6 a. m."
           }
         }
       }
@@ -218,7 +434,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ a las 6 p. m."
+            "value" : "%@ a las 6 p. m."
           }
         }
       }
@@ -3373,7 +3589,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "12 p. m., cuando las campanas tocan para la oración del mediodía"
+            "value" : "12 p. m., cuando las campanas tocan para la oración del mediodía"
           }
         }
       }
@@ -3424,7 +3640,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "6 a. m."
+            "value" : "6 a. m."
           }
         }
       }
@@ -3435,7 +3651,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "6 a. m., mediodía y 6 p. m."
+            "value" : "6 a. m., mediodía y 6 p. m."
           }
         }
       }
@@ -3446,7 +3662,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "6 a. m., para empezar el día con oración"
+            "value" : "6 a. m., para empezar el día con oración"
           }
         }
       }
@@ -3458,7 +3674,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "8 p. m."
+            "value" : "8 p. m."
           }
         }
       }
@@ -3469,7 +3685,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "8 p. m., para terminar el día con oración"
+            "value" : "8 p. m., para terminar el día con oración"
           }
         }
       }
@@ -4084,7 +4300,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una oración a María a las 6 a. m., al mediodía y a las 6 p. m."
+            "value" : "Una oración a María a las 6 a. m., al mediodía y a las 6 p. m."
           }
         }
       }
@@ -4249,7 +4465,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una breve oración a María a las 6 a. m., al mediodía y a las 6 p. m., que recuerda el mensaje del ángel."
+            "value" : "Una breve oración a María a las 6 a. m., al mediodía y a las 6 p. m., que recuerda el mensaje del ángel."
           }
         }
       }
@@ -4260,7 +4476,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una breve oración a María a las 6 a. m., al mediodía y a las 6 p. m."
+            "value" : "Una breve oración a María a las 6 a. m., al mediodía y a las 6 p. m."
           }
         }
       }
@@ -5557,7 +5773,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A las 6 p. m."
+            "value" : "A las 6 p. m."
           }
         }
       }
@@ -14251,6 +14467,17 @@
         }
       }
     },
+    "More meditations come with a connection." : {
+      "comment" : "Mysteries' page with no signal and nothing downloaded: after the line under MEDITATIONS, saying the one built-in set is not all there is",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando tengas conexión, verás más meditaciones."
+          }
+        }
+      }
+    },
     "More options" : {
       "localizations" : {
         "es" : {
@@ -19448,7 +19675,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recordarme a las 6 a. m."
+            "value" : "Recordarme a las 6 a. m."
           }
         }
       }
@@ -19459,7 +19686,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recordarme a las 8 p. m."
+            "value" : "Recordarme a las 8 p. m."
           }
         }
       }
@@ -19840,7 +20067,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suena a las 6 a. m., al mediodía y a las 6 p. m. para el Ángelus, una breve oración a María"
+            "value" : "Suena a las 6 a. m., al mediodía y a las 6 p. m. para el Ángelus, una breve oración a María"
           }
         }
       }
@@ -20187,7 +20414,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descargar"
+            "value" : "Guardar sin conexión"
           }
         }
       }
@@ -20198,7 +20425,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descargar"
+            "value" : "Guardar sin conexión"
           }
         }
       }
@@ -21064,7 +21291,7 @@
         }
       }
     },
-    "Show Words and Beads" : {
+    "Show words and beads" : {
       "comment" : "The Rosary's player, text sheet: switch that shows the prayer's words and the beads at the edge",
       "localizations" : {
         "es" : {

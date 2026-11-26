@@ -886,11 +886,11 @@ PROVENANCE = {
 }
 
 CARLO = dict(
-    imageset="carlo_acutis", status="flagged",
+    imageset="carlo_acutis", status="removed",
     work="Photograph of Carlo Acutis (head and shoulders, red polo, mountains behind)",
     creator="Unknown; the widely circulated family photograph (c. 2005–06)",
     licence="Not established — almost certainly in copyright (a modern photograph; the Acutis family / Associazione Amici di Carlo Acutis control the official images)",
-    note="Used in CarloAcutisView (CachedAssetImage(\"carlo_acutis\")). Do not ship without permission. "
+    note="Removed from the app 23 Nov 2026 (copyright take-off; the original is kept in reports/rig/copyright-takeoff/removed/). CarloAcutisView draws his icon without it; a My Prayer that chose it hangs the Saved painting. To bring a photograph back: "
          "Replacement options, in order: (1) written permission from the Associazione Carlo Acutis (carloacutis.com) for this photograph; "
          "(2) a freely licensed photograph on Commons (fetch.py --search 'Carlo Acutis' lists any, with licence; as of the last check most Commons "
          "images of him were deleted as non-free, so expect none); (3) no photograph: the page draws the votive candle or a monogram instead. "
@@ -1028,8 +1028,6 @@ TEXTS = [
     # each prayer (product-research's credits audit, 15 Nov 2026)
     dict(title="Prayers of the Church", maker="the 1910 Raccolta, the Roman Ritual, Missal and Breviary, the app's own renderings from the Latin, and the prayer books and publishers named under each prayer",
          detail="The Prayer Book", source="Each prayer's source is named under it", licence="Credited under each prayer"),
-    dict(title="Novena to Our Lady, Undoer of Knots", maker="Fr. Juan Ramón Celeiro, as printed by Ascension Press",
-         detail="The Undoer of Knots novena, in English and Spanish", source="ascensionpress.com", licence="Used with credit"),
     dict(title="Novenas from EWTN", maker="EWTN; the Novena to St Joseph by Fr. Lawrence G. Lovasik, S.V.D. (1956); the Novena to the Holy Spirit by the Holy Ghost Fathers",
          detail="The Efficacious Novena to the Sacred Heart, the Novena to the Holy Spirit, the Novena to St Joseph and the Guadalupe novena (its Spanish from EWTN Español); the St Jude novena's Spanish from EWTN Español and ACI Prensa", source="ewtn.com; aciprensa.com", licence="Used with credit"),
     dict(title="The Litany of St Joseph, 2021 invocations", maker="USCCB",

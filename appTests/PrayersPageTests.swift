@@ -352,6 +352,17 @@ struct PrayersPageTests {
         #expect(router.path.count == 1)
     }
 
+    /// The Angelus's page was a list of one row: every door to it prays it
+    @Test func anOrderOfOnePrayerIsPrayedNotListed() throws {
+        let router = AppRouter()
+        router.push(.prayerOrder(id: "angelus"))
+        guard case .prayAlong(let launch) = try #require(router.topRoute) else {
+            Issue.record("the Angelus opened \(String(describing: router.topRoute)), not the pray-along")
+            return
+        }
+        #expect(launch.orderID == "angelus")
+    }
+
     // MARK: The home page
 
     @Test func theHomePageNamesOnlyPrayersAndOrdersTheBookHolds() {

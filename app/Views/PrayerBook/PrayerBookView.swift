@@ -209,13 +209,9 @@ struct PrayerBookView: View {
             title: order.title(on: now),
             painting: .order(order, on: now)
         ) {
-            // An order of one prayer (the Angelus) has nothing to choose
-            // on its own page, so its shortcut prays it, as Android's does
-            if order.prayers(on: now).count == 1 {
-                router.push(.prayAlong(.order(order, on: now)))
-            } else {
-                router.push(.prayerOrder(id: order.id))
-            }
+            // An order of one prayer (the Angelus) is prayed at once: the
+            // router turns its page into the pray-along (`AppRouter.push`)
+            router.push(.prayerOrder(id: order.id))
         }
     }
 

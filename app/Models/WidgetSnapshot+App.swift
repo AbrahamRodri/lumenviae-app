@@ -165,7 +165,7 @@ extension WidgetSnapshot {
         return Rosary(
             category: prayer.category,
             form: kind.rawValue,
-            setName: kind == .meditationSet ? prayer.setName : "",
+            setName: kind == .meditationSet ? prayer.displaySetName : "",
             mysteryIndex: prayer.mysteryIndex,
             beadIndex: prayer.beadIndex,
             savedAt: prayer.savedAt,
@@ -189,6 +189,11 @@ extension WidgetSnapshot {
         _ novenas: [String: NovenaProgress], info: (String) -> NovenaInfo?, at date: Date, calendar: Calendar
     ) -> [Novena] {
         novenas.values.compactMap { (progress: NovenaProgress) -> Novena? in
+            // A novena the Prayer Book no longer holds (the Undoer of Knots,
+            // taken off in Nov 2026) is not shown: it stood under its raw id
+            // at "Day 4 of 9", and its link opened nothing. Its days are
+            // kept, and it comes back if the novena does
+            guard let about = info(progress.novenaID) else { return nil }
             let todays: Int?
             let current: Int
             switch progress.standing(on: date, calendar: calendar) {
@@ -203,11 +208,10 @@ extension WidgetSnapshot {
             }
             let shown = max(1, min(current, progress.length))
             let prayedToday = progress.prayed.contains(progress.dayNumber(on: date, calendar: calendar))
-            let about = info(progress.novenaID)
             return Novena(
                 id: progress.novenaID,
-                name: about?.name ?? progress.novenaID,
-                painting: about?.painting,
+                name: about.name,
+                painting: about.painting,
                 length: progress.length,
                 prayedDays: progress.prayed.sorted(),
                 todaysDay: todays,
@@ -261,9 +265,10 @@ extension WidgetSnapshot {
             painting: (ConsecrationPhase.phase(for: number) ?? .preparatory).heroImageName,
             todayPrayed: progress.isDayCompleted(number),
             isCompleted: progress.isCompleted,
-            beginsLine: String(localized: "Begins \(dayAndMonth(of: progress.startDate))"),
+            // The year where it is not this one, as Home's row says it (#203)
+            beginsLine: String(localized: "Begins \(dayAndMonth(of: progress.startDate, seenOn: date, calendar: calendar))"),
             feastLine: String(
-                localized: "For the feast of \(dayAndMonth(of: feast))",
+                localized: "For the feast of \(dayAndMonth(of: feast, seenOn: date, calendar: calendar))",
                 comment: "Widgets, Consecration chosen ahead: the feast its 33 days end on, by its date, like For the feast of 2 February")
         )
     }
@@ -331,6 +336,14 @@ extension WidgetSnapshot {
         dayMonthFormatter.string(from: date)
     }
 
+    /// The day and month, and the year too when it is not the year of the
+    /// day it is read on: "11 January 2027" in November 2026
+    private static func dayAndMonth(of date: Date, seenOn day: Date, calendar: Calendar) -> String {
+        calendar.component(.year, from: date) == calendar.component(.year, from: day)
+            ? dayMonthFormatter.string(from: date)
+            : dayMonthYearFormatter.string(from: date)
+    }
+
     private static func lowercasingFirstLetter(_ text: String) -> String {
         text.prefix(1).lowercased() + text.dropFirst()
     }
@@ -338,6 +351,8 @@ extension WidgetSnapshot {
     private static let weekdayFormatter = languageFormatter(english: "EEEE", template: "EEEE")
 
     private static let dayMonthFormatter = languageFormatter(english: "d MMMM", template: "dMMMM")
+
+    private static let dayMonthYearFormatter = languageFormatter(english: "d MMMM yyyy", template: "dMMMMyyyy")
 
     private static let fullDateFormatter = languageFormatter(english: "EEEE, d MMMM", template: "EEEEdMMMM")
 
